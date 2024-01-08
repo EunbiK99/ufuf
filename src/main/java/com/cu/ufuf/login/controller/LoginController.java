@@ -7,4 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/login/*")
 public class LoginController {
 
+    @RequestMapping("registerForm")
+    public String registerForm(){
+        return "login/registerForm";
+    }
+
 }
