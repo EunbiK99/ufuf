@@ -18,25 +18,47 @@
                 <!--코드 시작-->
                 <div class="row">
                     <div class="col">
-                        <div class="row">
+
+                        <div class="row py-3">
+                            <div class="col fw-bold text-center" style="font-size:1.1em">
+                                회원가입
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col fw-semibold">
+                                회원계정
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col">
-                                <input type="text" class="form-control" id="userid" name="userid" placeholder="아이디를 입력해주세요">
+                                <input type="text" class="form-control rounded-0" id="userid" name="userid" placeholder="아이디를 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="text" class="form-control" id="password" name="password" placeholder="비밀번호를 입력해주세요">
+                                <input type="text" class="form-control rounded-0 border-top-0" id="password" name="password" placeholder="비밀번호를 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-3">
+                            <div class="col fw-semibold">
+                                회원정보
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="이름을 입력해주세요">
+                                <input type="text" class="form-control rounded-0" id="name" name="name" placeholder="이름을 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
                         <!--대학교 검색-->
-                        <div class="row">
+                        <div class="row mt-2">
+                            <div class="col fw-semibold">
+                                대학교 검색
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col">
-                                <select class="form-select" id="region">
+                                <select class="form-select rounded-0" id="region" style="font-size:0.9em;">
                                     <option value="">전체</option>
 						            <option value="100260">서울특별시</option>
                                     <option value="100267">부산광역시</option>
@@ -58,16 +80,23 @@
                                     <option value="100771">해외거주</option>
                                 </select>
                             </div>
-                            <div class="col">
-                                <select class="form-select" id="sch1">
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col pe-1">
+                                <select class="form-select rounded-0" id="sch1" style="font-size:0.9em;">
                                     <option value="">1차구분</option>
 						            <option value="100322">전문대학</option>
 						            <option value="100323">대학(4년제)</option>
                                 </select>
                             </div>
                             <!--만약 전문대면-->
-                            <div id="ifCollege" class="col">
-                                <select class="form-select" id="sch2">
+                            <div id="ifNone" class="col ps-1">
+                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
+                                    <option value="">2차구분</option>
+                                </select>
+                            </div>
+                            <div id="ifCollege" class="col ps-1 d-none">
+                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
                                     <option value="">2차구분</option>
 						            <option value="100324">전문대학</option>
 						            <option value="100325">기능대학(폴리텍대학)</option>
@@ -76,8 +105,8 @@
                                 </select>
                             </div>
                             <!--만약 대학이면-->
-                            <div id="ifUniversity" class="col">
-                                <select class="form-select" id="sch2">
+                            <div id="ifUniversity" class="col ps-1 d-none">
+                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
                                     <option value="">2차구분</option>
 						            <option value="100328">일반대학</option>
 						            <option value="100329">교육대학</option>
@@ -86,10 +115,10 @@
 						            <option value="100332">각종대학(대학)</option>
                                 </select>
                             </div>
-                            <div class="row">
-                                <div class="col">
-                                    <input type="text" class="form-control" id="searchSchulNm" name="searchSchulNm" placeholder="대학명 검색">
-                                </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <input type="text" class="form-control rounded-0" id="searchSchulNm" name="searchSchulNm" placeholder="대학명 검색" style="font-size:0.9em;">
                             </div>
                         </div>
                     </div>
