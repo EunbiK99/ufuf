@@ -26,7 +26,7 @@ public class AppConfig implements WebMvcConfigurer{
             .addResourceLocations("file://C:/uploadFiles/")
             // .setCachePeriod(60 * 60 * 24 * 365);
         ;  
-	}    
+	}
 
 }
 
