@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 public class UserInfoDto {
     private String user_id;
-	private String university_id;
 	private String name;
 	private String userid;
 	private String password;
+	private String university;
 	private String department;
 	private String address;
 	private String phone;

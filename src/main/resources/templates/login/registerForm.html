@@ -7,13 +7,133 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script>
+
+    function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if(data.userSelectedType === 'R'){
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    document.getElementById("extraAddress").value = extraAddr;
+                
+                } else {
+                    document.getElementById("extraAddress").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('postcode').value = data.zonecode;
+                document.getElementById("address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("detailAddress").focus();
+            }
+        }).open();
+    }
+
+    function aaa(){
+
+        const searchword = document.querySelector("#searchword").value;
+        const region = document.querySelector("#region").value;
+        const sch1 = document.querySelector("#sch1").value;
+        console.log(searchword);
+
+        $.ajax({
+            url:'//www.career.go.kr/cnet/openapi/getOpenApi?apiKey=421ec27f43f706389803746e6eb59dba&svcType=api&svcCode=SCHOOL&contentType=json&gubun=univ_list',
+            type:'get',
+            data : {
+                'region' : region,
+                'sch1' : sch1,
+                'searchSchulNm' : searchword
+            },
+            success:(res)=>{
+                console.log(res);
+            },
+            error:()=>{
+                alert('❗error❗')
+            }
+        })
+    }
+
+    function searchUniversity(){
+
+        const region = document.querySelector("#region").value;
+        const sch1 = document.querySelector("#sch1").value;
+        const searchword = document.querySelector("#searchword").value;
+        console.log(searchword)
+
+        fetch("//www.career.go.kr/cnet/openapi/getOpenApi?apiKey=421ec27f43f706389803746e6eb59dba&svcType=api&svcCode=SCHOOL&contentType=json&gubun=univ_list", {
+			method: "post",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: "region=" + encodeURIComponent(region) +
+                "&sch1=" + encodeURIComponent(sch1) +
+                "&searchword=" + encodeURIComponent(searchword)
+        })
+		.then(response => response.json())
+		.then(response => {
+			
+			closeUniListModal();
+			
+		});
+
+    }
+
+    function openUniListModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#uniListModal");
+    	
+    	modal.show();
+	}
+	
+    function closeUniListModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#uniListModal");
+    	
+        modal.hide();
+	}
+
+    
+    </script>
+
+
 </head>
 
 <body>
     
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
-            <div class="col">
+            <div class="col px-3">
 
                 <!--코드 시작-->
                 <div class="row">
@@ -50,8 +170,57 @@
                                 <input type="text" class="form-control rounded-0" id="name" name="name" placeholder="이름을 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
+                        <div class="row mt-1 d-flex">
+                            <div class="col-4 pe-0">
+                                <input type="text" class="form-control rounded-0" id="birthYear" placeholder="생년" style="font-size:0.9em;">
+                            </div>
+                            <div class="col-1 px-0 text-center">
+                                -
+                            </div>
+                            <div class="col-3 px-0">
+                                <input type="text" class="form-control rounded-0" id="birthMonth" placeholder="월" style="font-size:0.9em;">
+                            </div>
+                            <div class="col-1 px-0 text-center">
+                                -
+                            </div>
+                            <div class="col-3 ps-0">
+                                <input type="text" class="form-control rounded-0" id="birthDate" placeholder="일" style="font-size:0.9em;">
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col d-grid pe-1">
+                                <input type="radio" class="btn-check" id="genderF" name="gender">
+                                <label class="btn btn-outline-secondary rounded-0" for="genderF" style="font-size:0.9em;">여성</label>
+                            </div>
+                            <div class="col d-grid ps-1">
+                                <input type="radio" class="btn-check" id="genderM" name="gender">
+                                <label class="btn btn-outline-secondary rounded-0" for="genderM" style="font-size:0.9em;">남성</label>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <input type="text" class="form-control rounded-0" id="phone" name="phone" placeholder="핸드폰번호를 - 없이 입력해주세요" style="font-size:0.9em;">
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <input type="text" class="form-control rounded-0" id="email" name="email" placeholder="이메일 주소를 입력해주세요" style="font-size:0.9em;">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="input-group">
+                                    <input type="text" class="form-control rounded-0" id="postcode" placeholder="우편번호" style="font-size:0.9em;">
+                                    <input type="button" class="btn btn-outline-secondary rounded-0" onclick="execDaumPostcode()" value="우편번호 찾기" style="font-size:0.9em;">
+                                </div>
+                                <input type="text" class="form-control rounded-0 mt-1" id="address" placeholder="주소" style="font-size:0.9em;">
+                                <input type="text" class="form-control rounded-0 mt-1" id="detailAddress" placeholder="상세주소" style="font-size:0.9em;">
+                                <input type="text" class="form-control rounded-0 mt-1" id="extraAddress" placeholder="참고항목" style="font-size:0.9em;">
+                            </div>
+                        </div>
+                        
                         <!--대학교 검색-->
-                        <div class="row mt-2">
+                        <div class="row mt-3">
                             <div class="col fw-semibold">
                                 대학교 검색
                             </div>
@@ -82,43 +251,25 @@
                             </div>
                         </div>
                         <div class="row mt-1">
-                            <div class="col pe-1">
+                            <div class="col">
                                 <select class="form-select rounded-0" id="sch1" style="font-size:0.9em;">
                                     <option value="">1차구분</option>
 						            <option value="100322">전문대학</option>
 						            <option value="100323">대학(4년제)</option>
                                 </select>
                             </div>
-                            <!--만약 전문대면-->
-                            <div id="ifNone" class="col ps-1">
-                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
-                                    <option value="">2차구분</option>
-                                </select>
-                            </div>
-                            <div id="ifCollege" class="col ps-1 d-none">
-                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
-                                    <option value="">2차구분</option>
-						            <option value="100324">전문대학</option>
-						            <option value="100325">기능대학(폴리텍대학)</option>
-						            <option value="100326">사이버대학(2년제)</option>
-						            <option value="100327">각종대학(전문)</option>
-                                </select>
-                            </div>
-                            <!--만약 대학이면-->
-                            <div id="ifUniversity" class="col ps-1 d-none">
-                                <select class="form-select rounded-0" id="sch2" style="font-size:0.9em;">
-                                    <option value="">2차구분</option>
-						            <option value="100328">일반대학</option>
-						            <option value="100329">교육대학</option>
-						            <option value="100330">산업대학</option>
-						            <option value="100331">사이버대학(4년제)</option>
-						            <option value="100332">각종대학(대학)</option>
-                                </select>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control rounded-0 border-end-0" id="searchword" placeholder="대학명 검색" style="font-size:0.9em;">
+                                    <button class="btn btn-outline-secondary rounded-0" type="button" onclick="openUniListModal()"><i class="bi bi-search"></i></button>
+                                </div>
                             </div>
                         </div>
                         <div class="row mt-1">
                             <div class="col">
-                                <input type="text" class="form-control rounded-0" id="searchSchulNm" name="searchSchulNm" placeholder="대학명 검색" style="font-size:0.9em;">
+                                <input type="text" class="form-control rounded-0" id="department" name="department" placeholder="학과명을 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
                     </div>
@@ -128,6 +279,57 @@
         </div>
     </div>
 
+
+
+    <div id="uniListModal" class="modal">
+		<div class="modal-dialog">
+			<div class="modal-content px-3 rounded-0">
+				<div class="modal-header mt-1">
+					<h6 class="modal-title fw-semibold">검색된 대학교 리스트</h6>
+					<span onclick="closeUniListModal()" class="close text-secondary fs-5" id="close-modal"><i class="bi bi-x-lg"></i></span>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+                        <div class="col">
+                            <div class="row mt-1">
+                                <div class="col text-secondary" style="font-size:0.8em">전체 검색 결과 수 (5)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col" id="uniListBox">
+                                    <div id="uniListTemplete">
+                                        <div class="uniWrapper row py-2 border-bottom" style="font-size:0.90em">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <span class="fw-semibold">서울대학교</span>
+                                                        <span class="text-secondary ms-2" style="font-size:0.8em">대학(4년제)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col" style="font-size:0.85em">
+                                                        서울특별시 어쩌구 저ㅓㅉ구어쩌구어쩎ㅇ 90-2번지 제2캠퍼스
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+				</div>
+				<div class="modal-footer border-0 mb-3">
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div id="uniListTemplete" >
+		<div class="uniWrapper row text-center py-1 border-bottom" style="font-size:0.95em">
+			
+		</div>
+	</div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
