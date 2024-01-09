@@ -60,7 +60,7 @@
         }).open();
     }
 
-    function aaa(){
+    function searchUniversity(){
 
         const searchword = document.querySelector("#searchword").value;
         const region = document.querySelector("#region").value;
@@ -77,42 +77,96 @@
             },
             success:(res)=>{
                 console.log(res);
+                handleResponse(res);
             },
             error:()=>{
                 alert('❗error❗')
             }
         })
+
     }
 
-    function searchUniversity(){
+    function handleResponse(response) {
+        // 응답 데이터를 HTML에 표시
+        displayUniList(response.dataSearch);
+    }
 
+    function displayUniList(dataSearch) {
+
+        const searchword = document.querySelector("#searchword").value;
         const region = document.querySelector("#region").value;
         const sch1 = document.querySelector("#sch1").value;
-        const searchword = document.querySelector("#searchword").value;
-        console.log(searchword)
 
-        fetch("//www.career.go.kr/cnet/openapi/getOpenApi?apiKey=421ec27f43f706389803746e6eb59dba&svcType=api&svcCode=SCHOOL&contentType=json&gubun=univ_list", {
-			method: "post",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: "region=" + encodeURIComponent(region) +
-                "&sch1=" + encodeURIComponent(sch1) +
-                "&searchword=" + encodeURIComponent(searchword)
-        })
-		.then(response => response.json())
-		.then(response => {
-			
-			closeUniListModal();
-			
-		});
+        if (!region || !sch1 ||
+            searchword.trim() === '') {
+	        alert('모든 항목에 평가를 완료해주세요');
+	        return;
+	    }
 
+        const uniListBox = document.getElementById("uniListBox");
+        const totalCountDiv = document.getElementById('totalCount');
+
+        if(dataSearch.content.length === 0){
+
+            totalCountDiv.innerText = "검색 결과 수 (0)";
+            
+            if(uniListBox.classList.contains("my-4")){
+                return;
+            }else{
+                uniListBox.classList.add("my-4");
+            }
+
+            uniListBox.innerText = "검색 결과가 존재하지 않습니다.";
+
+        } else{
+
+            if(uniListBox.classList.contains("my-4")){
+                uniListBox.classList.remove("my-4");
+            }
+
+            uniListBox.innerHTML = "";
+
+            const totalCount = dataSearch.content[0].totalCount;
+            totalCountDiv.innerText = "검색 결과 수 (" + totalCount + ")";
+
+            for (const uniInfo of dataSearch.content) {
+                
+                const uniWrapper = document.querySelector("#uniListTemplete .uniWrapper").cloneNode(true);
+
+                const schoolNameDiv = uniWrapper.querySelector(".schoolName");
+                const schoolGubunDiv = uniWrapper.querySelector(".schoolGubun");
+                const adresDiv = uniWrapper.querySelector(".adres");
+
+                schoolNameDiv.innerText = uniInfo.schoolName;
+                schoolNameDiv.onclick = function() {
+                    setUniversityData(uniInfo.schoolName);
+                };
+
+                schoolGubunDiv.innerText = uniInfo.schoolGubun;
+                adresDiv.innerText = uniInfo.adres;
+
+                uniListBox.appendChild(uniWrapper);
+            }
+        }
+
+    }
+
+    function setUniversityData(schoolName){
+
+        const searchword = document.getElementById('searchword');
+        searchword.value = schoolName;
+
+        closeUniListModal();
+
+        document.getElementById("department").focus();
     }
 
     function openUniListModal() {
     	
     	const modal = bootstrap.Modal.getOrCreateInstance("#uniListModal");
-    	
+
+    	searchUniversity();
+
     	modal.show();
 	}
 	
@@ -262,7 +316,7 @@
                         <div class="row mt-1">
                             <div class="col">
                                 <div class="input-group">
-                                    <input type="text" class="form-control form-control rounded-0 border-end-0" id="searchword" placeholder="대학명 검색" style="font-size:0.9em;">
+                                    <input type="text" onclick="" class="form-control form-control rounded-0 border-end-0" id="searchword" placeholder="대학명 검색" style="font-size:0.9em;">
                                     <button class="btn btn-outline-secondary rounded-0" type="button" onclick="openUniListModal()"><i class="bi bi-search"></i></button>
                                 </div>
                             </div>
@@ -283,40 +337,23 @@
 
     <div id="uniListModal" class="modal">
 		<div class="modal-dialog">
-			<div class="modal-content px-3 rounded-0">
-				<div class="modal-header mt-1">
-					<h6 class="modal-title fw-semibold">검색된 대학교 리스트</h6>
-					<span onclick="closeUniListModal()" class="close text-secondary fs-5" id="close-modal"><i class="bi bi-x-lg"></i></span>
+			<div class="modal-content rounded-0">
+				<div class="modal-header border-0 rounded-0" style="background-color: #f27713">
+					<h6 class="modal-title fw-semibold text-white px-2">검색된 대학교 리스트</h6>
+					<span onclick="closeUniListModal()" class="close text-white fs-5" id="close-modal"><i class="bi bi-x-lg"></i></span>
 				</div>
-				<div class="modal-body">
-					<div class="row">
+				<div class="modal-body pb-0 px-4">
+					<div class="row border-bottom border-secondary">
                         <div class="col">
-                            <div class="row mt-1">
-                                <div class="col text-secondary" style="font-size:0.8em">전체 검색 결과 수 (5)</div>
+                            <div class="row mt-1 pb-2 border-bottom border-secondary">
+                                <div id="totalCount" class="col text-secondary" style="font-size:0.8em"></div>
                             </div>
                             <div class="row">
                                 <div class="col" id="uniListBox">
-                                    <div id="uniListTemplete">
-                                        <div class="uniWrapper row py-2 border-bottom" style="font-size:0.90em">
-                                            <div class="col">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <span class="fw-semibold">서울대학교</span>
-                                                        <span class="text-secondary ms-2" style="font-size:0.8em">대학(4년제)</span>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col" style="font-size:0.85em">
-                                                        서울특별시 어쩌구 저ㅓㅉ구어쩌구어쩎ㅇ 90-2번지 제2캠퍼스
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
 				</div>
 				<div class="modal-footer border-0 mb-3">
@@ -325,11 +362,22 @@
 		</div>
 	</div>
 
-    <div id="uniListTemplete" >
-		<div class="uniWrapper row text-center py-1 border-bottom" style="font-size:0.95em">
-			
-		</div>
-	</div>
+    <div id="uniListTemplete" class="d-none">
+        <div class="uniWrapper row py-2 border-bottom" style="font-size:0.90em">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <a class="schoolName fw-semibold link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"></a>
+                        <span class="schoolGubun text-secondary ms-2" style="font-size:0.8em"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="adres col text-secondary" style="font-size:0.85em">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
