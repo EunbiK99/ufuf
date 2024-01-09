@@ -7,14 +7,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-public class CircleDto {
+public class CircleJoinApplyDto {
+    private int circle_join_apply_id;
     private int circle_id;
-    private int circle_small_category_id;
-    private int circle_grade_id;
     private int user_id;
-    private String circle_name;
-    private String circle_content;
-    private String circle_image;
+    private String join_submit;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime application_date;
+    private LocalDateTime created_at;
 }

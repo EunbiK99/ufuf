@@ -16,8 +16,6 @@ public class CircleController {
     @RequestMapping("test")
     public String test(){
 
-
-
         return "circle/test";
     }
 
