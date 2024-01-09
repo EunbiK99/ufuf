@@ -218,13 +218,16 @@
                             </div>
                         </div>
                         <div class="row mt-4">
-                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
                                 학생증 인증
                             </div>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col" style="">
-                                <img class="img-fluid" src="#">
+                        <div class="row mt-3 px-2">
+                            <div class="col d-flex justify-content-center border py-5">
+                                <label for="inputFile">
+                                    <img class="img-fluid" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 6em;">
+                                </label>
+                                <input name="imageFiles" class="form-control border-dark-subtle" type="file" id="inputFile" accept="image/*" style="display:none;">
                             </div>
                         </div>
 
@@ -235,7 +238,7 @@
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
                             <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
-                                다음 단계로 이동
+                                회원가입 완료
                             </a>
                         </div>
                     </div>

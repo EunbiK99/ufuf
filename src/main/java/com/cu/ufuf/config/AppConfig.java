@@ -23,7 +23,7 @@ public class AppConfig implements WebMvcConfigurer{
         
         // 업로드 외부 파일 
         registry.addResourceHandler("/uploadFiles/**")
-            .addResourceLocations("file://C:/uploadFiles/")
+            .addResourceLocations("file:///C:/uploadFiles/")
             // .setCachePeriod(60 * 60 * 24 * 365);
         ;  
 	}
