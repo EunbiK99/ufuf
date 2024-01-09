@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>회원가입</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script>
+
+    function searchUniversity(){
+
+        const searchword = document.querySelector("#searchword").value;
+        const region = document.querySelector("#region").value;
+        const sch1 = document.querySelector("#sch1").value;
+        console.log(searchword);
+
+        $.ajax({
+            url:'//www.career.go.kr/cnet/openapi/getOpenApi?apiKey=421ec27f43f706389803746e6eb59dba&svcType=api&svcCode=SCHOOL&contentType=json&gubun=univ_list',
+            type:'get',
+            data : {
+                'region' : region,
+                'sch1' : sch1,
+                'searchSchulNm' : searchword
+            },
+            success:(res)=>{
+                console.log(res);
+                handleResponse(res);
+            },
+            error:()=>{
+                alert('❗error❗')
+            }
+        })
+
+    }
+
+    function handleResponse(response) {
+        // 응답 데이터를 HTML에 표시
+        displayUniList(response.dataSearch);
+    }
+
+    function displayUniList(dataSearch) {
+
+        const uniListBox = document.getElementById("uniListBox");
+        const totalCountDiv = document.getElementById('totalCount');
+
+        if(dataSearch.content.length === 0){
+
+            totalCountDiv.innerText = "검색 결과 수 (0)";
+            
+            if(uniListBox.classList.contains("my-4")){
+                return;
+            }else{
+                uniListBox.classList.add("my-4");
+            }
+
+            uniListBox.innerText = "검색 결과가 존재하지 않습니다.";
+
+        } else{
+
+            if(uniListBox.classList.contains("my-4")){
+                uniListBox.classList.remove("my-4");
+            }
+
+            uniListBox.innerHTML = "";
+
+            const totalCount = dataSearch.content[0].totalCount;
+            totalCountDiv.innerText = "검색 결과 수 (" + totalCount + ")";
+
+            for (const uniInfo of dataSearch.content) {
+                
+                const uniWrapper = document.querySelector("#uniListTemplete .uniWrapper").cloneNode(true);
+
+                const schoolNameDiv = uniWrapper.querySelector(".schoolName");
+                const schoolGubunDiv = uniWrapper.querySelector(".schoolGubun");
+                const adresDiv = uniWrapper.querySelector(".adres");
+
+                schoolNameDiv.innerText = uniInfo.schoolName;
+                schoolNameDiv.onclick = function() {
+                    setUniversityData(uniInfo.schoolName);
+                };
+
+                schoolGubunDiv.innerText = uniInfo.schoolGubun;
+                adresDiv.innerText = uniInfo.adres;
+
+                uniListBox.appendChild(uniWrapper);
+            }
+        }
+
+    }
+
+    function setUniversityData(schoolName){
+
+        const searchword = document.getElementById('searchword');
+        searchword.value = schoolName;
+
+        closeUniListModal();
+
+        document.getElementById("department").focus();
+    }
+
+    function openUniListModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#uniListModal");
+
+        const searchword = document.querySelector("#searchword").value;
+        const region = document.querySelector("#region").value;
+        const sch1 = document.querySelector("#sch1").value;
+
+        if (!region || !sch1 ||
+            searchword.trim() === '') {
+	        alert('대학 분류 값을 입력해주세요');
+	        return;
+	    }
+
+    	searchUniversity();
+
+    	modal.show();
+	}
+	
+    function closeUniListModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#uniListModal");
+    	
+        modal.hide();
+	}
+
+    
+    </script>
+
+
+</head>
+
+<body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col px-3">
+
+                <div class="row py-4">
+                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
+                        <i class="bi bi-arrow-left"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.1em">
+                        회원가입
+                    </div>
+                    <div class="col-1" style="font-size:1.1em">
+                    </div>
+                </div>
+
+                <!--코드 시작-->
+                <div class="row">
+                    <div class="col">
+
+                        <!--대학교 검색-->
+                        <div class="row mt-4">
+                            <div class="col fw-semibold mt-2" style="font-size:1.36em">
+                                학교 인증을 완료해주세요
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
+                                대학교 카테고리
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="region" style="font-size:0.9em;">
+                                    <option value="">지역</option>
+						            <option value="100260">서울특별시</option>
+                                    <option value="100267">부산광역시</option>
+                                    <option value="100269">인천광역시</option>
+                                    <option value="100272">대구광역시</option>
+                                    <option value="100275">광주광역시</option>
+                                    <option value="100271">대전광역시</option>
+                                    <option value="100273">울산광역시</option>
+                                    <option value="100704">세종특별자치시</option>
+                                    <option value="100276">경기도</option>
+                                    <option value="100278">강원특별자치도</option>
+                                    <option value="100281">충청남도</option>
+                                    <option value="100280">충청북도</option>
+                                    <option value="100285">경상북도</option>
+                                    <option value="100291">경상남도</option>
+                                    <option value="100282">전라북도</option>
+                                    <option value="100283">전라남도</option>
+                                    <option value="100292">제주특별자치도</option>
+                                    <option value="100771">해외거주</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="sch1" style="font-size:0.9em;">
+                                    <option value="">1차구분</option>
+						            <option value="100322">전문대학</option>
+						            <option value="100323">대학(4년제)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                                대학명 검색
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="input-group border-bottom">
+                                    <input type="text" class="form-control border-0 py-2" id="searchword" placeholder="대학명을 입력해주세요" style="font-size:0.9em;">
+                                    <button class="btn btn-outline-secondary border-0 py-2" type="button" onclick="openUniListModal()"><i class="bi bi-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" id="department" name="department" placeholder="학과명을 입력해주세요" style="font-size:0.9em;">
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                                학생증 인증
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col" style="">
+                                <img class="img-fluid" src="#">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="fixed-bottom">
+                    <div class="row text-center pb-4">
+                        <div class="col d-grid mx-2 pb-2">
+                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
+                                다음 단계로 이동
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="uniListModal" class="modal">
+		<div class="modal-dialog">
+			<div class="modal-content rounded-0">
+				<div class="modal-header border-0 rounded-0" style="background-color: #f27713">
+					<h6 class="modal-title fw-semibold text-white px-2">검색된 대학교 리스트</h6>
+					<span onclick="closeUniListModal()" class="close text-white fs-5" id="close-modal"><i class="bi bi-x-lg"></i></span>
+				</div>
+				<div class="modal-body pb-0 px-4">
+					<div class="row border-bottom border-secondary">
+                        <div class="col">
+                            <div class="row mt-1 pb-2 border-bottom border-secondary">
+                                <div id="totalCount" class="col text-secondary" style="font-size:0.8em"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col" id="uniListBox">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+				<div class="modal-footer border-0 mb-3">
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div id="uniListTemplete" class="d-none">
+        <div class="uniWrapper row py-2 border-bottom" style="font-size:0.90em">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <a class="schoolName fw-semibold link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"></a>
+                        <span class="schoolGubun text-secondary ms-2" style="font-size:0.8em"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="adres col text-secondary" style="font-size:0.85em">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
