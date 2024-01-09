@@ -13,6 +13,7 @@ public class CircleBoardDto {
     private String board_title;
     private String board_content;
     private String main_image;
+    private int board_cnt;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime created_at;
 }

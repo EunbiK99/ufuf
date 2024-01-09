@@ -15,12 +15,14 @@ public class CircleController {
 
     @RequestMapping("test")
     public String test(){
-
+        
         return "circle/test";
     }
 
     @RequestMapping("circleMainPage")
     public String circleMainPage(){
+
+
 
         return "circle/circleMainPage";
     }
