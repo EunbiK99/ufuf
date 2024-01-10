@@ -53,6 +53,31 @@
                 }
             }).open();
         }
+        function sendSelectedOptionsToServer() {
+            const selectedOptions = [];
+            const checkboxes = document.querySelectorAll('.room_option_category_id:checked');
+            
+            checkboxes.forEach(checkbox => {
+                selectedOptions.push(checkbox.value);
+            });
+
+            // Ajax를 사용하여 서버로 선택된 옵션들을 전송합니다.
+            // jQuery를 사용한다면 $.ajax를 활용할 수 있습니다.
+            // 아래 코드는 JavaScript의 fetch API를 사용한 예시입니다.
+            fetch('/your-server-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ room_option_category_id: selectedOptions })
+            })
+            .then(response => {
+                // 서버로부터의 응답을 처리합니다.
+            })
+            .catch(error => {
+                // 오류 처리를 수행합니다.
+            });
+        }
     </script>
 </head>
 
@@ -76,63 +101,63 @@
 
         
         <!--정보 입력-->
-        <form action="./roomRegisterProcess" method="post">
+        <form action="./roomRegisterProcess" method="post" enctype="multipart/form-data">
             <div class="row mt-3">
                 <div class="col">
                     <!--방 메인사진-->
                     <div class="row mt-2 ms-2 fw-bold text-secondary">메인사진 등록</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="file" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="file" name="mainImageFile" class="form-control"></div>
                     </div>
 
                     <!--추가 사진 등록-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">추가 사진 등록</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="file" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="file" name="imageFiles" class="form-control" multiple></div>
                     </div>
 
                     <!--제목-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">제목</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="text" class="form-control" placeholder="제목을 입력해주세요."></div>
+                        <div class="col mx-2 mt-2"><input type="text" name="title" class="form-control" placeholder="제목을 입력해주세요."></div>
                     </div>
 
                     <!--설명-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">설명</div>
                     <div class="row pb-3 ">
                         <div class="col mx-2 mt-2">
-                            <textarea rows="10" class="form-control" placeholder="설명을 입력해주세요."></textarea>
+                            <textarea rows="10" name="content" class="form-control" placeholder="설명을 입력해주세요."></textarea>
                         </div>
                     </div>
 
                     <!--방, 침대, 화장실 갯수-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">방 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="number" name="room_count" class="form-control"></div>
                     </div>
 
                     <div class="row mt-4 ms-2 fw-bold text-secondary">침대 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="number" name="bed_count" class="form-control"></div>
                     </div>
                     
                     <div class="row mt-4 ms-2 fw-bold text-secondary">화장실 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="number" name="toilet_count" class="form-control"></div>
                     </div>
 
                     <!--위치-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">게스트하우스 주소</div>
                     <div class="row mt-3">
-                        <div class="col-7 ms-2 me-0"><input type="text" class="form-control" id="postcode" placeholder="우편번호"></div>
+                        <div class="col-7 ms-2 me-0"><input type="text" name="location" class="form-control" id="postcode" placeholder="우편번호"></div>
                         <div class="col-3 ms-3 me-1"><input  type="button" class="btn btn-secondary" onclick="execDaumPostcode()" value="우편번호 찾기"></div>
                     </div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="text" id="address" class="form-control" placeholder="주소"></div>
+                        <div class="col mx-2 mt-2"><input type="text" name="location" id="address" class="form-control" placeholder="주소"></div>
                         
                     </div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="text" id="detailAddress" class="form-control" placeholder="상세주소"></div>
+                        <div class="col mx-2 mt-2"><input type="text" name="location" id="detailAddress" class="form-control" placeholder="상세주소"></div>
                         
                     </div>
 
@@ -143,7 +168,7 @@
                     <div class="row">
                         <div class="col mx-2 mt-2">
                             <div class="input-group mb-3">
-                                <select class="form-select" name="checkin_time">
+                                <select class="form-select" name="checkin1">
                                     <option selected value="오전">오전</option>
                                     <option value="오후">오후</option>
                                 </select>
@@ -151,7 +176,7 @@
                         </div>
                         <div class="col mt-2">
                             <div class="input-group mb-3">
-                                <select class="form-select" name="checkin_time">
+                                <select class="form-select" name="checkin2">
                                     <option selected value="1시">1시</option>
                                     <option value="2시">2시</option>
                                     <option value="3시">3시</option>
@@ -173,7 +198,7 @@
                     <div class="row">
                         <div class="col mx-2 mt-2">
                             <div class="input-group mb-3">
-                                <select class="form-select" name="checkout_time">
+                                <select class="form-select" name="checkout1">
                                     <option selected value="오전">오전</option>
                                     <option value="오후">오후</option>
                                 </select>
@@ -181,7 +206,7 @@
                         </div>
                         <div class="col mt-2">
                             <div class="input-group mb-3">
-                                <select class="form-select" name="checkout_time">
+                                <select class="form-select" name="checkout2">
                                     <option selected value="1시">1시</option>
                                     <option value="2시">2시</option>
                                     <option value="3시">3시</option>
@@ -203,48 +228,51 @@
                     <!--기준인원, 최대 인원-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">기준 인원</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="number" name="people_count_standard" class="form-control"></div>
                     </div>
                     <div class="row mt-4 ms-2 fw-bold text-secondary">최대 인원</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input type="number" name="people_count_limit" class="form-control"></div>
                     </div>
 
                     <!--인원 추가금-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">인원 추가금(1인당)</div>
                     <div class="row mt-2">
-                        <div class="col ms-2"><input type="number" class="form-control"></div>
+                        <div class="col ms-2"><input type="number" name="extra_money" class="form-control"></div>
                         <div class="col-1 me-3 pt-1 text-secondary ms-1">원</div>
                     </div>
 
                     <!--1박당 가격-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">1박 가격</div>
                     <div class="row mt-2">
-                        <div class="col ms-2"><input type="number" class="form-control"></div>
+                        <div class="col ms-2"><input type="number" name="room_charge" class="form-control"></div>
                         <div class="col-1 me-3 pt-1 text-secondary ms-1">원</div>
                     </div>
 
                     <!--일정-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 가능 일정</div>
                     <div class="row">
-                        <div class="col-5 mx-2 mt-2"><input type="date" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input type="date" name="start_schedule" class="form-control"></div>
                         <div class="col-1 fs-5 fw-bold text-secondary pt-2">~</div>
-                        <div class="col-5 mx-2 mt-2"><input type="date" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input type="date" name="end_schedule" class="form-control"></div>
                     </div>
 
-                    <!--어메니티-->
-                    <div class="row mt-4 ms-2 fw-bold text-secondary">어메니티</div>
+                    <!--기본옵션-->
+                    <div class="row mt-4 ms-2 fw-bold text-secondary">기본옵션</div>
 
                     <div class="row mt-2">
                         <div class="col mx-3 py-2 border rounded border-secondery-subtle">
-                            <!--나중에 반복문으로다가 셀렉트폼 해야댐~-->
-                            <div class="row mt-2">
-                                <div class="col-1"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-                                <div class="col text-secondary">저는 담배를 개뻑뻑펴놨어용</div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-1"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-                                <div class="col text-secondary">뻐킹이에용</div>
+                            <div class="col" th:each="roomOption, iterStat : ${roomOptionList}">
+                                <div class="row mt-2">
+                                    <div class="col-1">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               th:id="'room_option_category_id_' + ${iterStat.index}" 
+                                               th:name="'room_option_category_id'" + ${iterStat.index}
+                                               th:value="${roomOption.room_option_category_id}" />
+                                    </div>
+                                    <div class="col text-secondary" th:text="${roomOption.room_option_category_name}"></div>
+                                </div>
                             </div>
                             <div class="row mt-2"></div>
                         </div>

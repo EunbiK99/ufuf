@@ -1,5 +1,8 @@
 package com.cu.ufuf.dto;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
 
@@ -21,8 +24,10 @@ public class RoomInfoDto {
     private int people_count_limit;
     private int extra_money;
     private int room_charge;
-    private LocalDateTime start_schedule;
-    private LocalDateTime end_schedule;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate start_schedule;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate end_schedule;
     private LocalDateTime created_at;
 }
                                                                           

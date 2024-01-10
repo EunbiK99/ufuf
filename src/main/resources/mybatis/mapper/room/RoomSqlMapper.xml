@@ -51,5 +51,10 @@
         )
     </insert>
 
+    <select id="selectRoomOptionCategoryAll" resultType="com.cu.ufuf.dto.RoomOptionCategoryDto">
+		select * from room_option_category
+        order by room_option_category_id asc	
+	</select>
+
 
 </mapper>
