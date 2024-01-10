@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class InterestRoomDto {
 
-    private Integer interest_room_id;
-    private Integer room_info_id;
-    private Integer user_id;
+    private int interest_room_id;
+    private int room_info_id;
+    private int user_id;
 
 }

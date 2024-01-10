@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>게스트하우스 메인페이지</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div class="container">
+         <!-- 탑 네비-->
+         <div class="row pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+            <!--뒤로가기-->
+            <div class="col-3 ps-0 pt-2 pe-0">
+                <!--나중에 통합메인페이지로 링크 삽입-->
+                <a class="btn" href="#"><img src="/public/image/room/ufuf_logo.png" class="img-fluid"></a>
+            </div>
+            <!--무슨카테고리 메인페이지인지 알게-->
+            <div class="col ps-0 me-0 pt-2 fw-bold text-secondary">게스트하우스</div>
+            
+            <div class="col"></div>
+
+            <!--알람? 유저아이콘? 뭐넣을지는 고민해야함-->
+            <div class="col-1 ps-0 pt-2 me-3">
+                <a class="btn" href="#"><i class="bi bi-bell text-secondary"></i></a>
+            </div>
+        </div>
+
+        <!--여백-->
+        <div class="row p-4 mt-4"></div>
+
+        <!--캐러셀 넣을지 버튼만 넣을지는 고민해야할 것 같음-->
+        <div class="row"></div>
+
+        <!--우리학교 근처 숙소-->
+        <div class="row">
+            <div class="col fw-bold">우리학교 근처 숙소</div>
+            <div class="col">
+                <a class="btn" href="#"><i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+        <div id="global-navi" class="row mt-5">
+            <div class="col overflow-x-auto">
+                <div class="row" style="width:200%;">
+                    <!--나중에 리스트 출력으로 바꿀 예정-->
+                    <a class="btn" href="#"></a>
+                        <div class="col">
+                            <div class="row"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid rounded"></div>
+                            <div class="row">진평동구미원룸</div>
+                            <div class="row">경상북도 구미시 진평동 561-19</div>
+                            <div class="row">75,000원/1박</div>
+                            
+                        </div>
+                    </a>
+                    <div class="col">메뉴2</div>
+                    <div class="col">메뉴3</div>
+                    <div class="col">메뉴4</div>
+                    <div class="col">메뉴5</div>
+                    <div class="col">메뉴6</div>
+                    <div class="col">메뉴7</div>
+                    <div class="col">메뉴8</div>
+                    <div class="col">메뉴9</div>
+                </div>
+            </div>
+        </div>
+
+        <!--실시간 리뷰(간단한 방 정보랑 게스트 리뷰로 싹다 올리기)-->
+        <div class="row"></div>
+
+        <!--인기 게스트하우스(기간 내 찜 수로 할 예정)-->
+        <div class="row"></div>
+
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
