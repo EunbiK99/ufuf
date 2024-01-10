@@ -5,6 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cu.ufuf.circle.service.CircleService;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequestMapping("/circle")
@@ -22,8 +25,21 @@ public class CircleController {
     @RequestMapping("circleMainPage")
     public String circleMainPage(){
 
-
+        
 
         return "circle/circleMainPage";
     }
+    
+    @RequestMapping("circleApplyPage")
+    public String circleApplyPage(){
+
+        
+
+        return "circle/circleApplyPage";
+    }
+
+
+    
+
+
 }

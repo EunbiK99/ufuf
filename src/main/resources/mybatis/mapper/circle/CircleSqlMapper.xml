@@ -3,6 +3,20 @@
 
 <mapper namespace="com.cu.ufuf.circle.mapper.CircleSqlMapper">
 
-   
-   
+    <insert id="circleInfoInsert">
+        INSERT into circle(circle_small_category_id, circle_grade_id, user_id, circle_name, circle_content,circle_image) values(
+	        #{circle_small_category_id}, #{circle_grade_id}, #{user_id}, #{circle_name}, #{circle_content}, #{circle_image}
+        )
+    </insert>
+
+    <select id="circlemiddlecategoryInfoAll" resultType="com.cu.ufuf.dto.CircleMiddleCategoryDto">
+        SELECT * from circle_middle_category
+    </select>
+
+    <select id="circlesmallcategoryInfoAll" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
+        SELECT * from circle_small_category
+    </select>
+    <select id="circlesmallcategoryInfoByMiddleId" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
+        SELECT * from circle_small_category where circle_middle_category_id = #{circle_middle_category_id}
+    </select>
 </mapper>
