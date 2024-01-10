@@ -10,8 +10,8 @@
     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">    
 
     <style>
     *{
@@ -22,6 +22,10 @@
     }
     .white-placeholder::placeholder{
         color: white;
+    }
+
+    .itsMe{
+        font-family: 'Quicksand', sans-serif;
     }
     </style>
 </head>
@@ -118,24 +122,24 @@ function attachProfileImage(){
                         </div>
                         
                         <div class="row mt-2">
-                            <div class="co">
-                                <div class="row mt-5 mb-5 mx-1">
-                                    <div class="col text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
-                                        <div class="row">
-                                            <div id="attachProfileImageCol" class="col text-center">
-                                                <img src="/public/image/meeting/needUpload.png" class="img-fluid">
+                            <div class="col">
+                                <div class="row mt-2">
+                                    <div class="col text-center">
+                                        <span class="fw-bold fst-italic itsMe fs-1">It's me</span>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 mb-1 mx-1">
+                                    <div class="col-6 text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
+                                        <div class="row  d-flex align-items-center">
+                                            <div id="attachProfileImageCol" class="col-auto text-center">                                                
+                                                <img src="/public/image/meeting/needUpload.png" class="img-fluid">                                                
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <span id="attachedFileName"></span>
-                                            </div>
-                                        </div>
+                                        </div>                                        
                                     </div>
                                     <div class="col ms-2">
                                         <div class="row">                                            
                                             <div class="col">
-                                                <span class="fw-bold">여미새</span> 님
+                                                <span th:text="${session.sessionUserInfo.name}" class="fw-bold"></span> 님
                                             </div>
                                         </div>
 
@@ -147,24 +151,32 @@ function attachProfileImage(){
 
                                         <div class="row mt-2">
                                             <div class="col-auto">
-                                                <span>남</span>
+                                                <span th:if="${session.sessionUserInfo.gender == 'M'}">남</span>
+                                                <span th:if="${session.sessionUserInfo.gender == 'F'}">여</span>
                                             </div>
                                             <div class="col-auto">
-                                                <span>21세</span>
+                                                <span th:text="${session.sessionUserInfo.birth}"></span>
                                             </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col">
-                                                <span>냠냠대학교</span>
+                                                <span th:text="${session.sessionUserInfo.university}"></span>
                                             </div>                                            
                                         </div>
 
                                         <div class="row mt-2">
                                             <div class="col">
-                                                <span>쩝쩝학과</span>
+                                                <span th:text="${session.sessionUserInfo.department}"></span>
                                             </div>
                                         </div>
 
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col text-truncate">
+                                        <span>[ 파일명 : </span>
+                                        <span id="attachedFileName"></span>
+                                        <span> ]</span>
                                     </div>
                                 </div>
                                 

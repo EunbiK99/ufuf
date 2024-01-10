@@ -13,67 +13,122 @@
 
 <script>
 
-function reloadMap(){
-    
-}
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = { 
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-            level: 1 // 지도의 확대 레벨 
-        }; 
-    
-    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-    
-    // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
-    if (navigator.geolocation) {
-        
-        // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-        navigator.geolocation.getCurrentPosition(function(position) {
-            
-            var lat = position.coords.latitude, // 위도
-                lon = position.coords.longitude; // 경도
-            
-            var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+    function reloadMap(){
 
-            // 마커와 인포윈도우를 표시합니다
-            displayMarker(locPosition);
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = { 
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 1 // 지도의 확대 레벨 
+            }; 
+        
+        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+        
+        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+        if (navigator.geolocation) {
+            
+            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+            navigator.geolocation.getCurrentPosition(function(position) {
                 
-        });
-        
-    } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-        
-        var locPosition = new kakao.maps.LatLng(33.450701, 126.570667) 
+                var lat = position.coords.latitude, // 위도
+                    lon = position.coords.longitude; // 경도
+                
+                var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                
+                // 접속위치 출력
+                getNowLocation(lat, lon);
+
+                // 마커와 인포윈도우를 표시합니다
+                displayMarker(locPosition);
+                    
+            });
             
-        displayMarker(locPosition);
-    }
-    
-    // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-    function displayMarker(locPosition) {
-    
-        // 마커를 생성합니다
-        var marker = new kakao.maps.Marker({  
-            map: map, 
-            position: locPosition
-        }); 
+        } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+            
+            var locPosition = new kakao.maps.LatLng(33.450701, 126.570667) 
+                
+            displayMarker(locPosition);
+        }
         
-        // 지도 중심좌표를 접속위치로 변경합니다
-        map.setCenter(locPosition); 
-    }
+        // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+        function displayMarker(locPosition) {
+        
+            // 마커를 생성합니다
+            var marker = new kakao.maps.Marker({  
+                map: map, 
+                position: locPosition
+            }); 
+            
+            // 지도 중심좌표를 접속위치로 변경합니다
+            map.setCenter(locPosition); 
+        }
 
-    function setZoomable(zoomable) {
-        // 마우스 휠로 지도 확대,축소 가능여부를 설정합니다
-        map.setZoomable(zoomable);    
-    }
+        function setZoomable(zoomable) {
+            // 마우스 휠로 지도 확대,축소 가능여부를 설정합니다
+            map.setZoomable(zoomable);    
+        }
 
+        function getNowLocation(lat,lng){
+
+            let geocoder = new kakao.maps.services.Geocoder();
+
+            let coord = new kakao.maps.LatLng(lat, lng);
+            let callback = function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    console.log(result);
+                    handleResponse(result);
+                }
+            }
+            geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+        }
+
+        function handleResponse(result) {
+            // 응답 데이터를 HTML에 표시
+            displayNowLocation(result);
+        }
+
+        function displayNowLocation(data){
+
+            const nowLocation = document.getElementById("nowLocation");
+
+            if(data[0].road_address === null){
+                
+                nowLocation.innerText= data[0].address.address_name;
+
+            }
+
+        }
+
+        setZoomable(false);
+
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
-        setZoomable(false);
-    });
+		reloadMap();
+	});
+
 
 
 
 
 </script>
+
+<style>
+
+    /* .btn{
+        z-index: 2;
+        position: absolute;
+        top: 48em;
+        left: 8.6em;
+    } */
+
+    #nowLocation{
+        z-index: 2;
+        position: absolute;
+        top: 2em;
+        left: 3em;
+    }
+
+</style>
 
 
 </head>
@@ -86,24 +141,21 @@ function reloadMap(){
 
                 <div class="row">
                     <div class="col px-0">
-                        <div id="map" style="height:45em;">
-                            
 
-                            </script>
-                        </div>
-                    </div>
-                </div>
+                        
+                        
+                        <div id="map" style="height:45em;" class="z-n1"></div>
 
-                <div class="row">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col text-secondary">
-                                <i class="bi bi-geo-alt"></i><span id="nowLocation"></span>
-                            </div>
-                        </div>
                         <div class="row">
                             <div class="col">
-                                버튼
+                                <div class="gap-2 d-md-block d-flex justify-content-center">
+                                    <button class="btn py-2 btn-dark px-5">
+                                        미션 찾기
+                                    </button>
+                                    <button class="btn py-2 btn-dark px-5">
+                                        미션 등록
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
