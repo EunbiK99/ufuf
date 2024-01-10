@@ -221,6 +221,21 @@ public class LoginRestController {
     // }
 
     
+    @PostMapping("/userLogin")
+    public RestResponseDto userLogin(HttpSession session, UserInfoDto params) {
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        if(loginService.isUserExist(params) != null){
+
+            session.setAttribute("sessionUserInfo", loginService.isUserExist(params));
+            
+        }
+
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
 
 
 }

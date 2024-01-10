@@ -199,15 +199,18 @@ public class LoginController {
 
         session.invalidate();
 
-        return "login/welcome";
+        return "login/welcomePage";
     }
 
-    @RequestMapping("welcome")
-    public String welcome(){
-        return "welcome";
+    @RequestMapping("welcomePage")
+    public String welcomePage(){
+        return "login/welcomePage";
     }
 
-
+    @RequestMapping("loginPage")
+    public String loginPage(){
+        return "login/loginPage";
+    }
 
 
 

@@ -137,6 +137,18 @@
     
     </script>
 
+    <style>
+        .fileUploadButton:hover {
+            color : rgb(68, 68, 68);
+        }
+
+        .fixed-bottom{
+            z-index: 1;
+            position: relative;
+            bottom: 0;
+            left: 0em;
+        }
+    </style>
 
 </head>
 
@@ -146,11 +158,11 @@
         <div class="row">
             <div class="col px-3">
 
-                <div class="row py-4">
+                <div class="row py-3">
                     <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
                         <i class="bi bi-arrow-left"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.1em">
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
                         회원가입
                     </div>
                     <div class="col-1" style="font-size:1.1em">
@@ -163,19 +175,19 @@
                     <div class="col">
 
                         <!--대학교 검색-->
-                        <div class="row mt-4">
-                            <div class="col fw-semibold mt-2" style="font-size:1.36em">
+                        <div class="row mt-2">
+                            <div class="col fw-semibold mt-2" style="font-size:1.4em">
                                 학교 인증을 완료해주세요
                             </div>  
                         </div>
-                        <div class="row mt-5">
-                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                        <div class="row mt-4">
+                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.9em;">
                                 대학교 카테고리
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="region" style="font-size:0.9em;">
+                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="region">
                                     <option value="">지역</option>
 						            <option value="100260">서울특별시</option>
                                     <option value="100267">부산광역시</option>
@@ -198,33 +210,33 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="sch1" style="font-size:0.9em;">
+                                <select class="form-select border-top-0 border-start-0 border-end-0 rounded-0" id="sch1">
                                     <option value="">1차구분</option>
 						            <option value="100322">전문대학</option>
 						            <option value="100323">대학(4년제)</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row mt-4">
-                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                        <div class="row mt-3">
+                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.9em;">
                                 대학명 검색
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col">
                                 <div class="input-group border-bottom">
-                                    <input type="text" class="form-control border-0 py-2" id="searchword" placeholder="대학명을 입력해주세요" style="font-size:0.9em;">
+                                    <input type="text" class="form-control border-0 py-2" id="searchword" placeholder="대학명을 입력해주세요">
                                     <button class="btn btn-outline-secondary border-0 py-2" type="button" onclick="openUniListModal()"><i class="bi bi-search"></i></button>
                                 </div>
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" id="department" name="department" placeholder="학과명을 입력해주세요" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" id="department" name="department" placeholder="학과명을 입력해주세요">
                             </div>
                         </div>
                         <div class="row mt-4">
-                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
+                            <div class="col fw-semibold text-secondary mt-3" style="font-size:0.9em;">
                                 학생증 인증
                             </div>
                         </div>
@@ -241,9 +253,9 @@
                 </div>
 
                 <div class="fixed-bottom">
-                    <div class="row text-center pb-4">
-                        <div class="col d-grid mx-2 pb-2">
-                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
+                    <div class="row text-center mt-4 mb-4">
+                        <div class="col d-grid mb-2 mt-3">
+                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1 fs-5" style="background-color: #FF8827">
                                 다음 단계로 이동
                             </button>
                         </div>
