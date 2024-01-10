@@ -25,13 +25,68 @@
     }
     </style>
 </head>
+<script>
+function attachProfileImage(){
+    const inputProfileImageFile = document.getElementById("inputProfileImageFile");
+    inputProfileImageFile.click();
+
+    inputProfileImageFile.addEventListener('change', ()=>{
+        
+        if(inputProfileImageFile.files && inputProfileImageFile.files[0]){
+            
+            let reader = new FileReader();
+            let originalFileName = inputProfileImageFile.files[0].name;
+            
+            reader.onload = (e)=>{
+                
+                const attachProfileImageCol = document.getElementById('attachProfileImageCol');
+                
+                attachProfileImageCol.innerHTML = "";
+                
+                const imagePreview = document.createElement('img');                
+                
+                imagePreview.src = e.target.result;
+                imagePreview.setAttribute('class', 'img-fluid');
+                attachProfileImageCol.appendChild(imagePreview);
+
+                const attachedFileName = document.getElementById("attachedFileName");
+                attachedFileName.innerHTML = "";
+                attachedFileName.innerText = originalFileName;
+            }
+            reader.readAsDataURL(inputProfileImageFile.files[0]);
+        }
+    });  
+}
+
+
+
+
+    
+
+
+</script>
 
 <body>
     <div class="container-fluid">
+        <input id="inputProfileImageFile" type="file" class="d-none" accept="image/*">
         
         <div class="row">
-            <div class="col text-center">
-                탑 에어리어 영역
+            <div class="col">
+                <div class="row mt-1 align-content-center">
+                    <div class="col">
+                        <div class="row justify-content-between">
+                            <div class="col-auto">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto">
+                                <span class="fw-bold fs-4 align-middle">ufuf</span>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-list fs-4 fw-bold"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -39,19 +94,21 @@
             <div class="col">                
                 
                 <!--이걸 하나의 프로필로-->
-                <div class="row mt-3 border-0 rounded">
-                    <div class="col">
+                <div class="row mt-3">
+                    <div class="col mx-1 border border-black border-2 rounded">
 
                         <div class="row border-bottom border-2 border-black justify-content-between">
-                            <div class="col">
+                            <div class="col" style="background-color: #FF8827;">
                                 <div class="row my-1">
                                     <div class="col-auto">
                                         <div class="row">
                                             <div class="col-2">
-                                                <i class="bi bi-arrow-left"></i>
+                                                <a href="./mainPage" role="button" class="btn px-0 py-0">
+                                                    <i class="bi bi-arrow-left"></i>
+                                                </a>
                                             </div>
                                             <div class="col-auto text-center">
-                                                <span>나의 미팅 프로필</span>
+                                                <span class="fw-bold">나의 미팅 프로필</span>
                                             </div>                                     
                                         </div>                                        
                                     </div>
@@ -61,12 +118,17 @@
                         </div>
                         
                         <div class="row mt-2">
-                            <div class="col">
-                                <div class="row mt-5 mb-5">
-                                    <div class="col text-center border border-1 border-black rounded ms-2">
-                                        <div class="row mt-5">
+                            <div class="co">
+                                <div class="row mt-5 mb-5 mx-1">
+                                    <div class="col text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
+                                        <div class="row">
+                                            <div id="attachProfileImageCol" class="col text-center">
+                                                <img src="/public/image/meeting/needUpload.png" class="img-fluid">
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col">
-                                                <i class="bi bi-plus-circle-dotted fs-1 align-middle"></i>
+                                                <span id="attachedFileName"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -110,12 +172,12 @@
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>Comment</span>
+                                                <span class="fw-bold">Comment</span>
                                             </div>
                                         </div>
                                         <div class="row mt-1 mb-3">
                                             <div class="col">
-                                                <textarea class="form-control" rows="6"></textarea>
+                                                <textarea class="form-control border-black" rows="6"></textarea>
                                             </div>
                                         </div>
                                     </div>
