@@ -203,7 +203,7 @@ public class LoginRestController {
         userInfoDto.setPassword(password);
         userInfoDto.setName(name);
         userInfoDto.setGender(gender);
-        userInfoDto.setBirth(birth);
+        // userInfoDto.setBirth(birth);
         userInfoDto.setPhone(phone);
         userInfoDto.setEmail(email);
         userInfoDto.setAddress(address);
