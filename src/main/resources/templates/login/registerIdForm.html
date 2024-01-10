@@ -10,7 +10,36 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
-    
+    <script>
+        function saveIdToSesson(){
+		
+            const userid = document.getElementById("userid");
+            const password = document.getElementById("password");
+            const passwordCheck = document.getElementById("passwordCheck");
+            
+            fetch("./saveIdToSesson", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "userid=" + userid.value +
+                        "&password=" + password.value
+            })
+            .then(response => response.json())
+            .then(response => {
+                
+                userid.value = "";
+                password.value = "";
+                passwordCheck.value = "";
+                
+            });
+
+            location.href="./registerProfileForm";
+        
+        }
+
+
+    </script>
 
 </head>
 
@@ -81,9 +110,9 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" href="./registerProfileForm">
+                            <div class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveIdToSesson()">
                                 다음 단계로 이동
-                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>

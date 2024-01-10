@@ -40,12 +40,6 @@
                     if(data.buildingName !== '' && data.apartment === 'Y'){
                         extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                     }
-                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                    if(extraAddr !== ''){
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                    // 조합된 참고항목을 해당 필드에 넣는다.
-                    document.getElementById("extraAddress").value = extraAddr;
                 
                 } else {
                     document.getElementById("extraAddress").value = '';
@@ -60,6 +54,54 @@
         }).open();
     }
     
+    function saveProfileToSesson(){
+		
+        const name = document.getElementById("name");
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const birthYear = document.getElementById("birthYear");
+        const birthMonth = document.getElementById("birthMonth");
+        const birthDate = document.getElementById("birthDate");
+        const phone = document.getElementById("phone");
+        const email = document.getElementById("email");
+        const address = document.getElementById("address");
+        const detailAddress = document.getElementById("detailAddress");
+        
+        var myAddress = address.value + detailAddress.value;
+
+        fetch("./saveProfileToSesson", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "name=" + name.value +
+                    "&gender=" + gender.value +
+                    "&birthYear=" + birthYear.value +
+                    "&birthMonth=" + birthMonth.value +
+                    "&birthDate=" + birthDate.value + 
+                    "&phone=" + phone.value +
+                    "&email=" + email.value +
+                    "&phone=" + phone.value +
+                    "&myAddress=" + myAddress
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+            name.value = "";
+            gender.value = "";
+            birthYear.value = "";
+            birthMonth.value = "";
+            birthDate.value = "";
+            phone.value = "";
+            email.value = "";
+            address.value = "";
+            detailAddress.value = "";
+            
+        });
+    
+        location.href="./registerUniForm";
+    }
+
+
     </script>
 
 
@@ -106,7 +148,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col px-2">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="name" name="userid" placeholder="이름을 입력해주세요" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="name" name="name" placeholder="이름을 입력해주세요" style="font-size:0.9em;">
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -116,11 +158,11 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col d-grid pe-1">
-                                <input type="radio" class="btn-check" id="genderF" name="gender" checked>
+                                <input type="radio" class="btn-check" id="genderF" name="gender" value="F" checked>
                                 <label class="btn rounded-0" for="genderF" style="font-size:0.9em;">여성</label>
                             </div>
                             <div class="col d-grid ps-1">
-                                <input type="radio" class="btn-check" id="genderM" name="gender">
+                                <input type="radio" class="btn-check" id="genderM" name="gender" value="M">
                                 <label class="btn rounded-0" for="genderM" style="font-size:0.9em;">남성</label>
                             </div>
                         </div>
@@ -187,7 +229,7 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" href="./registerUniForm">
+                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveProfileToSesson(); event.preventDefault();">
                                 다음 단계로 이동
                             </a>
                         </div>

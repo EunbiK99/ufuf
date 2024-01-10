@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class UserPointDto {
-    private Integer user_point_id;
-    private Integer user_id;
-    private Integer point_plus_minus;
+    private int user_point_id;
+    private int user_id;
+    private int point_plus_minus;
     private LocalDateTime created_at;
 }

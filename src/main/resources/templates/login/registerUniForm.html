@@ -97,6 +97,7 @@
 
         const searchword = document.getElementById('searchword');
         searchword.value = schoolName;
+        searchword.innerText = schoolName;
 
         closeUniListModal();
 
@@ -128,6 +129,54 @@
     	
         modal.hide();
 	}
+
+    function saveUniToSesson(){
+		
+        const searchword = document.getElementById("searchword");
+        const department = document.getElementById("department");
+        
+        fetch("./saveUniToSesson", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "searchword=" + searchword.value +
+                    "&department=" + department.value
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+            searchword.value = "";
+            department.value = "";
+            
+        });
+
+        saveStudentIdImgToSession();
+
+        location.href="./registerProfileImgForm";
+    
+    }
+
+    function saveStudentIdImgToSession(){
+
+        const studentid_img = document.getElementById("studentid_img");
+        var file = studentid_img.files[0];
+
+        var formData = new FormData();
+        formData.append("file", file);
+        
+        fetch("./saveStudentIdImgToSession", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+        });
+    }
 
     
     </script>
@@ -227,7 +276,7 @@
                                 <label for="studentid_img">
                                     <img class="img-fluid" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 6em;">
                                 </label>
-                                <input name="studentid_img" class="form-control border-dark-subtle" type="file" id="studentid_img" accept="image/*" style="display:none;">
+                                <input class="form-control border-dark-subtle" type="file" id="studentid_img" accept="image/*" style="display:none;">
                             </div>
                         </div>
 
@@ -237,7 +286,7 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
+                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveUniToSesson()">
                                 회원가입 완료
                             </a>
                         </div>

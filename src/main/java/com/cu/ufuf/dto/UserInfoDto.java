@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class UserInfoDto {
-    private Integer user_id;
+    private int user_id;
 	private String name;
 	private String userid;
 	private String password;
