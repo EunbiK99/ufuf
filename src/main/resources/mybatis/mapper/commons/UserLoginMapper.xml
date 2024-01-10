@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cu.ufuf.login.mapper.UserLoginMapper">
 
-    <select id = "createUserPk" resultType="int">
+    <select id="createUserPk" resultType="int">
         select ifnull(MAX(user_id)+1, 1) user_id from user_info;
     </select>
 
@@ -26,10 +26,16 @@
         );
     </insert>
 
-    <insert id = "insertStudentIdImg" parameterType="hashMap">
+    <insert id="insertStudentIdImg" parameterType="hashMap">
         insert into studentid_img(user_id, studentid_img)
         values(#{param1}, #{param2});
     </insert>
+
+    <select id="isUserExist" resultType="com.cu.ufuf.dto.UserInfoDto">
+        SELECT * from user_info
+        where userid = #{userid}
+        and password = #{password}
+    </select>
 
 
 </mapper>

@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController {
 
     @Autowired
-    private LoginServiceImpl loginServiceImpl;
+    private LoginServiceImpl loginService;
 
     @RequestMapping("registerIdForm")
     public String registerIdForm(HttpSession session){
@@ -129,9 +129,27 @@ public class LoginController {
 			
 		}
 
-        loginServiceImpl.insertUser(userInfoDto, studentidImg);
+        loginService.insertUser(userInfoDto, studentidImg);
 
         return "login/aaa";
+    }
+
+    @RequestMapping("testloginPage")
+    public String testloginPage(){
+        return "login/testloginPage";
+    }
+
+    @RequestMapping("testloginProcess")
+    public String testloginProcess(HttpSession session, UserInfoDto params){
+
+        if(loginService.isUserExist(params) != null){
+
+            session.setAttribute("sessionUserInfo", loginService.isUserExist(params));
+            return "redirect:../commons/mainPage";
+            
+        }else{
+            return "redirect:./aaa";
+        }
     }
 
 }

@@ -26,11 +26,11 @@ public class LoginRestController {
     private LoginServiceImpl loginService;
 
     @RequestMapping("saveIdToSesson")
-    public RestResponseDto saveIdToSesson(HttpSession session, String id, String password){
+    public RestResponseDto saveIdToSesson(HttpSession session, String userid, String password){
         
         RestResponseDto restResponseDto = new RestResponseDto();
 
-        session.setAttribute("id", id);
+        session.setAttribute("userid", userid);
         session.setAttribute("password", password);
 
         System.out.println("세션 이동");
@@ -39,6 +39,8 @@ public class LoginRestController {
 
         return restResponseDto;
     }
+
+    
 
     @RequestMapping("saveProfileToSesson")
     public RestResponseDto saveProfileToSesson(HttpSession session, 
@@ -179,7 +181,7 @@ public class LoginRestController {
 
         UserInfoDto userInfoDto = new UserInfoDto();
 
-        String id = (String)session.getAttribute("id");
+        String userid = (String)session.getAttribute("userid");
         String password = (String)session.getAttribute("password");
         String name = (String)session.getAttribute("name");
         String gender = (String)session.getAttribute("gender");
@@ -192,7 +194,7 @@ public class LoginRestController {
         String profile_img = (String)session.getAttribute("profile_img");
         String studentid_img = (String)session.getAttribute("studentid_img");
 
-        userInfoDto.setUserid(id);
+        userInfoDto.setUserid(userid);
         userInfoDto.setPassword(password);
         userInfoDto.setName(name);
         userInfoDto.setGender(gender);
@@ -208,8 +210,7 @@ public class LoginRestController {
 
         restResponseDto.setResult("Success");
 
-        System.out.println(id);
-        System.out.println(password);
+        System.out.println("인서트 완료");
 
         return restResponseDto;
     }

@@ -12,4 +12,6 @@ public interface UserLoginMapper {
 
     public void insertUser(UserInfoDto userInfoDto);
     public void insertStudentIdImg(int user_id, String studentid_img);
+
+    public UserInfoDto isUserExist(UserInfoDto userInfoDto);
 }

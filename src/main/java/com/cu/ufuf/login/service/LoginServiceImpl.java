@@ -22,5 +22,9 @@ public class LoginServiceImpl {
 
     }
 
+    public UserInfoDto isUserExist(UserInfoDto userInfoDto){
+        return userLoginMapper.isUserExist(userInfoDto);
+    }
+
     
 }
