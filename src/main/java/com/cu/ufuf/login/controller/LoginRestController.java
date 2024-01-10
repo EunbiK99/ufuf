@@ -8,7 +8,10 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jms.JmsProperties.Listener.Session;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +19,7 @@ import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.service.LoginServiceImpl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -25,9 +29,11 @@ public class LoginRestController {
     @Autowired
     private LoginServiceImpl loginService;
 
-    @RequestMapping("saveIdToSesson")
-    public RestResponseDto saveIdToSesson(HttpSession session, String userid, String password){
-        
+    @PostMapping("/saveIdToSession")
+    public RestResponseDto saveIdToSession(HttpServletRequest request, String userid, String password) {
+
+        HttpSession session = request.getSession();
+
         RestResponseDto restResponseDto = new RestResponseDto();
 
         session.setAttribute("userid", userid);
@@ -39,7 +45,6 @@ public class LoginRestController {
 
         return restResponseDto;
     }
-
     
 
     @RequestMapping("saveProfileToSesson")
