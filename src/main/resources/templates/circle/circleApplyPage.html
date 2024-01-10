@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        
+    var fileInput = document.getElementById('circle_image');
+    var previewImage = document.getElementById('previewImage');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('circle_image');
+        var previewImage = document.getElementById('previewImage');
+
+        fileInput.addEventListener('change', function (e) {
+            var file = e.target.files[0];
+
+            if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function (readerEvent) {
+                previewImage.src = readerEvent.target.result;
+            };
+
+            reader.readAsDataURL(file);
+            }
+
+            previewImage.classList.remove("d-none")
+            
+        });
+});
+
+    function smallCategoryList(middleNum){
+
+        const circle_middle_category_id = middleNum.value;
+        console.log(circle_middle_category_id);
+        //무조건 처음에는 안에 값 지워버리기
+        const small = document.querySelector("#small");
+        small.innerHTML = "";
+
+        const url = "./circlesmallcategoryInfoByMiddleId?circle_middle_category_id=" + circle_middle_category_id;
+
+        fetch(url)
+        .then(response => response.json())
+        .then(response => {
+
+            for(e of response.data){
+                
+                const option = document.createElement("option");
+                option.innerText = e.category_name;
+                option.setAttribute("value",e.circle_small_category_id);
+                
+                small.appendChild(option);
+            }
+
+        })
+
+    }
+    function middleCategoryList(){
+
+        const url = "./middleCategoryAll";
+
+        
+
+        fetch(url)
+        .then(response => response.json())
+        .then(response => {
+            
+            
+
+            for(e of response.data){
+
+                const middle = document.querySelector("#middle"); 
+                middle.setAttribute("onchange","smallCategoryList(this)")
+                const option = document.createElement("option");
+                option.setAttribute("value", e.circle_middle_category_id);
+                option.innerText = e.category_name;
+
+                middle.appendChild(option);
+
+            }
+        })
+
+
+    }
+    //동아리 등록완료
+    //저번에 쓰던 값 가져오기 #id값 > option:checked
+    function circleComplete(){
+        // 이앞에는 동아리명이 중복되지 않는지 검증 해야 함 // 동아리명은 unique 해야함
+        
+        // 1. selected 된 circle_small_category_id
+
+        let cc = document.querySelector("#small > option:checked").value;
+        let circle_small_category_id = parseInt(cc, 10);
+        
+        
+        // 2. circle_name
+
+        const circle_name = document.querySelector("#circle_name").value;
+        console.log(circle_name);
+
+        // 3. circle_content
+
+        const circle_content = document.querySelector("#circle_content").value;
+        console.log(circle_content);
+
+        // 4. circle_image 원본파일명 => filename
+        // const filename = aa.files[0].name;
+
+        const aa = document.querySelector("#circle_image");
+        
+        const formData = new FormData();
+        formData.append('file', aa.files[0]);
+        formData.append('data',circle_small_category_id);
+        formData.append('data',circle_name);
+        formData.append('data',circle_content);
+        
+        
+        const url = "./circleComplete";
+        fetch(url, {
+			method: "POST",
+			body: formData
+		})
+		.then(response => response.json())
+		.then(response => {
+			
+
+
+		})
+		;
+
+
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        middleCategoryList();
+
+    })
+
+    //
+    </script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    개설자<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <input class="form-control" type="text" placeholder="세션값에서 이름가져와서 disable">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    학교명<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <input class="form-control" type="text" placeholder="세션값에서 학교명찾아와서 disable">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    동아리명<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <input id="circle_name" class="form-control" type="text" placeholder="동아리명을 입력해주세요">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    동아리 중분류 카테고리<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <select id="middle" name="circle_name" class="form-select"></select>
+                </div>
+            </div>
+            <div class="row mt-2" disabled>
+                <div class="col d-flex align-items-center">
+                    동아리 소분류 카테고리<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <select id="small" name="circle_name" class="form-select"></select>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    동아리 설명<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <textarea id="circle_content" class="form-control" placeholder="동아리명을 입력해주세요" rows="4"></textarea>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
+                    동아리 대표 이미지<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <input id="circle_image" name="circle_image" class="form-control" type="file" accept="image/*">
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <img id="previewImage" src="" alt="미리 보기" class="img-fluid d-none">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col d-grid">
+                    <button class="btn btn-primary" onclick="circleComplete()">개설하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
