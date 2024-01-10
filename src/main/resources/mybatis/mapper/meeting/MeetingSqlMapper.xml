@@ -3,6 +3,11 @@
 
 <mapper namespace="com.cu.ufuf.meeting.mapper.MeetingSqlMapper">
 
+<!-- * 미팅프로필 테이블 현재 PK 조회-->
+<select id="countProfilePk" resultType="int">
+    SELECT count(id) from meeting_profile
+</select>
+
 
 
 </mapper>

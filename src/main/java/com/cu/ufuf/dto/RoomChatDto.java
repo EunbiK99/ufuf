@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 @Data
 public class RoomChatDto {
 
-    private Integer room_chat_id;
-    private Integer room_info_id;
-    private Integer room_guest_id;
+    private int room_chat_id;
+    private int room_info_id;
+    private int room_guest_id;
     private LocalDateTime created_at;
 }

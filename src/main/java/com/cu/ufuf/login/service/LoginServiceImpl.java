@@ -12,8 +12,18 @@ public class LoginServiceImpl {
     @Autowired
     private UserLoginMapper userLoginMapper;
 
-    public void insertUser(UserInfoDto userInfoDto){
+    public void insertUser(UserInfoDto userInfoDto, String studentid_img){
+
+        int userPk = userLoginMapper.createUserPk();
+        userInfoDto.setUser_id(userPk);
+
         userLoginMapper.insertUser(userInfoDto);
+        userLoginMapper.insertStudentIdImg(userPk, studentid_img);
+
+    }
+
+    public UserInfoDto isUserExist(UserInfoDto userInfoDto){
+        return userLoginMapper.isUserExist(userInfoDto);
     }
 
     

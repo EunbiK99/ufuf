@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cu.ufuf.room.mapper.RoomSqlMapper">
+
+    <select id="creatRoomInfoPk" resultType="int">
+        select max(room_info_id)+1 from room_info
+    </select>
+    <insert id="roomInsert">
+       insert into room_info(user_id, main_image, title, room_count, bed_count, toilet_count, content, location, 
+            checkin_time,
+            checkout_time,
+            people_count_standard,
+            people_count_limit,
+            extra_money,
+            room_charge,
+            start_schedule,
+            end_schedule
+        ) values(
+            #{user_id},
+            #{main_image},
+            #{title},
+            #{room_count},
+            #{bed_count},
+            #{toilet_count},
+            #{content},
+            #{location}, 
+            #{checkin_time},
+            #{checkout_time},
+            #{people_count_standard},
+            #{people_count_limit},
+            #{extra_money},
+            #{room_charge},
+            #{start_schedule},
+            #{end_schedule}
+        )
+    </insert>
+
+    <insert id="insertRoomOption">
+        insert into room_option(room_info_id, room_option_category_id) values(
+            #{room_info_id},
+            #{room_option_category_id}
+        )
+    </insert>
+
+    <insert id="insertRoomDetailImage">
+        insert into room_image(room_info_id, location, original_filename) values(
+            #{room_info_id}, 
+            #{location}, 
+            #{original_filename}
+        )
+    </insert>
+
+    <select id="selectRoomOptionCategoryAll" resultType="com.cu.ufuf.dto.RoomOptionCategoryDto">
+		select * from room_option_category
+        order by room_option_category_id asc	
+	</select>
+
+
+</mapper>

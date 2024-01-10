@@ -97,6 +97,7 @@
 
         const searchword = document.getElementById('searchword');
         searchword.value = schoolName;
+        searchword.innerText = schoolName;
 
         closeUniListModal();
 
@@ -129,6 +130,54 @@
         modal.hide();
 	}
 
+    function saveUniToSesson(){
+		
+        const searchword = document.getElementById("searchword");
+        const department = document.getElementById("department");
+        
+        fetch("./saveUniToSesson", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "searchword=" + searchword.value +
+                    "&department=" + department.value
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+            searchword.value = "";
+            department.value = "";
+            
+        });
+
+        saveStudentIdImgToSession();
+
+        location.href="./registerProfileImgForm";
+    
+    }
+
+    function saveStudentIdImgToSession(){
+
+        const studentid_img = document.getElementById("studentid_img");
+        var file = studentid_img.files[0];
+
+        var formData = new FormData();
+        formData.append("file", file);
+        
+        fetch("./saveStudentIdImgToSession", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+        });
+    }
+
     
     </script>
 
@@ -160,7 +209,7 @@
                         <div class="row mt-4">
                             <div class="col fw-semibold mt-2" style="font-size:1.36em">
                                 학교 인증을 완료해주세요
-                            </div>
+                            </div>  
                         </div>
                         <div class="row mt-5">
                             <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
@@ -224,10 +273,10 @@
                         </div>
                         <div class="row mt-3 px-2">
                             <div class="col d-flex justify-content-center border py-5">
-                                <label for="inputFile">
+                                <label for="studentid_img">
                                     <img class="img-fluid" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 6em;">
                                 </label>
-                                <input name="imageFiles" class="form-control border-dark-subtle" type="file" id="inputFile" accept="image/*" style="display:none;">
+                                <input class="form-control border-dark-subtle" type="file" id="studentid_img" accept="image/*" style="display:none;">
                             </div>
                         </div>
 
@@ -237,7 +286,7 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
+                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveUniToSesson()">
                                 회원가입 완료
                             </a>
                         </div>
