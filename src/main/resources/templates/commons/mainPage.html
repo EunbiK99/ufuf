@@ -14,11 +14,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
     <style>
+    @font-face {
+        font-family: 'myCustomFont';
+        src: local('myCustomFont'), url('/public/font/SF-Mono-Semibold.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+
     *{
         /* font-family: 'Dongle', sans-serif; */
-        /* font-family: 'Gowun Dodum', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        /* font-family: 'myCustomFont', sans-serif; */
     }
     </style>
 </head>
@@ -49,8 +57,19 @@
         
         <div class="row">
             <div class="col">
+                
                 <div class="row mt-5">
-                <div class="col text-center" role="button" onclick="window.location.href=''">
+                    <div class="col text-center">
+                        <span class="fw-bold fs-1">접속유저 : </span>
+                    </div>
+                    <div class="col text-center">                        
+                        <span th:if="${session.sessionUserInfo != null}" th:text="${session.sessionUserInfo.name}" class="fw-bold fs-1"></span>
+                        <span th:unless="${session.sessionUserInfo != null}" class="fw-bold fs-1">로그인안됨</span>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col text-center" role="button" onclick="window.location.href='../login/testloginPage'">
                         <span class="fw-bold fs-1">로그인</span>
                     </div>
                 </div>
@@ -70,7 +89,7 @@
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center" onclick="window.location.href=''">
+                    <div class="col text-center" onclick="window.location.href='../room/roomMainPage'">
                         <span class="fw-bold fs-1">유니B&B 메인</span>
                     </div>
                 </div>
