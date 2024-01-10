@@ -11,39 +11,39 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
     <script>
-        function saveIdToSesson(){
+        // function saveIdToSesson(){
 		
-            const userid = document.getElementById("userid");
-            const password = document.getElementById("password");
-            const passwordCheck = document.getElementById("passwordCheck");
+        //     const userid = document.getElementById("userid");
+        //     const password = document.getElementById("password");
+        //     const passwordCheck = document.getElementById("passwordCheck");
 
-            const data = {
-                userid: userid,
-                password: password
-             };
+        //     const data = {
+        //         userid: userid,
+        //         password: password
+        //      };
 
-            fetch("./saveIdToSession", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(response => {
+        //     fetch("./saveIdToSession", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //     .then(response => response.json())
+        //     .then(response => {
                 
-                console.log(response);
+        //         console.log(response);
 
-                // 입력 필드 초기화
-                document.getElementById("userid").value = "";
-                document.getElementById("password").value = "";
-                document.getElementById("passwordCheck").value = "";
+        //         // 입력 필드 초기화
+        //         document.getElementById("userid").value = "";
+        //         document.getElementById("password").value = "";
+        //         document.getElementById("passwordCheck").value = "";
                 
-            });
+        //     });
 
-            location.href="./registerProfileForm";
+        //     location.href="./registerProfileForm";
         
-        }
+        // }
 
 
     </script>
@@ -68,14 +68,15 @@
                 </div>
 
                 <!--코드 시작-->
+                <form action="./saveIdToSession" method="post">
                 <div class="row">
                     <div class="col px-3">
-
                         <div class="row mt-4">
                             <div class="col fw-semibold mt-2" style="font-size:1.36em">
                                 사용하실 아이디와<br>비밀번호를 입력해주세요
                             </div>
                         </div>
+                        
                         <div class="row mt-5">
                             <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
                                 아이디
@@ -104,7 +105,7 @@
                             </div>
                         </div>
                         <div class="row my-5">
-                            <div class="col my-3">
+                            <div class="col my-4">
                             </div>
                         </div>
                         <div class="row mt-5 pt-5">
@@ -119,12 +120,13 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <div class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveIdToSesson()">
+                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
                                 다음 단계로 이동
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
+                </form>
 
             </div>
         </div>

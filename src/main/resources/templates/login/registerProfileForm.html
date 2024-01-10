@@ -53,53 +53,6 @@
             }
         }).open();
     }
-    
-    function saveProfileToSesson(){
-		
-        const name = document.getElementById("name");
-        const gender = document.querySelector('input[name="gender"]:checked');
-        const birthYear = document.getElementById("birthYear");
-        const birthMonth = document.getElementById("birthMonth");
-        const birthDate = document.getElementById("birthDate");
-        const phone = document.getElementById("phone");
-        const email = document.getElementById("email");
-        const address = document.getElementById("address");
-        const detailAddress = document.getElementById("detailAddress");
-        
-        var myAddress = address.value + detailAddress.value;
-
-        fetch("./saveProfileToSesson", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "name=" + name.value +
-                    "&gender=" + gender.value +
-                    "&birthYear=" + birthYear.value +
-                    "&birthMonth=" + birthMonth.value +
-                    "&birthDate=" + birthDate.value + 
-                    "&phone=" + phone.value +
-                    "&email=" + email.value +
-                    "&phone=" + phone.value +
-                    "&myAddress=" + myAddress
-        })
-        .then(response => response.json())
-        .then(response => {
-            
-            name.value = "";
-            gender.value = "";
-            birthYear.value = "";
-            birthMonth.value = "";
-            birthDate.value = "";
-            phone.value = "";
-            email.value = "";
-            address.value = "";
-            detailAddress.value = "";
-            
-        });
-    
-        location.href="./registerUniForm";
-    }
 
 
     </script>
@@ -133,6 +86,7 @@
                 </div>
 
                 <!--코드 시작-->
+                <form action="./saveProfileToSession" method="post">
                 <div class="row">
                     <div class="col">
 
@@ -173,19 +127,19 @@
                         </div>
                         <div class="row mt-1 d-flex">
                             <div class="col-4 pe-0">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="birthYear" placeholder="YYYY" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" name="birthYear" id="birthYear" placeholder="YYYY" style="font-size:0.9em;">
                             </div>
                             <div class="col-1 px-0 text-center">
                                 -
                             </div>
                             <div class="col-3 px-0">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="birthMonth" placeholder="MM" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" name="birthMonth" id="birthMonth" placeholder="MM" style="font-size:0.9em;">
                             </div>
                             <div class="col-1 px-0 text-center">
                                 -
                             </div>
                             <div class="col-3 ps-0">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="birthDate" placeholder="DD" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" name="birthDate" id="birthDate" placeholder="DD" style="font-size:0.9em;">
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -219,8 +173,8 @@
                                     <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0" id="postcode" placeholder="우편번호" style="font-size:0.9em;">
                                     <input type="button" class="btn btn-outline-secondary rounded-0" onclick="execDaumPostcode()" value="우편번호 찾기" style="font-size:0.9em;">
                                 </div>
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 mt-1" id="address" placeholder="주소" style="font-size:0.9em;">
-                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 mt-1" id="detailAddress" placeholder="상세주소" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 mt-1" name="address" id="address" placeholder="주소" style="font-size:0.9em;">
+                                <input type="text" class="form-control border-top-0 border-start-0 border-end-0 rounded-0 mt-1" name="detailAddress" id="detailAddress" placeholder="상세주소" style="font-size:0.9em;">
                             </div>
                         </div>
                     </div>
@@ -229,12 +183,13 @@
                 <div class="fixed-bottom">
                     <div class="row text-center pb-4">
                         <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveProfileToSesson(); event.preventDefault();">
+                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827">
                                 다음 단계로 이동
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
+                </form>
                         
             </div>
         </div>
