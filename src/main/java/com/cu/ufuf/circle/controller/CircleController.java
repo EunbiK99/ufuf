@@ -56,7 +56,7 @@ public class CircleController {
         // 모집공고 등록 insert // 모집이미지 등록여러개 // !!!!!(아직안함)동아리키 받아와야함
         System.out.println(circleNoticeDto.getCircle_notice_title());
         System.out.println(circleNoticeDto.getCircle_notice_content());
-        
+
         // 모집공고 등록이 먼저 되어야하고 그다음에 번호값을 받아서(Max) 번호키를 이미지번호키에 등록
         
         
@@ -99,6 +99,14 @@ public class CircleController {
 
         return "redirect:./circleMainPage";
     }
+    
+    @RequestMapping("circleNoticeBoardPage")
+    public String circleNoticeBoardPage(){
+        
+        return "circle/circleNoticeBoardPage";
+    }
+    
+    
 
 
     
