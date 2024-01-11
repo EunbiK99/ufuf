@@ -10,7 +10,7 @@
 
 <insert id="insertOrderInfo">
     insert into order_info(order_id, item_id, status)
-    values(#{order_id}, #{item_id}, #{status});
+    values(#{order_id}, #{status});
 </insert>
 
 
