@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ItemInfoDto {
     private String item_id;
-	private LocalDateTime created_at;
+	private String item_name;
 }

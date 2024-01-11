@@ -230,6 +230,8 @@ public class LoginRestController {
 
             session.setAttribute("sessionUserInfo", loginService.isUserExist(params));
             
+        }else{
+            
         }
 
         restResponseDto.setResult("Success");
