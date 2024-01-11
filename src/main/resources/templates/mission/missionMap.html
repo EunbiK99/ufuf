@@ -121,13 +121,6 @@
         left: 8.6em;
     } */
 
-    #nowLocation{
-        z-index: 2;
-        position: absolute;
-        top: 2em;
-        left: 3em;
-    }
-
 </style>
 
 
@@ -142,11 +135,15 @@
                 <div class="row">
                     <div class="col px-0">
 
-                        
-                        
-                        <div id="map" style="height:45em;" class="z-n1"></div>
+                        <div id="map" style="height:35em;"></div>
 
-                        <div class="row">
+                        <div class="row pt-2 border-top px-3">
+                            <div class="col">
+                                <span><i class="bi bi-geo-alt"></i></span>
+                                <span id="nowLocation" class="text-secondary ms-1"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col">
                                 <div class="gap-2 d-md-block d-flex justify-content-center">
                                     <button class="btn py-2 btn-dark px-5">

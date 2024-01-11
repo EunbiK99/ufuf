@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @RequestMapping("saveIdToSession")
-    public String saveIdToSession(HttpSession session, String userid, String password){
+    public String saveIdToSession(HttpSession session, @RequestParam(name="userid") String userid,@RequestParam(name="password") String password){
 
         session.setAttribute("userid", userid);
         session.setAttribute("password", password);
@@ -51,8 +51,10 @@ public class LoginController {
 
     @RequestMapping("saveProfileToSession")
     public String saveProfileToSession(HttpSession session, 
-            String name, String gender, String birthYear, String birthMonth, String birthDate,
-            String phone, String email, String address, String detailAddress){
+            @RequestParam(name="name")String name, @RequestParam(name="gender") String gender, 
+            @RequestParam(name="birthYear") String birthYear, @RequestParam(name="birthMonth") String birthMonth, @RequestParam(name="birthDate") String birthDate,
+            @RequestParam(name="phone") String phone, @RequestParam(name="email") String email, 
+            @RequestParam(name="address") String address, @RequestParam(name="detailAddress") String detailAddress){
 
         String birth = birthYear +"-"+ birthMonth +"-"+ birthDate;
         System.out.println(birth);
@@ -74,7 +76,7 @@ public class LoginController {
 
     @RequestMapping("saveUniToSession")
     public String saveUniToSession(HttpSession session, 
-            String university, String department,
+            @RequestParam(name = "university") String university, @RequestParam(name = "department") String department,
             @RequestParam(name = "studentid_img") MultipartFile studentid_img){
 
         session.setAttribute("university", university);
