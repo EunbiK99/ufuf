@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
-import com.cu.ufuf.dto.CircleNoticeDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 
@@ -36,13 +35,9 @@ public class CircleService {
 
         circleSqlMapper.circleInfoInsert(circleDto);
     }
-    public void circleNoticeInfoInsert(CircleNoticeDto circleNoticeDto){
-        circleSqlMapper.circleNoticeInfoInsert(circleNoticeDto);
-    }
+    
     public void circleNoticeImageInfoInsert(CircleNoticeImageDto circleNoticeImageDto){
         circleSqlMapper.circleNoticeImageInfoInsert(circleNoticeImageDto);
     }
-    public int circleNoticeIdInt(){
-        return circleSqlMapper.circleNoticeIdInt();
-    }
+    
 }

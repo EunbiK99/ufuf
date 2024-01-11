@@ -1,113 +1,289 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 모달이 나타날 때
+            $('#myModal').on('shown.bs.modal', function () {
+                // 현재 버튼 위치
+                var buttonPosition = $('.btn-primary').offset();
+                // 모달을 버튼 위에 위치하도록 조절
+                $(this).find('.modal-dialog').css({
+                    'top': buttonPosition.top - $(window).scrollTop(),
+                    'left': buttonPosition.left
+                });
+            });
+        });
+        function openModal() {
+            document.getElementById('myModal').style.display = 'flex';
+        }
+
+        // 모달 닫기 함수
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+        // 카테고리 리스트 6개 출력
+        function smallCategoryList(){
+            
+            const url ="./smallCategoryList";
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                for(e of response.data){
+                    const smallC = document.querySelector("#smallC");
+                    const div = document.createElement("div");
+                    div.classList.add("col-2", "px-0", "d-grid");
+
+                    //<span class="badge text-bg-light">축구</span>
+                    const span = document.createElement("span")
+                    span.innerText = "#" + e.category_name;
+                    span.classList.add("badge", "text-bg-light")
+                    div.appendChild(span);
+                    smallC.appendChild(div);
+                }
+            })
+
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function (event) {
+            var modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        window.addEventListener("DOMContentLoaded", () =>{
+            smallCategoryList();
+        })
+    </script>
     <style>
-        
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* + 버튼 스타일 */
+        .plus-button {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 23px;
+            border: 0.01em solid black;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 모달 내용 스타일 */
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* 닫기 버튼 스타일 */
+        .close {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+        .modal-dialog-bottom {
+            
+            margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
+            transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
+            }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                탑
-            </div>
-            <div class="col">
-                네비바
-            </div>
-            <div class="col">
-                로고
-            </div>
-            <div class="col-5">
-                로그아웃아이콘
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col px-0">
-                <div id="carouselExampleInterval" class="row carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                      <div class="carousel-item active" data-bs-interval="2000">
-                        <img src="/public/image/circle/MainCarousel1.png" class="d-block w-100" alt="..." style="height: 10em;">
-                      </div>
-                      <div class="carousel-item" data-bs-interval="2000">
-                        <img src="/public/image/circle/MainCarousel2.png" class="d-block w-100" alt="..."  style="height: 10em;">
-                      </div>
-                      <div class="carousel-item" data-bs-interval="2000">
-                        <img src="/public/image/circle/MainCarousel3.png" class="d-block w-100" alt="..."  style="height: 10em;">
-                      </div>
-                    </div>
-                  </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col overflow-x-auto">
-                <div class="row" style="width: 200%;">
+                <div class="row">
                     <div class="col">
-                        <span class="badge text-bg-light">버튼 1</span>
+                        탑
                     </div>
                     <div class="col">
-                        <span class="badge text-bg-light">버튼 2</span>
+                        네비바
                     </div>
                     <div class="col">
-                        <span class="badge text-bg-light">버튼 3</span>
+                        로고
                     </div>
-                    <div class="col">
-                        <span class="badge text-bg-light">버튼 4</span>
-                    </div>
-                    <div class="col">
-                        <span class="badge text-bg-light">버튼 5</span>
-                    </div>
-                    <div class="col">
-                        <span class="badge text-bg-light">버튼 6</span>
+                    <div class="col-5">
+                        로그아웃아이콘
                     </div>
                 </div>
-              
-              
+                <div class="row mt-2 mx-0 px-0">
+                    <div class="col mx-0 px-0">
+                        <div id="carouselExampleInterval" class="row carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active" data-bs-interval="2000">
+                                    <img src="/public/image/circle/MainCarousel1.png" class="d-block w-100" alt="..."
+                                        style="height: 10em;">
+                                </div>
+                                <div class="carousel-item" data-bs-interval="2000">
+                                    <img src="/public/image/circle/MainCarousel2.png" class="d-block w-100" alt="..."
+                                        style="height: 10em;">
+                                </div>
+                                <div class="carousel-item" data-bs-interval="2000">
+                                    <img src="/public/image/circle/MainCarousel3.png" class="d-block w-100" alt="..."
+                                        style="height: 10em;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col overflow-x-auto">
+                        <div id="smallC" class="row" style="width: 200%;">
+                        </div>
+                    </div>
 
-            </div>
-            
-            <!-- 필요한 만큼 버튼을 추가할 수 있습니다. -->
-          </div>
-        <div class="row mt-2">
-            <div class="col pe-0 fw-bold">
-                ❗핫한 동아리 
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col">
-                <div class="row mx-1 border rounded-3">
-                    <div class="col-3 text-center">
-                        
+                    <!-- 필요한 만큼 버튼을 추가할 수 있습니다. -->
+                </div>
+                <div class="row mt-2">
+                    <div class="col ps-1 fw-bold">
+                        ❗핫한 동아리
                     </div>
-                    <div class="col text-center">
-                        글 (3개정도?)
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="row mx-1 border rounded-3">
+                            <div class="col-3 text-center">
+
+                            </div>
+                            <div class="col text-center">
+                                글 (3개정도?)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col ps-1 fw-bold">
+                        ❗인기있는 동아리 게시글
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row mx-1 border rounded-3">
+                            <div class="col-3 text-center">
+                                인원이 많은
+                            </div>
+                            <div class="col text-center">
+                                글 (3개정도?)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row fixed-bottom mx-0 mt align-items-center"
+                    style="border-top: 0.01em solid rgb(219, 219, 219);">
+                    <div class="button col text-center">
+                        1
+                    </div>
+                    <div class="button col text-center">
+                        2
+                    </div>
+                    <div class="col-2 plus-button px-0 d-grid">
+                        <button class="btn" onclick="openModal()">+</button>
+                    </div>
+                    <div class="button col text-center">
+                        4
+                    </div>
+                    <div class="button col text-center">
+                        5
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mt-2">
-            <div class="col pe-0 fw-bold">
-                ❗인기있는 동아리 게시글
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col">
-                <div class="row mx-1 border rounded-3">
-                    <div class="col-3 text-center">
-                        인원이 많은 
+
+    </div>
+    <!-- 모달 -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-sm modal-dialog-bottom pt-0"> <!-- 또는 modal-sm -->
+            <div class="modal-content px-0 py-0">
+                <!-- 모달 본문 -->
+                <div class="modal-body py-0">
+                    <div class="row" style="border-bottom: 0.01em solid black;">
+                        <div class="col-1"></div>
+                            <a href="./circleApplyPage" style="text-decoration: none; color: black;">
+                                <div class="col py-2">
+                                    <span class="fw-bold">+</span> 동아리 개설하기
+                                </div>
+                            </a>
+                        </div>
+                    <div class="row" style="border-bottom: 0.01em solid black;">
+                        <a href="#" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 동아리 가입하기
+                            </div>
+                        </a>
                     </div>
-                    <div class="col text-center">
-                        글 (3개정도?)
+                    <div class="row" style="border-bottom: 0.01em solid black;">
+                        <a href="#" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 일정 추가
+                            </div>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a href="#" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 투표글 작성
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

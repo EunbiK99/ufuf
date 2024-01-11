@@ -1,6 +1,7 @@
 package com.cu.ufuf.circle.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +71,17 @@ public class CircleRestController {
     public RestResponseDto circleComplete(@RequestParam("file") MultipartFile file,
     @RequestParam("data") int circle_small_category_id,
     @RequestParam("circle_name") String circle_name,
-    @RequestParam("circle_content") String circle_content){
-        
-        // UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute(null);
+    @RequestParam("circle_content") String circle_content, HttpSession session){
 
+        // 세션정보들
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        String circle_university = userInfoDto.getUniversity();
+
+        // 인스턴스 생성
         RestResponseDto responseDto = new RestResponseDto();
 
+        // 동아리 대표 배너이미지
         String filename = file.getOriginalFilename();
         long randomFilename = System.currentTimeMillis();
         String Path = "C:/uploadFiles/";
@@ -89,26 +95,43 @@ public class CircleRestController {
 
         String commafile = filename.substring(filename.lastIndexOf("."));
         String fileLink = randomFilename + commafile;
-
+        
         try {
             file.transferTo(new File(Path + fileLink));
         }catch(Exception e) {
             e.printStackTrace();
         }
         
-        System.out.println(fileLink);
-        
         CircleDto circleDto = new CircleDto();
         circleDto.setCircle_small_category_id(circle_small_category_id);
         circleDto.setCircle_name(circle_name);
         circleDto.setCircle_content(circle_content);
-        // 등급번호 1(아이언) set
         circleDto.setCircle_grade_id(1);
-        // 사진 set
         circleDto.setCircle_image(fileLink); 
+        circleDto.setUser_id(user_id);
+        circleDto.setCircle_university(circle_university);
+
+        circleService.circleInfoInsert(circleDto);
+        // 이거끝나고 상세이미지 등록하는거 해주어야함
         
-        //circleService.circleInfoInsert(circleDto); ==> 세션정보받고 이것만 하면 끝
+        responseDto.setResult("success");
         
+        return responseDto;
+    }
+    @RequestMapping("smallCategoryList")
+    public RestResponseDto smallCategoryList(){
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        List<CircleSmallCategoryDto> circleSmallCategoryDtos = circleService.circleSmallCategoryDtos();
+        // 여기서 고민 6개만 넣을까?
+        List<CircleSmallCategoryDto> circleSmallCategoryDtos2 = new ArrayList<>(); 
+        int sizeToCopy = Math.min(6, circleSmallCategoryDtos.size());
+        for (int x = 0; x < sizeToCopy; x++) {
+            circleSmallCategoryDtos2.add(circleSmallCategoryDtos.get(x));
+        }
+                
+        responseDto.setData(circleSmallCategoryDtos2);
         responseDto.setResult("success");
         
         return responseDto;

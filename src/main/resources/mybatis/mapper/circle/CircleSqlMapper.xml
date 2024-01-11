@@ -4,8 +4,8 @@
 <mapper namespace="com.cu.ufuf.circle.mapper.CircleSqlMapper">
 
     <insert id="circleInfoInsert">
-        INSERT into circle(circle_small_category_id, circle_grade_id, user_id, circle_name, circle_content,circle_image) values(
-	        #{circle_small_category_id}, #{circle_grade_id}, #{user_id}, #{circle_name}, #{circle_content}, #{circle_image}
+        INSERT into circle(circle_small_category_id, circle_grade_id, user_id, circle_name, circle_university, circle_content,circle_image) values(
+            #{circle_small_category_id}, 1, #{user_id}, #{circle_name}, #{circle_university}, #{circle_content}, #{circle_image}
         )
     </insert>
 
@@ -19,17 +19,11 @@
     <select id="circlesmallcategoryInfoByMiddleId" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
         SELECT * from circle_small_category where circle_middle_category_id = #{circle_middle_category_id}
     </select>
-    <insert id="circleNoticeInfoInsert">
-        INSERT into circle_notice(circle_id,circle_notice_title,circle_notice_content) values(
-	        #{circle_id},#{circle_notice_title},#{circle_notice_content}
-        )
-    </insert>
     <insert id="circleNoticeImageInfoInsert">
         INSERT INTO circle_notice_image(circle_notice_id,circle_notice_image) values(
             #{circle_notice_id}, #{circle_notice_image}
         )
     </insert>
-    <select id="circleNoticeIdInt" resultType="int">
-        SELECT max(circle_notice_id) from circle_notice
-    </select>
+    
+    
 </mapper>
