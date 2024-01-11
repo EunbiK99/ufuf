@@ -20,8 +20,13 @@
         /* font-family: 'Quicksand', sans-serif; */
         font-family: 'Noto Sans KR', sans-serif;
     }
-    .white-placeholder::placeholder{
-        color: white;
+    .custom-border-color{
+        border-color: #FF8827 !important;
+    }
+
+    .custom-input:focus{
+        border-color: #FF8827;
+        box-shadow: 0 0 10px #FF8827;
     }
 
     .itsMe{
@@ -29,7 +34,39 @@
     }
     </style>
 </head>
-<script>
+
+<script th:inline="javascript">
+
+let sessionUserId = /*[[${session.sessionUserInfo.user_id}]]*/;
+console.log('sessionUserId: ', sessionUserId);
+
+
+function registerProfile(){
+    const confirmResult = confirm("이 내용대로 미팅프로필을 만드시겠습니까?");
+
+    if(confirmResult){
+        const formData = new FormData();
+
+        formData.append('user_id', sessionUserId);
+        formData.append('profileNickname', document.getElementById("inputNickname").value);
+        formData.append('profile_Img', document.getElementById("inputProfileImageFile").files[0]);
+        formData.append('profileComment', document.getElementById("inputComment").value);
+        formData.append('snsURL', document.getElementById('inputSNSUrl').value);
+
+        const url = './api/registerProfile';
+
+        fetch(url, {method : 'post', body : formData})
+        .then(response => response.json())
+        .then(response => {            
+            alert('미팅 프로필 등록이 완료되었습니다.');
+            window.location.href="./mainPage";
+        });
+    }
+    else{
+        return;
+    }
+}
+
 function attachProfileImage(){
     const inputProfileImageFile = document.getElementById("inputProfileImageFile");
     inputProfileImageFile.click();
@@ -62,10 +99,34 @@ function attachProfileImage(){
     });  
 }
 
+function checkDuplicateSNSUrl(textValue){
 
+    let inputText  = textValue;
+    const inputSNSUrl = document.getElementById('inputSNSUrl');
+    const SNSUrlRow = document.getElementById('SNSUrlRow');
 
+    fetch('./api/checkDuplicateSNSUrl?value='+inputText)
+    .then(response => response.json())
+    .then(response => {
+        
+        let checkedValue = response.data;
 
-    
+        if(checkedValue === 0){
+            const goodCheck = document.createElement('div');
+            goodCheck.setAttribute('class', 'col-auto fs-4');
+            goodCheck.innerHTML = '<i class="bi bi-check2 text-success fw-bold"></i>'
+            
+            SNSUrlRow.appendChild(goodCheck);
+        }
+        else{
+            const badCheck = document.createElement('div');
+            badCheck.setAttribute('class', 'col-auto fs-4');
+            badCheck.innerHTML = '<i class="bi bi-x text-danger fw-bold"></i>'
+            
+            SNSUrlRow.appendChild(badCheck);
+        }
+    });
+}
 
 
 </script>
@@ -79,7 +140,7 @@ function attachProfileImage(){
                 <div class="row mt-1 align-content-center">
                     <div class="col">
                         <div class="row justify-content-between">
-                            <div class="col-auto">
+                            <div class="col-auto" role="button" onclick="window.location.href='../commons/mainPage'">
                                 <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto">
@@ -123,9 +184,12 @@ function attachProfileImage(){
                         
                         <div class="row mt-2">
                             <div class="col">
-                                <div class="row mt-2">
-                                    <div class="col text-center">
-                                        <span class="fw-bold fst-italic itsMe fs-1">It's me</span>
+                                <div id="SNSUrlRow" class="row mt-2">
+                                    <div class="col-auto pe-0">
+                                        <span class="fw-bold itsMe fs-2">ufuf.com/</span>                                        
+                                    </div>
+                                    <div class="col-auto ps-0 fw-bold itsMe fs-2">                                        
+                                        <input id="inputSNSUrl" type="text" class="custom-input form-control border border-2 custom-border-color" placeholder="your SNS..." onchange="checkDuplicateSNSUrl(this.value)">                                        
                                     </div>
                                 </div>
                                 <div class="row mt-4 mb-1 mx-1">
@@ -144,8 +208,8 @@ function attachProfileImage(){
                                         </div>
 
                                         <div class="row mt-2">
-                                            <div class="col">
-                                                <input type="text" class="border-0 form-control form-control-sm" placeholder="닉네임 입력">
+                                            <div class="col-10">
+                                                <input id="inputNickname" type="text" class="custom-input border border-2 custom-border-color form-control form-control-sm" placeholder="닉네임 입력">
                                             </div>
                                         </div>
 
@@ -172,7 +236,7 @@ function attachProfileImage(){
 
                                     </div>
                                 </div>
-                                <div class="row mb-4">
+                                <div class="row mt-3 mb-4">
                                     <div class="col text-truncate">
                                         <span>[ 파일명 : </span>
                                         <span id="attachedFileName"></span>
@@ -189,7 +253,7 @@ function attachProfileImage(){
                                         </div>
                                         <div class="row mt-1 mb-3">
                                             <div class="col">
-                                                <textarea class="form-control border-black" rows="6"></textarea>
+                                                <textarea id="inputComment" class="custom-input form-control border border-2 custom-border-color" rows="6"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -201,7 +265,7 @@ function attachProfileImage(){
                         <div class="row mt-5">
                             <div class="col">
                                 <div class="row mb-5 justify-content-center">
-                                    <div class="col-6 text-center btn d-grid" style="background-color: #FF8827;">
+                                    <div class="col-6 text-center btn d-grid" style="background-color: #FF8827;" onclick="registerProfile()">
                                         <span class="">Create My Profile!</span>
                                     </div>
                                 </div>
