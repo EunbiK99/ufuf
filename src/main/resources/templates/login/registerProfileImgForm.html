@@ -9,46 +9,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
-    <script>
-
-    function saveProfileImgToSession(){
-    
-        const profileImg = document.getElementById("profileImg");
-        var file = profileImg.files[0];
-
-        var formData = new FormData();
-        formData.append("file", file);
-
-        fetch("./saveProfileImgToSession", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(response => {
-            
-        });
-    
-    }
-
-    function registerUser(){
-
-        fetch("./registerUser", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            
-        });
-    }
-
-        
-    </script>
-
 </head>
+
+<style>
+
+</style>
 
 <body>
     
@@ -56,11 +21,11 @@
         <div class="row">
             <div class="col">
 
-                <div class="row py-4">
+                <div class="row py-3">
                     <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
                         <i class="bi bi-arrow-left"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.1em">
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
                         프로필 등록
                     </div>
                     <div class="col-1" style="font-size:1.1em">
@@ -68,37 +33,39 @@
                 </div>
 
                 <!--코드 시작-->
+                <form action="./registerUser" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col px-3">
 
-                        <div class="row mt-4">
-                            <div class="col fw-semibold mt-2" style="font-size:1.36em">
+                        <div class="row mt-2">
+                            <div class="col fw-semibold mt-2" style="font-size:1.4em">
                                 프로필 사진을 등록해주세요
                             </div>
                         </div>
                         <div class="row mt-5">
-                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
+                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.9em;">
                                 프로필 사진
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col px-2">
-                                <input class="form-control border-dark-subtle" type="file" id="profileImg" accept="image/*">
+                                <input class="form-control border-dark-subtle rounded-1" type="file" name="profileImg" id="profileImg" accept="image/*">
                             </div>
                         </div>
 
                     </div>
                 </div>
 
-                <div class="fixed-bottom">
-                    <div class="row text-center pb-4">
-                        <div class="col d-grid mx-2 pb-2">
-                            <a class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" href="./aaa" onclick="saveProfileImgToSession(); event.preventDefault();">
-                                프로필 사진 등록 완료
-                            </a>
+                <div class="fixed-bottom px-3">
+                    <div class="row text-center mt-4 mb-4">
+                        <div class="col d-grid mb-2 mt-3">
+                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1 fs-5" style="background-color: #FF8827">
+                                등록완료
+                            </button>
                         </div>
                     </div>
                 </div>
+                </form>
 
             </div>
         </div>

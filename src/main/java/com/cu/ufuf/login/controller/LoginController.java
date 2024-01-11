@@ -1,6 +1,7 @@
 package com.cu.ufuf.login.controller;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -24,25 +25,198 @@ public class LoginController {
     private LoginServiceImpl loginService;
 
     @RequestMapping("registerIdForm")
-    public String registerIdForm(HttpSession session){
+    public String registerIdForm(){
         return "login/registerIdForm";
     }
 
-    @RequestMapping("registerProfileForm")
-    public String registerProfileForm(HttpSession session){
+    @RequestMapping("saveIdToSession")
+    public String saveIdToSession(HttpSession session, String userid, String password){
+
+        session.setAttribute("userid", userid);
+        session.setAttribute("password", password);
+
+        System.out.println(userid);
+        Object id = session.getAttribute("userid");
+        String idd = (String)session.getAttribute("userid");
+        System.out.println(idd);
 
         return "login/registerProfileForm";
     }
+
+    @RequestMapping("registerProfileForm")
+    public String registerProfileForm(){
+
+        return "login/registerProfileForm";
+    }
+
+    @RequestMapping("saveProfileToSession")
+    public String saveProfileToSession(HttpSession session, 
+            String name, String gender, String birthYear, String birthMonth, String birthDate,
+            String phone, String email, String address, String detailAddress){
+
+        String birth = birthYear +"-"+ birthMonth +"-"+ birthDate;
+        System.out.println(birth);
+
+        session.setAttribute("name", name);
+        session.setAttribute("gender", gender);
+        session.setAttribute("phone", phone);
+        session.setAttribute("birth", birth);
+        session.setAttribute("email", email);
+        session.setAttribute("address", address + detailAddress);
+
+        return "login/registerUniForm";
+    }
     
     @RequestMapping("registerUniForm")
-    public String registerUniForm(HttpSession session){
+    public String registerUniForm(){
         return "login/registerUniForm";
     }
 
-    @RequestMapping("registerProfileImgForm")
-    public String registerProfileImgForm(HttpSession session){
+    @RequestMapping("saveUniToSession")
+    public String saveUniToSession(HttpSession session, 
+            String university, String department,
+            @RequestParam(name = "studentid_img") MultipartFile studentid_img){
+
+        session.setAttribute("university", university);
+        session.setAttribute("department", department);
+
+        if(studentid_img != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/userStudentIdImg";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = studentid_img.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				studentid_img.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            session.setAttribute("studentid_img", todayPath + fileName);
+		}
+
         return "login/registerProfileImgForm";
     }
+
+    @RequestMapping("registerProfileImgForm")
+    public String registerProfileImgForm(){
+        return "login/registerProfileImgForm";
+    }
+
+    @RequestMapping("registerUser")
+    public String registerUser(HttpSession session, @RequestParam(name = "profileImg") MultipartFile profileImg){
+
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        if(profileImg != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/userProfile";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = profileImg.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				profileImg.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            userInfoDto.setProfile_img(todayPath + fileName);
+			
+		}
+
+        String userid = (String)session.getAttribute("userid");
+        String password = (String)session.getAttribute("password");
+        String name = (String)session.getAttribute("name");
+        String gender = (String)session.getAttribute("gender");
+        String birth = (String)session.getAttribute("birth");
+        String phone = (String)session.getAttribute("phone");
+        String email = (String)session.getAttribute("email");
+        String address = (String)session.getAttribute("address");
+        String university = (String)session.getAttribute("university");
+        String department = (String)session.getAttribute("department");
+        String studentid_img = (String)session.getAttribute("studentid_img");
+
+        System.out.println(userid);
+        System.out.println(birth);
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date parsedDate = dateFormat.parse(birth);
+
+            // DTO에 설정
+            userInfoDto.setBirth(parsedDate);
+
+            // 이후에 필요한 작업 수행
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // 예외 처리를 수행하거나 적절한 방식으로 오류를 처리하세요.
+        }
+
+        userInfoDto.setUserid(userid);
+        userInfoDto.setPassword(password);
+        userInfoDto.setName(name);
+        userInfoDto.setGender(gender);
+        userInfoDto.setPhone(phone);
+        userInfoDto.setEmail(email);
+        userInfoDto.setAddress(address);
+        userInfoDto.setUniversity(university);
+        userInfoDto.setDepartment(department);
+        
+        loginService.insertUser(userInfoDto, studentid_img);
+
+        session.invalidate();
+
+        return "login/welcomePage";
+    }
+
+    @RequestMapping("welcomePage")
+    public String welcomePage(){
+        return "login/welcomePage";
+    }
+
+    @RequestMapping("loginPage")
+    public String loginPage(){
+        return "login/loginPage";
+    }
+
+
+
+
+
+
 
     @RequestMapping("aaa")
     public String aaa(HttpSession session){
@@ -60,8 +234,6 @@ public class LoginController {
         @RequestParam(name = "profileImg") MultipartFile profileImg, 
         @RequestParam(name = "studentid_img") MultipartFile studentid_img)
         {
-
-        System.out.println("aa");
         
         String studentidImg = "null";
 

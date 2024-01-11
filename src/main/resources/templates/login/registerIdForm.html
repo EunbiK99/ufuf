@@ -11,42 +11,51 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
     <script>
-        function saveIdToSesson(){
+        // function saveIdToSesson(){
 		
-            const userid = document.getElementById("userid");
-            const password = document.getElementById("password");
-            const passwordCheck = document.getElementById("passwordCheck");
+        //     const userid = document.getElementById("userid");
+        //     const password = document.getElementById("password");
+        //     const passwordCheck = document.getElementById("passwordCheck");
 
-            const data = {
-                userid: userid,
-                password: password
-             };
+        //     const data = {
+        //         userid: userid,
+        //         password: password
+        //      };
 
-            fetch("./saveIdToSession", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(response => {
+        //     fetch("./saveIdToSession", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //     .then(response => response.json())
+        //     .then(response => {
                 
-                console.log(response);
+        //         console.log(response);
 
-                // 입력 필드 초기화
-                document.getElementById("userid").value = "";
-                document.getElementById("password").value = "";
-                document.getElementById("passwordCheck").value = "";
+        //         // 입력 필드 초기화
+        //         document.getElementById("userid").value = "";
+        //         document.getElementById("password").value = "";
+        //         document.getElementById("passwordCheck").value = "";
                 
-            });
+        //     });
 
-            location.href="./registerProfileForm";
+        //     location.href="./registerProfileForm";
         
-        }
+        // }
 
 
     </script>
+
+    <style>
+        .fixed-bottom{
+            z-index: 1;
+            position: relative;
+            bottom: 0;
+            left: 0em;
+        }
+    </style>
 
 </head>
 
@@ -56,11 +65,11 @@
         <div class="row">
             <div class="col">
 
-                <div class="row py-4">
+                <div class="row py-3">
                     <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
                         <i class="bi bi-arrow-left"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.1em">
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
                         회원가입
                     </div>
                     <div class="col-1" style="font-size:1.1em">
@@ -68,34 +77,36 @@
                 </div>
 
                 <!--코드 시작-->
+                <form action="./saveIdToSession" method="post">
                 <div class="row">
                     <div class="col px-3">
 
-                        <div class="row mt-4">
-                            <div class="col fw-semibold mt-2" style="font-size:1.36em">
+                        <div class="row mt-2">
+                            <div class="col fw-semibold mt-2" style="font-size:1.5em;">
                                 사용하실 아이디와<br>비밀번호를 입력해주세요
                             </div>
                         </div>
-                        <div class="row mt-5">
-                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.8em;">
+                        
+                        <div class="row mt-4 pt-3">
+                            <div class="col fw-semibold text-secondary mt-4" style="font-size:0.9em;">
                                 아이디
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col px-2">
                                 <input type="text" name ="userid" id="userid" 
-                                    class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder="아이디를 입력해주세요" style="font-size:0.9em;">
+                                    class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder="아이디를 입력해주세요">
                             </div>
                         </div>
                         <div class="row mt-4">
-                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.8em;">
+                            <div class="col fw-semibold text-secondary mt-2" style="font-size:0.9em;">
                                 비밀번호
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col px-2">
                                 <input type="password" name="password" id="password" 
-                                    class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder="비밀번호를 입력해주세요" style="font-size:0.9em;">
+                                    class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder="비밀번호를 입력해주세요">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -104,12 +115,7 @@
                             </div>
                         </div>
                         <div class="row my-5">
-                            <div class="col my-3">
-                            </div>
-                        </div>
-                        <div class="row mt-5 pt-5">
-                            <div class="col px-2 text-center mt-5 pt-5">
-                                <a class="text-secondary" style="font-size:0.7em;">이미 계정이 있으신가요?</a>
+                            <div class="col my-4">
                             </div>
                         </div>
 
@@ -117,14 +123,20 @@
                 </div>
 
                 <div class="fixed-bottom">
-                    <div class="row text-center pb-4">
-                        <div class="col d-grid mx-2 pb-2">
-                            <div class="btn py-2 fw-semibold text-white rounded-1" style="background-color: #FF8827" onclick="saveIdToSesson()">
+                    <div class="row mt-2">
+                        <div class="col px-2 text-center">
+                            <a class="text-secondary" style="font-size:0.9em;">이미 계정이 있으신가요?</a>
+                        </div>
+                    </div>
+                    <div class="row text-center mb-4 mt-3">
+                        <div class="col d-grid mb-2">
+                            <button  type="submit" class="btn py-2 fw-semibold text-white rounded-1 fs-5" style="background-color: #FF8827">
                                 다음 단계로 이동
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
+                </form>
 
             </div>
         </div>
