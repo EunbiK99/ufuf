@@ -30,7 +30,8 @@ public class LoginController {
     }
 
     @RequestMapping("saveIdToSession")
-    public String saveIdToSession(HttpSession session, @RequestParam(name="userid") String userid,@RequestParam(name="password") String password){
+    public String saveIdToSession(HttpSession session, 
+            @RequestParam(name="userid") String userid, @RequestParam(name="password") String password){
 
         session.setAttribute("userid", userid);
         session.setAttribute("password", password);
@@ -40,7 +41,7 @@ public class LoginController {
         String idd = (String)session.getAttribute("userid");
         System.out.println(idd);
 
-        return "login/registerProfileForm";
+        return "redirect:./registerProfileForm";
     }
 
     @RequestMapping("registerProfileForm")
@@ -66,7 +67,7 @@ public class LoginController {
         session.setAttribute("email", email);
         session.setAttribute("address", address + detailAddress);
 
-        return "login/registerUniForm";
+        return "redirect:./registerUniForm";
     }
     
     @RequestMapping("registerUniForm")
@@ -113,7 +114,7 @@ public class LoginController {
             session.setAttribute("studentid_img", todayPath + fileName);
 		}
 
-        return "login/registerProfileImgForm";
+        return "redirect:./registerProfileImgForm";
     }
 
     @RequestMapping("registerProfileImgForm")
@@ -201,7 +202,7 @@ public class LoginController {
 
         session.invalidate();
 
-        return "login/welcomePage";
+        return "redirect:./welcomePage";
     }
 
     @RequestMapping("welcomePage")
