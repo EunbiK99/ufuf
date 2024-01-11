@@ -8,10 +8,12 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.service.LoginServiceImpl;
 
@@ -30,7 +32,8 @@ public class LoginController {
     }
 
     @RequestMapping("saveIdToSession")
-    public String saveIdToSession(HttpSession session, @RequestParam(name="userid") String userid,@RequestParam(name="password") String password){
+    public String saveIdToSession(HttpSession session, 
+            @RequestParam(name="userid") String userid, @RequestParam(name="password") String password){
 
         session.setAttribute("userid", userid);
         session.setAttribute("password", password);
@@ -40,7 +43,7 @@ public class LoginController {
         String idd = (String)session.getAttribute("userid");
         System.out.println(idd);
 
-        return "login/registerProfileForm";
+        return "redirect:./registerProfileForm";
     }
 
     @RequestMapping("registerProfileForm")
@@ -66,7 +69,7 @@ public class LoginController {
         session.setAttribute("email", email);
         session.setAttribute("address", address + detailAddress);
 
-        return "login/registerUniForm";
+        return "redirect:./registerUniForm";
     }
     
     @RequestMapping("registerUniForm")
@@ -113,7 +116,7 @@ public class LoginController {
             session.setAttribute("studentid_img", todayPath + fileName);
 		}
 
-        return "login/registerProfileImgForm";
+        return "redirect:./registerProfileImgForm";
     }
 
     @RequestMapping("registerProfileImgForm")
@@ -201,7 +204,7 @@ public class LoginController {
 
         session.invalidate();
 
-        return "login/welcomePage";
+        return "redirect:./welcomePage";
     }
 
     @RequestMapping("welcomePage")
@@ -213,6 +216,7 @@ public class LoginController {
     public String loginPage(){
         return "login/loginPage";
     }
+
 
 
 
