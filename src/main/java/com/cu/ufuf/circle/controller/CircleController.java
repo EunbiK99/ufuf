@@ -4,10 +4,14 @@ import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cu.ufuf.circle.service.CircleService;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
+import com.cu.ufuf.dto.UserInfoDto;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,20 +38,79 @@ public class CircleController {
 
         return "circle/circleMainPage";
     }
-    
+    // !!!!!!!!!!!!!이거 일단 사용하지말자
     @RequestMapping("circleApplyPage")
-    public String circleApplyPage(){
-
+    public String circleApplyPage(HttpSession session, Model model){
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        model.addAttribute("userInfoDto", userInfoDto);
         
         return "circle/circleApplyPage";
     }
     // !!!!!!!!!!!!!이거 일단 사용하지말자
     @RequestMapping("circleNoticeApplyPage")
-    public String circleNoticeApplyPage(){
-
+    public String circleNoticeApplyPage(HttpSession session, Model model){
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        model.addAttribute("userInfoDto", userInfoDto);
         return "circle/circleNoticeApplyPage";
     }
+
+    @RequestMapping("circleNoticeImagePage")
+    public String circleNoticeImagePage(HttpSession session, Model model){
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        model.addAttribute("userInfoDto", userInfoDto);
+        
+        return "circle/circleNoticeImagePage";
+    }
     
+    @RequestMapping("circleNoticeApplyProcess")
+    public String circleNoticeApplyProcess(HttpSession session, @RequestParam("circle_notice_image") MultipartFile[] images){
+            // userid 기준으로 max 값 가져와야함 => 다른사람이랑 같이만들고 있으면 충돌날듯?
+            UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+            int circleId = circleService.circleIdMaxByUserId(user_id);
+
+            for(MultipartFile multipartFile : images){
+                // 빈공간 처리
+                if(multipartFile.isEmpty()) {
+        			continue;
+        		}
+                // 이게 원본 파일명
+                String filename = multipartFile.getOriginalFilename();
+                long randomFilename = System.currentTimeMillis();
+                String Path = "C:/uploadFiles/";
+                
+
+                File realtodayPath = new File(Path);
+
+                // 디렉토리 생성
+                if(!realtodayPath.exists()){
+                    realtodayPath.mkdirs();
+                }
+
+                String commafile = filename.substring(filename.lastIndexOf("."));
+                String fileLink = randomFilename + commafile;
+
+                try {
+        			multipartFile.transferTo(new File(Path + fileLink));
+        		}catch(Exception e) {
+        			e.printStackTrace();
+        		}
+                // 반복문 돌리면서 insert
+                CircleNoticeImageDto circleNoticeImageDto = new CircleNoticeImageDto();
+                circleNoticeImageDto.setCircle_notice_image(fileLink);
+                circleNoticeImageDto.setCircle_id(circleId);
+
+                circleService.circleNoticeImageInfoInsert(circleNoticeImageDto);
+
+                
+            }
+
+            return "redirect:./circleMainPage";
+    
+        }
     // @RequestMapping("circleNoticeApplyProcess")
     // public String circleNoticeApplyProcess(CircleNoticeDto circleNoticeDto, @RequestParam("circle_notice_image") MultipartFile[] images){
     //     // 모집공고 등록 insert(무조건 여기다가 해야됨) // 모집이미지 등록여러개 // !!!!!(아직안함)동아리키 받아와야함

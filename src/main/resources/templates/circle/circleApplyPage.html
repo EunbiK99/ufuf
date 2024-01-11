@@ -128,7 +128,11 @@
 		.then(response => response.json())
 		.then(response => {
 			
+            if (response.result === "success") {
+                //const user_id = document.querySelector("#user_id").value;
+                location.href = "./circleNoticeImagePage";
 
+            }
 
 		})
 		;
@@ -138,7 +142,7 @@
 
     window.addEventListener("DOMContentLoaded", () => {
         middleCategoryList();
-
+        
     })
 
     //
@@ -171,7 +175,7 @@
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <input class="form-control" type="text" placeholder="세션값에서 이름가져와서 disable">
+                    <input class="form-control" type="text" placeholder="세션값에서 이름가져와서 disable" th:value="${userInfoDto.name}" th:disabled="true">
                 </div>
             </div>
             <div class="row mt-2">
@@ -181,7 +185,8 @@
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <input class="form-control" type="text" placeholder="세션값에서 학교명찾아와서 disable">
+                    <input class="form-control" type="text" placeholder="세션값에서 학교명찾아와서 disable" th:value="${userInfoDto.university}" th:disabled="true">
+                    <input id="user_id" type="hidden" th:value="${userInfoDto.user_id}">
                 </div>
             </div>
             <div class="row mt-2">
