@@ -5,9 +5,40 @@
 
 <!-- * 미팅프로필 테이블 현재 PK 조회-->
 <select id="countProfilePk" resultType="int">
-    SELECT count(id) from meeting_profile
+    SELECT count(profileid) from meeting_profile
 </select>
 
+<!-- * 개인SNS URL 주소 중복 여부 확인-->
+<select id="countSNSUrlByInputUrlValue" resultType="int">
+    SELECT count(*) from meeting_sns 
+    where snsURL like #{value}
+</select>
+
+<!-- * 미팅프로필 인서트 쿼리-->
+<insert id="insertMeetingProfile">
+    insert into meeting_profile(profileid, user_id, profileNickname, profileImg, profileComment)
+    values(
+        #{profileid},
+        #{user_id},
+        #{profileNickname},
+        #{profileImg},
+        #{profileComment}
+    )
+</insert>
+<!-- * 개인SNS 인서트 쿼리-->
+<insert id="insertNewSNS">
+    insert into meeting_sns(profileid, snsURL) 
+    values(
+        #{profileid},
+        #{snsURL}
+    )
+</insert>
+
+<!-- * 미팅 프로필 존재 여부 확인 쿼리-->
+<select id="countMeetingProfileByUserId" resultType="int">
+    SELECT count(*) from meeting_profile mp 
+    where user_id = #{user_id}
+</select>
 
 
 </mapper>
