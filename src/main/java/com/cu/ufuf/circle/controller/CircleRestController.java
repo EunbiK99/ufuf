@@ -69,24 +69,13 @@ public class CircleRestController {
     @RequestMapping("circleComplete")
     public RestResponseDto circleComplete(@RequestParam("file") MultipartFile file,
     @RequestParam("data") int circle_small_category_id,
-    @RequestParam("data") String circle_name,
-    @RequestParam("data") String circle_content){
-        // circle_name ==> 왜data값이 다튀어나오는가?????????????????????????
-        System.out.println(circle_name);
-
-
-        CircleDto circleDto = new CircleDto();
-        circleDto.setCircle_small_category_id(circle_small_category_id);
-        circleDto.setCircle_name(circle_name);
-        circleDto.setCircle_content(circle_content);
+    @RequestParam("circle_name") String circle_name,
+    @RequestParam("circle_content") String circle_content){
+        
         // UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute(null);
 
         RestResponseDto responseDto = new RestResponseDto();
 
-        // 1. 등급번호 1(아이언) set
-        circleDto.setCircle_grade_id(1); 
-        // 2. 파일등록 multipartFile
-        // 이게 원본 파일명
         String filename = file.getOriginalFilename();
         long randomFilename = System.currentTimeMillis();
         String Path = "C:/uploadFiles/";
@@ -94,7 +83,6 @@ public class CircleRestController {
 
         File realtodayPath = new File(Path);
 
-        // 디렉토리 생성
         if(!realtodayPath.exists()){
             realtodayPath.mkdirs();
         }
@@ -109,7 +97,17 @@ public class CircleRestController {
         }
         
         System.out.println(fileLink);
-        //circleService.circleInfoInsert(circleDto);
+        
+        CircleDto circleDto = new CircleDto();
+        circleDto.setCircle_small_category_id(circle_small_category_id);
+        circleDto.setCircle_name(circle_name);
+        circleDto.setCircle_content(circle_content);
+        // 등급번호 1(아이언) set
+        circleDto.setCircle_grade_id(1);
+        // 사진 set
+        circleDto.setCircle_image(fileLink); 
+        
+        //circleService.circleInfoInsert(circleDto); ==> 세션정보받고 이것만 하면 끝
         
         responseDto.setResult("success");
         

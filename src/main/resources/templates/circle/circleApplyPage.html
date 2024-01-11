@@ -101,12 +101,12 @@
         // 2. circle_name
 
         const circle_name = document.querySelector("#circle_name").value;
-        console.log(circle_name);
+        
 
         // 3. circle_content
 
         const circle_content = document.querySelector("#circle_content").value;
-        console.log(circle_content);
+        
 
         // 4. circle_image 원본파일명 => filename
         // const filename = aa.files[0].name;
@@ -116,8 +116,8 @@
         const formData = new FormData();
         formData.append('file', aa.files[0]);
         formData.append('data',circle_small_category_id);
-        formData.append('data',circle_name);
-        formData.append('data',circle_content);
+        formData.append('circle_name',circle_name);
+        formData.append('circle_content',circle_content);
         
         
         const url = "./circleComplete";
@@ -143,6 +143,22 @@
 
     //
     </script>
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+        }
+    
+        .fixed-bottom {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: #ffffff;
+          padding: 10px;
+          text-align: center;
+        }
+      </style>
 </head>
 <body>
 <div class="container-fluid">
@@ -223,7 +239,7 @@
                     <img id="previewImage" src="" alt="미리 보기" class="img-fluid d-none">
                 </div>
             </div>
-            <div class="row mt-3">
+            <div class="row mt-3 mx-0 fixed-bottom">
                 <div class="col d-grid">
                     <button class="btn btn-primary" onclick="circleComplete()">개설하기</button>
                 </div>
