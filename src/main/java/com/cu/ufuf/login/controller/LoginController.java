@@ -217,6 +217,19 @@ public class LoginController {
         return "login/loginPage";
     }
 
+    @RequestMapping("loginProcess")
+    public String loginProcess(HttpSession session, UserInfoDto params){
+
+        if(loginService.isUserExist(params) != null){
+
+            session.setAttribute("sessionUserInfo", loginService.isUserExist(params));
+            return "redirect:../commons/mainPage";
+            
+        }else{
+            return "redirect:./aaa";
+        }
+    }
+
 
 
 

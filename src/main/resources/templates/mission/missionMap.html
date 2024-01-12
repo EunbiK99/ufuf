@@ -150,9 +150,45 @@
 
     }
 
+    // function loadKakaoPayment(){
+
+    //     const data = {
+    //         cid: "TC0ONETIME",
+    //         // partner_user_id: 
+    //         // partner_order_id:
+    //         // item_code:
+    //         // item_name:
+    //         // quantity:
+    //         // total_amount:
+    //         // tax_free_amount:
+    //         // approval_url:
+    //         // cancel_url:
+    //         // fail_url:
+    //         };
+
+    //     fetch("./saveIdToSession", {
+    //         method: "POST",
+    //         headers: {
+    //             "Authorization": "KakaoAK ${fe6556cbcccecbec99f52226077803d7}",
+    //             "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+    //         },
+    //         body: JSON.stringify(data)
+    //     })
+    //     .then(response => response.json())
+    //     .then(response => {
+            
+    //         console.log(response);
+
+           
+            
+    //     });      
+
+    // }
+
 
 
     window.addEventListener("DOMContentLoaded", () => {
+
 		reloadMap();
 	});
 
@@ -248,11 +284,12 @@
                                 </div>
                                 <div class="row mt-4 mb-3">
                                     <div class="col d-grid">
-                                        <button id="locatePaymentPageBtn" class="btn py-2 btn-dark px-5">
+                                        <button id="locatePaymentPageBtn" class="btn py-2 btn-dark px-5" onclick="loadKakaoPayment()">
                                             미션 등록하기
                                         </button>
                                     </div>
                                 </div>
+                                <div th:innerText="${session.sessionUserInfo.userid}"></div>
                             </div>
                         </div>
 
