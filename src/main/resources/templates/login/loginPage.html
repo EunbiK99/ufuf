@@ -12,49 +12,22 @@
 
     <script>
 
-        function userLogin(){
 
-            const data = {
-                userid: userid,
-                password: password
-             };
+    function KakaoRequestLogin(){
 
-            fetch("./userLogin", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(response => {
-                
-                console.log(response);
+        const url = 'https://kauth.kakao.com/oauth/authorize?client_id=' + '7319aff03174c9825e5552818af66d19' +
+        '&redirect_uri=' + "http://localhost:8888/commons/mainPage" +
+        '&response_type=code&' + 'profile_nickname profile_image'
 
-                // 입력 필드 초기화
-                document.getElementById("userid").value = "";
-                document.getElementById("password").value = "";
-                
-            });
+        const kakaoLoginBtn = document.getElementById("kakaoLoginBtn");
+        kakaoLoginBtn.setAttribute("href", url);
 
-            location.href="../commons/mainPage";
-        }
+    }
 
-        function requestLogin(){
-
-            const url = 'https://kauth.kakao.com/oauth/authorize?client_id=' + '7319aff03174c9825e5552818af66d19' +
-            '&redirect_uri=' + "http://localhost:8888/commons/mainPage" +
-            '&response_type=code&' + 'profile_nickname profile_image'
-
-            const kakaoLoginBtn = document.getElementById("kakaoLoginBtn");
-            kakaoLoginBtn.setAttribute("href", url);
-
-        }
-
-        window.addEventListener("DOMContentLoaded", () => {
-            requestLogin();
-        });
-        
+    window.addEventListener("DOMContentLoaded", () => {
+        KakaoRequestLogin();
+    });
+    
 
 
     </script>
@@ -88,6 +61,7 @@
                             </div>
                             <div class="col"></div>
                         </div>
+                        <form action="./loginProcess" method="post">
                         <div class="row mt-5">
                             <div class="col">
                                 <input type="text" name ="userid" id="userid" 
@@ -108,6 +82,8 @@
                                 </button>
                             </div>
                         </div>
+                        </form>
+                        
                         <div class="row text-center mt-2">
                             <div class="col d-grid">
                                 <a href="./registerIdForm" class="btn py-2 fw-semibold rounded-1" style="border-color: #FF8827; color: #ff7b10; font-size:1.15em;">

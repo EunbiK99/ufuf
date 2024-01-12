@@ -1,7 +1,5 @@
 package com.cu.ufuf.dto;
 
-import java.time.LocalDateTime;
-
 import lombok.Data;
 
 @Data
