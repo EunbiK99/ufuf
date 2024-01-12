@@ -11,6 +11,25 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 
+<script>
+    function readURL(input) {
+
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+            document.getElementById('loadImg').src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            document.getElementById('loadImg').src = "";
+        }
+    }
+
+</script>
+
 <style>
 
 </style>
@@ -47,9 +66,12 @@
                                 프로필 사진
                             </div>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col px-2">
-                                <input class="form-control border-dark-subtle rounded-1" type="file" name="profileImg" id="profileImg" accept="image/*">
+                        <div class="row mt-1 px-2">
+                            <div class="col d-flex justify-content-center py-5">
+                                <label for="profileImg">
+                                    <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/camera_icon.png}" style="height: 8.5em;">
+                                </label>
+                                <input class="form-control border-dark-subtle" type="file" name="profileImg" id="profileImg" accept="image/*" style="display:none;" onchange="readURL(this);">
                             </div>
                         </div>
 
