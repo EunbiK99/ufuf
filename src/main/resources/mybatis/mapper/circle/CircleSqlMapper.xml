@@ -20,10 +20,42 @@
         SELECT * from circle_small_category where circle_middle_category_id = #{circle_middle_category_id}
     </select>
     <insert id="circleNoticeImageInfoInsert">
-        INSERT INTO circle_notice_image(circle_notice_id,circle_notice_image) values(
-            #{circle_notice_id}, #{circle_notice_image}
+        INSERT INTO circle_notice_image(circle_id,circle_notice_image) values(
+	        #{circle_id}, #{circle_notice_image}
         )
     </insert>
+    <select id="circleIdMaxByUserId" resultType="int">
+        SELECT max(circle_id) from circle where user_id = #{user_id}
+    </select>
+    <insert id="cirlceMemberinfoInsert">
+        insert into circle_member(circle_id, user_id, circle_position) values(
+            #{circle_id}, #{user_id}, #{circle_position}
+        )
+    </insert>
+    <select id="circleMemberPrintHotThree" resultType="map">
+        SELECT DISTINCT*
+        FROM circle c
+        WHERE c.circle_id = (
+            SELECT c.circle_id
+            FROM circle c
+            INNER JOIN circle_member cm ON c.circle_id = cm.circle_id
+            GROUP BY c.circle_id
+            ORDER BY COUNT(*) DESC
+            LIMIT 3
+        )
+    </select>
+    <select id="circleNewListOrderByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle order by circle_id desc
+    </select>
+    <select id="circlesmallCategoryListBysmallCategoryId" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
+        select * from circle_small_category where circle_small_category_id = #{circle_small_category_id}
+    </select>
+    <select id="circleGradeInfoByGradeId" resultType="com.cu.ufuf.dto.CircleGradeDto">
+        select * from circle_grade where circle_grade_id = #{circle_grade_id}
+    </select>
+    <select id="circleMemberCountInfo" resultType="int">
+        SELECT count(*) from circle_member where circle_id = #{circle_id}
+    </select>
     
     
 </mapper>

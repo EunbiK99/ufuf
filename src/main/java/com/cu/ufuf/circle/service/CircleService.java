@@ -1,12 +1,18 @@
 package com.cu.ufuf.circle.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.checkerframework.checker.units.qual.degrees;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
 import com.cu.ufuf.dto.CircleDto;
+import com.cu.ufuf.dto.CircleGradeDto;
+import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
@@ -38,6 +44,49 @@ public class CircleService {
     
     public void circleNoticeImageInfoInsert(CircleNoticeImageDto circleNoticeImageDto){
         circleSqlMapper.circleNoticeImageInfoInsert(circleNoticeImageDto);
+    }
+
+    public int circleIdMaxByUserId(int user_id){
+        return circleSqlMapper.circleIdMaxByUserId(user_id);
+    }
+    // 양식은 똑같음 값만 세팅잘하면됨
+    public void cirlceMemberinfoInsert(CircleMemberDto circleMemberDto){
+        circleSqlMapper.cirlceMemberinfoInsert(circleMemberDto);
+    }
+
+    public List<Map<String, Object>> circleMemberPrintHotThree(){
+        
+        return circleSqlMapper.circleMemberPrintHotThree();
+    }
+    public List<Map<String, Object>> circleNewListOrderByCircleId(){
+        
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleDto> circleDtos = circleSqlMapper.circleNewListOrderByCircleId();
+
+        for(CircleDto e : circleDtos){
+
+            Map<String, Object> map = new HashMap<>();
+            int circle_small_category_id = e.getCircle_small_category_id();
+            CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_grade_id = e.getCircle_grade_id();
+            CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
+            int circle_id = e.getCircle_id();
+            int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+
+            map.put("circleMemberCnt", circleMemberCnt);
+            map.put("circleGradeDto", circleGradeDto);
+            map.put("circleSmallCategoryDto", circleSmallCategoryDto);
+            map.put("circleDto", e);
+
+            list.add(map);
+            
+        }
+        
+        
+
+
+        return list;
     }
     
 }

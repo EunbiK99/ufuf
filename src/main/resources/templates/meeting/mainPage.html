@@ -26,6 +26,11 @@
     }
     </style>
 </head>
+<script th:inline="javascript">
+
+
+
+</script>
 
 <body>
     <div class="container-fluid">
@@ -153,7 +158,7 @@
                     </div>
                 </div>
 
-                <div id="main04" class="row">
+                <div id="main04" class="row" th:if="${meetingProfileCheck == 'guest' or meetingProfileCheck == 0}">
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -214,7 +219,7 @@
 
                             <div class="col">
                                 <div class="row justify-content-center">
-                                    <div class="col-8 fw-bold text-white text-center border border-2 rounded-5 custom-border-color" style="background-color: #FF8827;">
+                                    <div class="col-8 fw-bold text-white text-center border border-2 rounded-5 custom-border-color" style="background-color: #FF8827;" onclick="window.location.href='./createMeetingGroupPage'">
                                         <div class="row">
                                             <div class="col">
                                                 <span class="">

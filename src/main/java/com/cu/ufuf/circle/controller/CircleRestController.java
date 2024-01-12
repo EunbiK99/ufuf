@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.circle.service.CircleService;
 import com.cu.ufuf.dto.CircleDto;
+import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.RestResponseDto;
@@ -101,7 +102,7 @@ public class CircleRestController {
         }catch(Exception e) {
             e.printStackTrace();
         }
-        
+        // 이건 동아리 세팅
         CircleDto circleDto = new CircleDto();
         circleDto.setCircle_small_category_id(circle_small_category_id);
         circleDto.setCircle_name(circle_name);
@@ -112,7 +113,17 @@ public class CircleRestController {
         circleDto.setCircle_university(circle_university);
 
         circleService.circleInfoInsert(circleDto);
-        // 이거끝나고 상세이미지 등록하는거 해주어야함
+        // 여기까지
+
+        // 동아리를 만들었을 시점에 동아리 회원정보에 지금 세션정보의 값을 넣어주는데 직책은 => 동아리장 P 으로 insert
+        int circleId = circleService.circleIdMaxByUserId(user_id);
+        String circlePosition = "P";
+        CircleMemberDto circleMemberDto = new CircleMemberDto();
+        circleMemberDto.setCircle_id(circleId);
+        circleMemberDto.setUser_id(user_id);
+        circleMemberDto.setCircle_position(circlePosition);
+        circleService.cirlceMemberinfoInsert(circleMemberDto);
+        // 여기까지
         
         responseDto.setResult("success");
         
@@ -136,9 +147,29 @@ public class CircleRestController {
         
         return responseDto;
     }
-    
-    
 
+    // circleNewListOrderByCircleId
+    @RequestMapping("circleNewList")
+    public RestResponseDto circleNewList(){
 
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.circleNewListOrderByCircleId());
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
+    // 양식
+    // @RequestMapping("asdfasdfasdf")
+    // public RestResponseDto asdfasdfasdfasdf(){
+
+    //     RestResponseDto responseDto = new RestResponseDto();
+
+    //     responseDto.setData(null);
+    //     responseDto.setResult("success");
+        
+    //     return responseDto;
+    // }
 
 }

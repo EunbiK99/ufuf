@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import com.cu.ufuf.dto.RoomGuestDto;
 import com.cu.ufuf.dto.RoomImageDto;
 import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionDto;
@@ -30,6 +31,7 @@ public class RoomController {
     private RoomServiceIpml roomService;
 
 
+	//게스트하우스 메인페이지
 	@RequestMapping("roomMainPage")
     public String roomMainPage(){
 		
@@ -38,6 +40,7 @@ public class RoomController {
         return "room/roomMainPage";
     }
 
+	//방 등록페이지
     @RequestMapping("roomRegisterPage")
     public String roomRegisterPage(Model model){
 
@@ -46,6 +49,7 @@ public class RoomController {
         return "room/roomRegisterPage";
     }
 
+	//방 등록 값 넘기기
     @RequestMapping("roomRegisterProcess")
     public String roomRegisterProcess(HttpSession session, RoomInfoDto roomInfoDto, @RequestParam(name = "mainImageFile") MultipartFile mainImageFile, @RequestParam(name = "imageFiles") MultipartFile[] imageFiles, @RequestParam(name = "room_option_category_id") int[] room_option_category_id,String checkin1,String checkin2,String checkout1,String checkout2 ){
 		
@@ -137,13 +141,62 @@ public class RoomController {
 		roomService.roomRegister(roomInfoDto, room_option_category_id, roomImageDtoList);
         
         
-        return "redirect:./roomRegisterPage";
+        return "redirect:./roomRegisterCompletePage";
     }
 
+	//방 등록 완료페이지
     @RequestMapping("roomRegisterCompletePage")
     public String roomRegisterCompletePage(){
         
         return "room/roomRegisterCompletePage";
     }
+
+	//게스트 예약페이지
+	@RequestMapping("roomReservationPage")
+	public String roomReservationPage(){
+
+		return "room/roomReservationPage";
+	}
+
+	//예약 값 넘기는거
+	@RequestMapping("roomReservationProcess")
+	public String roomReservationProcess(@RequestParam(name = "guest_count", required = false, defaultValue = "1") int guestCount, HttpSession session, RoomGuestDto roomGuestDto) {
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int userPk = sessionUserInfo.getUser_id();
+		
+		roomGuestDto.setUser_id(userPk);
+		roomGuestDto.setGuest_count(guestCount);
+		
+		roomService.roomReservation(roomGuestDto);
+
+		return "redirect:./roomReservationPage";
+	}
+
+	//예약완료페이지(해야댐)
+	@RequestMapping("roomReservationCompletePage")
+    public String roomReservationCompletePage(){
+        //여기다 예약정보 받아와서 예약 이렇게 됐다 확인할 수 있게
+        return "room/roomReservationCompletePage";
+    }
+	
+	
+	//숙소 리스트 페이지(기본)
+	@RequestMapping("roomListPage")
+	public String roomListPage(Model model){
+
+		
+		model.addAttribute("roomList", roomService.getRoomInfoList());
+		return "room/roomListPage";
+	}
+
+	//숙소 상세 페이지
+	@RequestMapping("roomDetailPage")
+	public String roomDetailPage(Model model,@RequestParam int room_info_id){
+		
+		model.addAttribute("roomDetail", roomService.getRoomInfo(room_info_id));
+		return "room/roomDetailPage";
+	}
+
 
 }
