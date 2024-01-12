@@ -3,9 +3,28 @@
 
 <mapper namespace="com.cu.ufuf.merchan.mapper.MerchanSqlMapper">
 
+<insert id="insertItemCategory">
+    insert into item_category(category_name)
+    values(#{category_name});
+</insert>
+
+<select id="createItemPk" resultType="int">
+    select ifnull(MAX(item_id)+1, 1) item_id from item_info;
+</select>
+
+<insert id="insertItemInfo">
+    insert into item_info(item_id, item_category_id, merchan_id)
+    values(#{item_id}, #{item_category_id}, #{merchan_id});
+</insert>
+
 <insert id="insertOrderInfo">
-    insert into order_info(order_id, item_id, status)
-    values(#{order_id}, 'MI1', #{status});
+    insert into order_info(order_id, item_id, user_id, status)
+    values(
+        #{order_id},
+        #{item_id},
+        #{user_id},
+        #{status}
+    );
 </insert>
 
 

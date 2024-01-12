@@ -8,8 +8,28 @@
 </select>
 
 <insert id="insertMission">
-    insert into mission_info(mission_id, user_location_id, order_id, title, detail, reward)
-    values(#{mission_id}, #{user_location_id}, #{order_id}, #{title}, #{detail}, #{reward});
+    insert into mission_info(mission_id, user_id, title, detail, reward, registerd_location)
+    values(#{mission_id}, 
+        #{user_id}, 
+        #{title}, 
+        #{detail}, 
+        #{reward}, 
+        #{registerd_location}
+    );
 </insert>
+
+<select id="getOrderInfo" resultType="com.cu.ufuf.dto.OrderInfoDto">
+    select oi.* from order_info oi
+    where oi.item_id = (
+        select ii.item_id from item_info ii
+        where ii.item_category_id = 1
+        and ii.merchan_id = #{merchan_id}
+    );
+</select>
+
+<select id="getItemInfo" resultType="com.cu.ufuf.dto.ItemInfoDto">
+    select * from item_info
+    where item_id = #{item_id};
+</select>
 
 </mapper>

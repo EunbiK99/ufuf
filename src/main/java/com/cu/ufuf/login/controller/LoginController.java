@@ -38,11 +38,6 @@ public class LoginController {
         session.setAttribute("userid", userid);
         session.setAttribute("password", password);
 
-        System.out.println(userid);
-        Object id = session.getAttribute("userid");
-        String idd = (String)session.getAttribute("userid");
-        System.out.println(idd);
-
         return "redirect:./registerProfileForm";
     }
 
@@ -60,7 +55,6 @@ public class LoginController {
             @RequestParam(name="address") String address, @RequestParam(name="detailAddress") String detailAddress){
 
         String birth = birthYear +"-"+ birthMonth +"-"+ birthDate;
-        System.out.println(birth);
 
         session.setAttribute("name", name);
         session.setAttribute("gender", gender);

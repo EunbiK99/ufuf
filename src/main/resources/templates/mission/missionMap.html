@@ -13,6 +13,8 @@
 
 <script>
 
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
     function reloadMap(){
 
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
@@ -33,6 +35,10 @@
                     lon = position.coords.longitude; // 경도
                 
                 var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+                // 접속 좌표 hidden 값으로 넘김(미션등록 위해서)
+                const nowCoords = document.getElementById("nowCoords");
+                nowCoords.setAttribute("value", lat + "," + lon);
                 
                 // 접속위치 출력
                 getNowLocation(lat, lon);
@@ -102,10 +108,18 @@
 
     }
 
+    function locationHandler(){
+        var location = returnLocaton();
+        console.log(location);
+    }
+
     function showMissionRegForm(){
 
         const map = document.getElementById("map");
         map.style.height = "25em";
+
+        const registerMissionBox = document.getElementById("registerMissionBox");
+        registerMissionBox.classList.remove("d-none");
 
         const findMissionBtn = document.getElementById("findMissionBtn");
         const registerMissionBtn = document.getElementById("registerMissionBtn");
@@ -115,20 +129,22 @@
 
     }
 
-    function registerMission(location){
+    function registerMissionProcess(){
 		
-        const title = document.getElementById("title");
-        const content = document.getElementById("content");
-        const reward = document.getElementById("passwordCheck");
+        const title = document.getElementById("title").value;
+        const detail = document.getElementById("detail").value;
+        const reward = document.getElementById("reward").value;
+        const registerd_location = document.getElementById("nowCoords").value;
 
         const data = {
+            user_id: sessionUser,
             title: title,
-            content: content,
+            detail: detail,
             reward: reward,
-            registerd_location: location
-            };
+            registerd_location: registerd_location
+        };
 
-        fetch("./registerMission", {
+        fetch("./registerMissionProcess", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -140,55 +156,77 @@
             
             console.log(response);
 
+            getItemAndOrderInfo(response.mission_id);
+
             // 입력 필드 초기화
-            document.getElementById("userid").value = "";
-            document.getElementById("password").value = "";
-            document.getElementById("passwordCheck").value = "";
+            document.getElementById("title").value = "";
+            document.getElementById("detail").value = "";
+            document.getElementById("reward").value = "";
             
         });
 
-
     }
 
-    // function loadKakaoPayment(){
+    function getItemAndOrderInfo(mission_id){
 
-    //     const data = {
-    //         cid: "TC0ONETIME",
-    //         // partner_user_id: 
-    //         // partner_order_id:
-    //         // item_code:
-    //         // item_name:
-    //         // quantity:
-    //         // total_amount:
-    //         // tax_free_amount:
-    //         // approval_url:
-    //         // cancel_url:
-    //         // fail_url:
-    //         };
+        const data = {
+            mission_id: mission_id
+        };
 
-    //     fetch("./saveIdToSession", {
-    //         method: "POST",
-    //         headers: {
-    //             "Authorization": "KakaoAK ${fe6556cbcccecbec99f52226077803d7}",
-    //             "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
-    //         },
-    //         body: JSON.stringify(data)
-    //     })
-    //     .then(response => response.json())
-    //     .then(response => {
+        fetch("./getItemAndOrderInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(response => {
             
-    //         console.log(response);
-
-           
+            console.log(response);
             
-    //     });      
+        });
+    }
 
-    // }
+    function loadKakaoPayment(info){
+
+        const item_name = document.getElementById("title").value;
+        const total_amount = document.getElementById("reward").value;
+
+        const data = {
+            cid: "TC0ONETIME",
+            partner_user_id: sessionUser,
+            partner_order_id: info.OrderInfoDto.order_id,
+            item_code: info.itemInfoDto.item_id,
+            item_name: item_name,
+            quantity: 1,
+            total_amount: total_amount,
+            tax_free_amount: total_amount,
+            approval_url: "http://localhost:8888/commons/paymentSuccessPage",
+            cancel_url: "http://localhost:8888/commons/paymentCancelPage",
+            fail_url:"http://localhost:8888/commons/paymentFailPage"
+            };
+
+        fetch("https://kapi.kakao.com/v1/payment/ready", {
+            method: "POST",
+            headers: {
+                "Authorization": "KakaoAK ${fe6556cbcccecbec99f52226077803d7}",
+                "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(response => {
+            
+            console.log(response);
+
+        });      
+
+    }
 
 
 
     window.addEventListener("DOMContentLoaded", () => {
-
 		reloadMap();
 	});
 
@@ -223,6 +261,7 @@
                         <div class="row pt-2 border-top">
                             <div class="col">
                                 <span><i class="bi bi-geo-alt align-self-center"></i></span>
+                                <input type="hidden" id="nowCoords"></span>
                                 <span id="nowLocation" class="text-secondary align-self-center" style="font-size: 0.95em;"></span>
                             </div>
                         </div>
@@ -246,7 +285,7 @@
                             </div>
                         </div>
                         
-                        <div id="registerMissionBox" class="row border-top">
+                        <div id="registerMissionBox" class="row border-top d-none">
                             <div class="col mt-2">
                                 <div class="row">
                                     <div class="col">
@@ -263,7 +302,7 @@
                                 <div class="row mt-2">
                                     <div class="col">
                                         <div class="form-floating">
-                                            <textarea class="form-control rounded-0 py-2" id="content" style="height: 6em;"></textarea>
+                                            <textarea class="form-control rounded-0 py-2" id="detail" style="height: 6em;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -284,13 +323,16 @@
                                 </div>
                                 <div class="row mt-4 mb-3">
                                     <div class="col d-grid">
-                                        <button id="locatePaymentPageBtn" class="btn py-2 btn-dark px-5" onclick="loadKakaoPayment()">
+                                        <button id="locatePaymentPageBtn" class="btn py-2 btn-dark px-5" onclick="registerMissionProcess()">
                                             미션 등록하기
                                         </button>
                                     </div>
                                 </div>
-                                <div th:innerText="${session.sessionUserInfo.userid}"></div>
                             </div>
+                        </div>
+
+                        <div id="showMissionList" class="row border-top">
+                            
                         </div>
 
                     </div>

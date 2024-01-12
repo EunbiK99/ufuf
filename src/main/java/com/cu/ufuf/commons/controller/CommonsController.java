@@ -12,4 +12,5 @@ public class CommonsController {
         return "./commons/mainPage";
     }
 
+
 }
