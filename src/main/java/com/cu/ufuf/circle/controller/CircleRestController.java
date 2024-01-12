@@ -147,9 +147,29 @@ public class CircleRestController {
         
         return responseDto;
     }
-    
-    
 
+    // circleNewListOrderByCircleId
+    @RequestMapping("circleNewList")
+    public RestResponseDto circleNewList(){
 
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.circleNewListOrderByCircleId());
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
+    // 양식
+    // @RequestMapping("asdfasdfasdf")
+    // public RestResponseDto asdfasdfasdfasdf(){
+
+    //     RestResponseDto responseDto = new RestResponseDto();
+
+    //     responseDto.setData(null);
+    //     responseDto.setResult("success");
+        
+    //     return responseDto;
+    // }
 
 }

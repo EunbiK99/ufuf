@@ -44,6 +44,18 @@
             LIMIT 3
         )
     </select>
+    <select id="circleNewListOrderByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle order by circle_id desc
+    </select>
+    <select id="circlesmallCategoryListBysmallCategoryId" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
+        select * from circle_small_category where circle_small_category_id = #{circle_small_category_id}
+    </select>
+    <select id="circleGradeInfoByGradeId" resultType="com.cu.ufuf.dto.CircleGradeDto">
+        select * from circle_grade where circle_grade_id = #{circle_grade_id}
+    </select>
+    <select id="circleMemberCountInfo" resultType="int">
+        SELECT count(*) from circle_member where circle_id = #{circle_id}
+    </select>
     
     
 </mapper>
