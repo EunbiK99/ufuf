@@ -1,6 +1,7 @@
 package com.cu.ufuf.circle.controller;
 
 import java.io.File;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -169,6 +170,20 @@ public class CircleController {
     public String circleListPage(){
         
         return "circle/circleListPage";
+    }
+
+    @RequestMapping("circleListArticlePage")
+    public String circleListArticlePage(@RequestParam("circle_id") int circle_id, Model model){
+        // 여기서 가입신청->->
+        // 상세동아리정보 => 서클정보전부 담아와야함
+        
+
+        // 이미지 리스트 가져오깅
+        List<CircleNoticeImageDto> circleNoticeImageDtos = circleService.circleNoticeImageInfoByCircleId(circle_id);
+
+        model.addAttribute("circleNoticeImageDtos", circleNoticeImageDtos);
+
+        return "circle/circleListArticlePage";
     }
 
     

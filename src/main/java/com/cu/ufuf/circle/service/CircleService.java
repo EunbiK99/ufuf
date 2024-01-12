@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.checkerframework.checker.units.qual.degrees;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +86,37 @@ public class CircleService {
 
 
         return list;
+    }
+    // 이거 자바스크립트로 받을까????
+    public Map<String, Object> circleInfoVarious(int circle_id){
+
+        Map<String, Object> map = new HashMap<>();
+        
+        CircleDto circleDto = circleSqlMapper.circleInfoByCircleId(circle_id);
+        int circle_grade_id = circleDto.getCircle_grade_id();
+        int circle_small_category_id = circleDto.getCircle_small_category_id();
+
+        CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+        CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
+
+        int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+        CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoBySmallCategoryId(circle_middle_category_id);
+        
+        // 4개정보 받아서 보내면됨
+        map.put("circleDto", circleDto);
+        map.put("circleSmallCategoryDto", circleSmallCategoryDto);
+        map.put("circleGradeDto", circleGradeDto);
+        map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
+
+        
+
+        return map;
+    }
+
+    public List<CircleNoticeImageDto> circleNoticeImageInfoByCircleId(int circle_id){
+
+
+        return circleSqlMapper.circleNoticeImageInfoByCircleId(circle_id);
     }
     
 }

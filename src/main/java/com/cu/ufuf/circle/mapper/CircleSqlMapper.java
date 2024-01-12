@@ -36,13 +36,18 @@ public interface CircleSqlMapper {
     public List<Map<String, Object>> circleMemberPrintHotThree();
     public List<CircleDto> circleNewListOrderByCircleId();
 
-    // 동아리 소분류카테고리번호로 카테고리 이름 가져올거..
+    // 동아리 소분류카테고리번호로 카테고리 이름 가져올거.. & 중분류 카테고리 소분류카테고리번호로가져옴
     public CircleSmallCategoryDto circlesmallCategoryListBysmallCategoryId(int circle_small_category_id);
+    public CircleMiddleCategoryDto circlemiddleCategoryInfoBySmallCategoryId(int circle_small_category_id);
 
     // 동아리 등급번호로 동아리 등급정보 가져오기 & 동아리 회원수 몇명인지 count
     public CircleGradeDto circleGradeInfoByGradeId(int circle_grade_id);
     public int circleMemberCountInfo(int circle_id);
 
-    //
+    // 동아리id로 단일동아리정보 가져오기
+    public CircleDto circleInfoByCircleId(int circle_id);
+
+    // 동아리 상세이미지(여러개) 가져오는..
+    public List<CircleNoticeImageDto> circleNoticeImageInfoByCircleId(int circle_id);
     
 }

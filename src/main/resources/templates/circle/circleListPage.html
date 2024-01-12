@@ -41,8 +41,16 @@
                     circlepeople.innerHTML = "";
                     circlepeople.innerText = e.circleGradeDto.circle_people;
 
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
                     const listInsert = document.querySelector("#listInsert");
-                    listInsert.appendChild(Wrapper);
+                    listInsert.appendChild(a);
                     
 
                 }
