@@ -7,11 +7,17 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    /* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">    
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=414094d89a80d31e7af956f1c114f3da&libraries=services"></script>
 
     <style>
     *{
@@ -22,6 +28,108 @@
     }
     </style>
 </head>
+
+<script>
+
+function checkMyLocation(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const x = position.coords.latitude; // 위도
+            const y = position.coords.longitude; // 경도
+            console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
+
+            let kakaoMap = document.getElementById('kakaoMap'),
+                mapOption={
+                    center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                    level: 2 // 지도의 확대 레벨
+                };
+            
+            let map = new kakao.maps.Map(kakaoMap, mapOption);
+
+            const mapControl = new kakao.maps.MapTypeControl();
+            const zoomControl = new kakao.maps.ZoomControl();
+
+            map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
+            map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+            // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
+		    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+			console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+            console.log(mouseEvent.latLng);
+            const newX = mouseEvent.latLng.Ma;
+            console.log('newX: ', newX);
+            const newy = mouseEvent.latLng.La;
+            console.log('newy: ', newy);
+
+            
+
+            const url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=" + x + "&y=" + y;
+            
+            fetch(url, {
+                method : 'get',
+                headers : 'Authorization: KakaoAK eac3376c76b2eed9843c4d3fbcc91890'
+            })
+            .then(response => response.json())
+            .then(response =>{
+                console.log(document);
+            });
+		});	
+
+        });
+    }
+    else {
+        console.error("Geolocation을 지원하지 않는 브라우저입니다.");
+    }
+}
+
+function addCommas(numberValue){
+    let applyChargeWithComma = numberValue.toString().split(".");
+    return applyChargeWithComma[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (applyChargeWithComma[1] ? "." + applyChargeWithComma[1] : "");    
+}
+
+function checkInputNumber(target){
+    const meetingApplyCharge = document.getElementById('meetingApplyCharge');
+    let tempValue = meetingApplyCharge.value.replace(/[^0-9,]/g,'');
+    tempValue = tempValue.replace(/[,]/g,'');
+    target.value = addCommas(tempValue);    
+}
+
+
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    flatpickr('#datepicker', {
+        mode : 'range',
+        dateFormat : 'Y-m-d',        
+        minDate : 'today',
+        maxDate : new Date().fp_incr(7),
+        locale : 'ko'
+    });
+});
+
+// flatpickr(datepicker,{
+//     dateFormat: 'Y-m-d H:i', // 날짜 및 시간 형식 설정 (예: 2023-09-12 15:30)
+// 		enableTime: true,        // 시간 선택 활성화
+// 		time_24hr: true,         // 24시간 형식 사용
+// 		minDate: 'today',        // 오늘 이전 날짜 선택 비활성화
+// 		maxDate: 'today' + 7,   // 특정 날짜까지 선택 가능
+// 		defaultDate: 'today',    // 초기 날짜 설정 (현재 날짜와 시간)
+// 		disable: '', // 특정 날짜 비활성화
+// 		locale: 'ko',            // 한국어로 지역화
+// 		onOpen: function(selectedDates, dateStr, instance) {
+// 			// 위젯이 열릴 때 실행할 코드
+// 		},
+// 		onClose: function(selectedDates, dateStr, instance) {
+// 			// 위젯이 닫힐 때 실행할 코드
+// 		},
+// 		onChange: function(selectedDates, dateStr, instance) {
+// 			// 날짜가 변경될 때 실행할 코드
+// 		},
+// 		disableMobile: false,      // 모바일 기기에서 위젯 비활성화
+// 		altInput: true,           // 추가 입력란 활성화
+// 		altFormat: 'F j, Y H:i', // 추가 입력란의 날짜 및 시간 형식
+// });
+</script>
+
 
 <body>
     <div class="container-fluid">
@@ -47,8 +155,140 @@
             </div>
         </div>
         
-        <div class="row">
+        <div class="row mt-3">
             <div class="col">
+                <div id="main01" class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col mx-1 my-1 border border-0 rounded">
+                                
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-1">새 미팅 그룹 생성</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>미팅 그룹 타이틀</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="text" class="form-control" placeholder="그룹에 대한 간단한 설명을 입력해주세요">
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>본인 포함 총 몇명이서 모이길 원하시나요?</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">                                                
+                                                <input type="number" class="form-control" step="1"  min="0" max="10">
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>모집하는 인원의 성별을 선택해주세요</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="radio" value="M" class="btn-check" name="genderOption" id="genderMale" autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="genderMale">남자만</label>
+                                                <input type="radio" value="F" class="btn-check" name="genderOption" id="genderFemale" autocomplete="off">
+                                                <label class="btn btn-outline-danger" for="genderFemale">여자만</label>
+                                                <input type="radio" value="A" class="btn-check" name="genderOption" id="genderAll" autocomplete="off" checked>
+                                                <label class="btn btn-outline-success" for="genderAll">남녀모두</label>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>모이려는 날짜는 언제인가요?</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input id="" type="datetime-local" class="form-control">
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>지금부터 몇일동안 모집하실 건가요?</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input id="datepicker" type="text" class="form-control">
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>미팅 그룹에 참여하기위한 참가비가 있나요?</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <input id="meetingApplyCharge" type="text" class="form-control border border-0" maxlength="6" placeholder="1,000원 단위로 입력해주세요" onkeyup="checkInputNumber(this)">
+                                            </div>
+                                            <div class="col px-0">
+                                                <span class="align-middle"> 원</span>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>미팅 장소는 어디인가요?</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <button onclick="checkMyLocation()">일단버튼</button>
+                                            </div>
+                                        </div> 
+                                        <div class="row">
+                                            <div class="col">
+                                                <div id="kakaoMap" style="width: 100%; height: 350px; position: inherit;"></div>
+                                            </div>
+                                        </div>                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -60,9 +300,7 @@
         </div>
     </div>
 
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>       
 </body>
 
 </html>
