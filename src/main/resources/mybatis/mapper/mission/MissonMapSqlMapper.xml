@@ -3,4 +3,13 @@
 
 <mapper namespace="com.cu.ufuf.mission.mapper.MissionMapSqlMapper">
 
+<select id="createMissionPk" resultType="int">
+    select ifnull(MAX(mission_id)+1, 1) mission_id from mission_info;
+</select>
+
+<insert id="insertMission">
+    insert into mission_info(mission_id, user_location_id, order_id, title, detail, reward)
+    values(#{mission_id}, #{user_location_id}, #{order_id}, #{title}, #{detail}, #{reward});
+</insert>
+
 </mapper>

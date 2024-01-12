@@ -13,6 +13,7 @@ public class CircleDto {
     private int circle_grade_id;
     private int user_id;
     private String circle_name;
+    private String circle_university;
     private String circle_content;
     private String circle_image;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

@@ -58,43 +58,43 @@
         <div class="row">
             <div class="col">
                 
-                <div class="row mt-5">
-                    <div class="col text-center">
-                        <span class="fw-bold fs-1">접속유저 : </span>
+                <div class="row mt-5 justify-content-center">
+                    <div class="col-auto text-center">
+                        <span class="fw-bold fs-1">[ 접속유저 : </span>
                     </div>
-                    <div class="col text-center">                        
-                        <span th:if="${session.sessionUserInfo != null}" th:text="${session.sessionUserInfo.name}" class="fw-bold fs-1"></span>
-                        <span th:unless="${session.sessionUserInfo != null}" class="fw-bold fs-1">로그인안됨</span>
+                    <div class="col-auto text-center">                        
+                        <span th:if="${session.sessionUserInfo != null}" th:text="|${session.sessionUserInfo.name} ]|" class="fw-bold fs-1"></span>
+                        <span th:unless="${session.sessionUserInfo != null}" class="fw-bold fs-1">로그인안됨 ]</span>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col text-center" role="button" onclick="window.location.href='../login/testloginPage'">
+                    <div class="col text-center btn btn-white" role="button" onclick="window.location.href='../login/testloginPage'">
                         <span class="fw-bold fs-1">로그인</span>
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center" role="button" onclick="window.location.href='../login/testUserRegister'">
+                    <div class="col text-center btn btn-white" role="button" onclick="window.location.href='../login/testUserRegister'">
                         <span class="fw-bold fs-1">회원가입</span>
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center" onclick="window.location.href='../meeting/mainPage'">
+                    <div class="col text-center btn btn-white" role="button" onclick="window.location.href='../meeting/mainPage'">
                         <span class="fw-bold fs-1">유니시그널 메인</span>
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center" onclick="window.location.href='../circle/circleMainPage'">
+                    <div class="col text-center btn btn-white" role="button" onclick="window.location.href='../circle/circleMainPage'">
                         <span class="fw-bold fs-1">부제의 부재 써클 메인</span>
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center" onclick="window.location.href='../room/roomMainPage'">
+                    <div class="col text-center btn btn-white" role="button" onclick="window.location.href='../room/roomMainPage'">
                         <span class="fw-bold fs-1">유니B&B 메인</span>
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col text-center">
+                    <div class="col text-center btn btn-white" role="button" >
                         <span class="fw-bold fs-1">미션임파서블 메인</span>
                     </div>
                 </div>
