@@ -56,6 +56,16 @@
     <select id="circleMemberCountInfo" resultType="int">
         SELECT count(*) from circle_member where circle_id = #{circle_id}
     </select>
+    <select id="circleInfoByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
+        select * from circle where circle_id = #{circle_id}
+    </select>
+    <select id="circleNoticeImageInfoByCircleId" resultType="com.cu.ufuf.dto.CircleNoticeImageDto">
+        select * from circle_notice_image where circle_id = #{circle_id}
+    </select>
+    <select id="circlemiddleCategoryInfoBySmallCategoryId" resultType="com.cu.ufuf.dto.CircleMiddleCategoryDto">
+        select * from circle_middle_category where circle_small_category_id = #{circle_small_category_id}
+    </select>
+    
     
     
 </mapper>
