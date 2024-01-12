@@ -3,11 +3,12 @@
 
 <mapper namespace="com.cu.ufuf.room.mapper.RoomSqlMapper">
 
+    <!-- 여기서부터 방 등록 -->
     <select id="creatRoomInfoPk" resultType="int">
         select max(room_info_id)+1 from room_info
     </select>
     <insert id="roomInsert">
-       insert into room_info(user_id, main_image, title, room_count, bed_count, toilet_count, content, location, 
+       insert into room_info(user_id, main_image, title, room_count, bed_count, toilet_count, room_area, content, location, 
             checkin_time,
             checkout_time,
             people_count_standard,
@@ -23,6 +24,7 @@
             #{room_count},
             #{bed_count},
             #{toilet_count},
+            #{room_area},
             #{content},
             #{location}, 
             #{checkin_time},
@@ -51,10 +53,62 @@
         )
     </insert>
 
+    <!--옵션 나열-->
     <select id="selectRoomOptionCategoryAll" resultType="com.cu.ufuf.dto.RoomOptionCategoryDto">
 		select * from room_option_category
         order by room_option_category_id asc	
 	</select>
 
+    <!--여기서부터 신청-->
+    <insert id="insertRoomGuestInfo">
+        insert into room_guest(
+            user_id,
+            room_info_id,
+            start_reservation_schedule,
+            end_reservation_schedule,
+            guest_count
+        ) values(
+            2,
+            1,
+            '2024-01-18',
+            '2024-01-20',
+            2
+        )
+    </insert>
+
+    <!--글 나오게-->
+    <!-- 게시글 목록 보는거 -->
+	<select id="roomSelectAll" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT * FROM room_info ORDER BY room_info_id DESC
+	</select>
+
+	<select id="selectByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
+		SELECT * from user_info  WHERE user_id=#{user_id}
+	</select>
+
+	<!-- 상세글 보기 -->
+	<select id="roomSelectById" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT * FROM room_info WHERE room_info_id=#{room_info_id}
+	</select>
+
+    <!--방 추가사진-->
+    <select id="roomImageSelectById" resultType="com.cu.ufuf.dto.RoomImageDto">
+		SELECT * FROM room_image WHERE room_info_id=#{room_info_id}
+	</select>
+
+    <!--옵션 선택한거-->
+    <select id="roomOptionSelectById" resultType="com.cu.ufuf.dto.RoomOptionDto">
+        select * from room_option WHERE room_info_id=#{room_info_id}
+	</select>
+    
+    <!-- 룸 옵션 카테고리 하나씩 뽑아오는거 -->
+	<select id="roomOptionCategorySelectById" resultType="com.cu.ufuf.dto.RoomOptionCategoryDto">
+        select * from room_option_category WHERE room_option_category_id=#{room_option_category_id}
+	</select>
+	
+    <!--사진갯수-->
+     <select id="roomImageCount" resultType="int">
+        SELECT COUNT(*)+1 as image_count FROM room_image WHERE room_info_id=#{room_info_id};
+    </select>
 
 </mapper>
