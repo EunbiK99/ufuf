@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        
+        function circledNewList(){
+            // 처음에 초기화
+            document.querySelector("#listInsert").innerHTML = "";
+            const url = "./circleNewList";
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(Wrapper);
+                    
+
+                }
+
+            })
+
+
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            circledNewList();
+        })
+    </script>
+</head>
+<body>
+    <!-- 동아리 리스트 출력 -> 탑네비 푸터 네비 제외
+        ==> 이거 자바스크립트로 끌고와서 리스팅 시키면 될거 같은데?
+        ==> onclick으로
+    -->
+    <div>
+        <nav class="nav">
+            <a class="nav-link" onclick="circledNewList()" style="color: black;">신규</a>
+            <a class="nav-link" aria-current="page" href="#" style="color: black;">인기</a>
+            <a class="nav-link" href="#" style="color: black;">등급</a>
+          </nav>
+    </div>
+    <div class="container-fluid" style="background-color: rgb(225, 225, 225);">
+        <div class="row">
+            <div class="col">
+                <div class="row align-items-center mt-2">
+                    <div class="col fw-semibold" style="font-size: 1.0em;">
+                        새로 개설된 동아리
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="font-size: 0.9em; color: rgb(141, 141, 141);">
+                        따끈따끈한 신규 동아리
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="listInsert" class="col">
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper" class="row mt-2 mb-2 d-none">
+        <div class="col rounded-3 mx-2" style="border: 0.01em solid rgb(215, 215, 215); background-color: white;">
+            <div class="row align-items-center" style="font-size: small;">
+                <div class="col d-grid ps-0"><img class="circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col pt-2">
+                            <span class="circlecategory badge text-bg-primary">배찌</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="circlename col">
+                            동아리명
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="university col">
+                            학교명
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col pb-2">
+                            <i class="bi bi-people-fill"></i> <span class="currentpeople">현재인원</span>/<span class="circlepeople">등급인원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

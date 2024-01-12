@@ -3,14 +3,9 @@
 
 <mapper namespace="com.cu.ufuf.merchan.mapper.MerchanSqlMapper">
 
-<insert id="insertItemInfo">
-    insert into item_info(item_id)
-    values(#{item_id});
-</insert>
-
 <insert id="insertOrderInfo">
     insert into order_info(order_id, item_id, status)
-    values(#{order_id}, #{status});
+    values(#{order_id}, 'MI1', #{status});
 </insert>
 
 

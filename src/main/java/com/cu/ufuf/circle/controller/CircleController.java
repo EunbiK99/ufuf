@@ -164,6 +164,14 @@ public class CircleController {
         
         return "circle/circleNoticeBoardPage";
     }
+    // 동아리 리스트를 출력하는 페이지
+    @RequestMapping("circleListPage")
+    public String circleListPage(){
+        
+        return "circle/circleListPage";
+    }
+
+    
     
     
 

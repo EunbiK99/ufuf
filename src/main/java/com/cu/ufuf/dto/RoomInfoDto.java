@@ -16,6 +16,7 @@ public class RoomInfoDto {
     private int room_count;
     private int bed_count;
     private int toilet_count;
+    private int room_area;
     private String content;
     private String location;
     private String checkin_time;

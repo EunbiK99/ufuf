@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>게스트하우스 예약하기</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    
+</head>
+
+<body>
+    
+    <div class="container">
+        <!-- 페이지 네비-->
+        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+            <!--뒤로가기-->
+            <div class="col-1">
+                <!--나중에 게스트하우스 목록페이지나 메인페이지 같은데로 링크 삽입-->
+                <a class="btn" href="#"><i class="bi bi-x-lg text-secondary"></i></a> 
+            </div>
+
+            <!--무슨페이지인지 알 수 있게-->
+            <div class="col text-center fw-bold text-secondary mt-1 fs-5">예약하기</div>
+            <div class="col-1"></div> 
+        </div>
+        <!--여백-->
+        <div class="row p-4 mt-4"></div>
+
+        
+        <!--정보 입력-->
+        <form action="./roomReservationProcess" method="post">
+            <div class="row mt-3">
+                <div class="col">
+
+                    <!--인원-->
+                    <div class="row mt-4 ms-2 fw-bold text-secondary">예약 인원</div>
+                    <div class="row">
+                        <div class="col mx-2 me-0 mt-2">
+                            <input type="number" name="guest_count" id="guest_count" class="form-control">
+                        </div>
+                        <div class="col ms-0 mt-3 text-secondary">명</div>
+                    </div>
+
+                    <!--일정-->
+                    <div class="row mt-4 ms-2 fw-bold text-secondary">예약 일정</div>
+                    <div class="row">
+                        <div class="col-5 mx-2 mt-2"><input type="date" name="start_reservation_schedule" class="form-control"></div>
+                        <div class="col-1 fs-5 fw-bold text-secondary pt-2">~</div>
+                        <div class="col-5 mx-2 mt-2"><input type="date" name="end_reservation_schedule" class="form-control"></div>
+                    </div>
+
+                    <div class="fixed-bottom bg-white">
+                        <div class="row text-center pb-2 border-top border-secondery-subtle">
+                            <div class="col d-grid mx-2 mt-2 mb-4">
+                                <input type="submit" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="예약하기">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--여백-->
+        <div class="row p-4 mb-5"></div>
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
