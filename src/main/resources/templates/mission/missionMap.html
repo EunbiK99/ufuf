@@ -161,7 +161,7 @@
                 document.getElementById("detail").value = "";
                 document.getElementById("reward").value = "";
 
-            });
+        });
     }
 
     function getItemAndOrderInfo(mission_id) {
@@ -183,7 +183,7 @@
                 loadKakaoPayment(response.data);
                 insertKakaoPaymentReq(response.data);
 
-            });
+        });
     }
 
     function loadKakaoPayment(res) {
@@ -222,7 +222,7 @@
                 insertKakaoPaymentRes(response);
                 kakaoPayAccReq(res, response);
 
-            });
+        });
 
     }
 
@@ -233,6 +233,7 @@
         data.append("partner_order_id", req.orderInfoDto.order_id);
         data.append("partner_user_id", req.orderInfoDto.user_id);
         data.append("pg_token", pg_token);
+        
 
         fetch("https://kapi.kakao.com/v1/payment/approve", {
             method: "POST",
@@ -247,10 +248,10 @@
 
                 console.log(response);
 
-            });
+        });
     }
 
-    function insertKakaoPaymentReq(res) {
+    function insertKakaoPayReq(res) {
         const item_name = document.getElementById("title").value;
         const total_amount = document.getElementById("reward").value;
 
@@ -276,10 +277,10 @@
 
                 console.log(response);
 
-            });
+        });
     }
 
-    function insertKakaoPaymentRes(res) {
+    function insertKakaoPayRes(res) {
         const data = {
             tid: res.tid,
             next_redirect_mobile_url: res.next_redirect_mobile_url,
@@ -298,11 +299,29 @@
 
                 console.log(response);
 
-            });
+        });
     }
 
-    function insertkakaoPaymentAccReq(res){
+    function insertkakaoPayAccReq(res){
+        const data = {
+            tid: tid,
+            partner_order_id: partner_order_id,
+            partner_user_id: partner_user_id,
+            pg_token: pg_token
+        };
+        fetch("./insertkakaoPaymentAccReq", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
 
+                console.log(response);
+
+        });
     }
 
 

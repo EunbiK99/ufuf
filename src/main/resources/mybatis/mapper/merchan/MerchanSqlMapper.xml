@@ -63,5 +63,22 @@
     );
 </insert>
 
+<insert id = "insertKakaoPayAccReqInfo">
+    insert into kakao_payment_accept_req(
+        cid,
+        tid,
+        partner_order_id,
+        partner_user_id,
+        pg_token
+    )
+    values(
+        'TC0ONETIME',
+        #{tid},
+        #{partner_order_id},
+        #{partner_user_id},
+        #{pg_token}
+    );
+</insert>
+
 
 </mapper>

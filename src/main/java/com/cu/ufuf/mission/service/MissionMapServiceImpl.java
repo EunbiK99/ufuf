@@ -7,6 +7,7 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionInfoDto;
@@ -80,6 +81,10 @@ public class MissionMapServiceImpl {
 
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto){
         merchanSqlMapper.insertKakaoPayResInfo(kakaoPaymentResDto);
+    }
+
+    public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
     }
     
 
