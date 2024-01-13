@@ -13,7 +13,4 @@ public class KakaoPaymentReqDto {
 	private int quantity;
 	private int total_amount;
 	private int tax_free_amount;
-	private String approval_url;
-	private String cancel_url;
-	private String fail_url;
 }

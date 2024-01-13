@@ -27,5 +27,41 @@
     );
 </insert>
 
+<insert id="insertKakaoPayReqInfo">
+    insert into kakao_payment_req(
+        cid, 
+        partner_user_id,  
+        partner_order_id, 
+        item_code,
+        item_name, 
+        quantity, 
+        total_amount, 
+        tax_free_amount
+        )
+    values(
+        'TC0ONETIME', 
+        #{partner_user_id},
+        #{partner_user_id},
+        #{item_code},
+        #{item_name},
+        #{quantity},
+        #{total_amount},
+        #{tax_free_amount}
+    );
+</insert>
+
+<insert id = "insertKakaoPayResInfo">
+    insert into kakao_payment_res(
+        tid,
+        next_redirect_mobile_url,
+        created_at
+        )
+    values(
+        #{tid},
+        #{next_redirect_mobile_url},
+        #{created_at}
+    );
+</insert>
+
 
 </mapper>
