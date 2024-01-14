@@ -18,7 +18,7 @@
     );
 </insert>
 
-<select id="getOrderInfo" resultType="com.cu.ufuf.dto.OrderInfoDto">
+<select id="getOrderInfoByMissionId" resultType="com.cu.ufuf.dto.OrderInfoDto">
     select oi.* from order_info oi
     where oi.item_id = (
         select ii.item_id from item_info ii
@@ -31,5 +31,13 @@
     select * from item_info
     where item_id = #{item_id};
 </select>
+
+<select id="getOrderInfo" resultType="com.cu.ufuf.dto.OrderInfoDto">
+    select * from order_info
+    where order_info = order_info;
+</select>
+
+
+
 
 </mapper>

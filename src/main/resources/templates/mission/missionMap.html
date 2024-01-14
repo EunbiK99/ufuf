@@ -115,6 +115,20 @@
         console.log(location);
     }
 
+    // function loadMissionList(){
+    //     const map = document.getElementById("map");
+    //     map.style.height = "25em";
+
+    //     const missionListBox = document.getElementById("missionListBox");
+    //     missionListBox.classList.remove("d-none");
+
+    //     const findMissionBtn = document.getElementById("findMissionBtn");
+    //     const registerMissionBtn = document.getElementById("registerMissionBtn");
+
+    //     findMissionBtn.classList.add("d-none");
+    //     registerMissionBtn.classList.add("d-none");
+    // }
+
     function showMissionRegForm() {
         const map = document.getElementById("map");
         map.style.height = "25em";
@@ -122,11 +136,8 @@
         const registerMissionBox = document.getElementById("registerMissionBox");
         registerMissionBox.classList.remove("d-none");
 
-        const findMissionBtn = document.getElementById("findMissionBtn");
-        const registerMissionBtn = document.getElementById("registerMissionBtn");
-
-        findMissionBtn.classList.add("d-none");
-        registerMissionBtn.classList.add("d-none");
+        const startBtn = document.getElementById("startBtn");
+        startBtn.classList.add("d-none");
     }
 
     function registerMissionProcess() {
@@ -157,10 +168,6 @@
 
                 getItemAndOrderInfo(response.data.mission_id);
 
-                document.getElementById("title").value = "";
-                document.getElementById("detail").value = "";
-                document.getElementById("reward").value = "";
-
         });
     }
 
@@ -179,9 +186,9 @@
             .then(response => response.json())
             .then(response => {
 
-                console.log(response);
+                console.log("getorderinfo" + response);
                 loadKakaoPayment(response.data);
-                insertKakaoPaymentReq(response.data);
+                insertKakaoPayReq(response.data);
 
         });
     }
@@ -216,10 +223,13 @@
 
                 console.log(response);
 
-                // 나중에 모바일url로 바꿔줘야함
+                document.getElementById("title").value = "";
+                document.getElementById("detail").value = "";
+                document.getElementById("reward").value = "";
+
                 window.location.href = response.next_redirect_pc_url;
 
-                insertKakaoPaymentRes(response);
+                insertKakaoPayReq(res);
                 kakaoPayAccReq(res, response);
 
         });
@@ -233,7 +243,6 @@
         data.append("partner_order_id", req.orderInfoDto.order_id);
         data.append("partner_user_id", req.orderInfoDto.user_id);
         data.append("pg_token", pg_token);
-        
 
         fetch("https://kapi.kakao.com/v1/payment/approve", {
             method: "POST",
@@ -246,8 +255,10 @@
             .then(response => response.json())
             .then(response => {
 
-                console.log(response);
+                insertkakaoPayAccReq(data);
 
+                console.log(response);
+                
         });
     }
 
@@ -324,6 +335,75 @@
         });
     }
 
+    function insertAmountInfo(res){
+        const data = {
+            total: total,
+            point: point
+        };
+        fetch("./insertAmountInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                console.log(response);
+
+        });
+    }
+
+    function insertCardInfo(res){
+        const data = {
+            bin_: bin,
+            card_type: card_type,
+            install_month: install_month,
+            approved_id: approved_id
+        };
+        fetch("./insertCardInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                console.log(response);
+
+        });
+    }
+
+    function insertKakaoPayAccRes(res){
+        const data = {
+            tid: tid,
+            partner_order_id: partner_order_id,
+            partner_user_id: partner_user_id,
+            item_id: item_id,
+            aid: aid,
+            payment_method_type: payment_method_type,
+            approved_at: approved_at
+        };
+        fetch("./insertkakaoPaymentAccReq", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                console.log(response);
+
+        });
+    }
+
+    
+
 
 
 
@@ -358,86 +438,88 @@
 
                 <div class="row">
                     <div class="col">
-                        <div class="row pt-2 border-top">
-                            <div class="col">
+                        <div class="row">
+                            <div class="fixed-top">
+                            <div class="col bg-white text-center mt-3 mx-3 border border-secondary-subtle shadow-sm rounded-5">
                                 <span><i class="bi bi-geo-alt align-self-center"></i></span>
                                 <input type="hidden" id="nowCoords"></span>
                                 <span id="nowLocation" class="text-secondary align-self-center"
                                     style="font-size: 0.95em;"></span>
                             </div>
+                            </div>
                         </div>
 
                         <div class="row">
                             <div class="col px-0">
-                                <div id="map" style="height:35em; width: 100%;"></div>
+                                <div id="map" style="height:41.6em; width: 100%;"></div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="gap-2 d-md-block d-flex justify-content-center">
-                                    <button id="findMissionBtn" class="btn py-2 btn-dark px-5">
-                                        미션 찾기
-                                    </button>
-                                    <button id="registerMissionBtn" class="btn py-2 btn-dark px-5"
-                                        onclick="showMissionRegForm()">
-                                        미션 등록
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="registerMissionBox" class="row border-top d-none">
-                            <div class="col mt-2">
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="text" name="title" id="title"
-                                            class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2 fw-semibold border-secondary"
-                                            placeholder="미션 타이틀을 입력해주세요" style="font-size: 1.15em;">
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col fw-semibold text-secondary mt-1" style="font-size:0.9em;">
-                                        상세내용
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col">
-                                        <div class="form-floating">
-                                            <textarea class="form-control rounded-0 py-2" id="detail"
-                                                style="height: 6em;"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col fw-semibold text-secondary mt-1" style="font-size:0.9em;">
-                                        성공상금
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col">
-                                        <div class="input-group border-bottom">
-                                            <input type="text" name="reward" id="reward"
-                                                class="form-control border-0 rounded-0 py-2 align-self-center"
-                                                placeholder="최소 금액 : 1000원">
-                                            <span class="fw-semibold ms-3 me-1 align-self-center" id="reward"
-                                                style="font-size: 1.15em;">원</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-4 mb-3">
-                                    <div class="col d-grid">
-                                        <button id="locatePaymentPageBtn" class="btn py-2 btn-dark px-5"
-                                            onclick="registerMissionProcess()">
-                                            미션 등록하기
+                        <div class="fixed-bottom" id="startBtn">
+                            <div class="row mb-4">
+                                <div class="col py-3">
+                                    <div class="gap-2 d-md-block d-flex justify-content-center">
+                                        <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow" 
+                                            style="background-color: #FF8827;" onclick="loadMissionList()">
+                                            미션 찾기
+                                        </button>
+                                        <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow" 
+                                            style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white;" onclick="showMissionRegForm()">
+                                            미션 등록
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="showMissionList" class="row border-top">
-
+                        <div id="registerMissionBox" class="row d-none border-top">
+                            <div class="overflow-y-scroll" style="height:16.5em;">
+                                <div class="col">
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <input type="text" name="title" id="title"
+                                                class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2 fw-semibold border-secondary"
+                                                placeholder="미션 타이틀을 입력해주세요" style="font-size: 1.15em;">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col fw-semibold text-secondary mt-1" style="font-size:0.9em;">
+                                            상세내용
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <textarea class="form-control rounded-0 py-2" id="detail"
+                                                    style="height: 6em;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col fw-semibold text-secondary mt-1" style="font-size:0.9em;">
+                                            성공상금
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <div class="input-group border-bottom">
+                                                <input type="text" name="reward" id="reward"
+                                                    class="form-control border-0 rounded-0 py-2 align-self-center"
+                                                    placeholder="최소 금액 : 1000원">
+                                                <span class="fw-semibold ms-3 me-1 align-self-center" id="reward"
+                                                    style="font-size: 1.15em;">원</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 mb-3">
+                                        <div class="col d-grid">
+                                            <button type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5" style="background-color: #FF8827;" onclick="registerMissionProcess()">
+                                                미션 등록하기
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -447,6 +529,19 @@
         </div>
     </div>
 
+    <div id="missionListBox" class="row border-top d-none">
+        <div class="overflow-y-scroll" style="height:16.5em;">
+        <div class="col">
+            <div class="row mt-2">
+                <div class="col text-end text-secondary" style="font-size: 0.85em;">
+                    반경<span class="px-3">100m</span>
+                    <span class="pe3">300m</span>
+                    <span class="ps-3">500m</span>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
