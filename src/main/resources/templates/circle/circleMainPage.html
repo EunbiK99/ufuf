@@ -30,6 +30,54 @@
         function closeModal() {
             document.getElementById('myModal').style.display = 'none';
         }
+        // 동아리 리스트 hot 3개 ㅎㅎ;;
+        function circleInfoHotThree(){
+
+            const url = "./circleInfoHotThree"
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                for(e of response.data){
+
+                    // 동아리 리스트 생성
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(a);
+
+                }
+
+            })
+        }
+
         // 카테고리 리스트 6개 출력
         function smallCategoryList(){
             
@@ -40,12 +88,16 @@
                 for(e of response.data){
                     const smallC = document.querySelector("#smallC");
                     const div = document.createElement("div");
-                    div.classList.add("col-2", "px-0", "d-grid");
+                    div.classList.add("col", "px-1", "py-1" ,"d-grid", "align-items-center");
 
                     //<span class="badge text-bg-light">축구</span>
                     const span = document.createElement("span")
-                    span.innerText = "#" + e.category_name;
-                    span.classList.add("badge", "text-bg-light")
+                    span.innerText = "# " + e.category_name;
+                    span.classList.add("badge", "badge-md", "rounded-pill", "py-3","border")
+                    span.style.fontSize = "0.88em"
+                    span.style.color = "black";
+                    span.style.backgroundColor = "rgb(240, 240, 240)";
+                    
                     div.appendChild(span);
                     smallC.appendChild(div);
                 }
@@ -62,6 +114,7 @@
         }
         window.addEventListener("DOMContentLoaded", () =>{
             smallCategoryList();
+            circleInfoHotThree();
         })
     </script>
     <style>
@@ -78,31 +131,6 @@
             background-color: #ffffff;
             padding: 10px;
             text-align: center;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            text-decoration: none;
-            border-radius: 8px;
-            margin: 5px;
-            cursor: pointer;
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        /* + 버튼 스타일 */
-        .plus-button {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            border-radius: 50%;
-            background-color: #ffffff;
-            color: #000000;
-            font-size: 23px;
-            border: 0.01em solid black;
         }
 
         .modal {
@@ -136,7 +164,18 @@
             
             margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
             transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
-            }
+        }
+        .image-container {
+            width: 100%;
+            height: 100px; /* 높이를 조절하세요 */
+            overflow: hidden;
+        }
+
+        .responsive-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -144,35 +183,35 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <div class="row">
-                    <div class="col">
-                        탑
+                <div class="row mt-2 align-items-center">
+                    <div class="col-2">
+                        <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
                     </div>
-                    <div class="col">
-                        네비바
+                    <div class="col-6 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;">
+                        ufuf
                     </div>
-                    <div class="col">
-                        로고
+                    <div class="col-2" style="text-align: right;">
+                        <a href="#" style="text-decoration: none; color: black;"><i class="bi bi-bell fs-1"></i></a>
                     </div>
-                    <div class="col-5">
-                        로그아웃아이콘
+                    <div class="col-2">
+                        <a href="./logoutProcess" style="text-decoration: none; color: black;"><i class="bi bi-door-closed fs-1"></i></a>
                     </div>
                 </div>
                 <div class="row mt-2 mx-0 px-0">
                     <div class="col mx-0 px-0">
                         <div id="carouselExampleInterval" class="row carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
+                            <div class="carousel-inner px-0">
                                 <div class="carousel-item active" data-bs-interval="2000">
-                                    <img src="/public/image/circle/MainCarousel1.png" class="d-block w-100" alt="..."
-                                        style="height: 10em;">
+                                    <img src="/public/image/circle/MainCarousel1.png" class="d-block" alt="..."
+                                        style="height: 13em; width: 100%;">
                                 </div>
                                 <div class="carousel-item" data-bs-interval="2000">
                                     <img src="/public/image/circle/MainCarousel2.png" class="d-block w-100" alt="..."
-                                        style="height: 10em;">
+                                        style="height: 13em;">
                                 </div>
                                 <div class="carousel-item" data-bs-interval="2000">
                                     <img src="/public/image/circle/MainCarousel3.png" class="d-block w-100" alt="..."
-                                        style="height: 10em;">
+                                        style="height: 13em;">
                                 </div>
                             </div>
                         </div>
@@ -194,16 +233,9 @@
                         <a href="./circleListPage" style="text-decoration: none; color: black;">+</a>
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col">
-                        <div class="row mx-1 border rounded-3">
-                            <div class="col-3 text-center">
-
-                            </div>
-                            <div class="col text-center">
-                                글 (3개정도?)
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col" id="listInsert">
+                        
                     </div>
                 </div>
                 <div class="row mt-2 align-items-center me-1">
@@ -214,7 +246,7 @@
                         <a href="#" style="text-decoration: none; color: black;">+</a>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-2">
                     <div class="col">
                         <div class="row mx-1 border rounded-3">
                             <div class="col-3 text-center">
@@ -226,22 +258,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="row fixed-bottom mx-0 mt align-items-center"
+                <div class="row fixed-bottom mx-0 align-items-center"
                     style="border-top: 0.01em solid rgb(219, 219, 219);">
-                    <div class="button col text-center">
-                        1
+                    <div class="button col py-0 text-center fs-1">
+                        <i class="bi bi-house-door-fill"></i>
                     </div>
-                    <div class="button col text-center">
-                        2
+                    <div class="button col py-0 text-center fs-1">
+                        <i class="bi bi-messenger"></i>
                     </div>
-                    <div class="col-2 plus-button px-0 d-grid">
-                        <button class="btn" onclick="openModal()">+</button>
+                    <div class="col-2 px-0 d-grid">
+                        <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
                     </div>
-                    <div class="button col text-center">
-                        4
+                    <div class="button col py-0 text-center fs-1">
+                        <i class="bi bi-people-fill"></i>
                     </div>
-                    <div class="button col text-center">
-                        5
+                    <div class="button col py-0 text-center fs-1">
+                        <i class="bi bi-person-circle"></i>
                     </div>
                 </div>
             </div>
@@ -284,11 +316,40 @@
                         </a>
                     </div>
                     <div class="row">
-                        <a href="#" style="text-decoration: none; color: black;">
+                        <a href="./myCircleListPage" style="text-decoration: none; color: black;">
                             <div class="col py-2">
                                 <span class="fw-bold">+</span> 동아리 게시글 작성
                             </div>
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper" class="row mt-2 mb-2 d-none">
+        <div class="col rounded-3 mx-2" style="border: 0.01em solid rgb(215, 215, 215); background-color: white;">
+            <div class="row align-items-center" style="font-size: small;">
+                <div class="image-container col d-grid ps-0"><img class="responsive-img circlemainimage img-fluid rounded-3" style="width: 100%; height: 100%;" src="/public/image/circle/MainCarousel1.png"></div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col pt-2">
+                            <span class="circlecategory badge text-bg-primary">배찌</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="circlename col">
+                            동아리명
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="university col">
+                            학교명
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col pb-2">
+                            <i class="bi bi-people-fill"></i> <span class="currentpeople">현재인원</span>/<span class="circlepeople">등급인원</span>
+                        </div>
                     </div>
                 </div>
             </div>

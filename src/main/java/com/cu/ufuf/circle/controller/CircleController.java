@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cu.ufuf.circle.service.CircleService;
@@ -173,17 +174,35 @@ public class CircleController {
     }
 
     @RequestMapping("circleListArticlePage")
-    public String circleListArticlePage(@RequestParam("circle_id") int circle_id, Model model){
+    public String circleListArticlePage(){
         // 여기서 가입신청->->
         // 상세동아리정보 => 서클정보전부 담아와야함
         
-
         // 이미지 리스트 가져오깅
-        List<CircleNoticeImageDto> circleNoticeImageDtos = circleService.circleNoticeImageInfoByCircleId(circle_id);
-
-        model.addAttribute("circleNoticeImageDtos", circleNoticeImageDtos);
 
         return "circle/circleListArticlePage";
+    }
+    
+    @RequestMapping("logoutProcess")
+    public String logoutProcess(HttpSession session) {
+        // 세션 만료
+        session.invalidate();
+        // 로그아웃 후 리다이렉션할 홈페이지 경로 반환
+        return "redirect:../login/testloginPage";
+    }
+    @RequestMapping("myCircleListPage")
+    public String myCircleListPage(){
+        
+        
+
+        return "circle/myCircleListPage";
+    }
+    @RequestMapping("circleFeedPage")
+    public String circleFeedPage(){
+
+
+
+        return "circle/circleFeedPage";
     }
 
     

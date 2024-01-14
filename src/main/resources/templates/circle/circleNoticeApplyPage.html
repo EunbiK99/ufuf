@@ -9,24 +9,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        document.getElementById('fileInput').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // 기존의 미리보기 삭제
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('fileInput').addEventListener('change', function (e) {
+                const files = e.target.files;
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = ''; // 기존의 미리보기 삭제
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
 
-                const reader = new FileReader();
-                reader.onload = function (readerEvent) {
-                    const previewImage = document.createElement('img');
-                    previewImage.src = readerEvent.target.result;
-                    previewImage.classList.add('preview-image');
-                    previewContainer.appendChild(previewImage);
-                };
+                    const reader = new FileReader();
+                    reader.onload = function (readerEvent) {
+                        const previewImage = document.createElement('img');
+                        previewImage.src = readerEvent.target.result;
+                        previewImage.classList.add('preview-image');
+                        previewContainer.appendChild(previewImage);
+                    };
 
-                reader.readAsDataURL(file);
-            }
+                    reader.readAsDataURL(file);
+                }
+            });
         });
         // 이건 다시한번 해보자
     </script>

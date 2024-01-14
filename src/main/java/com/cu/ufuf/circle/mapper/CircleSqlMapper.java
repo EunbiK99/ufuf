@@ -5,12 +5,15 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
+import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
 public interface CircleSqlMapper {
@@ -33,12 +36,12 @@ public interface CircleSqlMapper {
     public void cirlceMemberinfoInsert(CircleMemberDto circleMemberDto);
     
     // 동아리 핫한 3개 리스트 가져오기 & 신규순전체 동아리 리스트
-    public List<Map<String, Object>> circleMemberPrintHotThree();
+    public List<CircleDto> circleInfoHotThree();
     public List<CircleDto> circleNewListOrderByCircleId();
 
     // 동아리 소분류카테고리번호로 카테고리 이름 가져올거.. & 중분류 카테고리 소분류카테고리번호로가져옴
     public CircleSmallCategoryDto circlesmallCategoryListBysmallCategoryId(int circle_small_category_id);
-    public CircleMiddleCategoryDto circlemiddleCategoryInfoBySmallCategoryId(int circle_small_category_id);
+    public CircleMiddleCategoryDto circlemiddleCategoryInfoByMiddleCategoryId(int circle_middle_category_id);
 
     // 동아리 등급번호로 동아리 등급정보 가져오기 & 동아리 회원수 몇명인지 count
     public CircleGradeDto circleGradeInfoByGradeId(int circle_grade_id);
@@ -50,4 +53,17 @@ public interface CircleSqlMapper {
     // 동아리 상세이미지(여러개) 가져오는..
     public List<CircleNoticeImageDto> circleNoticeImageInfoByCircleId(int circle_id);
     
+    // 동아리 가입신청
+    public void circleJoinApplyInsert(CircleJoinApplyDto circleJoinApplyDto);
+
+    // 동아리 회원정보 (세션userid로 가져올거) => 내가 가지고 있는게 여러개 나오겠지..
+    public List<CircleMemberDto> circleMemberInfoByUserId(int user_id);
+    // 동아리 회원정보 (동아리 키 기준)
+    public List<CircleMemberDto> circleMemberInfoByCircleId(int circle_id);
+
+    // 동아리 게시판리스트 (동아리 회원번호기준)
+    public List<CircleBoardDto> circleboardInfoByCircleMemberId(int circle_member_id);
+
+    // 유저정보 by user_id
+    public UserInfoDto userInfoByUserId(int user_id);
 }

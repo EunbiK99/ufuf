@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const circleboardList = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./circleboardList?circle_id="+ circle_id)
+            .then(response => response.json())
+            .then(response => {
+                // 아직 글작성 안해서 글이없음 ^^..
+                for(e of response.data){
+
+                    console.log(e.userInfoDto.name);
+                    console.log(e.circleMemberDto.circle_member_id);
+                    console.log(e.circleBoardDto.circle_board_id);
+                }
+
+            })
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            circleboardList();
+        })
+        
+    </script>
+</head>
+<body>
+    <!-- 여기는 동아리 내부 게시글 존재 동아리 피드라고 생각하면 됨 -->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

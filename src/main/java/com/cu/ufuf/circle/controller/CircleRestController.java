@@ -3,6 +3,7 @@ package com.cu.ufuf.circle.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.circle.service.CircleService;
 import com.cu.ufuf.dto.CircleDto;
+import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
+import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -147,7 +150,7 @@ public class CircleRestController {
         
         return responseDto;
     }
-
+    // 동아리 리스트들 목록 출력
     // circleNewListOrderByCircleId
     @RequestMapping("circleNewList")
     public RestResponseDto circleNewList(){
@@ -159,19 +162,106 @@ public class CircleRestController {
         
         return responseDto;
     }
-    
-    // 양식
-    // @RequestMapping("asdfasdfasdf")
-    // public RestResponseDto asdfasdfasdfasdf(){
+    // 동아리 상세페이지 이미지 리스트
+    @RequestMapping("circleArticleImageList")
+    public RestResponseDto circleArticleImageList(@RequestParam("circle_id") int circle_id){
 
-    //     RestResponseDto responseDto = new RestResponseDto();
+        RestResponseDto responseDto = new RestResponseDto();
 
-    //     responseDto.setData(null);
-    //     responseDto.setResult("success");
+        List<CircleNoticeImageDto> circleNoticeImageDtos = circleService.circleNoticeImageInfoByCircleId(circle_id);
+
+
+        responseDto.setData(circleNoticeImageDtos);
+        responseDto.setResult("success");
         
-    //     return responseDto;
-    // }
+        return responseDto;
+    }
+    // 동아리 상세페이지 정보들
+    @RequestMapping("circleInfoVarious")
+    public RestResponseDto circleInfoVarious(@RequestParam("circle_id") int circle_id){
 
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.circleInfoVarious(circle_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 동아리 가입신청
+    @RequestMapping("circleJoinApplyInsert")
+    public RestResponseDto circleJoinApplyInsert(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        String joinsubmit = "N"; // 가입승인여부 N ==> 나중에는 이거 그냥 전부가입으로 풀지 생각중 그러면.. 그냥Y넣으면됨
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleJoinApplyDto circleJoinApplyDto = new CircleJoinApplyDto();
+        circleJoinApplyDto.setCircle_id(circle_id);
+        circleJoinApplyDto.setJoin_submit(joinsubmit);
+        circleJoinApplyDto.setUser_id(user_id);
+
+        circleService.circleJoinApplyInsert(circleJoinApplyDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    // 동아리 hot3개 리스트
+        @RequestMapping("circleInfoHotThree")
+        public RestResponseDto circleInfoHotThree(){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+
+            responseDto.setData(circleService.circleInfoHotThree());
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }   
+        
+        @RequestMapping("myCircleList")
+        public RestResponseDto myCircleList(HttpSession session){
+            UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+
+            List<Map<String, Object>> circleListAndPosition = circleService.myCircleInfoListAndPosition(user_id);
+
+            RestResponseDto responseDto = new RestResponseDto();
+
+
+            responseDto.setData(circleListAndPosition);
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+
+        @RequestMapping("circleboardList")
+        public RestResponseDto circleboardList(@RequestParam("circle_id") int circle_id){
+
+            RestResponseDto responseDto = new RestResponseDto();
+
+            responseDto.setData(circleService.circleboardList(circle_id));
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }   
+        
+    //   RESTAPI 양식
+    /*  
+        @RequestMapping("asdfasdfasdf")
+        public RestResponseDto asdfasdfasdfasdf(){
+
+            RestResponseDto responseDto = new RestResponseDto();
+
+            responseDto.setData(null);
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }                                                                        */
+    
+    
     
 
 }

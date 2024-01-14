@@ -32,17 +32,17 @@
             #{circle_id}, #{user_id}, #{circle_position}
         )
     </insert>
-    <select id="circleMemberPrintHotThree" resultType="map">
-        SELECT DISTINCT*
+    <select id="circleInfoHotThree" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT *
         FROM circle c
-        WHERE c.circle_id = (
+        WHERE c.circle_id IN (
             SELECT c.circle_id
             FROM circle c
             INNER JOIN circle_member cm ON c.circle_id = cm.circle_id
             GROUP BY c.circle_id
-            ORDER BY COUNT(*) DESC
-            LIMIT 3
+            ORDER BY COUNT(*) DESC 
         )
+        limit 3
     </select>
     <select id="circleNewListOrderByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
         SELECT * from circle order by circle_id desc
@@ -62,10 +62,27 @@
     <select id="circleNoticeImageInfoByCircleId" resultType="com.cu.ufuf.dto.CircleNoticeImageDto">
         select * from circle_notice_image where circle_id = #{circle_id}
     </select>
-    <select id="circlemiddleCategoryInfoBySmallCategoryId" resultType="com.cu.ufuf.dto.CircleMiddleCategoryDto">
-        select * from circle_middle_category where circle_small_category_id = #{circle_small_category_id}
+    <select id="circlemiddleCategoryInfoByMiddleCategoryId" resultType="com.cu.ufuf.dto.CircleMiddleCategoryDto">
+        select * from circle_middle_category where circle_middle_category_id = #{circle_middle_category_id}
     </select>
-    
+    <insert id="circleJoinApplyInsert">
+        INSERT into circle_join_apply(circle_id, user_id, join_submit) values(
+            #{circle_id}, #{user_id}, #{join_submit}
+        )
+    </insert>
+    <select id="circleMemberInfoByUserId" resultType="com.cu.ufuf.dto.CircleMemberDto">
+        select * from circle_member where user_id = #{user_id}
+    </select>
+    <select id="circleMemberInfoByCircleId" resultType="com.cu.ufuf.dto.CircleMemberDto">
+        select * from circle_member where circle_id = #{circle_id}
+    </select>
+    <select id="circleboardInfoByCircleMemberId" resultType="com.cu.ufuf.dto.CircleBoardDto">
+        select * from circle_board where circle_member_id = #{circle_member_id}
+    </select>
+    <select id="userInfoByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
+        select * from user_info where user_id = #{user_id}
+    </select>
+
     
     
 </mapper>
