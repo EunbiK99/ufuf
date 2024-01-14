@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
 import com.cu.ufuf.dto.CircleBoardDto;
+import com.cu.ufuf.dto.CircleBoardImageDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
@@ -228,6 +229,29 @@ public class CircleService {
         }
 
         return list;
+    }
+
+    public CircleMemberDto circleMemberInfoByUserIdAndCircleId(int user_id, int circle_id){
+
+        return circleSqlMapper.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+    }
+
+    public void circleboardDtoInsert(CircleBoardDto circleBoardDto){
+
+        circleSqlMapper.circleboardDtoInsert(circleBoardDto);
+    }
+
+    public int boardIdMaxByCircleMemberId(int circle_member_id){
+
+        return circleSqlMapper.boardIdMaxByCircleMemberId(circle_member_id);
+    }
+    public void circleboardImageDtoInsert(CircleBoardImageDto circleBoardImageDto){
+        
+        circleSqlMapper.circleboardImageDtoInsert(circleBoardImageDto);
+    }
+    public CircleDto circleInfoByCircleId(int circle_id){
+
+        return circleSqlMapper.circleInfoByCircleId(circle_id);
     }
     
 }

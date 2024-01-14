@@ -82,6 +82,23 @@
     <select id="userInfoByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
         select * from user_info where user_id = #{user_id}
     </select>
+    <select id="circleMemberInfoByUserIdAndCircleId" resultType="com.cu.ufuf.dto.CircleMemberDto">
+        select * from circle_member where user_id = #{user_id} and circle_id = #{circle_id}
+    </select>
+
+    <insert id="circleboardDtoInsert">
+        insert into circle_board(circle_member_id, board_title, board_content, main_image, board_cnt) values(
+            #{circle_member_id}, #{board_title}, #{board_content}, #{main_image}, #{board_cnt}
+        )
+    </insert>
+    <select id="boardIdMaxByCircleMemberId" resultType="int">
+        select max(circle_board_id) from circle_board where circle_member_id = #{circle_member_id}
+    </select>
+    <insert id="circleboardImageDtoInsert">
+        insert into circle_board_image(circle_board_id, sub_image) values(
+            #{circle_board_id}, #{sub_image}
+        )
+    </insert>
 
     
     

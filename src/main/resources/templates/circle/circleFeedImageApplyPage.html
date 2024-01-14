@@ -21,9 +21,9 @@
                     const reader = new FileReader();
                     reader.onload = function (readerEvent) {
                         const previewImage = document.createElement('img');
+                        previewImage.classList.add("img-fluid");
                         previewImage.src = readerEvent.target.result;
                         previewImage.classList.add('preview-image');
-                        previewImage.classList.add("img-fluid");
                         previewContainer.appendChild(previewImage);
                     };
 
@@ -31,7 +31,19 @@
                 }
             });
         });
-        // 이건 다시한번 해보자
+
+        //이건 다시한번 해보자
+        const querysend = () => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            const formm = document.querySelector("#formm");
+            formm.setAttribute("action","./circleBoardImageApplyProcess?circle_id="+circle_id);
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            querysend();
+        })
     </script>
     <style>
         body {
@@ -53,45 +65,30 @@
 <body>
     
     <div class="container-fluid">
-        <form action="./circleNoticeApplyProcess" method="post" enctype="multipart/form-data">
+        <form id="formm" method="post" enctype="multipart/form-data">
         <div class="row mt-2">
             <div class="col d-flex align-items-center">
-                공고제목<span class="text-danger">＊</span>
+                게시글 상세이미지<span class="text-danger">＊</span>
             </div>         
-        </div>
-        <div class="row mt-1">
-            <div class="col d-grid align-items-center">
-                <input name="circle_notice_title" class="form-control" type="text" placeholder="공고제목을 입력하세요">
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col d-flex align-items-center">
-                공고내용<span class="text-danger">＊</span>
-            </div>         
-        </div>
-        <div class="row mt-1">
-            <div class="col d-grid align-items-center">
-                <input name="circle_notice_content" class="form-control" type="text" placeholder="공고내용을 입력하세요">
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col d-flex align-items-center">
-                공고이미지<span class="text-danger">＊</span>
-            </div>         
-        </div>
-        <div class="row mt-1">
-            <div class="col d-grid align-items-center">
-                <input id="fileInput" name="circle_notice_image" type="file" accept="image/*" multiple />
-            </div>
         </div>
         <div class="row">
-            <div id="previewContainer" class="col">
+            <div class="col d-flex align-items-center" style="font-size: 0.9em; color: rgb(187, 187, 187);">
+                게시글에 관련된 사진을 올려주세요❗
+            </div>         
+        </div>
+        <div class="row mt-2">
+            <div class="col d-grid align-items-center">
+                <input class="form-control" id="fileInput" name="sub_image" type="file" accept="image/*" multiple />
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div id="previewContainer" class="col px-0">
 
             </div>
         </div>
         <div class="row mt-3 fixed-bottom mx-0">
             <div class="col d-grid">
-                <input type="submit" class="btn btn-primary" role="button" value="공고등록완료">
+                <input type="submit" class="btn btn-primary" role="button" value="작성 완료">
             </div>
         </div>
         </form>

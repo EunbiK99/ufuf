@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.cu.ufuf.dto.CircleBoardDto;
+import com.cu.ufuf.dto.CircleBoardImageDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
@@ -66,4 +68,16 @@ public interface CircleSqlMapper {
 
     // 유저정보 by user_id
     public UserInfoDto userInfoByUserId(int user_id);
+
+    // userid and circleid 동아리 회원 정보찾기
+    public CircleMemberDto circleMemberInfoByUserIdAndCircleId(@Param("user_id") int user_id, @Param("circle_id") int circle_id);
+
+    // 게시글 등록록
+    public void circleboardDtoInsert(CircleBoardDto circleBoardDto);
+
+    // 게시글 내가작성한것중에 최근에 작성한 글찾아오기
+    public int boardIdMaxByCircleMemberId(int circle_member_id);
+
+    // 게시글 이미지 등록
+    public void circleboardImageDtoInsert(CircleBoardImageDto circleBoardImageDto);
 }
