@@ -134,7 +134,7 @@
         modal.hide();
 	}
 
-    function readURL(input) {
+    function showSelectedImg(input) {
 
         if (input.files && input.files[0]) {
 
@@ -191,7 +191,7 @@
 
                         <!--대학교 검색-->
                         <div class="row mt-2">
-                            <div class="col fw-semibold mt-2" style="font-size:1.4em">
+                            <div class="col fw-semibold mt-2" style="font-size:1.5em">
                                 학교 인증을 완료해주세요
                             </div>  
                         </div>
@@ -260,7 +260,7 @@
                                 <label for="studentid_img">
                                     <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 7em;">
                                 </label>
-                                <input class="form-control border-dark-subtle" type="file" name="studentid_img" id="studentid_img" accept="image/*" style="display:none;" onchange="readURL(this);">
+                                <input class="form-control border-dark-subtle" type="file" name="studentid_img" id="studentid_img" accept="image/*" style="display:none;" onchange="showSelectedImg(this);">
                             </div>
                         </div>
 

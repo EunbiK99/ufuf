@@ -3,9 +3,81 @@
 
 <mapper namespace="com.cu.ufuf.merchan.mapper.MerchanSqlMapper">
 
+<insert id="insertItemCategory">
+    insert into item_category(category_name)
+    values(#{category_name});
+</insert>
+
+<select id="createItemPk" resultType="int">
+    select ifnull(MAX(item_id)+1, 1) item_id from item_info;
+</select>
+
+<insert id="insertItemInfo">
+    insert into item_info(item_id, item_category_id, merchan_id)
+    values(#{item_id}, #{item_category_id}, #{merchan_id});
+</insert>
+
 <insert id="insertOrderInfo">
-    insert into order_info(order_id, item_id, status)
-    values(#{order_id}, 'MI1', #{status});
+    insert into order_info(order_id, item_id, user_id, status)
+    values(
+        #{order_id},
+        #{item_id},
+        #{user_id},
+        #{status}
+    );
+</insert>
+
+<insert id="insertKakaoPayReqInfo">
+    insert into kakao_payment_req(
+        cid, 
+        partner_user_id,  
+        partner_order_id, 
+        item_code,
+        item_name, 
+        quantity, 
+        total_amount, 
+        tax_free_amount
+        )
+    values(
+        'TC0ONETIME', 
+        #{partner_user_id},
+        #{partner_user_id},
+        #{item_code},
+        #{item_name},
+        #{quantity},
+        #{total_amount},
+        #{tax_free_amount}
+    );
+</insert>
+
+<insert id = "insertKakaoPayResInfo">
+    insert into kakao_payment_res(
+        tid,
+        next_redirect_mobile_url,
+        created_at
+        )
+    values(
+        #{tid},
+        #{next_redirect_mobile_url},
+        #{created_at}
+    );
+</insert>
+
+<insert id = "insertKakaoPayAccReqInfo">
+    insert into kakao_payment_accept_req(
+        cid,
+        tid,
+        partner_order_id,
+        partner_user_id,
+        pg_token
+    )
+    values(
+        'TC0ONETIME',
+        #{tid},
+        #{partner_order_id},
+        #{partner_user_id},
+        #{pg_token}
+    );
 </insert>
 
 

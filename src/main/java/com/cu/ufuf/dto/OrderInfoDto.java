@@ -7,7 +7,8 @@ import lombok.Data;
 @Data
 public class OrderInfoDto {
     private String order_id;
-	private String item_pk;
+	private int item_id;
+	private int user_id;
 	private String status;
 	private LocalDateTime created_at;
 }

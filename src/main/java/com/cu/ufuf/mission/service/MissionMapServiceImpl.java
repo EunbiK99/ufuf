@@ -6,7 +6,12 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
 import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
 
@@ -18,35 +23,70 @@ public class MissionMapServiceImpl {
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
 
-    public void insertOrder(){
+    public void registerMissionProcess(MissionInfoDto missionInfoDto){
 
-        String order_id = "MI1";
+        int mission_id = missionMapsqlMapper.createMissionPk();
+        int user_id = missionInfoDto.getUser_id();
+        missionInfoDto.setMission_id(mission_id);
+ 
+        missionMapsqlMapper.insertMission(missionInfoDto);
+
+        ItemInfoDto itemInfoDto = new ItemInfoDto();
+        int item_id = merchanSqlMapper.createItemPk();
+
+        itemInfoDto.setItem_id(item_id);
+        itemInfoDto.setItem_category_id(1);
+        itemInfoDto.setMerchan_id(mission_id);
+
+        merchanSqlMapper.insertItemInfo(itemInfoDto);
+
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+
+        String order_id = "MI";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String today = sdf.format(new Date());
 
         UUID uuid = UUID.randomUUID();
         String ramdomUUID = uuid.toString().replace("-", "");
+        ramdomUUID = ramdomUUID.substring(0, 10);
+        ramdomUUID = ramdomUUID.toUpperCase();
 
-        ramdomUUID = ramdomUUID.substring(0, 15);
+        order_id = order_id + item_id + today + ramdomUUID;
 
-        order_id = order_id + today + ramdomUUID;
+        orderInfoDto.setOrder_id(order_id);
+        orderInfoDto.setItem_id(item_id);
+        orderInfoDto.setUser_id(user_id);
+        orderInfoDto.setStatus("주문완료");
 
+        merchanSqlMapper.insertOrderInfo(orderInfoDto);
     }
 
-    public void registerMission(MissionInfoDto missionInfoDto){
+    public Map<String, Object> getItemAndOrderInfo(int mission_id){
 
-        // 결제 및 주문번호 발급코드 필요
+        Map<String, Object> ItemOrderInfo = new HashMap<>();
 
-        int missionPk = missionMapsqlMapper.createMissionPk();
-        missionInfoDto.setMission_id(missionPk);
+        OrderInfoDto orderInfoDto = missionMapsqlMapper.getOrderInfo(mission_id);
+        int item_id = orderInfoDto.getItem_id();
 
-        merchanSqlMapper.insertItemInfo("mi" + missionPk);
+        ItemOrderInfo.put("orderInfoDto", orderInfoDto);
+        ItemOrderInfo.put("itemInfoDto", missionMapsqlMapper.getItemInfo(item_id));
 
-
-        missionMapsqlMapper.insertMission(missionInfoDto);
-
+        return ItemOrderInfo;
     }
+
+    public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto){
+        merchanSqlMapper.insertKakaoPayReqInfo(kakaoPaymentReqDto);
+    }
+
+    public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto){
+        merchanSqlMapper.insertKakaoPayResInfo(kakaoPaymentResDto);
+    }
+
+    public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
+    }
+    
 
 
 }
