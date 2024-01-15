@@ -109,6 +109,7 @@ public class CircleRestController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         // 이건 동아리 세팅
         CircleDto circleDto = new CircleDto();
         circleDto.setCircle_small_category_id(circle_small_category_id);
@@ -270,13 +271,13 @@ public class CircleRestController {
                 String filename = file.getOriginalFilename();
                 long randomFilename = System.currentTimeMillis();
                 String Path = "C:/uploadFiles/";
-
+                
                 File realtodayPath = new File(Path);
 
                 if (!realtodayPath.exists()) {
                     realtodayPath.mkdirs();
                 }
-
+                
                 String commafile = filename.substring(filename.lastIndexOf("."));
                 String fileLink = randomFilename + commafile;
 
@@ -285,6 +286,7 @@ public class CircleRestController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
 
                 CircleBoardDto circleBoardDto = new CircleBoardDto();
                 circleBoardDto.setBoard_title(board_title);

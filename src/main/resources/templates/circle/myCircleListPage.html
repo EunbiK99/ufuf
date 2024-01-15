@@ -8,6 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script>
 
         function goBack() {
@@ -70,24 +75,30 @@
     </script>
     <style>
         .image-container {
-            width: 100%;
-            height: 180px; /* 높이를 조절하세요 */
+            width: 10em;
+            height: 10em; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
         .responsive-img {
-            width: 100%;
+            width: 10em;
             height: 100%;
             object-fit: cover;
+        }
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
         }
     </style>
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid mt-1">
+    <div class="container-fluid mt-1" style="background-color: rgb(251, 251, 251);">
         <div class="row">
             <div class="col" style="font-size: 1.2em;">
-                가입한 동아리 리스트
+                내가 가입한 동아리 리스트
             </div>
         </div>
         <div class="row">
@@ -100,29 +111,29 @@
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="row mt-2 mb-2 d-none">
-        <div class="col rounded-3 mx-2" style="border: 0.01em solid rgb(215, 215, 215); background-color: white;">
-            <div class="row align-items-center" style="font-size: small;">
-                <div class="image-container col d-grid ps-0"><img class="responsive-img circlemainimage img-fluid rounded-3" style="width: 100%; height: 100%;" src="/public/image/circle/MainCarousel1.png"></div>
-                <div class="col">
+    <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
+        <div class="col rounded-3 mx-1" style="background-color: white;">
+            <div class="row rounded-3" style="font-size: small;">
+                <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
+                <div class="col px-0">
                     <div class="row">
-                        <div class="col pt-2">
-                            <span class="circlecategory badge text-bg-primary">배찌</span>
+                        <div class="col" style="padding-top: 0.9em;">
+                            <span class="circlecategory rounded-pill py-1 px-2 text-bg-secondary fw-semibold">배찌</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="circlename col">
+                    <div class="row mt-1">
+                        <div class="circlename col fw-semibold" style="font-size: 1.4em;">
                             동아리명
                         </div>
                     </div>
                     <div class="row">
-                        <div class="university col">
+                        <div class="university col" style="font-size: 1em; color: gray;">
                             학교명
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col pb-2">
-                            <i class="bi bi-people-fill"></i> <span class="currentpeople">현재인원</span>/<span class="circlepeople">등급인원</span>
+                    <div class="row mt-3 align-items-center">
+                        <div class="col pt-1" style="color: rgb(134, 134, 134); font-size: 1.3em;">
+                            <i class="bi bi-people-fill"></i>&nbsp; <span class="currentpeople" style="color: black">현재인원</span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circlepeople" style="color: black;">등급인원</span>
                         </div>
                     </div>
                 </div>
