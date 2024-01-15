@@ -135,7 +135,10 @@ public class CircleService {
         
         // 4개정보 받아서 보내면됨
         int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+        int userId = circleDto.getUser_id();
+        UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(userId);
 
+        map.put("userInfoDto", userInfoDto);
         map.put("circleMemberCnt", circleMemberCnt);
         map.put("circleDto", circleDto);
         map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -216,7 +219,7 @@ public class CircleService {
 
                     int user_id = e.getUser_id();
                     UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
-                    
+                    // 유저정보(프로필사진), 글정보(글내용), 동아리멤버정보(등급)
                     map.put("userInfoDto", userInfoDto);
                     map.put("circleBoardDto", e2);
                     map.put("circleMemberDto", e);
