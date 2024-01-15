@@ -46,6 +46,7 @@ public class MissionMapRestController {
 
     @RequestMapping("loadMissionList")
     public RestResponseDto loadMissionList(){
+
         RestResponseDto restResponseDto = new RestResponseDto();
         
         restResponseDto.setData(missionMapService.loadMissionList());
@@ -53,6 +54,39 @@ public class MissionMapRestController {
         
         return restResponseDto;
     }
+
+    @ResponseBody
+    @PostMapping("getMissionDetail")
+    public RestResponseDto getMissionDetail(@RequestBody String mission_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_id != null && !mission_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_id")) {
+                    // mission_id 필드 추출 및 정수로 변환
+                    int missionId = jsonNode.get("mission_id").asInt();
+                    restResponseDto.setData(missionMapService.getMissionDetail(missionId));
+                    
+                } else {
+                    System.out.println("mission_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
 
     @ResponseBody
     @PostMapping("getItemAndOrderInfo")

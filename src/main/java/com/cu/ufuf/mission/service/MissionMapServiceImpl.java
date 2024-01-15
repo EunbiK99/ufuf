@@ -71,6 +71,21 @@ public class MissionMapServiceImpl {
         return missionMapsqlMapper.selectAllMission();
     }
 
+    // 미션 상세 출력
+    public Map<String, Object> getMissionDetail(int mission_id){
+
+        Map<String, Object> missionDetail = new HashMap<>();
+
+        MissionInfoDto missionInfo = missionMapsqlMapper.selectMissionById(mission_id);
+
+        int user_id = missionInfo.getUser_id();
+
+        missionDetail.put("missionInfo", missionInfo);
+        missionDetail.put("userInfo", missionMapsqlMapper.selectUserById(user_id));
+
+        return missionDetail;
+    }
+
     // 주문상태 업데이트
     public void updateOrderStatus(OrderInfoDto orderInfoDto){
         merchanSqlMapper.updateOrderStatus(orderInfoDto);

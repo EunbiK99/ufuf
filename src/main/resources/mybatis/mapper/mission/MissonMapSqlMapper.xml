@@ -19,8 +19,21 @@
     );
 </insert>
 
+<!-- 미션 목록 출력 -->
 <select id="selectAllMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
     select * from mission_info;
+</select>
+
+<!-- 미션 상세보기 -->
+<select id="selectMissionById" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    select * from mission_info
+    where mission_id = #{mission_id};
+</select>
+
+<!-- 미션 등록자 정보 -->
+<select id="selectUserById" resultType="com.cu.ufuf.dto.UserInfoDto">
+    select * from user_info
+    where user_id = #{user_id};
 </select>
 
 <!--주문 번호로 미션내용 조회 (결제 결과 페이지에서 출력)-->
@@ -42,7 +55,7 @@
 <!-- 주문번호로 주문내용가져오기 -->
 <select id="getOrderInfo" resultType="com.cu.ufuf.dto.OrderInfoDto">
     select * from order_info
-    where order_info = order_info;
+    where order_id = #{order_id};
 </select>
 
 
