@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionInfoDto;
@@ -66,7 +69,7 @@ public class MissionMapServiceImpl {
 
         Map<String, Object> ItemOrderInfo = new HashMap<>();
 
-        OrderInfoDto orderInfoDto = missionMapsqlMapper.getOrderInfo(mission_id);
+        OrderInfoDto orderInfoDto = missionMapsqlMapper.getOrderInfoByMissionId(mission_id);
         int item_id = orderInfoDto.getItem_id();
 
         ItemOrderInfo.put("orderInfoDto", orderInfoDto);
@@ -75,6 +78,19 @@ public class MissionMapServiceImpl {
         return ItemOrderInfo;
     }
 
+    public OrderInfoDto getOrderInfo(String Order_id){
+        return missionMapsqlMapper.getOrderInfo(Order_id);
+    }
+
+
+
+
+
+
+
+
+
+    // 카카오페이
     public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto){
         merchanSqlMapper.insertKakaoPayReqInfo(kakaoPaymentReqDto);
     }
@@ -86,6 +102,19 @@ public class MissionMapServiceImpl {
     public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
         merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
     }
+
+    public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+        merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
+    }
+
+    public void insertAmountInfo(AmountDto amountInfo){
+        merchanSqlMapper.insertAmountInfo(amountInfo);
+    }
+
+    public void insertCardInfo(CardInfoDto cardInfoDto){
+        merchanSqlMapper.insertCardInfo(cardInfoDto);
+    }
+
     
 
 

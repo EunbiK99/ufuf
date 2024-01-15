@@ -6,9 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cu.ufuf.circle.service.CircleService;
+import com.cu.ufuf.dto.CircleBoardImageDto;
+import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
@@ -173,17 +176,100 @@ public class CircleController {
     }
 
     @RequestMapping("circleListArticlePage")
-    public String circleListArticlePage(@RequestParam("circle_id") int circle_id, Model model){
+    public String circleListArticlePage(){
         // 여기서 가입신청->->
         // 상세동아리정보 => 서클정보전부 담아와야함
         
-
         // 이미지 리스트 가져오깅
-        List<CircleNoticeImageDto> circleNoticeImageDtos = circleService.circleNoticeImageInfoByCircleId(circle_id);
-
-        model.addAttribute("circleNoticeImageDtos", circleNoticeImageDtos);
 
         return "circle/circleListArticlePage";
+    }
+    
+    @RequestMapping("logoutProcess")
+    public String logoutProcess(HttpSession session) {
+        // 세션 만료
+        session.invalidate();
+        // 로그아웃 후 리다이렉션할 홈페이지 경로 반환
+        return "redirect:../login/testloginPage";
+    }
+    // 내가 가입한 동아리리스트 (무조건 세션이있어야 볼수있는 페이지)
+    @RequestMapping("myCircleListPage")
+    public String myCircleListPage(){
+        
+        
+
+        return "circle/myCircleListPage";
+    }
+    // 동아리 메인페이지라고 봐도 무방
+    @RequestMapping("circleFeedPage")
+    public String circleFeedPage(){
+
+
+
+        return "circle/circleFeedPage";
+    }
+    // 동아리 게시글 작성 페이지 (대표이미지는 여기에있음)
+    @RequestMapping("circleFeedWritePage")
+    public String circleFeedWritePage(){
+
+
+
+        return "circle/circleFeedWritePage";
+    }
+    // 동아리 게시글 상세이미지 넣기
+    @RequestMapping("circleFeedImageApplyPage")
+    public String circleFeedImageApplyPage(){
+
+        return "circle/circleFeedImageApplyPage";
+    }
+
+    // 동아리 게시글 상세이미지 등록완료
+    @RequestMapping("circleBoardImageApplyProcess")
+    public String circleBoardImageApplyProcess(@RequestParam("circle_id") int circle_id,  @RequestParam("sub_image") MultipartFile[] images, HttpSession session){
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+
+        // member_id를 통해서 방금작성한글 찾아오면됨 => max값이용
+        int board_id = circleService.boardIdMaxByCircleMemberId(circle_member_id);
+
+        for(MultipartFile multipartFile : images){
+            // 빈공간 처리
+            if(multipartFile.isEmpty()) {
+                continue;
+            }
+            // 이게 원본 파일명
+            String filename = multipartFile.getOriginalFilename();
+            long randomFilename = System.currentTimeMillis();
+            String Path = "C:/uploadFiles/";
+            
+            File realtodayPath = new File(Path);
+
+            // 디렉토리 생성
+            if(!realtodayPath.exists()){
+                realtodayPath.mkdirs();
+            }
+
+            String commafile = filename.substring(filename.lastIndexOf("."));
+            String fileLink = randomFilename + commafile;
+
+            try {
+                multipartFile.transferTo(new File(Path + fileLink));
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+
+            CircleBoardImageDto circleBoardImageDto = new CircleBoardImageDto();
+            circleBoardImageDto.setCircle_board_id(board_id);
+            circleBoardImageDto.setSub_image(fileLink);
+            
+            circleService.circleboardImageDtoInsert(circleBoardImageDto);
+            
+        }
+
+        return "redirect:./circleFeedPage?circle_id=" + circle_id;
     }
 
     

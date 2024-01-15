@@ -7,6 +7,127 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.go(-1);
+        }   
+        function circleApplyComplete(){
+            // 이미 가입시 disabled or 모달로 경고창 // 다른학교일경우에 disabled or 모달로 경고창 // 가입안되있으면 가입신청이 완료
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circleId = urlParams.get("circle_id");
+
+            const url = "./circleJoinApplyInsert?circle_id=" + circleId;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+            })
+            
+            location.href = "./circleMainPage"
+
+            setTimeout(() => {
+                showModal()
+            }, 1000)
+        }
+        // 가입이 완료 되었습니다 ? 
+        function showModal(){
+            console.log("실행될까?");
+        }
+
+        // 버튼 disabled 하려면 => 세션정보 user_id랑 circle_id 들고가서 가입신청 있는지 확인하고 있으면(조건문) => disabled 잡으면 된다. 
+
+
+        // 해당 동아리의 모든 정보들
+        function circleInfo(){
+            
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circleId = urlParams.get("circle_id");
+
+            const url = "./circleInfoVarious?circle_id=" + circleId;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                //자자 만들어봅시다.. 틀먼저
+                const e = response.data;
+
+                const Wrapper = document.querySelector("#Wrapper");
+                const circle_name = Wrapper.querySelector(".circle_name"); 
+                circle_name.innerText = e.circleDto.circle_name;
+                const circle_university = Wrapper.querySelector(".circle_university"); 
+                circle_university.innerText = e.circleDto.circle_university;
+                const circle_content = Wrapper.querySelector(".circle_content"); 
+                circle_content.innerText = e.circleDto.circle_content;
+                const circle_image = Wrapper.querySelector(".circle_image"); 
+                e.circleDto.circle_image; // 동아리 대표 이미지임 .. 맨위로 가야할듯 수정
+                const circle_people = Wrapper.querySelector(".circle_people"); 
+                circle_people.innerText = e.circleGradeDto.circle_people;
+                const category_name1 = Wrapper.querySelector(".category_name1"); // 소분류 카테고리 이름
+                category_name1.innerText = e.circleSmallCategoryDto.category_name;
+                const category_name2 = Wrapper.querySelector(".category_name2"); // 중분류 카테고리 이름
+                category_name2.innerText = e.circleMiddleCategoryDto.category_name;
+                const circleMemberCnt = Wrapper.querySelector(".circleMemberCnt"); 
+                circleMemberCnt.innerText = e.circleMemberCnt;
+
+                
+                // 현재 인원 / 등급 인원 
+                // 제약조건 걸어야함 현재인원 == 등급인원 일 경우에 가입신청 버튼을 disabled 
+
+                //e.circleDto.user_id //동아리개설자pk
+                // e.circleDto.circle_university 
+                // e.circleDto.circle_content
+                // e.circleDto.circle_image
+                // e.circleGradeDto.circle_people
+                // e.circleSmallCategoryDto.category_name
+                // e.circleMiddleCategoryDto.category_name
+
+
+
+
+            })
+
+        }
+
+        // 이미지 리스트 (얜 반복문이라서 따로 가져옴)
+        function subImageList(){
+            // !!!!!! 이거 쿼리스트링으로 값이 어떤게 날라왔는지 확인해서 값을 넘길수 있음.. (되게 유용)
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circleId = urlParams.get("circle_id");
+
+            const url = "./circleArticleImageList?circle_id=" + circleId;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                for(e of response.data){
+                    const img = document.createElement("img");
+                    img.setAttribute("src","/uploadFiles/" + e.circle_notice_image);
+                    img.classList.add("img-fluid")
+                    img.classList.add("responsive-img")
+                    
+                    const a = document.querySelector("#a");
+                    a.classList.add("d-grid")
+                    a.appendChild(img);
+                }
+
+            })
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            const circleId = urlParams.get("circle_id");
+            console.log(circleId);
+
+            // 로드될때 실행되어야하는 함수
+            subImageList();
+            circleInfo();
+            
+        })
+    </script>
     <style>
         body {
           margin: 0;
@@ -22,20 +143,61 @@
           padding: 10px;
           text-align: center;
         }
+        /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
+        .image-container {
+            width: 100%;
+            overflow: hidden; /* 부모 컨테이너를 벗어나는 부분 숨김 */
+        }
+
+        .responsive-img {
+            width: 100%;
+            object-fit: cover; /* 이미지를 부모 컨테이너에 맞게 조정하면서 종횡비 유지 */
+        }
       </style>
 </head>
 <body>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col">
+        <div id="Wrapper" class="row">
+            <div class="col"><!-- 동아리명, 학교명, 동아리 상세설명, 동아리대표이미지, 등급명, 중분류카테고리명, 소분류카테고리명 정도? -->
                 <div class="row">
+                    <div class="col circle_image"><!-- 모바일 상단 배너 사이즈 468px x 60px 정도?-->
+                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"><!-- 액티비티 -->
+                        <span class="category_name2 badge text-bg-dark"></span> <span class="category_name1 badge text-bg-primary"></span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold" style="font-size: 1.1em;">
+                        <span class="circle_name"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="color: rgb(118, 117, 117);">
+                        <span class="circle_university"></span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col" style="color: rgb(139, 139, 139);">
+                        <i class="bi bi-people-fill"></i> <span class="circleMemberCnt"></span>/<span class="circle_people"></span>
+                    </div>
+                </div>
+                <div class="row mt-3">
                     <div class="col">
+                        <span class="circle_content"></span>
+                    </div>
+                </div>
+                <div class="row mt-3"><!-- 상세이미지 맨 아래로 가야햠 -->
+                    <div id="a" class="col px-0 image-container" style="object-fit: cover; width: 100%; height: 100%;">
                         
                     </div>
                 </div>
                 <div class="row mt-3 mx-0 fixed-bottom">
                     <div class="col d-grid">
-                        <button class="btn btn-primary" onclick="circleComplete()">가입 신청</button>
+                        <button class="btn btn-primary" onclick="circleApplyComplete()">가입 신청</button>
                     </div>
                 </div>
             </div>

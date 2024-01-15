@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 여기서 circleFeedWritePage갈때 쿼리스트링 => circle_id 날려줘야 함
+        function goBack() {
+            window.history.go(-1);
+        }
+        
+        const circleboardList = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./circleboardList?circle_id="+ circle_id)
+            .then(response => response.json())
+            .then(response => {
+                // 아직 글작성 안해서 글이없음 ^^.. ==> 글작성 먼저 만들자..
+                // 글리스트 가져온거임 .. 
+                for(e of response.data){
+                
+                    console.log(e.userInfoDto.name);
+                    console.log(e.circleMemberDto.circle_member_id);
+                    console.log(e.circleBoardDto.circle_board_id);
+                }
+
+            })
+        }
+
+        // CircleService에서 circleInfoVarious가져오면 그 동아리 관련 정보들을 대부분 가져올 수 있음
+        const circleInfoOne = () => {
+            
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            const url = "./circleInfoOne?circle_id=" + circle_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                const e = response.data;
+                const main_image = document.querySelector("#main_image");
+                const img = document.createElement("img");
+                img.setAttribute("src","/uploadFiles/" + e.circleDto.circle_image);
+                img.classList.add("img-fluid");
+                img.classList.add("responsive-img");
+                const circle_title = document.querySelector("#circle_title");
+                circle_title.innerText = e.circleDto.circle_name;
+                
+                const currentpeople = document.querySelector("#currentpeople");
+                currentpeople.innerText = e.circleMemberCnt;
+                const circlepeople = document.querySelector("#circle_people");
+                circlepeople.innerText = e.circleGradeDto.circle_people;
+                
+
+
+
+                main_image.appendChild(img);
+
+            })
+
+        }
+
+        const circleBoardWrite = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            location.href = "./circleFeedWritePage?circle_id=" + circle_id;
+
+        }
+        
+
+        window.addEventListener("DOMContentLoaded", () => {
+            circleboardList();
+            circleInfoOne();
+        })
+        
+    </script>
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+        }
+    
+        .fixed-bottom {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: #ffffff;
+          padding: 10px;
+          text-align: center;
+        }
+        .image-container {
+            max-height: 260px;
+            width: 100%;
+            overflow: hidden; /* 부모 컨테이너를 벗어나는 부분 숨김 */
+        }
+
+        .responsive-img {
+            width: 100%;
+            object-fit: cover; /* 이미지를 부모 컨테이너에 맞게 조정하면서 종횡비 유지 */
+            opacity: 0.7;
+        }
+        .relative-container {
+            position: relative;
+        }
+
+        .relative-item {
+            position: absolute;
+            top: 75%;
+            
+            width: 95%;
+            background-color: rgb(255, 255, 255);
+        }
+        .relative-item2 {
+            position: absolute;
+            top: 55%;
+            
+            width: 50%;
+            background-color: rgb(255, 255, 255);
+        }
+        .circle {
+            width: 80px;
+            height: 80px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 50%;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 여기는 동아리 내부 게시글&피드 같이 만들거임 =>  존재 동아리 피드라고 생각하면 됨 -->
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid">
+        <div class="row relative-container justify-content-center">
+            <div id="main_image" class="col d-grid px-0 image-container">
+                
+            </div>
+            <div class="row relative-item rounded-2 border">
+                <div class="col pt-4 pb-2"> <!-- 정보를 표시하는 col -->
+                    <div class="mt-3 text-center">
+                        <!-- 여기에 정보를 표시할 내용을 추가 -->
+                        <h4 id="circle_title">동아리 정보</h2>
+                        <p><i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span id="currentpeople"></span> / <span id="circle_people"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row relative-item2 border circle align-items-center text-center">
+                <div class="col d-grid">
+                    힘
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                z
+            </div>
+        </div>
+        <div class="row mt-3 mx-0 fixed-bottom">
+            <div class="col d-grid">
+                <button class="btn btn-primary" onclick="circleBoardWrite()">게시글 작성하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
