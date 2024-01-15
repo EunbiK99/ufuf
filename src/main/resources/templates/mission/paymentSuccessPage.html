@@ -34,6 +34,31 @@
 
         });
     }
+
+    function upDateOrderstatus(){
+        const data = {
+            order_id: order_id,
+            status: "결제완료"
+        };
+        fetch("./upDateOrderstatus", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                console.log(response);
+                
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        upDateOrderstatus();
+    });
+
 </script>
 
 <body>

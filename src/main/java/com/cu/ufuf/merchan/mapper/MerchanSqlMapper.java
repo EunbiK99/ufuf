@@ -20,6 +20,7 @@ public interface MerchanSqlMapper {
     public void insertItemInfo(ItemInfoDto iteminfoDto);
 
     public void insertOrderInfo(OrderInfoDto orderInfoDto);
+    public void updateOrderStatus(OrderInfoDto orderInfoDto);
 
     public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto);
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto);

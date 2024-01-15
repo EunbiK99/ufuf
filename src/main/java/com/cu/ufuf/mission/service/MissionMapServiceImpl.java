@@ -26,6 +26,7 @@ public class MissionMapServiceImpl {
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
 
+    // 미션 등록
     public void registerMissionProcess(MissionInfoDto missionInfoDto){
 
         int mission_id = missionMapsqlMapper.createMissionPk();
@@ -65,6 +66,17 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertOrderInfo(orderInfoDto);
     }
 
+    // 미션 전체 리스트 출력
+    public List<MissionInfoDto> loadMissionList(){
+        return missionMapsqlMapper.selectAllMission();
+    }
+
+    // 주문상태 업데이트
+    public void updateOrderStatus(OrderInfoDto orderInfoDto){
+        merchanSqlMapper.updateOrderStatus(orderInfoDto);
+    }
+
+    // 아이템/주문 정보 가져오기
     public Map<String, Object> getItemAndOrderInfo(int mission_id){
 
         Map<String, Object> ItemOrderInfo = new HashMap<>();
@@ -78,6 +90,7 @@ public class MissionMapServiceImpl {
         return ItemOrderInfo;
     }
 
+    // 주문 정보 가져오기
     public OrderInfoDto getOrderInfo(String Order_id){
         return missionMapsqlMapper.getOrderInfo(Order_id);
     }
