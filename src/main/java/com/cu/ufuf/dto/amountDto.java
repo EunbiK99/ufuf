@@ -1,6 +1,8 @@
 package com.cu.ufuf.dto;
 
-@lombok
+import lombok.Data;
+
+@Data
 public class AmountDto {
     private int amount_id;
 	private int total;
