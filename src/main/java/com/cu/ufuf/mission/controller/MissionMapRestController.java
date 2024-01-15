@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,6 +39,16 @@ public class MissionMapRestController {
         missionMapService.registerMissionProcess(params);
         
         restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @RequestMapping("loadMissionList")
+    public RestResponseDto loadMissionList(){
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setData(missionMapService.loadMissionList());
         restResponseDto.setResult("Success");
         
         return restResponseDto;
@@ -116,10 +130,83 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @ResponseBody
+    @PostMapping("insertAmountInfo")
+    public RestResponseDto insertAmountInfo(@RequestBody AmountDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionMapService.insertAmountInfo(params);
+        
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @ResponseBody
+    @PostMapping("insertCardInfo")
+    public RestResponseDto insertCardInfo(@RequestBody CardInfoDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionMapService.insertCardInfo(params);
+        
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @ResponseBody
+    @PostMapping("insertKakaoPayAccRes")
+    public RestResponseDto insertKakaoPayAccRes(@RequestBody KakaoPaymentAcceptResDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionMapService.insertKakaoPayAccResInfo(params);
+        
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @ResponseBody
+    @PostMapping("upDateOrderstatus")
+    public RestResponseDto upDateOrderstatus(@RequestBody OrderInfoDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+    
+        missionMapService.updateOrderStatus(params);
+        
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+    
+
+
+    
+
 
 
 
     
+
+
+    @ResponseBody
+    @GetMapping("getOrderInfo")
+    public RestResponseDto getOrderInfo(String Order_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getOrderInfo(Order_id));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 }

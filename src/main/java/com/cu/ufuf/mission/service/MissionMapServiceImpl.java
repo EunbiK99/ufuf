@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionInfoDto;
@@ -23,6 +26,7 @@ public class MissionMapServiceImpl {
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
 
+    // 미션 등록
     public void registerMissionProcess(MissionInfoDto missionInfoDto){
 
         int mission_id = missionMapsqlMapper.createMissionPk();
@@ -62,11 +66,22 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertOrderInfo(orderInfoDto);
     }
 
+    // 미션 전체 리스트 출력
+    public List<MissionInfoDto> loadMissionList(){
+        return missionMapsqlMapper.selectAllMission();
+    }
+
+    // 주문상태 업데이트
+    public void updateOrderStatus(OrderInfoDto orderInfoDto){
+        merchanSqlMapper.updateOrderStatus(orderInfoDto);
+    }
+
+    // 아이템/주문 정보 가져오기
     public Map<String, Object> getItemAndOrderInfo(int mission_id){
 
         Map<String, Object> ItemOrderInfo = new HashMap<>();
 
-        OrderInfoDto orderInfoDto = missionMapsqlMapper.getOrderInfo(mission_id);
+        OrderInfoDto orderInfoDto = missionMapsqlMapper.getOrderInfoByMissionId(mission_id);
         int item_id = orderInfoDto.getItem_id();
 
         ItemOrderInfo.put("orderInfoDto", orderInfoDto);
@@ -75,6 +90,20 @@ public class MissionMapServiceImpl {
         return ItemOrderInfo;
     }
 
+    // 주문 정보 가져오기
+    public OrderInfoDto getOrderInfo(String Order_id){
+        return missionMapsqlMapper.getOrderInfo(Order_id);
+    }
+
+
+
+
+
+
+
+
+
+    // 카카오페이
     public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto){
         merchanSqlMapper.insertKakaoPayReqInfo(kakaoPaymentReqDto);
     }
@@ -86,6 +115,19 @@ public class MissionMapServiceImpl {
     public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
         merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
     }
+
+    public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+        merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
+    }
+
+    public void insertAmountInfo(AmountDto amountDto){
+        merchanSqlMapper.insertAmountInfo(amountDto);
+    }
+
+    public void insertCardInfo(CardInfoDto cardInfoDto){
+        merchanSqlMapper.insertCardInfo(cardInfoDto);
+    }
+
     
 
 

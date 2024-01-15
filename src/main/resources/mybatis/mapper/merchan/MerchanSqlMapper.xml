@@ -27,6 +27,12 @@
     );
 </insert>
 
+<update id="updateOrderStatus">
+    update order_info
+    set status = #{status}
+    where order_id = #{order_id};
+</update>
+
 <insert id="insertKakaoPayReqInfo">
     insert into kakao_payment_req(
         cid, 
@@ -70,7 +76,7 @@
         partner_order_id,
         partner_user_id,
         pg_token
-    )
+        )
     values(
         'TC0ONETIME',
         #{tid},
@@ -80,5 +86,49 @@
     );
 </insert>
 
+<insert id="insertKakaoPayAccResInfo">
+	insert into kakaoPaymentAcceptRes(
+    	tid,
+        amount_id,
+        card_id,
+        partner_order_id,
+        partner_user_id,
+        item_id,
+        aid,
+        payment_method_type,
+        approved_at
+        )
+	values(
+    	#{tid},
+        #{amount_id},
+        #{card_id},
+        #{partner_order_id},
+        #{partner_user_id},
+        #{item_id},
+        #{aid},
+    	#{payment_method_type},
+        #{approved_at}
+    );
+</insert>
+
+<insert id="insertAmountInfo">
+	insert into amount_info(total, point)
+    values(#{total},#{point});
+</insert>
+
+<insert id="insertCardInfo">
+	inert into card_info(
+    	bin_,
+        card_type,
+        install_month,
+        approved_id
+    	)
+	values(
+    	#{bin_},
+        #{card_type},
+        #{install_month},
+        #{approved_id},
+    );
+</insert>
 
 </mapper>

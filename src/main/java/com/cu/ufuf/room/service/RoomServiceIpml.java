@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,12 +87,13 @@ public class RoomServiceIpml {
     //룸 상세보기
 	public Map<String, Object> getRoomInfo(int room_info_id){
 		
+        
 		Map<String, Object> roomMap=new HashMap<>();
 		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(room_info_id);
 
         int UserPK=roomInfoDto.getUser_id();
 		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
-		
+
         
         List<RoomImageDto> roomImageDto=roomSqlMapper.roomImageSelectById(room_info_id);
         List<RoomOptionDto> roomOptionDto=roomSqlMapper.roomOptionSelectById(room_info_id);
@@ -114,5 +116,21 @@ public class RoomServiceIpml {
         //이미지랑 옵션 반복문 돌려야하나 멩,,,,일단 해야지
 		
 		return roomMap;
+	}
+
+    public Map<String, Object> getRoomInfoForReservation(int room_info_id) {
+		
+		Map<String, Object> roomMap=new HashMap<>();
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(room_info_id);
+
+        int UserPK=roomInfoDto.getUser_id();
+		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+
+
+        roomMap.put("roomInfoDto", roomInfoDto);
+        roomMap.put("userDto", userDto);
+
+		return roomMap;
+		
 	}
 }

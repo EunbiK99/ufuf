@@ -3,7 +3,10 @@ package com.cu.ufuf.room.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -152,8 +155,11 @@ public class RoomController {
     }
 
 	//게스트 예약페이지
-	@RequestMapping("roomReservationPage")
-	public String roomReservationPage(){
+	@GetMapping("roomReservationPage")
+	public String roomReservationPage(Model model, @RequestParam("room_info_id") int room_info_id){
+		
+
+		model.addAttribute("roomInfo", roomService.getRoomInfoForReservation(room_info_id));
 
 		return "room/roomReservationPage";
 	}
@@ -161,16 +167,17 @@ public class RoomController {
 	//예약 값 넘기는거
 	@RequestMapping("roomReservationProcess")
 	public String roomReservationProcess(@RequestParam(name = "guest_count", required = false, defaultValue = "1") int guestCount, HttpSession session, RoomGuestDto roomGuestDto) {
-
+		
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
 		int userPk = sessionUserInfo.getUser_id();
 		
 		roomGuestDto.setUser_id(userPk);
 		roomGuestDto.setGuest_count(guestCount);
+		System.out.println(roomGuestDto.getRoom_info_id());
 		
 		roomService.roomReservation(roomGuestDto);
 
-		return "redirect:./roomReservationPage";
+		return "redirect:./roomDetailPage?room_info_id="+roomGuestDto.getRoom_info_id();
 	}
 
 	//예약완료페이지(해야댐)
@@ -191,8 +198,8 @@ public class RoomController {
 	}
 
 	//숙소 상세 페이지
-	@RequestMapping("roomDetailPage")
-	public String roomDetailPage(Model model,@RequestParam int room_info_id){
+	@GetMapping("roomDetailPage")
+	public String roomDetailPage(Model model, @RequestParam("room_info_id") int room_info_id){
 		
 		model.addAttribute("roomDetail", roomService.getRoomInfo(room_info_id));
 		return "room/roomDetailPage";

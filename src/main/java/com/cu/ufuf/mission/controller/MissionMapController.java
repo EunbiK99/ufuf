@@ -24,19 +24,21 @@ public class MissionMapController {
     }
 
     @RequestMapping("paymentSuccessPage")
-    public String paymentSuccessPage(){
+    public String paymentSuccessPage(String Order_id, Model model){
         return "mission/paymentSuccessPage";
     }
 
     @RequestMapping("paymentCancelPage")
-    public String paymentCancelPage(){
+    public String paymentCancelPage(String Order_id, Model model){
         return "mission/paymentCancelPage";
     }
 
     @RequestMapping("paymentFailPage")
-    public String paymentFailPage(){
+    public String paymentFailPage(String Order_id, Model model){
         return "mission/paymentFailPage";
     }
+
+
 
 }
 
