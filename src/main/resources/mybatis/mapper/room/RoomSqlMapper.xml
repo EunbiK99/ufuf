@@ -59,7 +59,7 @@
         order by room_option_category_id asc	
 	</select>
 
-    <!--여기서부터 신청-->
+    <!--예약 신청-->
     <insert id="insertRoomGuestInfo">
         insert into room_guest(
             user_id,
@@ -68,11 +68,11 @@
             end_reservation_schedule,
             guest_count
         ) values(
-            2,
-            1,
-            '2024-01-18',
-            '2024-01-20',
-            2
+            #{user_id},
+            #{room_info_id},
+            #{start_reservation_schedule},
+            #{end_reservation_schedule},
+            #{guest_count}
         )
     </insert>
 
