@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">    
 
@@ -24,12 +25,25 @@
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Hi Melody', sans-serif; */
         font-family: 'Noto Sans KR', sans-serif;
     }
     </style>
 </head>
 
 <script>
+
+function closeCustomOverlay(){
+    const customOverlayWrapper = document.getElementById("customOverlayWrapper");
+    customOverlayWrapper.setMap(null);
+}
+
+function setMeetingLocation(){
+    const selectLocation = document.getElementById("testLocation").innerText;
+    console.log('selectLocation: ', selectLocation);
+    const meetingPlaceAddress = document.getElementById("meetingPlaceAddress");
+    meetingPlaceAddress.value = selectLocation;    
+}
 
 function checkMyLocation(){
     if (navigator.geolocation) {
@@ -41,10 +55,15 @@ function checkMyLocation(){
             let kakaoMap = document.getElementById('kakaoMap'),
                 mapOption={
                     center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                    level: 2 // 지도의 확대 레벨
+                    level : 2,  // 지도의 확대 레벨                    
                 };
             
+            /* 지도 생성 */
             let map = new kakao.maps.Map(kakaoMap, mapOption);
+            map.relayout();
+            
+            /* 주소-좌표 변환 객체(지오코더) 생성 */
+            let geocoder = new kakao.maps.services.Geocoder();
 
             const mapControl = new kakao.maps.MapTypeControl();
             const zoomControl = new kakao.maps.ZoomControl();
@@ -52,34 +71,79 @@ function checkMyLocation(){
             map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
             map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
+            function searchAddrFromCoords(coords, callback) {
+                // 좌표로 행정동 주소 정보를 요청합니다
+                geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+            }
+
+            function searchDetailAddrFromCoords(coords, callback) {
+                // 좌표로 법정동 상세 주소 정보를 요청합니다
+                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+            }
+
+            // 지도에 마커를 생성하고 표시한다
+            let marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(x, y), // 마커의 좌표
+                map: map // 마커를 표시할 지도 객체
+            });
+
+            let customOverlay = new kakao.maps.CustomOverlay({
+                map : map,
+                position : marker.getPosition(), 
+                content : '',
+                xAnchor : -0.1,
+                // yAnchor: 1.3,
+                clickable : true
+            });
+
+            const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
+            const testLocation = customOverlayWrapper.querySelector("#testLocation");            
+            
+            searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    let detailAddr = result[0].address.address_name;
+                    detailAddr += !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';                        
+                    
+                    testLocation.innerText = detailAddr;
+                    
+                    console.log('detailAddr: ', detailAddr);
+
+                    customOverlay.setContent(customOverlayWrapper);
+
+                    customOverlay.setMap(map);
+                }
+            });
+
             // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
 		    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-			console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
-            console.log(mouseEvent.latLng);
-            const newX = mouseEvent.latLng.Ma;
-            console.log('newX: ', newX);
-            const newy = mouseEvent.latLng.La;
-            console.log('newy: ', newy);
-
-            
-
-            const url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=" + x + "&y=" + y;
-            
-            fetch(url, {
-                method : 'get',
-                headers : 'Authorization: KakaoAK eac3376c76b2eed9843c4d3fbcc91890'
-            })
-            .then(response => response.json())
-            .then(response =>{
-                console.log(document);
-            });
-		});	
-
-        });
+                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {                        
+                        let detailAddr = result[0].address.address_name;
+                        // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+                        
+                        testLocation.innerHTML = '';
+                        testLocation.innerText = detailAddr;
+                        
+                        console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+                        console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
+                        
+                        let latlng = mouseEvent.latLng;
+                        
+                        marker.setPosition(latlng);
+                        customOverlay.setPosition(latlng);
+                        customOverlay.setMap(map);
+                    }
+                });
+		    });
+        });    
     }
     else {
         console.error("Geolocation을 지원하지 않는 브라우저입니다.");
     }
+}
+
+function closeOverlay(){
+    customOverlay.setMap(null);
 }
 
 function addCommas(numberValue){
@@ -272,19 +336,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                             <div class="col">
                                                 <span>미팅 장소는 어디인가요?</span>
                                             </div>
+                                            <div class="col">
+                                                <button class="btn btn-sm btn-info" onclick="checkMyLocation()">지도보기</button>
+                                            </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col">
-                                                <button onclick="checkMyLocation()">일단버튼</button>
+                                            <div class="col">                                                
+                                                <input type="text" class="form-control" id="meetingPlaceAddress" readonly>
                                             </div>
                                         </div> 
-                                        <div class="row">
+                                        <div class="row mt-2">
                                             <div class="col">
-                                                <div id="kakaoMap" style="width: 100%; height: 350px; position: inherit;"></div>
+                                                <div id="kakaoMap" style="width: 100%; height: 350px;"></div>
                                             </div>
                                         </div>                                         
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
@@ -298,6 +365,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 푸터 영역
             </div>
         </div>
+    </div>
+
+    <div id="templete" class="d-none">
+
+        <div id="customOverlayWrapper" class="container">
+            <div class="row bg-white border border-2 border-black rounded-3">
+                <div class="col">
+                    <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between">
+                        <div class="col-auto">
+                            <span class="fw-bold">주소</span>
+                        </div>
+                        <div class="col-auto">
+                            <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span id="testLocation"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2 mb-2 justify-content-center">
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-primary fw-bold" onclick="setMeetingLocation()">여기로 설정!!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>       

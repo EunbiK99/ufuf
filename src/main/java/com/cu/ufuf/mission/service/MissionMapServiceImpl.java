@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.amountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
@@ -120,7 +120,7 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
     }
 
-    public void insertAmountInfo(AmountDto amountInfo){
+    public void insertAmountInfo(amountDto amountInfo){
         merchanSqlMapper.insertAmountInfo(amountInfo);
     }
 
