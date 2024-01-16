@@ -271,7 +271,12 @@ public class CircleController {
 
         return "redirect:./circleFeedPage?circle_id=" + circle_id;
     }
+    
+    @RequestMapping("circleVoteWritePage")
+    public String circleVoteWritePage(){
 
+        return "circle/circleVoteWritePage";
+    }
     
     
     

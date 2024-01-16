@@ -77,7 +77,7 @@
         select * from circle_member where circle_id = #{circle_id}
     </select>
     <select id="circleboardInfoByCircleMemberId" resultType="com.cu.ufuf.dto.CircleBoardDto">
-        select * from circle_board where circle_member_id = #{circle_member_id}
+        select * from circle_board where circle_member_id = #{circle_member_id} order by circle_board_id desc
     </select>
     <select id="userInfoByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
         select * from user_info where user_id = #{user_id}
@@ -97,6 +97,16 @@
     <insert id="circleboardImageDtoInsert">
         insert into circle_board_image(circle_board_id, sub_image) values(
             #{circle_board_id}, #{sub_image}
+        )
+    </insert>
+    <insert id="circleVoteInsert">
+        insert into circle_vote(circle_member_id, vote_title, vote_theme) values(
+            #{circle_member_id}, #{vote_title}, #{vote_theme}
+        )
+    </insert>
+    <insert id="circleVoteOptionInsert">
+        insert into circle_vote_option(circle_vote_id, option_content, option_image) values(
+            #{circle_vote_id}, #{option_content}, #{option_image}
         )
     </insert>
 

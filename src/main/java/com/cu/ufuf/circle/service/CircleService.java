@@ -18,6 +18,8 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteDto;
+import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Service
@@ -255,6 +257,14 @@ public class CircleService {
     public CircleDto circleInfoByCircleId(int circle_id){
 
         return circleSqlMapper.circleInfoByCircleId(circle_id);
+    }
+    public void circleVoteInsert(CircleVoteDto circleVoteDto){
+        
+        circleSqlMapper.circleVoteInsert(circleVoteDto);
+    }
+    public void circleVoteOptionInsert(CircleVoteOptionDto circleVoteOptionDto){
+
+        circleSqlMapper.circleVoteOptionInsert(circleVoteOptionDto);
     }
     
 }

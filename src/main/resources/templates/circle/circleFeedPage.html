@@ -44,7 +44,7 @@
         function goBack() {
             window.history.go(-1);
         }
-        // 글작성하기 만들었으니까 해봄
+        // board글리스트 뽑아내기..
         const circleboardList = () => {
 
             const queryString = window.location.search;
@@ -57,16 +57,25 @@
                 // 아직 글작성 안해서 글이없음 ^^.. ==> 글작성 먼저 만들자..
                 // 글리스트 가져온거임 ..
                 for(e of response.data){
-                
-                    console.log(e.userInfoDto.name);
-                    console.log(e.circleMemberDto.circle_member_id);
-                    console.log(e.circleBoardDto.circle_board_id);
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const user_name = Wrapper.querySelector(".user_name");
+                    user_name.innerText = e.userInfoDto.name;
+                    const member_profile_img = Wrapper.querySelector(".member_profile_img");
+                    member_profile_img.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
+                    const board_main_image = Wrapper.querySelector(".board_main_image");
+                    board_main_image.setAttribute("src", "/uploadFiles/" + e.circleBoardDto.main_image);
+                    
+                    const boardInsert = document.querySelector("#boardInsert");
+                    boardInsert.appendChild(Wrapper);
                 }
 
             })
         }
         
         // CircleService에서 circleInfoVarious가져오면 그 동아리 관련 정보들을 대부분 가져올 수 있음
+        // 동아리정보
         const circleInfoOne = () => {
             
             const queryString = window.location.search;
@@ -106,7 +115,7 @@
             })
 
         }
-
+        // 동아리 게시글 작성 페이지로 이동 => 쿼리스트링 날려줌
         const circleBoardWrite = () => {
 
             const queryString = window.location.search;
@@ -114,6 +123,16 @@
             const circle_id = urlParams.get("circle_id");
 
             location.href = "./circleFeedWritePage?circle_id=" + circle_id;
+
+        }
+
+        const circleVoteWrite = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            location.href = "./circleVoteWritePage?circle_id=" + circle_id;
 
         }
         
@@ -184,6 +203,7 @@
         }
         .relative-container {
             position: relative;
+            
         }
 
         .relative-item {
@@ -204,11 +224,27 @@
             background-color: rgb(255, 255, 255);
             border-radius: 50%;
         }
+        
+        .image-container2 {
+            width: auto;
+            height: auto; /* 높이를 조절하세요 */
+            
+        }
+        .relative-container2 {
+            position: relative;
+            width: 100%;
+        }
+        
         *{
         /* font-family: 'Dongle', sans-serif; */
         font-family: 'Gowun Dodum', sans-serif;
         /* font-family: 'Quicksand', sans-serif; */
         /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        .content {
+        min-height: 120em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+        height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
+        overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
 
     </style>
@@ -216,12 +252,12 @@
 <body>
     <!-- 여기는 동아리 내부 게시글&피드 같이 만들거임 =>  존재 동아리 피드라고 생각하면 됨 -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid">
-        <div class="row relative-container justify-content-center">
+    <div class="container-fluid content" style="background-color: rgb(237, 237, 237);">
+        <div class="row px-0 relative-container justify-content-center">
             <div id="main_image" class="col d-grid px-0 image-container">
                 
             </div>
-            <div class="row relative-item rounded-2 border">
+            <div class="row relative-item rounded-2 border px-0">
                 <div class="col pt-4 pb-2"> <!-- 정보를 표시하는 col -->
                     <div class="mt-3 text-center">
                         <!-- 여기에 정보를 표시할 내용을 추가 -->
@@ -241,34 +277,10 @@
                 z
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <img id="member_profile_img" class="img-fluid"><!-- 여기는 동아리 멤버의 글과함께 올라갈 프로필 이미지 -->
-                    </div>
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <span id="user_name"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <!-- 넣고 싶은게 생김 (방금전, ~분전, 몇시간전, 몇일전??) -->
-                            </div>
-                        </div>                        
-                    </div>
-                    <div class="col">
-                        차단상세보기등<!-- *** 클릭시 회원의 활동내역같은거? 아님 차단기능 -->
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <img id="board_main_image">
-                    </div>
-                </div>
-            </div>  
+        <div class="row mt-4">
+            <div id="boardInsert" class="col">
+
+            </div>
         </div>
         
         <!-- 게시글 작성버튼
@@ -311,7 +323,7 @@
                         </a>
                     </div>
                     <div class="row" style="border-bottom: 0.01em solid black;">
-                        <a href="#" style="text-decoration: none; color: black;">
+                        <a onclick="circleVoteWrite()" style="text-decoration: none; color: black;">
                             <div class="col py-2">
                                 <span class="fw-bold">+</span> 투표글 작성
                             </div>
@@ -328,6 +340,37 @@
             </div>
         </div>
     </div>
+    <div id="Wrapper" class="row d-none">
+        <div class="col">
+            <div class="row pt-3 pb-1 align-items-center">
+                <div class="col-1">
+                    <img class="img-fluid member_profile_img">
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <span class="user_name"></span>
+                        </div>
+                        <div class="col text-end" style="font-size: 1.3em;">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </div>
+                    </div>                       
+                </div>
+            </div>
+            <div class="row">
+                <div class="col image-container2 px-0">
+                    <img class="relative-container2 board_main_image img-fluid">
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col" style="font-size: 0.7em;">
+                    1분전
+                </div>
+            </div> 
+        </div>  
+    </div>
+    
+    
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
