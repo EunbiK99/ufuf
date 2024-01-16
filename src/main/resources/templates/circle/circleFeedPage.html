@@ -7,12 +7,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script>
         // 여기서 circleFeedWritePage갈때 쿼리스트링 => circle_id 날려줘야 함
+        $(document).ready(function () {
+            // 모달이 나타날 때
+            $('#myModal').on('shown.bs.modal', function () {
+                // 현재 버튼 위치
+                var buttonPosition = $('.btn-primary').offset();
+                // 모달을 버튼 위에 위치하도록 조절
+                $(this).find('.modal-dialog').css({
+                    'top': buttonPosition.top - $(window).scrollTop(),
+                    'left': buttonPosition.left
+                });
+            });
+        });
+        function openModal() {
+            document.getElementById('myModal').style.display = 'flex';
+        }
+
+        // 모달 닫기 함수
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function (event) {
+            var modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
         function goBack() {
             window.history.go(-1);
         }
-        
+        // board글리스트 뽑아내기..
         const circleboardList = () => {
 
             const queryString = window.location.search;
@@ -23,18 +55,27 @@
             .then(response => response.json())
             .then(response => {
                 // 아직 글작성 안해서 글이없음 ^^.. ==> 글작성 먼저 만들자..
-                // 글리스트 가져온거임 .. 
+                // 글리스트 가져온거임 ..
                 for(e of response.data){
-                
-                    console.log(e.userInfoDto.name);
-                    console.log(e.circleMemberDto.circle_member_id);
-                    console.log(e.circleBoardDto.circle_board_id);
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const user_name = Wrapper.querySelector(".user_name");
+                    user_name.innerText = e.userInfoDto.name;
+                    const member_profile_img = Wrapper.querySelector(".member_profile_img");
+                    member_profile_img.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
+                    const board_main_image = Wrapper.querySelector(".board_main_image");
+                    board_main_image.setAttribute("src", "/uploadFiles/" + e.circleBoardDto.main_image);
+                    
+                    const boardInsert = document.querySelector("#boardInsert");
+                    boardInsert.appendChild(Wrapper);
                 }
 
             })
         }
-
+        
         // CircleService에서 circleInfoVarious가져오면 그 동아리 관련 정보들을 대부분 가져올 수 있음
+        // 동아리정보
         const circleInfoOne = () => {
             
             const queryString = window.location.search;
@@ -53,23 +94,28 @@
                 img.setAttribute("src","/uploadFiles/" + e.circleDto.circle_image);
                 img.classList.add("img-fluid");
                 img.classList.add("responsive-img");
+                main_image.appendChild(img);
+
                 const circle_title = document.querySelector("#circle_title");
                 circle_title.innerText = e.circleDto.circle_name;
                 
                 const currentpeople = document.querySelector("#currentpeople");
                 currentpeople.innerText = e.circleMemberCnt;
+
                 const circlepeople = document.querySelector("#circle_people");
                 circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                // 일단 프로필 이미지 지금 내가 못받음.. 은비컴에 저장되어있음 => 개설한 유저 프로필 이미지
+                const profile_img = document.querySelector("#profile_img");
+                const pfimg = document.createElement("img");
+                pfimg.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
+                pfimg.classList.add("img-fluid");
+                profile_img.appendChild(pfimg);
                 
-
-
-
-                main_image.appendChild(img);
-
             })
 
         }
-
+        // 동아리 게시글 작성 페이지로 이동 => 쿼리스트링 날려줌
         const circleBoardWrite = () => {
 
             const queryString = window.location.search;
@@ -77,6 +123,16 @@
             const circle_id = urlParams.get("circle_id");
 
             location.href = "./circleFeedWritePage?circle_id=" + circle_id;
+
+        }
+
+        const circleVoteWrite = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            location.href = "./circleVoteWritePage?circle_id=" + circle_id;
 
         }
         
@@ -88,6 +144,38 @@
         
     </script>
     <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 모달 내용 스타일 */
+        .modal-content {
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 1em;
+        }
+
+        /* 닫기 버튼 스타일 */
+        .close {
+            cursor: pointer;
+            position: absolute;
+            top: 1em;
+            right: 1em;
+            font-size: 2em;
+        }
+        .modal-dialog-bottom {
+            
+            margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
+            transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
+        }
         body {
           margin: 0;
           padding: 0;
@@ -99,11 +187,11 @@
           left: 0;
           width: 100%;
           background-color: #ffffff;
-          padding: 10px;
+          padding: 1em;
           text-align: center;
         }
         .image-container {
-            max-height: 260px;
+            max-height: 13em;
             width: 100%;
             overflow: hidden; /* 부모 컨테이너를 벗어나는 부분 숨김 */
         }
@@ -115,27 +203,48 @@
         }
         .relative-container {
             position: relative;
+            
         }
 
         .relative-item {
             position: absolute;
             top: 75%;
-            
             width: 95%;
             background-color: rgb(255, 255, 255);
         }
         .relative-item2 {
             position: absolute;
-            top: 55%;
-            
+            top: 50%;
             width: 50%;
             background-color: rgb(255, 255, 255);
         }
         .circle {
-            width: 80px;
-            height: 80px;
+            width: 5em;
+            height: 5em;
             background-color: rgb(255, 255, 255);
             border-radius: 50%;
+        }
+        
+        .image-container2 {
+            width: auto;
+            height: auto; /* 높이를 조절하세요 */
+            
+        }
+        .relative-container2 {
+            position: relative;
+            width: 100%;
+        }
+        
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        .content {
+        min-height: 120em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+        height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
+        overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
 
     </style>
@@ -143,12 +252,12 @@
 <body>
     <!-- 여기는 동아리 내부 게시글&피드 같이 만들거임 =>  존재 동아리 피드라고 생각하면 됨 -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid">
-        <div class="row relative-container justify-content-center">
+    <div class="container-fluid content" style="background-color: rgb(237, 237, 237);">
+        <div class="row px-0 relative-container justify-content-center">
             <div id="main_image" class="col d-grid px-0 image-container">
                 
             </div>
-            <div class="row relative-item rounded-2 border">
+            <div class="row relative-item rounded-2 border px-0">
                 <div class="col pt-4 pb-2"> <!-- 정보를 표시하는 col -->
                     <div class="mt-3 text-center">
                         <!-- 여기에 정보를 표시할 내용을 추가 -->
@@ -157,23 +266,111 @@
                     </div>
                 </div>
             </div>
-            <div class="row relative-item2 border circle align-items-center text-center">
-                <div class="col d-grid">
-                    힘
+            <div class="row relative-item2 border circle align-items-center text-center justify-content-center">
+                <div id="profile_img" class="col d-grid">
+                    
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-3">
             <div class="col">
                 z
             </div>
         </div>
-        <div class="row mt-3 mx-0 fixed-bottom">
-            <div class="col d-grid">
-                <button class="btn btn-primary" onclick="circleBoardWrite()">게시글 작성하기</button>
+        <div class="row mt-4">
+            <div id="boardInsert" class="col">
+
+            </div>
+        </div>
+        
+        <!-- 게시글 작성버튼
+            <div class="row mt-3 mx-0 fixed-bottom">
+                <div class="col d-grid">
+                    <button class="btn btn-primary">게시글 작성하기</button>
+                </div>
+            </div>
+        -->
+        <div class="row fixed-bottom mx-0 align-items-center">
+            <div class="button col py-0 text-center fs-1">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
+            <div class="button col py-0 text-center fs-1">
+                <i class="bi bi-messenger"></i>
+            </div>
+            <div class="col-2 px-0 d-grid">
+                <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
+            </div>
+            <div class="button col py-0 text-center fs-1" onclick="(() => {
+                location.href = './myCircleListPage'
+            })()">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="button col py-0 text-center fs-1">
+                <i class="bi bi-person-circle"></i>
             </div>
         </div>
     </div>
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-sm modal-dialog-bottom pt-0"> <!-- 또는 modal-sm -->
+            <div class="modal-content px-0 py-0">
+                <!-- 모달 본문 -->
+                <div class="modal-body py-0">
+                    <div class="row" style="border-bottom: 0.01em solid black;">
+                        <a href="#" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 일정 추가
+                            </div>
+                        </a>
+                    </div>
+                    <div class="row" style="border-bottom: 0.01em solid black;">
+                        <a onclick="circleVoteWrite()" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 투표글 작성
+                            </div>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a onclick="circleBoardWrite()" style="text-decoration: none; color: black;">
+                            <div class="col py-2">
+                                <span class="fw-bold">+</span> 동아리 게시글 작성
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper" class="row d-none">
+        <div class="col">
+            <div class="row pt-3 pb-1 align-items-center">
+                <div class="col-1">
+                    <img class="img-fluid member_profile_img">
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <span class="user_name"></span>
+                        </div>
+                        <div class="col text-end" style="font-size: 1.3em;">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </div>
+                    </div>                       
+                </div>
+            </div>
+            <div class="row">
+                <div class="col image-container2 px-0">
+                    <img class="relative-container2 board_main_image img-fluid">
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col" style="font-size: 0.7em;">
+                    1분전
+                </div>
+            </div> 
+        </div>  
+    </div>
+    
+    
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>

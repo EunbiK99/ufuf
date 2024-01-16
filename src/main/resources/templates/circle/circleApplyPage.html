@@ -7,6 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script>
         
     var fileInput = document.getElementById('circle_image');
@@ -48,6 +53,8 @@
         .then(response => response.json())
         .then(response => {
 
+            
+
             for(e of response.data){
                 
                 const option = document.createElement("option");
@@ -71,7 +78,7 @@
         .then(response => {
             
             
-
+            let count = 0;
             for(e of response.data){
 
                 const middle = document.querySelector("#middle"); 
@@ -79,6 +86,13 @@
                 const option = document.createElement("option");
                 option.setAttribute("value", e.circle_middle_category_id);
                 option.innerText = e.category_name;
+
+                if(count === 0){
+                    const optionchoice = document.createElement("option");
+                    optionchoice.innerText = "카테고리를 선택하세요";
+                    middle.appendChild(optionchoice);
+                    count++;
+                }
 
                 middle.appendChild(option);
 
@@ -93,21 +107,15 @@
         // 이앞에는 동아리명이 중복되지 않는지 검증 해야 함 // 동아리명은 unique 해야함
         
         // 1. selected 된 circle_small_category_id
-
         let cc = document.querySelector("#small > option:checked").value;
         let circle_small_category_id = parseInt(cc, 10);
         
-        
         // 2. circle_name
-
         const circle_name = document.querySelector("#circle_name").value;
         
-
         // 3. circle_content
-
         const circle_content = document.querySelector("#circle_content").value;
         
-
         // 4. circle_image 원본파일명 => filename
         // const filename = aa.files[0].name;
 
@@ -139,7 +147,7 @@
 
 
     }
-
+    
     window.addEventListener("DOMContentLoaded", () => {
         middleCategoryList();
         
@@ -159,8 +167,14 @@
           left: 0;
           width: 100%;
           background-color: #ffffff;
-          padding: 10px;
+          padding: 1em;
           text-align: center;
+        }
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
         }
       </style>
 </head>
@@ -171,7 +185,7 @@
             <div class="row mt-2">
                 <div class="col d-flex align-items-center">
                     개설자<span class="text-danger">＊</span>
-                </div>         
+                </div>
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
@@ -209,14 +223,14 @@
                     <select id="middle" name="circle_name" class="form-select"></select>
                 </div>
             </div>
-            <div class="row mt-2" disabled>
+            <div class="row mt-2">
                 <div class="col d-flex align-items-center">
                     동아리 소분류 카테고리<span class="text-danger">＊</span>
                 </div>         
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <select id="small" name="circle_name" class="form-select"></select>
+                    <select id="small" name="circle_name" class="form-select"><option>위 카테고리를 선택하세요</option></select>
                 </div>
             </div>
             <div class="row mt-2">

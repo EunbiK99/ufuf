@@ -15,6 +15,8 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteDto;
+import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
@@ -55,11 +57,12 @@ public interface CircleSqlMapper {
     // 동아리 상세이미지(여러개) 가져오는..
     public List<CircleNoticeImageDto> circleNoticeImageInfoByCircleId(int circle_id);
     
-    // 동아리 가입신청
+    // 동아리 가입신청 ====> 나중에 직책이 P , M 인 사람이 승인을 할 수 있도록.. 승인여부 Y로 바뀌면 동아리회원정보 insert되도록 만들어야 함
     public void circleJoinApplyInsert(CircleJoinApplyDto circleJoinApplyDto);
 
     // 동아리 회원정보 (세션userid로 가져올거) => 내가 가지고 있는게 여러개 나오겠지..
     public List<CircleMemberDto> circleMemberInfoByUserId(int user_id);
+
     // 동아리 회원정보 (동아리 키 기준)
     public List<CircleMemberDto> circleMemberInfoByCircleId(int circle_id);
 
@@ -80,4 +83,10 @@ public interface CircleSqlMapper {
 
     // 게시글 이미지 등록
     public void circleboardImageDtoInsert(CircleBoardImageDto circleBoardImageDto);
+    
+    // 투표글생성 & 투표항목생성 => insert
+    public void circleVoteInsert(CircleVoteDto circleVoteDto);
+    public void circleVoteOptionInsert(CircleVoteOptionDto circleVoteOptionDto);
+
+    // 흠
 }

@@ -28,118 +28,244 @@
         /* font-family: 'Hi Melody', sans-serif; */
         font-family: 'Noto Sans KR', sans-serif;
     }
+
+    .custom-button-color{
+        background-color: blueviolet !important;
+        color : white !important;
+    }
     </style>
 </head>
 
-<script>
+<script th:inline="javascript">
+
+function registerMeetingGroupProcess(){
+
+    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;    
+    const groupTitle = document.getElementById('groupTitle').value;
+    const groupContent = document.getElementById('groupContent').value;
+    const groupHeadCount = document.getElementById('groupHeadCount').value;
+    const groupMeetingDate = document.getElementById('groupMeetingDate').value;
+    const groupApplyCharge = document.getElementById('groupApplyCharge').value.replace(/[^\d]/g, '');
+    
+    const groupMeetingPlace = document.getElementById('groupMeetingPlace').value;    
+    const groupMeetingPlaceArray = groupMeetingPlace.split(' ');
+    const firstLocationCategory = groupMeetingPlaceArray[0];
+    const secondLocationCategory = groupMeetingPlaceArray[1];
+    
+    const groupApplyDate = document.getElementById('groupApplyDate').value;        
+    const groupApplyDateArray = groupApplyDate.split(' ~ ');    
+    const groupApplyStart = groupApplyDateArray[0];
+    const groupApplyEnd = groupApplyDateArray[1];
+    
+    
+    
+    const groupGenderOptionList = document.getElementsByName('groupGenderOption');
+    const groupGenderOptionListArray = Array.from(groupGenderOptionList);
+    let groupGenderOption;
+    for(e of groupGenderOptionListArray){
+        if(e.checked){
+            groupGenderOption = e.value;
+        }
+    }
+    
+    console.log('profileId: ', userMeetingId);
+    console.log('groupTitle: ', groupTitle);
+    console.log('groupContent: ', groupContent);
+    console.log('groupHeadCount: ', groupHeadCount);
+    console.log('groupMeetingDate: ', groupMeetingDate);
+    console.log('groupApplyCharge: ', groupApplyCharge);
+    
+    console.log('groupMeetingPlace: ', groupMeetingPlace);
+    console.log('firstLocationCategory: ', firstLocationCategory);
+    console.log('secondLocationCategory: ', secondLocationCategory);
+    
+    console.log('groupApplyStart: ', groupApplyStart);    
+    console.log('groupApplyEnd: ', groupApplyEnd);
+    console.log('groupGenderOption: ', groupGenderOption);
+    
+    
+    const tagButtonList = document.getElementsByClassName("tagButton");
+    const groupTag = Array.from(tagButtonList);
+    const tagNameList = groupTag.map(button => button.innerText);
+
+    const groupData = {
+        profileId : userMeetingId,
+        groupTitle : groupTitle,
+        groupContent : groupContent,
+        groupHeadCount : groupHeadCount,
+        groupMeetingDate : groupMeetingDate,
+        groupApplyStart : groupApplyStart,
+        groupApplyEnd : groupApplyEnd,
+        groupApplyCharge : groupApplyCharge,
+        groupMeetingPlace : groupMeetingPlace,
+        groupGenderOption : groupGenderOption,
+        firstLocationCategoryName : firstLocationCategory,
+        secondLocationCategoryName : secondLocationCategory,
+        tagNameList : tagNameList
+    }
+    
+
+    fetch('./api/registerGroupProcess', {
+        method : 'post',
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(groupData)})
+    .then(response => response.json())
+    .then(response =>{
+        const result = response.result;
+        if(result === "success"){
+            alert("모집글이 정상 등록되었습니다.");
+            window.location.href = "./mainPage";
+        }
+        else{
+            alert("오류 발생 ㅅㅂ");
+        }
+        
+    });
+    
+}
+
+function addCategoryTag(){    
+    
+    const tagButtonWrapper = document.getElementById("tagButtonWrapper");
+    const errorMessageRow = document.getElementById('errorMessageRow');
+    const inputCategoryName = document.getElementById("inputCategoryName");
+
+    if(inputCategoryName.value === ""){
+        alert("태그명을 입력해주세요!");
+        return;
+    }
+    else{
+        if(tagButtonWrapper.childElementCount >= 3){        
+            errorMessageRow.classList.remove('d-none');
+            inputCategoryName.value = '';
+        }
+        else{
+            errorMessageRow.classList.add('d-none');
+            
+            inputCategoryNameValue = inputCategoryName.value;
+            
+            const tagButton = document.createElement('button');
+            tagButton.innerText = '#' + inputCategoryNameValue;        
+
+            tagButton.setAttribute('class', 'tagButton btn btn-sm rounded-pill custom-button-color mx-1');        
+            tagButton.setAttribute("onclick", "this.remove()");        
+            
+            tagButtonWrapper.appendChild(tagButton);        
+            inputCategoryName.value = '';
+        }
+    }
+
+    
+}    
+
+let customOverlay;
 
 function closeCustomOverlay(){
     const customOverlayWrapper = document.getElementById("customOverlayWrapper");
-    customOverlayWrapper.setMap(null);
+    customOverlay.setMap(null);    
 }
 
 function setMeetingLocation(){
     const selectLocation = document.getElementById("testLocation").innerText;
     console.log('selectLocation: ', selectLocation);
-    const meetingPlaceAddress = document.getElementById("meetingPlaceAddress");
-    meetingPlaceAddress.value = selectLocation;    
+    const groupMeetingPlace = document.getElementById("groupMeetingPlace");
+    groupMeetingPlace.value = selectLocation;    
 }
 
-function checkMyLocation(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const x = position.coords.latitude; // 위도
-            const y = position.coords.longitude; // 경도
-            console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
+function checkMyLocation(){    
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const x = position.coords.latitude; // 위도
+        const y = position.coords.longitude; // 경도
+        console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
 
-            let kakaoMap = document.getElementById('kakaoMap'),
-                mapOption={
-                    center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                    level : 2,  // 지도의 확대 레벨                    
-                };
-            
-            /* 지도 생성 */
-            let map = new kakao.maps.Map(kakaoMap, mapOption);
-            map.relayout();
-            
-            /* 주소-좌표 변환 객체(지오코더) 생성 */
-            let geocoder = new kakao.maps.services.Geocoder();
+        let kakaoMap = document.getElementById('kakaoMap'),
+            mapOption={
+                center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                level : 2,  // 지도의 확대 레벨                    
+            };
+        
+        /* 지도 생성 */
+        let map = new kakao.maps.Map(kakaoMap, mapOption);
+        map.relayout();
+        map.setZoomable(false);
+        
+        
+        /* 주소-좌표 변환 객체(지오코더) 생성 */
+        let geocoder = new kakao.maps.services.Geocoder();
 
-            const mapControl = new kakao.maps.MapTypeControl();
-            const zoomControl = new kakao.maps.ZoomControl();
+        const mapControl = new kakao.maps.MapTypeControl();
+        const zoomControl = new kakao.maps.ZoomControl();
 
-            map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
-            map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+        map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
-            function searchAddrFromCoords(coords, callback) {
-                // 좌표로 행정동 주소 정보를 요청합니다
-                geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        function searchAddrFromCoords(coords, callback) {
+            // 좌표로 행정동 주소 정보를 요청합니다
+            geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        }
+
+        function searchDetailAddrFromCoords(coords, callback) {
+            // 좌표로 법정동 상세 주소 정보를 요청합니다
+            geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        }
+
+        // 지도에 마커를 생성하고 표시한다
+        let marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(x, y), // 마커의 좌표
+            map: map // 마커를 표시할 지도 객체
+        });
+
+        customOverlay = new kakao.maps.CustomOverlay({
+            map : map,
+            position : marker.getPosition(), 
+            content : '',
+            // xAnchor : -0.1,
+            yAnchor: 1.1,
+            clickable : true
+        });
+
+        const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
+        const testLocation = customOverlayWrapper.querySelector("#testLocation");            
+        
+        searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                let detailAddr = result[0].address.address_name;
+                // detailAddr += !!result[0].road_address ? '<br>도로명주소 : ' + result[0].road_address.address_name : '';
+                
+                testLocation.innerText = detailAddr;
+                
+                console.log('detailAddr: ', detailAddr);
+
+                customOverlay.setContent(customOverlayWrapper);
+
+                customOverlay.setMap(map);
             }
+        });
 
-            function searchDetailAddrFromCoords(coords, callback) {
-                // 좌표로 법정동 상세 주소 정보를 요청합니다
-                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-            }
-
-            // 지도에 마커를 생성하고 표시한다
-            let marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(x, y), // 마커의 좌표
-                map: map // 마커를 표시할 지도 객체
-            });
-
-            let customOverlay = new kakao.maps.CustomOverlay({
-                map : map,
-                position : marker.getPosition(), 
-                content : '',
-                xAnchor : -0.1,
-                // yAnchor: 1.3,
-                clickable : true
-            });
-
-            const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
-            const testLocation = customOverlayWrapper.querySelector("#testLocation");            
-            
-            searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
-                if (status === kakao.maps.services.Status.OK) {
+        // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+            searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {                        
                     let detailAddr = result[0].address.address_name;
-                    detailAddr += !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';                        
+                    // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
                     
+                    testLocation.innerHTML = '';
                     testLocation.innerText = detailAddr;
                     
-                    console.log('detailAddr: ', detailAddr);
-
-                    customOverlay.setContent(customOverlayWrapper);
-
+                    console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+                    console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
+                    
+                    let latlng = mouseEvent.latLng;
+                    
+                    marker.setPosition(latlng);
+                    customOverlay.setPosition(latlng);
                     customOverlay.setMap(map);
                 }
             });
-
-            // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
-		    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {                        
-                        let detailAddr = result[0].address.address_name;
-                        // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                        
-                        testLocation.innerHTML = '';
-                        testLocation.innerText = detailAddr;
-                        
-                        console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
-                        console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
-                        
-                        let latlng = mouseEvent.latLng;
-                        
-                        marker.setPosition(latlng);
-                        customOverlay.setPosition(latlng);
-                        customOverlay.setMap(map);
-                    }
-                });
-		    });
-        });    
-    }
-    else {
-        console.error("Geolocation을 지원하지 않는 브라우저입니다.");
-    }
+        });
+    });        
 }
 
 function closeOverlay(){
@@ -152,8 +278,8 @@ function addCommas(numberValue){
 }
 
 function checkInputNumber(target){
-    const meetingApplyCharge = document.getElementById('meetingApplyCharge');
-    let tempValue = meetingApplyCharge.value.replace(/[^0-9,]/g,'');
+    const groupApplyCharge = document.getElementById('groupApplyCharge');
+    let tempValue = groupApplyCharge.value.replace(/[^0-9,]/g,'');
     tempValue = tempValue.replace(/[,]/g,'');
     target.value = addCommas(tempValue);    
 }
@@ -161,7 +287,7 @@ function checkInputNumber(target){
 
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    flatpickr('#datepicker', {
+    flatpickr('.datepicker', {
         mode : 'range',
         dateFormat : 'Y-m-d',        
         minDate : 'today',
@@ -236,12 +362,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>미팅 그룹 타이틀</span>
+                                                <span>미팅을 표현하는 한마디!</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <input type="text" class="form-control" placeholder="그룹에 대한 간단한 설명을 입력해주세요">
+                                                <input id="groupTitle" type="text" class="form-control">
                                             </div>
                                         </div>                                        
                                     </div>
@@ -251,12 +377,54 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>본인 포함 총 몇명이서 모이길 원하시나요?</span>
+                                                <span>미팅 태그</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input id="inputCategoryName" type="text" class="form-control">
+                                            </div>
+                                            <div class="col">
+                                                <button class="btn btn-primary" onclick="addCategoryTag()">+ 추가</button>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div id="tagButtonWrapper" class="col">
+                                            </div>
+                                        </div>
+                                        <div id="errorMessageRow" class="row d-none">
+                                            <div class="col">
+                                                <span class="text-danger fw-bold">태그는 최대 3개까지 등록가능합니다.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>참가자 필수 확인사항</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <textarea id="groupContent" class="form-control" rows="3"></textarea>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>미팅 멤버 수</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">                                                
-                                                <input type="number" class="form-control" step="1"  min="0" max="10">
+                                                <input id="groupHeadCount" type="number" class="form-control" step="1"  min="2" max="10" value="2">
                                             </div>
                                         </div>                                        
                                     </div>
@@ -266,16 +434,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>모집하는 인원의 성별을 선택해주세요</span>
+                                                <span>미팅 멤버 성별</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <input type="radio" value="M" class="btn-check" name="genderOption" id="genderMale" autocomplete="off">
+                                                <input type="radio" value="M" class="btn-check" name="groupGenderOption" id="genderMale" autocomplete="off">
                                                 <label class="btn btn-outline-primary" for="genderMale">남자만</label>
-                                                <input type="radio" value="F" class="btn-check" name="genderOption" id="genderFemale" autocomplete="off">
+                                                <input type="radio" value="F" class="btn-check" name="groupGenderOption" id="genderFemale" autocomplete="off">
                                                 <label class="btn btn-outline-danger" for="genderFemale">여자만</label>
-                                                <input type="radio" value="A" class="btn-check" name="genderOption" id="genderAll" autocomplete="off" checked>
+                                                <input type="radio" value="A" class="btn-check" name="groupGenderOption" id="genderAll" autocomplete="off" checked>
                                                 <label class="btn btn-outline-success" for="genderAll">남녀모두</label>
                                             </div>
                                         </div>                                        
@@ -286,12 +454,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>모이려는 날짜는 언제인가요?</span>
+                                                <span>미팅 날짜 &amp; 시간</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <input id="" type="datetime-local" class="form-control">
+                                                <input id="groupMeetingDate" type="datetime-local" class="form-control">
                                             </div>
                                         </div>                                        
                                     </div>
@@ -301,12 +469,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>지금부터 몇일동안 모집하실 건가요?</span>
+                                                <span>미팅 모집기한</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <input id="datepicker" type="text" class="form-control">
+                                                <input id="groupApplyDate" type="text" class="datepicker form-control">
                                             </div>
                                         </div>                                        
                                     </div>
@@ -316,12 +484,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>미팅 그룹에 참여하기위한 참가비가 있나요?</span>
+                                                <span>미팅 참가비</span>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-auto">
-                                                <input id="meetingApplyCharge" type="text" class="form-control border border-0" maxlength="6" placeholder="1,000원 단위로 입력해주세요" onkeyup="checkInputNumber(this)">
+                                            <div class="col-4">
+                                                <input id="groupApplyCharge" type="text" class="form-control" maxlength="6" onkeyup="checkInputNumber(this)">
                                             </div>
                                             <div class="col px-0">
                                                 <span class="align-middle"> 원</span>
@@ -334,15 +502,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>미팅 장소는 어디인가요?</span>
+                                                <span>미팅 장소</span>
                                             </div>
                                             <div class="col">
                                                 <button class="btn btn-sm btn-info" onclick="checkMyLocation()">지도보기</button>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mt-2">
                                             <div class="col">                                                
-                                                <input type="text" class="form-control" id="meetingPlaceAddress" readonly>
+                                                <input id="groupMeetingPlace" type="text" class="form-control" readonly>
                                             </div>
                                         </div> 
                                         <div class="row mt-2">
@@ -351,7 +519,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                             </div>
                                         </div>                                         
                                     </div>
-                                </div>                                
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row my-2">
+                                            <div class="col d-grid">
+                                                <button class="btn btn-danger" onclick="registerMeetingGroupProcess()">미팅 그룹 생성</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

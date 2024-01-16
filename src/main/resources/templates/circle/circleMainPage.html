@@ -8,6 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -93,10 +100,10 @@
                     //<span class="badge text-bg-light">축구</span>
                     const span = document.createElement("span")
                     span.innerText = "# " + e.category_name;
-                    span.classList.add("badge", "badge-md", "rounded-pill", "py-3","border")
+                    span.classList.add("badge", "badge-md", "rounded-pill", "py-3", "border")
                     span.style.fontSize = "0.88em"
                     span.style.color = "black";
-                    span.style.backgroundColor = "rgb(240, 240, 240)";
+                    span.style.backgroundColor = "white";
                     
                     div.appendChild(span);
                     smallC.appendChild(div);
@@ -121,6 +128,8 @@
         body {
             margin: 0;
             padding: 0;
+            
+            
         }
 
         .fixed-bottom {
@@ -129,7 +138,7 @@
             left: 0;
             width: 100%;
             background-color: #ffffff;
-            padding: 10px;
+            padding: 1em;
             text-align: center;
         }
 
@@ -148,17 +157,17 @@
         /* 모달 내용 스타일 */
         .modal-content {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 2em;
+            border-radius: 1em;
         }
 
         /* 닫기 버튼 스타일 */
         .close {
             cursor: pointer;
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
+            top: 1em;
+            right: 1em;
+            font-size: 2em;
         }
         .modal-dialog-bottom {
             
@@ -166,50 +175,65 @@
             transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
         }
         .image-container {
-            width: 100%;
-            height: 100px; /* 높이를 조절하세요 */
+            width: 10em;
+            height: 10em; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
         .responsive-img {
-            width: 100%;
+            width: 10em;
             height: 100%;
             object-fit: cover;
         }
+
+        .content {
+        min-height: 100em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+        height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
+        overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
+        }
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        
     </style>
 </head>
 
 <body>
     <div class="container-fluid">
+        <div class="row mt-2 align-items-center">
+            <div class="col-2">
+                <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
+            </div>
+            <div class="col-6 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;">
+                ufuf
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <a href="#" style="text-decoration: none; color: black;"><i class="bi bi-bell fs-1"></i></a>
+            </div>
+            <div class="col-2">
+                <a href="./logoutProcess" style="text-decoration: none; color: black;"><i class="bi bi-door-closed fs-1"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-2 content" style="background-color: rgb(247, 247, 247);">
         <div class="row">
             <div class="col">
-                <div class="row mt-2 align-items-center">
-                    <div class="col-2">
-                        <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
-                    </div>
-                    <div class="col-6 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;">
-                        ufuf
-                    </div>
-                    <div class="col-2" style="text-align: right;">
-                        <a href="#" style="text-decoration: none; color: black;"><i class="bi bi-bell fs-1"></i></a>
-                    </div>
-                    <div class="col-2">
-                        <a href="./logoutProcess" style="text-decoration: none; color: black;"><i class="bi bi-door-closed fs-1"></i></a>
-                    </div>
-                </div>
-                <div class="row mt-2 mx-0 px-0">
-                    <div class="col mx-0 px-0">
+                <div class="row">
+                    <div class="col">
                         <div id="carouselExampleInterval" class="row carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner px-0">
-                                <div class="carousel-item active" data-bs-interval="2000">
+                                <div class="carousel-item active" data-bs-interval="5000">
                                     <img src="/public/image/circle/MainCarousel1.png" class="d-block" alt="..."
                                         style="height: 13em; width: 100%;">
                                 </div>
-                                <div class="carousel-item" data-bs-interval="2000">
+                                <div class="carousel-item" data-bs-interval="5000">
                                     <img src="/public/image/circle/MainCarousel2.png" class="d-block w-100" alt="..."
                                         style="height: 13em;">
                                 </div>
-                                <div class="carousel-item" data-bs-interval="2000">
+                                <div class="carousel-item" data-bs-interval="5000">
                                     <img src="/public/image/circle/MainCarousel3.png" class="d-block w-100" alt="..."
                                         style="height: 13em;">
                                 </div>
@@ -217,16 +241,15 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="row mt-2">
                     <div class="col overflow-x-auto">
                         <div id="smallC" class="row" style="width: 200%;">
                         </div>
                     </div>
-
-                    <!-- 필요한 만큼 버튼을 추가할 수 있습니다. -->
                 </div>
                 <div class="row mt-2 align-items-center me-1">
-                    <div class="col-11 ps-1 fw-bold">
+                    <div class="col-11 ps-1 fw-bold" style="font-size: 1.2em;">
                         ❗핫한 동아리
                     </div>
                     <div class="col-1">
@@ -258,8 +281,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row fixed-bottom mx-0 align-items-center"
-                    style="border-top: 0.01em solid rgb(219, 219, 219);">
+                <div class="row fixed-bottom mx-0 align-items-center">
                     <div class="button col py-0 text-center fs-1">
                         <i class="bi bi-house-door-fill"></i>
                     </div>
@@ -269,7 +291,9 @@
                     <div class="col-2 px-0 d-grid">
                         <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
                     </div>
-                    <div class="button col py-0 text-center fs-1">
+                    <div class="button col py-0 text-center fs-1" onclick="(() => {
+                        location.href = './myCircleListPage'
+                    })()">
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div class="button col py-0 text-center fs-1">
@@ -326,29 +350,29 @@
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="row mt-2 mb-2 d-none">
-        <div class="col rounded-3 mx-2" style="border: 0.01em solid rgb(215, 215, 215); background-color: white;">
-            <div class="row align-items-center" style="font-size: small;">
-                <div class="image-container col d-grid ps-0"><img class="responsive-img circlemainimage img-fluid rounded-3" style="width: 100%; height: 100%;" src="/public/image/circle/MainCarousel1.png"></div>
+    <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
+        <div class="col rounded-3 mx-1" style="background-color: white;">
+            <div class="row rounded-3" style="font-size: small;">
+                <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col pt-2">
-                            <span class="circlecategory badge text-bg-primary">배찌</span>
+                    <div class="row mt-1">
+                        <div class="col" style="padding-top: 0.9em; font-size: 0.7em;">
+                            <span class="circlecategory rounded-pill py-1 px-2 fw-semibold" style="background-color: rgb(130, 130, 130); color: white;">배찌</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="circlename col">
+                    <div class="row mt-1">
+                        <div class="circlename col fw-semibold" style="font-size: 1.4em;">
                             동아리명
                         </div>
                     </div>
                     <div class="row">
-                        <div class="university col">
+                        <div class="university col" style="font-size: 1em; color: gray;">
                             학교명
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col pb-2">
-                            <i class="bi bi-people-fill"></i> <span class="currentpeople">현재인원</span>/<span class="circlepeople">등급인원</span>
+                    <div class="row mt-4">
+                        <div class="col" style="color: rgb(134, 134, 134); font-size: 1.3em;">
+                            <i class="bi bi-people-fill"></i>&nbsp; <span class="currentpeople" style="color: black;">현재인원</span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circlepeople" style="color: black;">등급인원</span>
                         </div>
                     </div>
                 </div>

@@ -2,20 +2,32 @@ package com.cu.ufuf.meeting.api.controller;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingGroupDto;
+import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingGroupTagDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingRestResponseDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
+import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingTagDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
 @RestController
@@ -99,11 +111,77 @@ public class RestMeetingController {
         
         return meetingRestResponseDto;
     }
+
+    @PostMapping("registerGroupProcess")
+    public MeetingRestResponseDto registerGroupProcess(@RequestBody Map<String, Object> groupData){
+
+        int groupPk = meetingService.createGroupPk();
+        MeetingGroupDto meetingGroupDto = new MeetingGroupDto();
+        meetingGroupDto.setGroupId(groupPk);
+        meetingGroupDto.setProfileId((int)groupData.get("profileId"));
+        meetingGroupDto.setGroupTitle((String)(groupData.get("groupTitle")));
+        meetingGroupDto.setGroupContent((String)groupData.get("groupContent"));
+        meetingGroupDto.setGroupHeadCount(Integer.parseInt((String)(groupData.get("groupHeadCount"))));
+        meetingGroupDto.setGroupMeetingDate(LocalDateTime.parse((String)groupData.get("groupMeetingDate")));
+        meetingGroupDto.setGroupApplyStart(LocalDate.parse((String)groupData.get("groupApplyStart")));
+        meetingGroupDto.setGroupApplyEnd(LocalDate.parse((String)groupData.get("groupApplyEnd")));
+        meetingGroupDto.setGroupApplyCharge(Integer.parseInt((String)groupData.get("groupApplyCharge")));
+        meetingGroupDto.setGroupMeetingPlace((String)groupData.get("groupMeetingPlace"));
+        meetingGroupDto.setGroupGenderOption((String)groupData.get("groupGenderOption"));
+        
+        meetingService.registerNewGroup(meetingGroupDto);
+
+
+        MeetingFirstLocationCategoryDto meetingFirstLocationCategoryDto = new MeetingFirstLocationCategoryDto();
+        int firstLocationCategoryId = meetingService.createFirstLocationCategoryPk();
+        meetingFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);
+        meetingFirstLocationCategoryDto.setFirstLocationCategoryName((String)groupData.get("firstLocationCategoryName"));
+        
+        MeetingSecondLocationCategoryDto meetingSecondLocationCategoryDto = new MeetingSecondLocationCategoryDto();
+        int secondLocationCategoryId = meetingService.createSecondLocationCategoryPk();
+        meetingSecondLocationCategoryDto.setSecondLocationCategoryId(secondLocationCategoryId);
+        meetingSecondLocationCategoryDto.setSecondLocationCategoryName((String)groupData.get("secondLocationCategoryName"));
+        
+        meetingService.registerLocationCategory(meetingFirstLocationCategoryDto, meetingSecondLocationCategoryDto);        
+        
+        MeetingGroupFirstLocationCategoryDto meetingGroupFirstLocationCategoryDto = new MeetingGroupFirstLocationCategoryDto();
+        meetingGroupFirstLocationCategoryDto.setGroupId(groupPk);
+        meetingGroupFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);
+        
+        MeetingGroupSecondLocationCategoryDto meetingGroupSecondLocationCategoryDto = new MeetingGroupSecondLocationCategoryDto();
+        meetingGroupSecondLocationCategoryDto.setGroupId(groupPk);
+        meetingGroupSecondLocationCategoryDto.setSecondLocationCategoryId(secondLocationCategoryId);
+
+        meetingService.registerGroupLocationCategory(meetingGroupFirstLocationCategoryDto, meetingGroupSecondLocationCategoryDto);
+        
+        for(String tagName : (List<String>)groupData.get("tagNameList")){            
+            int tagPk = meetingService.createTagPk();
+            MeetingTagDto meetingTagDto = new MeetingTagDto();            
+            meetingTagDto.setTagName(tagName);
+            meetingTagDto.setTagId(tagPk);
+            
+            System.out.println(tagName);
+
+            
+            meetingService.registerTag(meetingTagDto);
+
+            
+            MeetingGroupTagDto meetingGroupTagDto = new MeetingGroupTagDto();
+            meetingGroupTagDto.setGroupId(groupPk);
+            meetingGroupTagDto.setTagId(tagPk);
+            
+            meetingService.registerGroupTag(meetingGroupTagDto);
+        }
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        
+        return meetingRestResponseDto;
+    }
     
-    
-    
-    
-    
+
+
     
     
     public MeetingRestResponseDto templete(){

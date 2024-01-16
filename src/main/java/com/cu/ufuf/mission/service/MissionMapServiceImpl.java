@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-import com.cu.ufuf.dto.amountDto;
+import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
@@ -26,6 +26,7 @@ public class MissionMapServiceImpl {
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
 
+    // 미션 등록
     public void registerMissionProcess(MissionInfoDto missionInfoDto){
 
         int mission_id = missionMapsqlMapper.createMissionPk();
@@ -65,6 +66,32 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertOrderInfo(orderInfoDto);
     }
 
+    // 미션 전체 리스트 출력
+    public List<MissionInfoDto> loadMissionList(){
+        return missionMapsqlMapper.selectAllMission();
+    }
+
+    // 미션 상세 출력
+    public Map<String, Object> getMissionDetail(int mission_id){
+
+        Map<String, Object> missionDetail = new HashMap<>();
+
+        MissionInfoDto missionInfo = missionMapsqlMapper.selectMissionById(mission_id);
+
+        int user_id = missionInfo.getUser_id();
+
+        missionDetail.put("missionInfo", missionInfo);
+        missionDetail.put("userInfo", missionMapsqlMapper.selectUserById(user_id));
+
+        return missionDetail;
+    }
+
+    // 주문상태 업데이트
+    public void updateOrderStatus(OrderInfoDto orderInfoDto){
+        merchanSqlMapper.updateOrderStatus(orderInfoDto);
+    }
+
+    // 아이템/주문 정보 가져오기
     public Map<String, Object> getItemAndOrderInfo(int mission_id){
 
         Map<String, Object> ItemOrderInfo = new HashMap<>();
@@ -78,6 +105,7 @@ public class MissionMapServiceImpl {
         return ItemOrderInfo;
     }
 
+    // 주문 정보 가져오기
     public OrderInfoDto getOrderInfo(String Order_id){
         return missionMapsqlMapper.getOrderInfo(Order_id);
     }
@@ -107,8 +135,8 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
     }
 
-    public void insertAmountInfo(amountDto amountInfo){
-        merchanSqlMapper.insertAmountInfo(amountInfo);
+    public void insertAmountInfo(AmountDto amountDto){
+        merchanSqlMapper.insertAmountInfo(amountDto);
     }
 
     public void insertCardInfo(CardInfoDto cardInfoDto){

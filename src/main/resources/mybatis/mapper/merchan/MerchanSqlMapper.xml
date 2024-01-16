@@ -27,6 +27,12 @@
     );
 </insert>
 
+<update id="updateOrderStatus">
+    update order_info
+    set status = #{status}
+    where order_id = #{order_id};
+</update>
+
 <insert id="insertKakaoPayReqInfo">
     insert into kakao_payment_req(
         cid, 

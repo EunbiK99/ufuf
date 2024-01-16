@@ -2,7 +2,7 @@ package com.cu.ufuf.merchan.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.cu.ufuf.dto.amountDto;
+import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
@@ -20,12 +20,13 @@ public interface MerchanSqlMapper {
     public void insertItemInfo(ItemInfoDto iteminfoDto);
 
     public void insertOrderInfo(OrderInfoDto orderInfoDto);
+    public void updateOrderStatus(OrderInfoDto orderInfoDto);
 
     public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto);
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto);
     public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
     public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
-    public void insertAmountInfo(amountDto amountDto);
+    public void insertAmountInfo(AmountDto amountDto);
     public void insertCardInfo(CardInfoDto cardInfoDto);
 
     
