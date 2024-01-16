@@ -133,4 +133,38 @@ public class RoomServiceIpml {
 		return roomMap;
 		
 	}
+
+    public Map<String, Object> getReservationInfo(int room_info_id) {
+		
+		Map<String, Object> roomMap=new HashMap<>();
+
+        RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomInfoAndUserId(room_info_id);
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
+
+        //몇박인지
+        int reservationDuration=roomSqlMapper.reservationDuration(room_info_id);
+        
+        //기본 숙박비
+        int standardRoomCharge=roomSqlMapper.reservationRoomCharge(room_info_id);
+        //추가요금
+        int extraCharge=roomSqlMapper.reservationExtraCharge(room_info_id);
+        //총 요금
+        int totalCost=roomSqlMapper.reservationRoomCharge(room_info_id)+roomSqlMapper.reservationExtraCharge(room_info_id);
+
+        int UserPK=roomGuestDto.getUser_id();
+		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+
+        roomMap.put("roomInfoDto", roomInfoDto);
+        roomMap.put("userDto", userDto);
+        roomMap.put("roomGuestDto", roomGuestDto);
+        
+        roomMap.put("reservationDuration", reservationDuration);
+        roomMap.put("standardRoomCharge", standardRoomCharge);
+        roomMap.put("extraCharge", extraCharge);
+        roomMap.put("totalCost", totalCost);
+
+		return roomMap;
+		
+	}
+    
 }

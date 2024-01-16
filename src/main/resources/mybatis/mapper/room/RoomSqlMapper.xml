@@ -111,4 +111,41 @@
         SELECT COUNT(*)+1 as image_count FROM room_image WHERE room_info_id=#{room_info_id};
     </select>
 
+    <!--예약자 정보-->
+    <select id="roomGuestSelectByRoomInfoAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest
+        where room_info_id=#{room_info_id}
+    </select>
+
+    <!--몇박인지-->
+    <select id="reservationDuration" resultType="int">
+        SELECT DATEDIFF(end_reservation_schedule, start_reservation_schedule) AS duration_in_days
+        FROM room_guest 
+        where room_info_id=#{room_info_id}
+    </select>
+
+    <!--기본 숙박비-->
+    <select id="reservationRoomCharge" resultType="int">
+        SELECT (DATEDIFF(end_reservation_schedule, start_reservation_schedule)+1)* room_charge AS total_cost
+        FROM room_guest rg
+        join room_info ri on rg.room_info_id=ri.room_info_id 
+        where rg.room_info_id=#{room_info_id}
+    </select>
+
+    <!--추가금-->
+    <select id="reservationExtraCharge" resultType="int">
+        SELECT
+            <![CDATA[
+                CASE WHEN rg.guest_count > ri.people_count_standard
+            ]]>
+                THEN (rg.guest_count - ri.people_count_standard) * ri.extra_money
+                ELSE 0
+            END AS additional_cost
+        FROM
+            room_guest rg
+        JOIN
+            room_info ri ON rg.room_info_id = ri.room_info_id
+        where rg.room_info_id=#{room_info_id}
+    </select>
+
 </mapper>

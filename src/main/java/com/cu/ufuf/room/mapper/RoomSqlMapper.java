@@ -39,4 +39,15 @@ public interface RoomSqlMapper {
 
      public int roomImageCount(int room_info_id);
 
+     //예약자 정보
+     public RoomGuestDto roomGuestSelectByRoomInfoAndUserId(int room_info_id);
+ 
+     //몇박인지
+     public int reservationDuration(int room_info_id);
+
+     //총 얼마인지
+     public int reservationRoomCharge(int room_info_id);
+
+     //추가금
+     public int reservationExtraCharge(int room_info_id);
 }
