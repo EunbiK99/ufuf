@@ -21,13 +21,13 @@
     var map;
     var missionMarker;
 
-    var imageSrc = "http://localhost:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
-    imageSize = new kakao.maps.Size(33, 33), // 마커이미지의 크기입니다
-    imageOption = {offset: new kakao.maps.Point(12, 32)};
+    var imageSrc = "https://172.30.1.95:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
+    imageOption = {offset: new kakao.maps.Point(24, 30)};
 
-    var personImg = "http://localhost:8888/public/image/mission/free-icon-person-8226827.png",
-    personImgSize = new kakao.maps.Size(32, 31),
-    personImgOption = {offset: new kakao.maps.Point(11, 26)};
+    var personImg = "https://172.30.1.95:8888/public/image/mission/free-icon-person-8226827.png",
+    personImgSize = new kakao.maps.Size(42, 41),
+    personImgOption = {offset: new kakao.maps.Point(24, 26)};
 
     // 지금 현재 위치 가져오기
     function getNowLocation(){
@@ -68,6 +68,8 @@
                         image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
                     });
 
+                    nowMarker.setZIndex(2);
+
                     // 가운데 표시
                     panTo(locPosition);
 
@@ -88,6 +90,8 @@
                 position: locPosition,
                 image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
             });
+
+            nowMarker.setZIndex(2);
 
             // 가운데 표시
             panTo(locPosition);
@@ -220,6 +224,9 @@
         const showMissionList = document.getElementById("showMissionList");
         showMissionList.classList.add("d-none");
 
+        const missionDetailBox = document.getElementById("missionDetailBox");
+        missionDetailBox.classList.remove("d-none");
+
         const data = {
             mission_id: mission_id
         };
@@ -316,14 +323,17 @@
 
                 console.log("getorderinfo" + response);
                 loadKakaoPayment(response.data);
-                insertKakaoPayReq(response.data);
 
         });
     }
 
     function loadKakaoPayment(res) {
-        const item_name = document.getElementById("title").value;
-        const total_amount = document.getElementById("reward").value;
+        const item_name = document.getElementById("inputTitle").value;
+        const total_amount = document.getElementById("inputReward").value;
+
+        const approval_url = `https://172.30.1.95:8888/mission/paymentSuccessPage?order_id=${res.orderInfoDto.order_id}`;
+        const cancel_url = `https://172.30.1.95:8888/mission/paymentCancelPage?order_id=${res.orderInfoDto.order_id}`;
+        const fail_url = `https://172.30.1.95:8888/mission/paymentFailPage?order_id=${res.orderInfoDto.order_id}`;
 
         const data = new URLSearchParams();
         data.append("cid", "TC0ONETIME");
@@ -334,9 +344,9 @@
         data.append("quantity", 1);
         data.append("total_amount", total_amount);
         data.append("tax_free_amount", total_amount);
-        data.append("approval_url", "http://localhost:8888/mission/paymentSuccessPage");
-        data.append("cancel_url", "http://localhost:8888/mission/paymentCancelPage");
-        data.append("fail_url", "http://localhost:8888/mission/paymentFailPage");
+        data.append("approval_url", approval_url);
+        data.append("cancel_url", cancel_url);
+        data.append("fail_url", fail_url);
 
         fetch("https://kapi.kakao.com/v1/payment/ready", {
             method: "POST",
@@ -351,11 +361,7 @@
 
                 console.log(response);
 
-                document.getElementById("title").value = "";
-                document.getElementById("detail").value = "";
-                document.getElementById("reward").value = "";
-
-                window.location.href = response.next_redirect_pc_url;
+                window.location.href = response.next_redirect_mobile_url;
 
                 insertKakaoPayReq(res);
                 insertKakaoPayRes(response);
@@ -384,18 +390,18 @@
             .then(response => response.json())
             .then(response => {
 
+                console.log(response);
+
                 insertkakaoPayAccReq(res.tid, req.orderInfoDto.order_id, req.orderInfoDto.user_id, pg_token);
 
-                insertAmountInfo(res.amount);
-                insertCardInfo(response.card_info);
-                
                 insertKakaoPayAccRes(response);
+
         });
     }
 
     function insertKakaoPayReq(res) {
-        const item_name = document.getElementById("title").value;
-        const total_amount = document.getElementById("reward").value;
+        const item_name = document.getElementById("inputTitle").value;
+        const total_amount = document.getElementById("inputReward").value;
 
         const data = {
             partner_user_id: sessionUser,
@@ -465,6 +471,8 @@
     function insertKakaoPayAccRes(res){
         const data = {
             tid: tid,
+            amount: amount,
+            card_info: card_info,
             partner_order_id: partner_order_id,
             partner_user_id: partner_user_id,
             item_id: item_id,
@@ -482,47 +490,9 @@
             .then(response => response.json())
             .then(response => {
 
-        });
-    }
-
-    function insertAmountInfo(res){
-        const data = {
-            total: total,
-            point: point
-        };
-        fetch("./insertAmountInfo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                console.log(response);
-
-        });
-    }
-
-    function insertCardInfo(res){
-        const data = {
-            bin_: bin,
-            card_type: card_type,
-            install_month: install_month,
-            approved_id: approved_id
-        };
-        fetch("./insertCardInfo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                console.log(response);
+                document.getElementById("inputTitle").value = "";
+                document.getElementById("inputDetail").value = "";
+                document.getElementById("inputeward").value = "";
 
         });
     }
@@ -547,7 +517,28 @@
         z-index: 2;
         position: absolute;
         bottom: 5.8em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+
     } 
+
+    body { 
+        position: fixed; 
+        width: 100%;
+    }
+
+    #footer{
+        position: absolute;
+        bottom: 0em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+        z-index: 2;
+    }
+    
+    
+    
 
     
 </style>
@@ -565,7 +556,7 @@
                     <div class="col">
                         <div class="row">
                             <div class="fixed-top">
-                                <div class="col bg-white text-center mt-3 mx-3 border border-secondary-subtle shadow-sm rounded-5">
+                                <div class="col bg-white text-center mt-3 mx-3 shadow-sm rounded-5 border border-secondary-subtle">
                                     <span><i class="bi bi-geo-alt align-self-center"></i></span>
                                     <input type="hidden" id="nowCoords"></span>
                                     <span id="nowLocation" class="text-secondary align-self-center"
@@ -576,7 +567,7 @@
 
                         <div class="row">
                             <div class="col px-0">
-                                <div id="map" style="height:38.28em; width: 100%;">
+                                <div id="map" style="height:33em; width: 100%;">
                                     <script>
 
                                         var mapContainer = document.getElementById("map"), // 지도를 표시할 div
@@ -600,84 +591,20 @@
                                 <div class="col d-flex justify-content-center">
                                     <div class="gap-2 d-md-block d-flex">
                                         <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow ms-1" 
-                                            style="background-color: #FF8827;" onclick="loadMissionList()">
-                                            미션 찾기
+                                            style="background-color: #FF8827; font-size: 1.05em;" onclick="loadMissionList()">
+                                            <span class="px-1">미션 찾기</span>
                                         </button>
                                         <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow me-1" 
-                                            style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white;" onclick="showMissionRegForm()">
-                                            미션 등록
+                                            style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.05em;" onclick="showMissionRegForm()">
+                                            <span class="px-1">미션 등록</span>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                         
-                        <div class="fixed-bottom bg-white">
-                            <div class="row text-secondary text-center py-1 px-2 border-top">
-                                <div class="col">
-                                    <a href="./missionMap" class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">
-                                    <div class="row">
-                                        <div class="col px-1">
-                                            <i class="bi bi-map"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col px-1" style="font-size:0.83em;">
-                                            미션맵
-                                        </div>
-                                    </div>
-                                    </a>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <i class="bi bi-envelope-paper"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col" style="font-size:0.83em;">
-                                            My미션
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <a class="btn" href="#"><img src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2em;"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <i class="bi bi-heart"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col" style="font-size:0.83em;">
-                                            찜목록
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col px-1">
-                                            <i class="bi bi-person-bounding-box"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col px-1" style="font-size:0.83em;">
-                                            My페이지
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        
 
                         <div id="registerMissionBox" class="row d-none border-top">
-                            <div class="overflow-y-scroll" style="height:16.5em;">
+                            <div class="overflow-y-scroll" style="height:15.5em;">
                                 <div class="col">
                                     <div class="row mt-2">
                                         <div class="col">
@@ -727,9 +654,8 @@
                         </div>
 
                         <div id="showMissionList" class="row border-top d-none">
-                            <div class="overflow-y-scroll" style="height:16em;">
-                            <div class="col pb-3">
-                                <div class="row mt-2">
+                            <div class="col">
+                                <div class="row mt-2 mb-1">
                                     <div class="col text-end align-self-center text-secondary" style="font-size: 0.95em;">
                                         <span>반경</span>
                                         <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center ms-2" style="font-size: 0.85em;">100m</button>
@@ -737,28 +663,121 @@
                                         <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.85em;">500m</button>
                                     </div>
                                 </div>
-                                <div class="row px-2">
-                                    <div id="missionListBox" class="col">
-                                        
+                                <div class="overflow-y-scroll" style="height:12.92em; touch-action: pan-y;">
+                                    <div class="row px-2">
+                                        <div id="missionListBox" class="col">
+                                            
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
 
-                        <div id="missionDetailBox" class="row border-top">
-                            <div class="overflow-y-scroll" style="height:16em;">
-                                <div class="col">
-                                    <div class="row mt-3">
-                                        <div id="showTitle" class="col fw-semibold">올때메로나
+                        <div id="missionDetailBox" class="row border-top d-none px-2" style="height:15.5em;">
+                            <div class="col">
+                                <div class="row mt-3 d-flex">
+                                    <div class="col align-self-center">
+                                        <div class="row">
+                                            <div id="dtTitle" class="col fw-semibold pe-0" style="font-size: 1.25em;">
+                                                피시방 같이 가실분 구함
+                                            </div>  
+                                        </div>
+                                        <div class="row">
+                                            <div id="dtUserName" class="col text-body-tertiary pe-0" style="font-size: 0.8em;">
+                                                서울 강남구 역삼동 800-60
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div id="showDetail" class="col">메로나 사와주시면 1000원 드릴게요
+                                    <div class="col-4 fw-semibold text-end d-grid" style="font-size: 1.2em;">
+                                        <button class="btn py-1 px-4 rounded-1 text-white fw-semibold mb-2" style="font-size: 0.85em; background-color: #FF8827;">
+                                            수락
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="overflow-y-scroll" style="height:11em;">
+                                <div class="row mt-2">
+                                    <div id="dtDetail" class="col text-dark-emphasis pb-2">
+                                        일상에서 작은 기쁨을 찾아보세요. 봄의 따뜻한 햇살, 좋아하는 음악, 마음에 드는 책. 작은 순간의 행복들이 모여 큰 행복을 만듭니다. 또한, 지인들과 소통하고 나만의 시간을 갖는 것도 중요해요. 간단한 것에서 특별함을 찾아 즐겁게 보내세요!
+                                    </div> 
+                                </div>
+                                <div class="row border-top pt-2 px-3">
+                                    <div id="dtDetail" class="col text-secondary text-start fw-semibold" style="font-size: 1.15em;">
+                                        보상
+                                    </div>
+                                    <div id="dtDetail" class="col text-dark-emphasis text-end">
+                                        <span class="reward fw-bold" style="font-size: 1.25em; color: #fa7e18;">10000</span>
+                                        <span> 원</span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fixed-bottom">
+                        <div class="footer bg-white">
+                            <div class="row text-secondary text-center py-1 px-2 border-top" style="height: 3.4em;">
+                                <div class="col">
+                                    <a href="./missionMap" class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">
+                                    <div class="row">
+                                        <div class="col px-1">
+                                            <i class="bi bi-map"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col px-1" style="font-size:0.75em;">
+                                            미션맵
+                                        </div>
+                                    </div>
+                                    </a>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <i class="bi bi-envelope-paper"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col" style="font-size:0.75em;">
+                                            My미션
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <a class="btn pt-1" href="../commons/mainPage">
+                                                <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2.2em;">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <i class="bi bi-heart"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col" style="font-size:0.75em;">
+                                            찜목록
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col px-1">
+                                            <i class="bi bi-person-bounding-box"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col px-1" style="font-size:0.75em;">
+                                            My페이지
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
 
                     </div>
@@ -774,8 +793,9 @@
         <div class="missionWrapper row py-2 border-bottom">
             <div class="col">
                 <div class="row">
-                    <div class="title col fw-semibold" style="font-size: 1.1em;">
-                        
+                    <div class="col">
+                        <span class="title fw-semibold" style="font-size: 1.05em;"></span>
+                        <!-- <span><i class="bi bi-heart ms-1" style="color: #FF8827;"></i></span> -->
                     </div>
                 </div>
                 <div class="row mt-1">

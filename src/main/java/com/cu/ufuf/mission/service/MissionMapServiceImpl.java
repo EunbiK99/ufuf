@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
+import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
@@ -131,17 +133,30 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
     }
 
-    public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+    public void insertKakaoPayAccResInfo(GetKakaoPaymentAcceptResDto params){
+
+        AmountDto amountDto = params.getAmount();
+        int amount_id = merchanSqlMapper.createAmountPk();
+        amountDto.setAmount_id(amount_id);
+
+        CardInfoDto cardDto = params.getCard_info();
+        int card_id = merchanSqlMapper.createCardInfoPk();
+        cardDto.setCard_id(card_id);
+
+        KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto = new KakaoPaymentAcceptResDto();
+
+        kakaoPaymentAcceptResDto.setTid(params.getTid());
+        kakaoPaymentAcceptResDto.setAid(params.getAid());
+        kakaoPaymentAcceptResDto.setAmount(amount_id);
+        kakaoPaymentAcceptResDto.setCard_info(card_id);
+        kakaoPaymentAcceptResDto.setPartner_order_id(params.getPartner_order_id());
+        kakaoPaymentAcceptResDto.setPartner_user_id(params.getPartner_user_id());
+        kakaoPaymentAcceptResDto.setApproved_at(params.getApproved_at());
+
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
+
     }
 
-    public void insertAmountInfo(AmountDto amountDto){
-        merchanSqlMapper.insertAmountInfo(amountDto);
-    }
-
-    public void insertCardInfo(CardInfoDto cardInfoDto){
-        merchanSqlMapper.insertCardInfo(cardInfoDto);
-    }
 
     
 

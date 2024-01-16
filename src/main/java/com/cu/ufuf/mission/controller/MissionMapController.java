@@ -3,6 +3,7 @@ package com.cu.ufuf.mission.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cu.ufuf.dto.UserInfoDto;
 
@@ -29,17 +30,33 @@ public class MissionMapController {
     }
 
     @RequestMapping("paymentSuccessPage")
-    public String paymentSuccessPage(String Order_id, Model model){
+    public String paymentSuccessPage(@RequestParam(name="order_id") String order_id,
+            @RequestParam(name="pg_token") String pg_token, Model model){
+
+        System.out.println(order_id);
+
+        model.addAttribute("order_id", order_id);
+        model.addAttribute("pg_token", pg_token);
+
         return "mission/paymentSuccessPage";
     }
 
     @RequestMapping("paymentCancelPage")
-    public String paymentCancelPage(String Order_id, Model model){
+    public String paymentCancelPage(@RequestParam(name="order_id") String order_id,
+            @RequestParam(name="pg_token") String pg_token, Model model){
+
+        model.addAttribute("order_id", order_id);
+        model.addAttribute("pg_token", pg_token);
+
         return "mission/paymentCancelPage";
     }
 
     @RequestMapping("paymentFailPage")
-    public String paymentFailPage(String Order_id, Model model){
+    public String paymentFailPage(@RequestParam(name="order_id") String order_id,
+            @RequestParam(name="pg_token") String pg_token, Model model){
+        model.addAttribute("order_id", order_id);
+        model.addAttribute("pg_token", pg_token);
+
         return "mission/paymentFailPage";
     }
 
