@@ -40,5 +40,11 @@
     where user_id = #{user_id}
 </select>
 
+<!-- * 미팅 프로필 셀렉트 쿼리-->
+<select id="selectMeetingProfileByUserId" resultType="com.cu.ufuf.dto.MeetingProfileDto">
+    SELECT * from meeting_profile mp 
+    where user_id = #{user_id}
+</select>
+
 
 </mapper>

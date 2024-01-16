@@ -39,6 +39,11 @@ public class MeetingServiceImpl {
         return meetingSqlMapper.countMeetingProfileByUserId(user_id);
     }
 
+    // * 미팅 프로필 셀렉트
+    public MeetingProfileDto getMeetingProfileByUserId(int user_id){
+        return meetingSqlMapper.selectMeetingProfileByUserId(user_id);
+    }
+
 
 
 }

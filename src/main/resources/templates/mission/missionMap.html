@@ -17,111 +17,143 @@
 
     var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
 
-    function reloadMap() {
+    var nowMarker;
+    var map;
+    var missionMarker;
 
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-            mapOption = {
-                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level: 1 // 지도의 확대 레벨 
-            };
+    var imageSrc = "http://localhost:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    imageSize = new kakao.maps.Size(33, 33), // 마커이미지의 크기입니다
+    imageOption = {offset: new kakao.maps.Point(12, 32)};
 
-        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    var personImg = "http://localhost:8888/public/image/mission/free-icon-person-8226827.png",
+    personImgSize = new kakao.maps.Size(32, 31),
+    personImgOption = {offset: new kakao.maps.Point(11, 26)};
 
-        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+    // 지금 현재 위치 가져오기
+    function getNowLocation(){
+
         if (navigator.geolocation) {
 
-            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-            navigator.geolocation.getCurrentPosition(function (position) {
+            function getLocation() {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude; // 위도
+                    var lon = position.coords.longitude; // 경도
 
-                var lat = position.coords.latitude, // 위도
-                    lon = position.coords.longitude; // 경도
+                    var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
 
-                var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                    getNowAddress(lat, lon);
 
-                // 접속 좌표 hidden 값으로 넘김(미션등록 위해서)
-                const nowCoords = document.getElementById("nowCoords");
-                nowCoords.setAttribute("value", lat + "," + lon);
+                    const nowCoords = document.getElementById("nowCoords");
+                    nowCoords.setAttribute("value", lat + "," + lon);
 
-                // 접속위치 출력
-                getNowLocation(lat, lon);
+                    if (map) {
+                        map.relayout();
+                        map = null;
+                    }
 
-                // 마커와 인포윈도우를 표시합니다
-                displayMarker(locPosition);
+                    // 새로운 지도 객체 생성
+                    map = new kakao.maps.Map(mapContainer, mapOption);
+                    map.setMinLevel(1);
+                    map.setMaxLevel(4);
 
-            });
+                    setZoomable(true);
+
+                    if (nowMarker) {
+                        nowMarker.setMap(null);
+                    }
+
+                    nowMarker = new kakao.maps.Marker({
+                        map: map,
+                        position: locPosition,
+                        image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
+                    });
+
+                    // 가운데 표시
+                    panTo(locPosition);
+
+                });
+            }
+            getLocation();
 
         } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+            console.log("사용불가");
+            var locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
 
-            var locPosition = new kakao.maps.LatLng(33.450701, 126.570667)
+            if (nowMarker) {
+                nowMarker.setMap(null);
+            }
 
-            displayMarker(locPosition);
-        }
-
-        // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-        function displayMarker(locPosition) {
-
-            // 마커를 생성합니다
-            var marker = new kakao.maps.Marker({
+            nowMarker = new kakao.maps.Marker({
                 map: map,
-                position: locPosition
+                position: locPosition,
+                image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
             });
 
-            // 지도 중심좌표를 접속위치로 변경합니다
-            map.setCenter(locPosition);
-        }
-
-        function setZoomable(zoomable) {
-            // 마우스 휠로 지도 확대,축소 가능여부를 설정합니다
-            map.setZoomable(zoomable);
-        }
-
-        function getNowLocation(lat, lng) {
-
-            let geocoder = new kakao.maps.services.Geocoder();
-
-            let coord = new kakao.maps.LatLng(lat, lng);
-            let callback = function (result, status) {
-                if (status === kakao.maps.services.Status.OK) {
-                    console.log(result);
-                    handleNowLocResponse(result);
-                }
-            }
-            geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
-        }
-
-        function handleNowLocResponse(result) {
-            // 응답 데이터를 HTML에 표시
-            displayNowLocation(result);
-        }
-
-        function displayNowLocation(data) {
-
-            const nowLocation = document.getElementById("nowLocation");
-
-            if (data[0].road_address === null) {
-                nowLocation.innerText = data[0].address.address_name;
-            } else {
-                nowLocation.innerText = data[0].road_address.address_name;
-            }
+            // 가운데 표시
+            panTo(locPosition);
 
         }
 
         
-        setZoomable(false);
+    }
+
+    // 지도 중심으로 이동시키기
+    function panTo(moveLatLon) {
+        
+        // 지도 중심을 부드럽게 이동시킵니다
+        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        map.panTo(moveLatLon);            
+    }
+
+    function setZoomable(zoomable) {
+        // 마우스 휠로 지도 확대,축소 가능여부를 설정합니다
+        map.setZoomable(zoomable);    
+    }
+
+    
+
+
+    // 주소 가져오기
+    function getNowAddress(lat, lng) {
+
+        let geocoder = new kakao.maps.services.Geocoder();
+
+        let coord = new kakao.maps.LatLng(lat, lng);
+        let callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                console.log(result);
+                displayNowLocation(result);
+            }
+        }
+
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+    }
+
+    // 주소 출력하기
+    function displayNowLocation(data) {
+
+        const nowLocation = document.getElementById("nowLocation");
+
+        if (data[0].road_address === null) {
+            nowLocation.innerText = data[0].address.address_name;
+        } else {
+            nowLocation.innerText = data[0].road_address.address_name;
+        }
 
     }
 
-    function locationHandler() {
-        var location = returnLocaton();
-        console.log(location);
-    }
+
+
+
+
+
 
     function loadMissionList(){
 
-        reloadMap();
-
         const map = document.getElementById("map");
-        map.style.height = "25em";
+        map.style.height = "22.3em";
+
+        getNowLocation();
 
         const showMissionList = document.getElementById("showMissionList");
         showMissionList.classList.remove("d-none");
@@ -149,37 +181,84 @@
                     const lat = missionLocation.substring(0, cutIndex);
                     const lng = missionLocation.substring(cutIndex + 1);
 
-                    var geocoder = new kakao.maps.services.Geocoder();
-                    geocoder.coord2Address(lng, lat, function(result, status) {
-
-                        if (status === kakao.maps.services.Status.OK) {
-
-                            if (result[0].road_address === null) {
-                                location.innerText = result[0].address.address_name;
+                    (function (currentLat, currentLng) {
+                        var geocoder = new kakao.maps.services.Geocoder();
+                        geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                            if (status === kakao.maps.services.Status.OK) {
+                                if (result[0].road_address === null) {
+                                    location.innerText = result[0].address.address_name;
+                                } else {
+                                    location.innerText = result[0].road_address.address_name;
+                                }
                             } else {
-                                location.innerText = result[0].road_address.address_name;
+                                console.log('주소를 가져오지 못했습니다.');
                             }
-
-                        } else {
-                            console.log('주소를 가져오지 못했습니다.');
-                        }
-                    })
+                        });
+                    })(lat, lng);
 
                     title.innerText = mission.title;
                     reward.innerText = mission.reward;
 
+                    setMissionMarkers(lat,lng);
+
+                    missionWrapper.onclick = function() {
+                        missionWrapper.classList.add("bg-light");
+                        loadMisisonDetail(mission.mission_id);
+                    };
+
                     missionListBox.appendChild(missionWrapper);
                 }
 
-            })
+            });
     }
 
+    function loadMisisonDetail(mission_id){
+
+        const missionWrapper = document.querySelector("#missionListTemplete .missionWrapper");
+        missionWrapper.classList.remove("bg-light");
+
+        const showMissionList = document.getElementById("showMissionList");
+        showMissionList.classList.add("d-none");
+
+        const data = {
+            mission_id: mission_id
+        };
+
+        fetch("./getMissionDetail", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+        });
+
+    }
+
+    function setMissionMarkers(lat,lng){
+
+        var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+        var markerPosition = new kakao.maps.LatLng(lat, lng);
+        var marker = new kakao.maps.Marker({
+            position: markerPosition,
+            image: markerImg,
+            clickable: true
+        });
+
+        marker.setMap(map);
+    }
+    
     function showMissionRegForm() {
-        
-        reloadMap();
 
         const map = document.getElementById("map");
-        map.style.height = "25em";
+        map.style.height = "22.3em";
+
+        getNowLocation();
 
         const registerMissionBox = document.getElementById("registerMissionBox");
         registerMissionBox.classList.remove("d-none");
@@ -189,9 +268,10 @@
     }
 
     function registerMissionProcess() {
-        const title = document.getElementById("title").value;
-        const detail = document.getElementById("detail").value;
-        const reward = document.getElementById("reward").value;
+
+        const title = document.getElementById("inputTitle").value;
+        const detail = document.getElementById("inputDetail").value;
+        const reward = document.getElementById("inputReward").value;
         const registerd_location = document.getElementById("nowCoords").value;
 
         const data = {
@@ -452,8 +532,9 @@
 
 
     window.addEventListener("DOMContentLoaded", () => {
-        reloadMap();
+        getNowLocation();
     });
+
 
 
 
@@ -462,12 +543,13 @@
 </script>
 
 <style>
-    /* .btn{
-    z-index: 2;
-    position: absolute;
-    top: 48em;
-    left: 8.6em;
-} */
+    #startBtn{
+        z-index: 2;
+        position: absolute;
+        bottom: 5.8em;
+    } 
+
+    
 </style>
 
 
@@ -483,30 +565,45 @@
                     <div class="col">
                         <div class="row">
                             <div class="fixed-top">
-                            <div class="col bg-white text-center mt-3 mx-3 border border-secondary-subtle shadow-sm rounded-5">
-                                <span><i class="bi bi-geo-alt align-self-center"></i></span>
-                                <input type="hidden" id="nowCoords"></span>
-                                <span id="nowLocation" class="text-secondary align-self-center"
-                                    style="font-size: 0.95em;"></span>
-                            </div>
+                                <div class="col bg-white text-center mt-3 mx-3 border border-secondary-subtle shadow-sm rounded-5">
+                                    <span><i class="bi bi-geo-alt align-self-center"></i></span>
+                                    <input type="hidden" id="nowCoords"></span>
+                                    <span id="nowLocation" class="text-secondary align-self-center"
+                                        style="font-size: 0.9em;"></span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col px-0">
-                                <div id="map" style="height:41.6em; width: 100%;"></div>
+                                <div id="map" style="height:38.28em; width: 100%;">
+                                    <script>
+
+                                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                                            mapOption = { 
+                                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                                level: 3 // 지도의 확대 레벨
+                                            };
+
+                                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                                        map.setMinLevel(1);
+                                        map.setMaxLevel(4);
+
+                                    </script>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="fixed-bottom" id="startBtn">
-                            <div class="row mb-4">
-                                <div class="col py-3">
-                                    <div class="gap-2 d-md-block d-flex justify-content-center">
-                                        <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow" 
+                        <div class="z-2 position-absolute" id="startBtn">
+                            <div class="row">
+                                <div class="col d-flex justify-content-center">
+                                    <div class="gap-2 d-md-block d-flex">
+                                        <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow ms-1" 
                                             style="background-color: #FF8827;" onclick="loadMissionList()">
                                             미션 찾기
                                         </button>
-                                        <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow" 
+                                        <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow me-1" 
                                             style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white;" onclick="showMissionRegForm()">
                                             미션 등록
                                         </button>
@@ -514,13 +611,77 @@
                                 </div>
                             </div>
                         </div>
+                         
+                        <div class="fixed-bottom bg-white">
+                            <div class="row text-secondary text-center py-1 px-2 border-top">
+                                <div class="col">
+                                    <a href="./missionMap" class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">
+                                    <div class="row">
+                                        <div class="col px-1">
+                                            <i class="bi bi-map"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col px-1" style="font-size:0.83em;">
+                                            미션맵
+                                        </div>
+                                    </div>
+                                    </a>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <i class="bi bi-envelope-paper"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col" style="font-size:0.83em;">
+                                            My미션
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <a class="btn" href="#"><img src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2em;"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col px-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <i class="bi bi-heart"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col" style="font-size:0.83em;">
+                                            찜목록
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col px-1">
+                                            <i class="bi bi-person-bounding-box"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col px-1" style="font-size:0.83em;">
+                                            My페이지
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
 
                         <div id="registerMissionBox" class="row d-none border-top">
                             <div class="overflow-y-scroll" style="height:16.5em;">
                                 <div class="col">
                                     <div class="row mt-2">
                                         <div class="col">
-                                            <input type="text" name="title" id="title"
+                                            <input type="text" name="title" id="inputTitle"
                                                 class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2 fw-semibold border-secondary"
                                                 placeholder="미션 타이틀을 입력해주세요" style="font-size: 1.15em;">
                                         </div>
@@ -533,8 +694,8 @@
                                     <div class="row mt-2">
                                         <div class="col">
                                             <div class="form-floating">
-                                                <textarea class="form-control rounded-0 py-2" id="detail"
-                                                    style="height: 6em;"></textarea>
+                                                <textarea class="form-control rounded-0 py-2" id="inputDetail"
+                                                    style="height: 5.5em; font-size:0.9em;"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -546,15 +707,15 @@
                                     <div class="row mt-2">
                                         <div class="col">
                                             <div class="input-group border-bottom">
-                                                <input type="text" name="reward" id="reward"
+                                                <input type="text" name="reward" id="inputReward"
                                                     class="form-control border-0 rounded-0 py-2 align-self-center"
                                                     placeholder="최소 금액 : 1000원">
-                                                <span class="fw-semibold ms-3 me-1 align-self-center" id="reward"
+                                                <span class="fw-semibold ms-3 me-1 align-self-center" id="inputReward"
                                                     style="font-size: 1.15em;">원</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-4 mb-3">
+                                    <div class="row mt-4 mb-4">
                                         <div class="col d-grid">
                                             <button type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5" style="background-color: #FF8827;" onclick="registerMissionProcess()">
                                                 미션 등록하기
@@ -566,37 +727,55 @@
                         </div>
 
                         <div id="showMissionList" class="row border-top d-none">
-                            <div class="overflow-y-scroll" style="height:16.5em;">
-                            <div class="col">
+                            <div class="overflow-y-scroll" style="height:16em;">
+                            <div class="col pb-3">
                                 <div class="row mt-2">
-                                    <div class="col text-end text-secondary" style="font-size: 0.85em;">
-                                        반경<span class="px-3">100m</span>
-                                        <span class="pe3">300m</span>
-                                        <span class="ps-3">500m</span>
+                                    <div class="col text-end align-self-center text-secondary" style="font-size: 0.95em;">
+                                        <span>반경</span>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center ms-2" style="font-size: 0.85em;">100m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center active" style="font-size: 0.85em;">300m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.85em;">500m</button>
                                     </div>
                                 </div>
-                                <div class="row mt-2 px-2">
+                                <div class="row px-2">
                                     <div id="missionListBox" class="col">
-
+                                        
                                     </div>
                                 </div>
                             </div>
                             </div>
                         </div>
 
+                        <div id="missionDetailBox" class="row border-top">
+                            <div class="overflow-y-scroll" style="height:16em;">
+                                <div class="col">
+                                    <div class="row mt-3">
+                                        <div id="showTitle" class="col fw-semibold">올때메로나
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div id="showDetail" class="col">메로나 사와주시면 1000원 드릴게요
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
+                
 
             </div>
         </div>
     </div>
 
     <div id="missionListTemplete" class="d-none">
-        <div class="missionWrapper row py-2 border-top">
+        <div class="missionWrapper row py-2 border-bottom">
             <div class="col">
                 <div class="row">
                     <div class="title col fw-semibold" style="font-size: 1.1em;">
-                        올때 메로나
+                        
                     </div>
                 </div>
                 <div class="row mt-1">
@@ -606,7 +785,7 @@
                 </div>
             </div>
             <div class="col-4 text-end align-self-center">
-                <span class="reward" style="font-size: 1.16em; color: #fa7e18;"></span>
+                <span class="reward fw-bold" style="font-size: 1.16em; color: #fa7e18;"></span>
                 <span style="font-size: 0.95em;"> 원</span>
             </div>
         </div> 

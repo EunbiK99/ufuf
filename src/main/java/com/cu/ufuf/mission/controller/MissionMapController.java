@@ -23,6 +23,11 @@ public class MissionMapController {
         return "mission/missionMap";
     }
 
+    @RequestMapping("testMap")
+    public String testMap(){
+        return "mission/testMap";
+    }
+
     @RequestMapping("paymentSuccessPage")
     public String paymentSuccessPage(String Order_id, Model model){
         return "mission/paymentSuccessPage";

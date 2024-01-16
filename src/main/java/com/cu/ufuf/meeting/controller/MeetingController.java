@@ -27,7 +27,13 @@ public class MeetingController {
             return "./meeting/mainPage";
         }else{
             int user_id = sessionUserInfo.getUser_id();        
-            model.addAttribute("meetingProfileCheck", meetingService.checkExistMeetingProfile(user_id));        
+            int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
+            model.addAttribute("meetingProfileCheck", profileCheckValue);
+
+            if(profileCheckValue > 0){                
+                session.setAttribute("meetingProfileInfo", meetingService.getMeetingProfileByUserId(user_id));
+            }
+
             return "./meeting/mainPage";
         }
 

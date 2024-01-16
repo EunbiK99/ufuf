@@ -18,4 +18,6 @@ public interface MeetingSqlMapper {
 
     public int countMeetingProfileByUserId(int user_id);
 
+    public MeetingProfileDto selectMeetingProfileByUserId(int user_id);
+
 }
