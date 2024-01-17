@@ -39,67 +39,125 @@
 <script th:inline="javascript">
 
 function registerMeetingGroupProcess(){
-    const userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;
-    console.log('userMeetingId: ', userMeetingId);
+
+    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;    
     const groupTitle = document.getElementById('groupTitle').value;
-    console.log('groupTitle: ', groupTitle);
     const groupContent = document.getElementById('groupContent').value;
-    console.log('groupContent: ', groupContent);
     const groupHeadCount = document.getElementById('groupHeadCount').value;
-    console.log('groupHeadCount: ', groupHeadCount);
     const groupMeetingDate = document.getElementById('groupMeetingDate').value;
-    console.log('groupMeetingDate: ', groupMeetingDate);
     const groupApplyCharge = document.getElementById('groupApplyCharge').value.replace(/[^\d]/g, '');
-    console.log('groupApplyCharge: ', groupApplyCharge);
+    
     const groupMeetingPlace = document.getElementById('groupMeetingPlace').value;    
-    console.log('groupMeetingPlace: ', groupMeetingPlace);
-
-    const groupApplyDate = document.getElementById('groupApplyDate').value;
-    console.log('groupApplyDate: ', groupApplyDate);
-
+    const groupMeetingPlaceArray = groupMeetingPlace.split(' ');
+    const firstLocationCategory = groupMeetingPlaceArray[0];
+    const secondLocationCategory = groupMeetingPlaceArray[1];
+    
+    const groupApplyDate = document.getElementById('groupApplyDate').value;        
+    const groupApplyDateArray = groupApplyDate.split(' ~ ');    
+    const groupApplyStart = groupApplyDateArray[0];
+    const groupApplyEnd = groupApplyDateArray[1];
+    
+    
+    
     const groupGenderOptionList = document.getElementsByName('groupGenderOption');
     const groupGenderOptionListArray = Array.from(groupGenderOptionList);
+    let groupGenderOption;
     for(e of groupGenderOptionListArray){
         if(e.checked){
-            const groupGenderOption = e.value;
-            console.log('groupGenderOption: ', groupGenderOption);
+            groupGenderOption = e.value;
+        }
+    }
+    
+    console.log('profileId: ', userMeetingId);
+    console.log('groupTitle: ', groupTitle);
+    console.log('groupContent: ', groupContent);
+    console.log('groupHeadCount: ', groupHeadCount);
+    console.log('groupMeetingDate: ', groupMeetingDate);
+    console.log('groupApplyCharge: ', groupApplyCharge);
+    
+    console.log('groupMeetingPlace: ', groupMeetingPlace);
+    console.log('firstLocationCategory: ', firstLocationCategory);
+    console.log('secondLocationCategory: ', secondLocationCategory);
+    
+    console.log('groupApplyStart: ', groupApplyStart);    
+    console.log('groupApplyEnd: ', groupApplyEnd);
+    console.log('groupGenderOption: ', groupGenderOption);
+    
+    
+    const tagButtonList = document.getElementsByClassName("tagButton");
+    const groupTag = Array.from(tagButtonList);
+    const tagNameList = groupTag.map(button => button.innerText);
+
+    const groupData = {
+        profileId : userMeetingId,
+        groupTitle : groupTitle,
+        groupContent : groupContent,
+        groupHeadCount : groupHeadCount,
+        groupMeetingDate : groupMeetingDate,
+        groupApplyStart : groupApplyStart,
+        groupApplyEnd : groupApplyEnd,
+        groupApplyCharge : groupApplyCharge,
+        groupMeetingPlace : groupMeetingPlace,
+        groupGenderOption : groupGenderOption,
+        firstLocationCategoryName : firstLocationCategory,
+        secondLocationCategoryName : secondLocationCategory,
+        tagNameList : tagNameList
+    }
+    
+
+    fetch('./api/registerGroupProcess', {
+        method : 'post',
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(groupData)})
+    .then(response => response.json())
+    .then(response =>{
+        const result = response.result;
+        if(result === "success"){
+            alert("모집글이 정상 등록되었습니다.");
+            window.location.href = "./mainPage";
+        }
+        else{
+            alert("오류 발생 ㅅㅂ");
+        }
+        
+    });
+    
+}
+
+function addCategoryTag(){    
+    
+    const tagButtonWrapper = document.getElementById("tagButtonWrapper");
+    const errorMessageRow = document.getElementById('errorMessageRow');
+    const inputCategoryName = document.getElementById("inputCategoryName");
+
+    if(inputCategoryName.value === ""){
+        alert("태그명을 입력해주세요!");
+        return;
+    }
+    else{
+        if(tagButtonWrapper.childElementCount >= 3){        
+            errorMessageRow.classList.remove('d-none');
+            inputCategoryName.value = '';
+        }
+        else{
+            errorMessageRow.classList.add('d-none');
+            
+            inputCategoryNameValue = inputCategoryName.value;
+            
+            const tagButton = document.createElement('button');
+            tagButton.innerText = '#' + inputCategoryNameValue;        
+
+            tagButton.setAttribute('class', 'tagButton btn btn-sm rounded-pill custom-button-color mx-1');        
+            tagButton.setAttribute("onclick", "this.remove()");        
+            
+            tagButtonWrapper.appendChild(tagButton);        
+            inputCategoryName.value = '';
         }
     }
 
     
-
-
-
-
-
-    const formData = new FormData();
-    
-}
-
-function addCategoryTag(){
-    
-    const tagButtonWrapper = document.getElementById("tagButtonWrapper");
-    const errorMessageRow = document.getElementById('errorMessageRow');
-    
-    if(tagButtonWrapper.childElementCount >= 3){        
-        errorMessageRow.classList.remove('d-none');
-        inputCategoryName.value = '';
-    }
-    else{
-        errorMessageRow.classList.add('d-none');
-
-        const inputCategoryName = document.getElementById("inputCategoryName");
-        inputCategoryNameValue = inputCategoryName.value;
-        
-        const tagButton = document.createElement('button');
-        tagButton.innerText = '#' + inputCategoryNameValue;        
-
-        tagButton.setAttribute('class', 'btn btn-sm rounded-pill custom-button-color mx-1');
-        tagButton.setAttribute("onclick", "this.remove()");        
-        
-        tagButtonWrapper.appendChild(tagButton);        
-        inputCategoryName.value = '';
-    }
 }    
 
 let customOverlay;
@@ -116,103 +174,98 @@ function setMeetingLocation(){
     groupMeetingPlace.value = selectLocation;    
 }
 
-function checkMyLocation(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const x = position.coords.latitude; // 위도
-            const y = position.coords.longitude; // 경도
-            console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
+function checkMyLocation(){    
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const x = position.coords.latitude; // 위도
+        const y = position.coords.longitude; // 경도
+        console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
 
-            let kakaoMap = document.getElementById('kakaoMap'),
-                mapOption={
-                    center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                    level : 2,  // 지도의 확대 레벨                    
-                };
-            
-            /* 지도 생성 */
-            let map = new kakao.maps.Map(kakaoMap, mapOption);
-            map.relayout();
-            map.setZoomable(false);
-            
-            
-            /* 주소-좌표 변환 객체(지오코더) 생성 */
-            let geocoder = new kakao.maps.services.Geocoder();
+        let kakaoMap = document.getElementById('kakaoMap'),
+            mapOption={
+                center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                level : 2,  // 지도의 확대 레벨                    
+            };
+        
+        /* 지도 생성 */
+        let map = new kakao.maps.Map(kakaoMap, mapOption);
+        map.relayout();
+        map.setZoomable(false);
+        
+        
+        /* 주소-좌표 변환 객체(지오코더) 생성 */
+        let geocoder = new kakao.maps.services.Geocoder();
 
-            const mapControl = new kakao.maps.MapTypeControl();
-            const zoomControl = new kakao.maps.ZoomControl();
+        const mapControl = new kakao.maps.MapTypeControl();
+        const zoomControl = new kakao.maps.ZoomControl();
 
-            map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
-            map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+        map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
-            function searchAddrFromCoords(coords, callback) {
-                // 좌표로 행정동 주소 정보를 요청합니다
-                geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        function searchAddrFromCoords(coords, callback) {
+            // 좌표로 행정동 주소 정보를 요청합니다
+            geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        }
+
+        function searchDetailAddrFromCoords(coords, callback) {
+            // 좌표로 법정동 상세 주소 정보를 요청합니다
+            geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        }
+
+        // 지도에 마커를 생성하고 표시한다
+        let marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(x, y), // 마커의 좌표
+            map: map // 마커를 표시할 지도 객체
+        });
+
+        customOverlay = new kakao.maps.CustomOverlay({
+            map : map,
+            position : marker.getPosition(), 
+            content : '',
+            // xAnchor : -0.1,
+            yAnchor: 1.1,
+            clickable : true
+        });
+
+        const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
+        const testLocation = customOverlayWrapper.querySelector("#testLocation");            
+        
+        searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                let detailAddr = result[0].address.address_name;
+                // detailAddr += !!result[0].road_address ? '<br>도로명주소 : ' + result[0].road_address.address_name : '';
+                
+                testLocation.innerText = detailAddr;
+                
+                console.log('detailAddr: ', detailAddr);
+
+                customOverlay.setContent(customOverlayWrapper);
+
+                customOverlay.setMap(map);
             }
+        });
 
-            function searchDetailAddrFromCoords(coords, callback) {
-                // 좌표로 법정동 상세 주소 정보를 요청합니다
-                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-            }
-
-            // 지도에 마커를 생성하고 표시한다
-            let marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(x, y), // 마커의 좌표
-                map: map // 마커를 표시할 지도 객체
-            });
-
-            customOverlay = new kakao.maps.CustomOverlay({
-                map : map,
-                position : marker.getPosition(), 
-                content : '',
-                // xAnchor : -0.1,
-                yAnchor: 1.1,
-                clickable : true
-            });
-
-            const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
-            const testLocation = customOverlayWrapper.querySelector("#testLocation");            
-            
-            searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
-                if (status === kakao.maps.services.Status.OK) {
+        // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+            searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {                        
                     let detailAddr = result[0].address.address_name;
-                    // detailAddr += !!result[0].road_address ? '<br>도로명주소 : ' + result[0].road_address.address_name : '';
+                    // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
                     
+                    testLocation.innerHTML = '';
                     testLocation.innerText = detailAddr;
                     
-                    console.log('detailAddr: ', detailAddr);
-
-                    customOverlay.setContent(customOverlayWrapper);
-
+                    console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+                    console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
+                    
+                    let latlng = mouseEvent.latLng;
+                    
+                    marker.setPosition(latlng);
+                    customOverlay.setPosition(latlng);
                     customOverlay.setMap(map);
                 }
             });
-
-            // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
-		    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {                        
-                        let detailAddr = result[0].address.address_name;
-                        // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                        
-                        testLocation.innerHTML = '';
-                        testLocation.innerText = detailAddr;
-                        
-                        console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
-                        console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
-                        
-                        let latlng = mouseEvent.latLng;
-                        
-                        marker.setPosition(latlng);
-                        customOverlay.setPosition(latlng);
-                        customOverlay.setMap(map);
-                    }
-                });
-		    });
-        });    
-    }
-    else {
-        console.error("Geolocation을 지원하지 않는 브라우저입니다.");
-    }
+        });
+    });        
 }
 
 function closeOverlay(){

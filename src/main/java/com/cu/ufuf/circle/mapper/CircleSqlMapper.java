@@ -15,6 +15,8 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteDto;
+import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
@@ -82,4 +84,9 @@ public interface CircleSqlMapper {
     // 게시글 이미지 등록
     public void circleboardImageDtoInsert(CircleBoardImageDto circleBoardImageDto);
     
+    // 투표글생성 & 투표항목생성 => insert
+    public void circleVoteInsert(CircleVoteDto circleVoteDto);
+    public void circleVoteOptionInsert(CircleVoteOptionDto circleVoteOptionDto);
+
+    // 흠
 }

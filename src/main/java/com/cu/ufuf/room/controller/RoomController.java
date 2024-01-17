@@ -182,7 +182,11 @@ public class RoomController {
 
 	//예약완료페이지(해야댐)
 	@RequestMapping("roomReservationCompletePage")
-    public String roomReservationCompletePage(){
+    public String roomReservationCompletePage(Model model, @RequestParam("room_info_id") int room_info_id){
+
+		System.out.println(room_info_id);
+		model.addAttribute("reservationInfo", roomService.getReservationInfo(room_info_id));
+		
         //여기다 예약정보 받아와서 예약 이렇게 됐다 확인할 수 있게
         return "room/roomReservationCompletePage";
     }
@@ -205,5 +209,7 @@ public class RoomController {
 		return "room/roomDetailPage";
 	}
 
+
+	
 
 }
