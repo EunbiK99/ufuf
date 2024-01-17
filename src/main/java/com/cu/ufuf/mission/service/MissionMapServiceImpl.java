@@ -15,6 +15,7 @@ import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
@@ -78,12 +79,12 @@ public class MissionMapServiceImpl {
 
         Map<String, Object> missionDetail = new HashMap<>();
 
-        MissionInfoDto missionInfo = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionInfoDto missionDto = missionMapsqlMapper.selectMissionById(mission_id);
 
-        int user_id = missionInfo.getUser_id();
+        int user_id = missionDto.getUser_id();
 
-        missionDetail.put("missionInfo", missionInfo);
-        missionDetail.put("userInfo", missionMapsqlMapper.selectUserById(user_id));
+        missionDetail.put("missionDto", missionDto);
+        missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
 
         return missionDetail;
     }
@@ -112,6 +113,10 @@ public class MissionMapServiceImpl {
         return missionMapsqlMapper.getOrderInfo(Order_id);
     }
 
+    // 미션 수락하기
+    public void acceptingMission(MissionAcceptedDto missionAcceptedDto){
+        missionMapsqlMapper.insertMissonAcc(missionAcceptedDto);
+    }
 
 
 

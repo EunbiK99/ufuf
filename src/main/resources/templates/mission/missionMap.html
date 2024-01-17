@@ -6,12 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>미션맵</title>
 
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <script type="text/javascript"
     src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
-
 
 <script>
 
@@ -19,15 +19,15 @@
 
     var nowMarker;
     var map;
-    var missionMarker;
+    var missionMarker = [];
 
-    var imageSrc = "https://172.30.1.95:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    var imageSrc = "https://192.168.219.103:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
     imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
     imageOption = {offset: new kakao.maps.Point(24, 30)};
 
-    var personImg = "https://172.30.1.95:8888/public/image/mission/free-icon-person-8226827.png",
+    var personImg = "https://192.168.219.103:8888/public/image/mission/free-icon-person-8226827.png",
     personImgSize = new kakao.maps.Size(42, 41),
-    personImgOption = {offset: new kakao.maps.Point(24, 26)};
+    personImgOption = {offset: new kakao.maps.Point(24, 20)};
 
     // 지금 현재 위치 가져오기
     function getNowLocation(){
@@ -114,9 +114,6 @@
         map.setZoomable(zoomable);    
     }
 
-    
-
-
     // 주소 가져오기
     function getNowAddress(lat, lng) {
 
@@ -150,17 +147,45 @@
 
 
 
+    // 미션 위치에 마커 설정
+    function setMissionMarkers(lat,lng){
 
+        var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+        var markerPosition = new kakao.maps.LatLng(lat, lng);
+        var marker = new kakao.maps.Marker({
+            position: markerPosition,
+            image: markerImg,
+            clickable: true
+        });
 
+        marker.setMap(map);
+
+        missionMarker.push(marker);
+    }
+
+    // 마커 삭제
+    function hideMarkers(){
+
+        for (var i = 0; i < missionMarker.length; i++) {
+            missionMarker[i].setMap(null);
+        }
+        // 배열 비우기
+        missionMarker = [];
+    }
+
+    // 미션 리스트 출력
     function loadMissionList(){
 
         const map = document.getElementById("map");
-        map.style.height = "22.3em";
+        map.style.height = "22em";
 
         getNowLocation();
 
         const showMissionList = document.getElementById("showMissionList");
         showMissionList.classList.remove("d-none");
+
+        const missionDetailBox = document.getElementById("missionDetailBox");
+        missionDetailBox.classList.add("d-none");
 
         const startBtn = document.getElementById("startBtn");
         startBtn.classList.add("d-none");
@@ -170,7 +195,7 @@
             .then(response => {
 
                 const missionListBox = document.getElementById("missionListBox");
-		        missionListBox.innerHTML = "";
+                missionListBox.innerHTML = "";
 
                 for(mission of response.data){
                     
@@ -203,12 +228,13 @@
                     title.innerText = mission.title;
                     reward.innerText = mission.reward;
 
-                    setMissionMarkers(lat,lng);
+                    (function (currentMissionWrapper, currentMissionId) {
+                        missionWrapper.onclick = function () {
+                            loadMisisonDetail(currentMissionId);
+                        };
+                    })(missionWrapper, mission.mission_id);
 
-                    missionWrapper.onclick = function() {
-                        missionWrapper.classList.add("bg-light");
-                        loadMisisonDetail(mission.mission_id);
-                    };
+                    setMissionMarkers(lat,lng);
 
                     missionListBox.appendChild(missionWrapper);
                 }
@@ -216,16 +242,24 @@
             });
     }
 
+    // 미션 상세보기
     function loadMisisonDetail(mission_id){
-
-        const missionWrapper = document.querySelector("#missionListTemplete .missionWrapper");
-        missionWrapper.classList.remove("bg-light");
 
         const showMissionList = document.getElementById("showMissionList");
         showMissionList.classList.add("d-none");
 
         const missionDetailBox = document.getElementById("missionDetailBox");
         missionDetailBox.classList.remove("d-none");
+
+        hideMarkers();
+
+        const dtTitle = document.getElementById("dtTitle");
+        const dtResLocation = document.getElementById("dtResLocation");
+        const dtDetail = document.getElementById("dtDetail");
+        const dtReward = document.getElementById("dtReward");
+        const dtUserProfileImg = document.getElementById("dtUserProfileImg");
+        const dtUserName = document.getElementById("dtUserName");
+        const missionAccModalBtn = document.getElementById("missionAccModalBtn");
 
         const data = {
             mission_id: mission_id
@@ -241,29 +275,104 @@
             .then(response => response.json())
             .then(response => {
 
-                
+                const info = response.data;
 
+                dtTitle.innerText = info.missionDto.title;
+                dtDetail.innerText = info.missionDto.detail;
+                dtReward.innerText = info.missionDto.reward;
+                dtUserName.innerText = info.userDto.name;
+                
+                dtUserProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + info.userDto.profile_img);
+
+                var missionLocation = info.missionDto.registerd_location;
+                const cutIndex = missionLocation.indexOf(",");
+                const lat = missionLocation.substring(0, cutIndex);
+                const lng = missionLocation.substring(cutIndex + 1);
+
+                setMissionMarkers(lat,lng);
+
+                (function (currentLat, currentLng) {
+                    var geocoder = new kakao.maps.services.Geocoder();
+                    geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                        if (status === kakao.maps.services.Status.OK) {
+                            if (result[0].road_address === null) {
+                                dtResLocation.innerText = result[0].address.address_name;
+                            } else {
+                                dtResLocation.innerText = result[0].road_address.address_name;
+                            }
+                        } else {
+                            console.log('주소를 가져오지 못했습니다.');
+                        }
+                    });
+                })(lat, lng);
+
+                missionAccModalBtn.onclick = function(){
+                    openMissionAccModal(mission_id);
+                }
+                
         });
 
     }
 
-    function setMissionMarkers(lat,lng){
+    function openMissionAccModal(mission_id) {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#missionAccModal");
 
-        var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
-        var markerPosition = new kakao.maps.LatLng(lat, lng);
-        var marker = new kakao.maps.Marker({
-            position: markerPosition,
-            image: markerImg,
-            clickable: true
+        const dtTitle = document.getElementById("dtTitle");
+        const missionTitle = document.getElementById("missionTitle");
+        const missionAccBtn = document.getElementById("missionAccBtn");
+
+        missionTitle.innerText = dtTitle.innerText;
+
+        missionAccBtn.onclick = function(){
+            acceptingMission(mission_id);
+        }
+
+    	modal.show();
+	}
+	
+    function closeMissionAccModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#missionAccModal");
+    	
+        modal.hide();
+	}
+
+    // 미션 수락하기
+    function acceptingMission(mission_id){
+
+        closeMissionAccModal();
+
+        const nowCoords = document.getElementById("nowCoords").value;
+        const missionAccModalBtn = document.getElementById("missionAccModalBtn");
+
+        const data = {
+            mission_id: mission_id,
+            user_id: sessionUser,
+            accepted_location: nowCoords
+        };
+
+        fetch("./acceptingMission", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                missionAccModalBtn.classList.add("disabled");
+                missionAccModalBtn.innerText = "미션 진행중";
+
         });
-
-        marker.setMap(map);
     }
     
+    // 미션 등록폼
     function showMissionRegForm() {
 
         const map = document.getElementById("map");
-        map.style.height = "22.3em";
+        map.style.height = "22em";
 
         getNowLocation();
 
@@ -274,6 +383,7 @@
         startBtn.classList.add("d-none");
     }
 
+    // 미션 등록 프로세스
     function registerMissionProcess() {
 
         const title = document.getElementById("inputTitle").value;
@@ -306,6 +416,7 @@
         });
     }
 
+    // 주문정보 가져오기
     function getItemAndOrderInfo(mission_id) {
         const data = {
             mission_id: mission_id
@@ -327,13 +438,14 @@
         });
     }
 
+    // 카카오페이로 연결
     function loadKakaoPayment(res) {
         const item_name = document.getElementById("inputTitle").value;
         const total_amount = document.getElementById("inputReward").value;
 
-        const approval_url = `https://172.30.1.95:8888/mission/paymentSuccessPage?order_id=${res.orderInfoDto.order_id}`;
-        const cancel_url = `https://172.30.1.95:8888/mission/paymentCancelPage?order_id=${res.orderInfoDto.order_id}`;
-        const fail_url = `https://172.30.1.95:8888/mission/paymentFailPage?order_id=${res.orderInfoDto.order_id}`;
+        const approval_url = `https://192.168.219.103/mission/paymentSuccessPage?order_id=${res.orderInfoDto.order_id}`;
+        const cancel_url = `https://192.168.219.103/mission/paymentCancelPage?order_id=${res.orderInfoDto.order_id}`;
+        const fail_url = `https://192.168.219.103/mission/paymentFailPage?order_id=${res.orderInfoDto.order_id}`;
 
         const data = new URLSearchParams();
         data.append("cid", "TC0ONETIME");
@@ -371,6 +483,7 @@
 
     }
 
+    // 카카오페이 승인 요청
     function kakaoPayAccReq(req, res) {
         const data = new URLSearchParams();
         data.append("cid", "TC0ONETIME");
@@ -399,6 +512,7 @@
         });
     }
 
+    // 카카오페이 db 인서트
     function insertKakaoPayReq(res) {
         const item_name = document.getElementById("inputTitle").value;
         const total_amount = document.getElementById("inputReward").value;
@@ -513,32 +627,46 @@
 </script>
 
 <style>
-    #startBtn{
-        z-index: 2;
-        position: absolute;
-        bottom: 5.8em;
-        margin: 0 auto;
-        left: 0;
-        right: 0;
-
-    } 
-
     body { 
         position: fixed; 
         width: 100%;
     }
 
-    #footer{
+    #startBtn{
+        z-index: 2;
         position: absolute;
+        bottom: 2.7em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+    } 
+
+    #footer{
+        position: fixed;
         bottom: 0em;
         margin: 0 auto;
         left: 0;
         right: 0;
-        z-index: 2;
     }
     
+    #backToList{
+        z-index: 2;
+        position: absolute;
+        bottom: 16em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+    }
+
+    #dtDetail {
+        overflow-wrap: break-word;
+    }
     
-    
+    .modal {
+        width: 90%;
+        top: 21%;
+        left: 5%;
+    }
 
     
 </style>
@@ -567,7 +695,7 @@
 
                         <div class="row">
                             <div class="col px-0">
-                                <div id="map" style="height:33em; width: 100%;">
+                                <div id="map" style="height:37.91em; width: 100%;">
                                     <script>
 
                                         var mapContainer = document.getElementById("map"), // 지도를 표시할 div
@@ -586,23 +714,8 @@
                             </div>
                         </div>
 
-                        <div class="z-2 position-absolute" id="startBtn">
-                            <div class="row">
-                                <div class="col d-flex justify-content-center">
-                                    <div class="gap-2 d-md-block d-flex">
-                                        <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow ms-1" 
-                                            style="background-color: #FF8827; font-size: 1.05em;" onclick="loadMissionList()">
-                                            <span class="px-1">미션 찾기</span>
-                                        </button>
-                                        <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow me-1" 
-                                            style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.05em;" onclick="showMissionRegForm()">
-                                            <span class="px-1">미션 등록</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        
+                        <!-- 미션 등록 -->
                         <div id="registerMissionBox" class="row d-none border-top">
                             <div class="overflow-y-scroll" style="height:15.5em;">
                                 <div class="col">
@@ -653,6 +766,7 @@
                             </div>
                         </div>
 
+                        <!-- 미션 리스트 -->
                         <div id="showMissionList" class="row border-top d-none">
                             <div class="col">
                                 <div class="row mt-2 mb-1">
@@ -663,7 +777,7 @@
                                         <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.85em;">500m</button>
                                     </div>
                                 </div>
-                                <div class="overflow-y-scroll" style="height:12.92em; touch-action: pan-y;">
+                                <div class="overflow-y-scroll overflow-x-hidden" style="height:13.3em;">
                                     <div class="row px-2">
                                         <div id="missionListBox" class="col">
                                             
@@ -673,112 +787,72 @@
                             </div>
                         </div>
 
-                        <div id="missionDetailBox" class="row border-top d-none px-2" style="height:15.5em;">
-                            <div class="col">
-                                <div class="row mt-3 d-flex">
-                                    <div class="col align-self-center">
-                                        <div class="row">
-                                            <div id="dtTitle" class="col fw-semibold pe-0" style="font-size: 1.25em;">
-                                                피시방 같이 가실분 구함
-                                            </div>  
-                                        </div>
-                                        <div class="row">
-                                            <div id="dtUserName" class="col text-body-tertiary pe-0" style="font-size: 0.8em;">
-                                                서울 강남구 역삼동 800-60
+                        <!-- 미션 상세 -->
+                        <div id="missionDetailBox" class="row border-top d-none" style="height:15.5em;">
+                            <div class="col px-0">
+                                <div class="overflow-y-auto overflow-x-hidden" style="height: 12.3em;">
+                                    <div class="row mt-2 pt-2 d-flex mb-1 mx-2">
+                                        <div class="col">
+                                            <div class="row">
+                                                <div id="dtTitle" class="col fw-semibold pe-0 align-self-center" style="font-size: 1.27em;">
+                                                    
+                                                </div>
+                                                <div class="col-3 d-flex justify-content-end">
+                                                    <span><i class="fi fi-rr-track" style="font-size: 1.2em; color: #FF8827;"></i></span>
+                                                    <span class="ms-2 align-self-center" style="font-size: 0.9em; color: #adadad;">125m</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="dtResLocation" class="col" style="font-size: 0.83em; color: #adadad;">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col mt-1 d-flex" style="overflow: hidden;">
+                                                    <img id="dtUserProfileImg" class="img-fluid rounded-circle me-1 align-self-center" 
+                                                        style="height: 1.4em; width: 1.4em; object-fit: cover; border-radius: 50%;">
+                                                    <span id="dtUserName" class="align-self-center fw-semibold ms-1 text-body-tertiary" 
+                                                        style="letter-spacing: 0.06em; font-size: 0.97em;"></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4 fw-semibold text-end d-grid" style="font-size: 1.2em;">
-                                        <button class="btn py-1 px-4 rounded-1 text-white fw-semibold mb-2" style="font-size: 0.85em; background-color: #FF8827;">
-                                            수락
+                                    
+                                    <div class="row mt-2 mx-2">
+                                        <div id="dtDetail" class="col text-dark-emphasis pt-2 pb-3" style="font-size: 1.05em;">
+                                        </div>    
+                                    </div>
+                                </div>
+
+                                <div id="backToList" class="fixed-bottom">
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <button class="btn border rounded-5 bg-white text-secondary shadow-sm mx-auto" style="font-size: 0.9em;" onclick="loadMissionList()">
+                                            <i class="bi bi-list"></i>
+                                            목록으로
                                         </button>
                                     </div>
                                 </div>
-                                
-                                <div class="overflow-y-scroll" style="height:11em;">
-                                <div class="row mt-2">
-                                    <div id="dtDetail" class="col text-dark-emphasis pb-2">
-                                        일상에서 작은 기쁨을 찾아보세요. 좋아하는 음악, 마음에 드는 책. 작은 순간의 행복들이 모여 큰 행복을 만듭니다. 또한, 지인들과 소통하고 나만의 시간을 갖는 것도 중요해요. 간단한 것에서 특별함을 찾아 즐겁게 보내세요!
-                                    </div> 
                                 </div>
-                                <div class="row border-top pt-2 px-3">
-                                    <div id="dtDetail" class="col text-secondary text-start fw-semibold" style="font-size: 1.15em;">
-                                        보상
+
+                                <div class="row border-top py-2 mx-2">
+                                    <div class="col text-dark-emphasis text-start align-self-center">
+                                        <span class="pe-2 fw-semibold border-end" style="font-size: 1.05em; color: #7c7c7c;">상금</span>
+                                        <span id="dtReward" class="fw-bold ps-2" style="font-size: 1.4em; color: #fa7e18;">10000</span>
+                                        <span class="pb-3 ms-1"  style="font-size: 1.05em; color: #7c7c7c;">원</span>
                                     </div>
-                                    <div id="dtDetail" class="col text-dark-emphasis text-end">
-                                        <span class="reward fw-bold" style="font-size: 1.25em; color: #fa7e18;">10000</span>
-                                        <span> 원</span>
+                                    <div class="col-4 fw-semibold text-end d-grid align-self-center px-2">
+                                        <button id="missionAccModalBtn" class="btn py-1 px-2 rounded-1 text-white fw-semibold"
+                                            style="font-size: 1.05em; background-color: #FF8827; height: 2.3em;">
+                                            <i class="bi bi-plus-lg me-1 text-start"></i>
+                                            <span class="me-1">수락</span>
+                                        </button>
                                     </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="fixed-bottom">
-                        <div class="footer bg-white">
-                            <div class="row text-secondary text-center py-1 px-2 border-top" style="height: 3.4em;">
-                                <div class="col">
-                                    <a href="./missionMap" class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">
-                                    <div class="row">
-                                        <div class="col px-1">
-                                            <i class="bi bi-map"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col px-1" style="font-size:0.75em;">
-                                            미션맵
-                                        </div>
-                                    </div>
-                                    </a>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <i class="bi bi-envelope-paper"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col" style="font-size:0.75em;">
-                                            My미션
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <a class="btn pt-1" href="../commons/mainPage">
-                                                <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2.2em;">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col px-1">
-                                    <div class="row">
-                                        <div class="col">
-                                            <i class="bi bi-heart"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col" style="font-size:0.75em;">
-                                            찜목록
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col px-1">
-                                            <i class="bi bi-person-bounding-box"></i>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col px-1" style="font-size:0.75em;">
-                                            My페이지
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
+                        
 
                     </div>
                 </div>
@@ -789,6 +863,7 @@
         </div>
     </div>
 
+    <!-- 미션 리스트 출력 -->
     <div id="missionListTemplete" class="d-none">
         <div class="missionWrapper row py-2 border-bottom">
             <div class="col">
@@ -810,7 +885,117 @@
             </div>
         </div> 
     </div>
-    
+
+    <!-- 시작 버튼 -->
+    <div class="row z-2" id="startBtn">
+        <div class="col d-flex justify-content-center">
+            <div class="gap-2 d-md-block d-flex">
+                <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 px-5 shadow ms-1" 
+                    style="background-color: #FF8827; font-size: 1.05em;" onclick="loadMissionList()">
+                    <span class="px-1">미션 찾기</span>
+                </button>
+                <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 shadow me-1" 
+                    style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.05em;" onclick="showMissionRegForm()">
+                    <span class="px-1">미션 등록</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 미션 수락 모달 -->
+    <div id="missionAccModal" class="modal mx-auto">
+		<div class="modal-dialog shadow">
+			<div class="modal-content rounded-2">
+				<div class="modal-header border-bottom rounded-0 py-3">
+					<span class="fw-semibold text-secondary px-2 text-center" style="font-size: 1.2em;">미션 수락</span>
+					<span onclick="closeMissionAccModal()" class="close fs-5" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
+				</div>
+				<div class="modal-body pb-0 px-4 pt-4">
+					<div class="row">
+                        <div class="col" style="font-size: 1.05em;">
+                            '<span id="missionTitle" class="fw-semibold" style="font-size: 1.1em;"></span>' 
+                            <span class="text-secondary ms-1">미션을 수락하시겠습니까?</span>
+                        </div>
+                    </div>
+				</div>
+				<div class="modal-footer border-0 my-2 d-grid">
+                    <div class="gap-2 d-md-block">
+                        <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionAccModal()">
+                            취소
+                        </button>
+                        <button id="missionAccBtn" class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;">수락</button>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- 하단 메뉴 바 -->
+    <div class="fixed-bottom ">
+        <div class="footer bg-white">
+            <div class="row text-secondary text-center py-1 border-top" style="height: 3.4em;">
+                <div class="col ps-3">
+                    <a href="./missionMap" class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-map"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            미션맵
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="col px-0">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-envelope-paper"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            My미션
+                        </div>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="row">
+                        <div class="col px-0">
+                            <a class="btn pt-1" href="../commons/mainPage">
+                                <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2.2em;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            찜목록
+                        </div>
+                    </div>
+                </div>
+                <div class="col pe-3">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-person-bounding-box"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            My페이지
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

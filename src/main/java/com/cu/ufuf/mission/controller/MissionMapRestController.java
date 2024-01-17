@@ -20,6 +20,7 @@ import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
@@ -125,6 +126,30 @@ public class MissionMapRestController {
         
         return restResponseDto;
     }
+
+    @ResponseBody
+    @PostMapping("acceptingMission")
+    public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionMapService.acceptingMission(params);
+        
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     @ResponseBody
     @PostMapping("insertKakaoPayReqInfo")
