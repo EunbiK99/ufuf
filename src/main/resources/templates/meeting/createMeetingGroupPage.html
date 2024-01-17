@@ -325,8 +325,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
-            <div class="col">
+        <div class="row sticky-top">
+            <div class="col" style="height: 3.3em;">
                 <div class="row mt-1 align-content-center">
                     <div class="col">
                         <div class="row justify-content-between">
@@ -538,8 +538,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
             </div>
         </div>
 
-        <div class="row">
-            <div class="col text-center">
+        <div class="row sticky-bottom">
+            <div class="col text-center"  style="height : 3.4em;">
                 푸터 영역
             </div>
         </div>
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <div class="col">
                     <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between">
                         <div class="col-auto">
-                            <span class="fw-bold">주소</span>
+                            <span class="fw-bold" style="font-size: 0.8em">주소</span>
                         </div>
                         <div class="col-auto">
                             <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     </div>
                     <div class="row">
                         <div class="col">
-                            <span id="testLocation"></span>
+                            <span id="testLocation" style="font-size: 0.8em"></span>
                         </div>
                     </div>
                     <div class="row mt-2 mb-2 justify-content-center">

@@ -22,13 +22,55 @@
     }
     </style>
 </head>
+<script>
+function getGroupList(){
+    fetch("./api/getGroupList")
+    .then(response => response.json())
+    .then(response =>{
+        
+    });
+}
 
+function getRandomLightColor() {
+  // 밝은 계열의 RGB 색상을 랜덤으로 생성
+    const minBrightness = 200; // 밝은 색상의 최소 밝기
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+
+    do {
+        color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+        }
+    } while (getBrightness(color) < minBrightness); // 최소 밝기 조건을 만족할 때까지 반복
+
+    return color;
+}
+
+// 색상의 밝기를 계산하는 함수
+function getBrightness(hexColor) {
+  // RGB 값을 추출하여 밝기 계산
+    const rgb = parseInt(hexColor.slice(1), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >>  8) & 0xff;
+    const b = (rgb >>  0) & 0xff;
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+}
+
+function changeBackgroundColor() {
+    const randomColorCol = document.getElementById('randomColorCol');
+    randomColorCol.style.backgroundColor = getRandomLightColor();    
+}
+
+document.addEventListener('DOMContentLoaded', changeBackgroundColor());
+
+</script>
 <body>
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
-            <div class="col">
+        <div class="row sticky-top">
+            <div class="col" style="height: 3.3em;">
                 <div class="row mt-1 align-content-center">
                     <div class="col">
                         <div class="row justify-content-between">
@@ -49,12 +91,34 @@
         
         <div class="row">
             <div class="col">
-
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div id="randomColorCol" class="col" style="height:7em;">
+                                <div class="row">
+                                    <div class="col">
+                                        <span id="groupMeetingDate"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span id="groupTitle"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span id="groupMeetingPlace"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col text-center">
+        <div class="row sticky-bottom">
+            <div class="col text-center"  style="height : 3.4em;">
                 푸터 영역
             </div>
         </div>
