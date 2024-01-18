@@ -28,4 +28,9 @@ public interface MissionMapSqlMapper {
 
     public void insertMissonAcc(MissionAcceptedDto missionAcceptedDto);
 
+    public List<MissionInfoDto> selectMyAccMission(int user_id);
+
+    public List<MissionInfoDto> selectMissionListByUserId(int user_id);
+    public int[] getMissionNotAcc(int user_id);
+
 }
