@@ -39,22 +39,22 @@
                     <div class="col">
                         
                         <div class="row">
-                            <a class="btn p-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}">
+                            <a class="p-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}">
                                 <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid" style="width: 22em; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
                             </a>
                         </div>
 
                         <div class="row mt-2">
-                            <a class="btn fw-bold text-start py-0 ms-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.title}"></a>
+                            <a class="fw-bold text-start py-0 ms-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
                         </div>
 
                         <div class="row">
-                            <div class="col p-0 text-truncate" style="max-width: 320px;"><a class="btn text-secondary text-start py-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.location}" style="font-size: 0.7em;"></a></div>
+                            <div class="col ms-3 p-0 text-truncate" style="max-width: 320px;"><a class="text-secondary text-start py-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.location}" style="font-size: 0.7em; text-decoration: none;"></a></div>
                             
                         </div>
 
-                        <div class="row mb-2">
-                            <div class="col-2"> <a class="btn text-start py-0 ms-0 ps-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${#numbers.formatDecimal(room.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}"></a></div>
+                        <div class="row mt-1 mb-2">
+                            <div class="col-2"> <a class="text-start py-0 ms-0 ps-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${#numbers.formatDecimal(room.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}" style="color: black; text-decoration: none;"></a></div>
                             <div class="col text-start text-secondary py-0">&nbsp;/1박</div>
                         </div>
                         

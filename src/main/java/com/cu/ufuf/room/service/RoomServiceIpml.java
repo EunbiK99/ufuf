@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.dto.RoomGuestDto;
+import com.cu.ufuf.dto.RoomGuestReviewDto;
+import com.cu.ufuf.dto.RoomGuestReviewImageDto;
 import com.cu.ufuf.dto.RoomImageDto;
 import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionCategoryDto;
@@ -26,7 +28,7 @@ public class RoomServiceIpml {
     //방 등록하기
     public void roomRegister(RoomInfoDto roomInfoDto,int[] roomOptionCategoryIdList,List<RoomImageDto> roomImageDtoList){
        
-        int roomPk =roomSqlMapper.creatRoomInfoPk();
+        int roomPk =roomSqlMapper.creatRoomInfoId();
                 
         roomInfoDto.setRoom_info_id(roomPk);
 
@@ -134,22 +136,23 @@ public class RoomServiceIpml {
 		
 	}
 
-    public Map<String, Object> getReservationInfo(int room_info_id) {
+    public Map<String, Object> getReservationInfo(int user_id,int room_info_id) {
 		
 		Map<String, Object> roomMap=new HashMap<>();
 
-        RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomInfoAndUserId(room_info_id);
-		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
+        RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomAndUserId(user_id, room_info_id);
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getUser_id(),roomGuestDto.getRoom_info_id());
+        System.out.println(roomInfoDto.getRoom_info_id());
 
         //몇박인지
-        int reservationDuration=roomSqlMapper.reservationDuration(room_info_id);
+        int reservationDuration=roomSqlMapper.reservationDuration(user_id, room_info_id);
         
         //기본 숙박비
-        int standardRoomCharge=roomSqlMapper.reservationRoomCharge(room_info_id);
+        int standardRoomCharge=roomSqlMapper.reservationRoomCharge(user_id, room_info_id);
         //추가요금
-        int extraCharge=roomSqlMapper.reservationExtraCharge(room_info_id);
+        int extraCharge=roomSqlMapper.reservationExtraCharge(user_id, room_info_id);
         //총 요금
-        int totalCost=roomSqlMapper.reservationRoomCharge(room_info_id)+roomSqlMapper.reservationExtraCharge(room_info_id);
+        int totalCost=roomSqlMapper.reservationRoomCharge(user_id, room_info_id)+roomSqlMapper.reservationExtraCharge(user_id, room_info_id);
 
         int UserPK=roomGuestDto.getUser_id();
 		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
@@ -166,5 +169,37 @@ public class RoomServiceIpml {
 		return roomMap;
 		
 	}
+
+    public List<Map<String, Object>> roomReservationList(int user_id) {
+		
+		List<Map<String, Object>> roomList=new ArrayList<>();
+		
+        List<RoomGuestDto> roomGuestDtoList=roomSqlMapper.roomGuestSelectByUserId(user_id);
+
+		for(RoomGuestDto roomGuestDto:roomGuestDtoList) {
+
+            RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
+            
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			map.put("roomGuestDto", roomGuestDto);
+
+			roomList.add(map);
+
+			
+		}
+		
+		return roomList;
+		
+	}
+
+    //리뷰 등록하기
+    public void guestReviewRegister(RoomGuestReviewDto roomGuestReviewDto){
+       
+        roomSqlMapper.insertGuestReview(roomGuestReviewDto);
+    }
     
 }

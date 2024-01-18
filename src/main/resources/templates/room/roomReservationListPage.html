@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MY 계약</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
+    
+</head>
+
+<body>
+    <div class="container" th:if="${session.sessionUserInfo !=null}">
+         <!-- 페이지 네비-->
+         <div class="row pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+           
+            <!--뒤로가기-->
+            <div class="col-1">
+                <a href="./roomMainPage"><i class="bi bi-x-lg text-secondary" style="color: black; text-decoration: none;"></i></a> 
+            </div>
+
+            <!--무슨페이지인지 알 수 있게-->
+            <div class="col text-center fw-bold text-secondary mt-1 fs-5">계약</div>
+            <div class="col-1"></div> 
+        </div>
+        <!--여백-->
+        <div class="row p-4 mt-4"></div>
+
+        <!--버튼-->
+        <div class="row border-bottom border-secondery-subtle"> 
+            <div class="col text-center d-grid" id="button1Col" onclick="showList('host')">
+                <button class="btn" id="button1" style=" border: none; background: none; cursor: pointer;">호스트</button>
+            </div>
+            <div class="col text-center d-grid" id="button2Col" onclick="showList('guest')">
+                <button class="btn" id="button2" style=" border: none; background: none; cursor: pointer;">게스트</button>
+            </div>
+        </div>
+
+        
+        <ul id="host" class="mt-3 ms-0 ps-0">
+            <div class="row py-2 ms-2 fw-bold">내가 올린 방</div>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-md-5" th:each="room : ${roomList}">
+                    <div class="row mt-3 border border-secondery-subtle rounded mx-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
+                        <div class="col">
+                            
+                            <div class="row">
+                                <a class=" p-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}">
+                                    <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid" style="width: 22em; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
+                                </a>
+                            </div>
+    
+                            <div class="row mt-2">
+                                <a class="fw-bold text-start py-0 ms-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
+                            </div>
+    
+                            <div class="row ms-1 ps-0">
+                                <div class="col ps-0 text-truncate" style="max-width: 320px;"><a class="text-secondary text-start py-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.location}" style="font-size: 0.7em; color: black; text-decoration: none;"></a></div>
+                                
+                            </div>
+    
+                            <div class="row mb-2 mt-1">
+                                <div class="col-2"> <a class="text-start py-0 ms-0 ps-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${#numbers.formatDecimal(room.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}" style="color: black; text-decoration: none;"></a></div>
+                                <div class="col text-start text-secondary py-0">&nbsp;/1박</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1"></div>
+            </div>
+        </ul>
+        
+        <ul id="guest" class="mt-3 ms-0 ps-0" style="display: none;">
+            <div class="row py-2 ms-2 fw-bold">내가 예약한 방</div>
+            <div class="row" th:each="reservation : ${roomReservationList}">
+                <div class="col-1"></div>
+                <div class="col-md-5">
+                    <div class="row mt-3 border border-secondary-subtle rounded mx-2 mt-2">
+                        <div class="col">
+                            <div class="row">
+                                <a class="p-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">
+                                    <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid" style="width: 22em; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="row mt-2">
+                                <a class=" fw-bold text-start py-0 ms-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${reservation.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
+                            </div>
+                            <div class="row"> 
+                                <div class="col p-0">
+                                    <a class=" text-secondary text-start ps-3" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${#temporals.format(reservation.roomGuestDto.start_reservation_schedule, 'yyyy.MM.dd(E)') + '-' + #temporals.format(reservation.roomGuestDto.end_reservation_schedule, 'yyyy.MM.dd(E)')}" style="text-decoration: none;"></a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col d-grid pe-0">
+                                    <a class="btn my-2 text-white fw-bold" th:href="@{./guestReviewPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" style="background-color: #FF8827;">리뷰쓰기</a>
+                                </div>
+                                <div class="col d-grid">
+                                    <a class="btn btn-outline-secondary my-2" th:href="@{./roomDetailPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">다시 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1"></div>
+            </div>
+        </ul>
+        
+   
+
+    </div>
+
+
+    
+
+    <script>
+        // 페이지 로드 시 초기 선택된 리스트에 스타일 적용
+        document.addEventListener("DOMContentLoaded", function() {
+            var defaultListId = 'host'; // 페이지가 로드될 때 기본으로 보여질 리스트 ID
+            showList(defaultListId);
+        });
+    
+        // 함수를 호출할 때 초기 선택도 고려하여 수정
+        function showList(listId) {
+            // 모든 리스트 숨기기
+            var allLists = document.querySelectorAll('ul');
+            allLists.forEach(function (list) {
+                list.style.display = 'none';
+            });
+    
+            // 모든 버튼의 스타일 초기화
+            var allButtonCols = document.querySelectorAll('.col.text-center');
+            allButtonCols.forEach(function (col) {
+                col.classList.remove('border-bottom', 'border-3','border-black');
+            });
+    
+            // 클릭한 버튼에 해당하는 리스트 보이기
+            var selectedList = document.getElementById(listId);
+            if (selectedList) {
+                selectedList.style.display = 'block';
+    
+                // 선택된 버튼에 스타일 추가
+                document.getElementById('button' + (listId === 'host' ? '1' : '2') + 'Col').classList.add('border-bottom', 'border-3','border-black');
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

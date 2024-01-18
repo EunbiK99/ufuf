@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import com.cu.ufuf.dto.RoomGuestDto;
+import com.cu.ufuf.dto.RoomGuestReviewDto;
+import com.cu.ufuf.dto.RoomGuestReviewImageDto;
 import com.cu.ufuf.dto.RoomImageDto;
 import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionDto;
@@ -173,21 +175,21 @@ public class RoomController {
 		
 		roomGuestDto.setUser_id(userPk);
 		roomGuestDto.setGuest_count(guestCount);
-		System.out.println(roomGuestDto.getRoom_info_id());
 		
 		roomService.roomReservation(roomGuestDto);
 
-		return "redirect:./roomDetailPage?room_info_id="+roomGuestDto.getRoom_info_id();
+		return "redirect:./roomReservationCompletePage?room_info_id="+roomGuestDto.getRoom_info_id();
 	}
 
 	//예약완료페이지(해야댐)
 	@RequestMapping("roomReservationCompletePage")
-    public String roomReservationCompletePage(Model model, @RequestParam("room_info_id") int room_info_id){
+    public String roomReservationCompletePage(HttpSession session, Model model, @RequestParam("room_info_id") int room_info_id){
 
-		System.out.println(room_info_id);
-		model.addAttribute("reservationInfo", roomService.getReservationInfo(room_info_id));
-		
-        //여기다 예약정보 받아와서 예약 이렇게 됐다 확인할 수 있게
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
+		model.addAttribute("reservationInfo", roomService.getReservationInfo(user_id, room_info_id));
+
+
         return "room/roomReservationCompletePage";
     }
 	
@@ -209,7 +211,50 @@ public class RoomController {
 		return "room/roomDetailPage";
 	}
 
+	//예약(게스트 호스트 둘 다) 목록 페이지
+	@RequestMapping("roomReservationListPage")
+	public String roomReservationListPage(HttpSession session, Model model){
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
 
-	
+		model.addAttribute("roomList", roomService.getRoomInfoList());
+		model.addAttribute("roomReservationList", roomService.roomReservationList(user_id));
+
+		return "room/roomReservationListPage";
+	}
+
+	//예약(게스트) 상세 페이지W
+	@RequestMapping("roomReservationInfoPage")
+    public String roomReservationInfoPage(HttpSession session, Model model, @RequestParam("room_info_id") int room_info_id){
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
+		model.addAttribute("reservationInfo", roomService.getReservationInfo(user_id, room_info_id));
+
+        return "room/roomReservationInfoPage";
+    }
+
+	//리뷰쓰기 페이지
+	@RequestMapping("guestReviewPage")
+	public String guestReviewPage(HttpSession session, Model model, @RequestParam("room_info_id") int room_info_id){
+		
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
+
+		model.addAttribute("ReservationInfo", roomService.getReservationInfo(user_id, room_info_id));
+
+		return "room/guestReviewPage";
+	}
+
+	//리뷰 쓴거 값 넘기기
+	@RequestMapping("guestReviewProcess")
+	public String guestReviewProcess(int room_info_id, RoomGuestReviewDto roomGuestReviewDto) {
+		
+		roomService.guestReviewRegister(roomGuestReviewDto);
+        
+		return "redirect:./roomReservationInfoPage?room_info_id="+room_info_id;
+	}
+
+
 
 }

@@ -4,7 +4,7 @@
 <mapper namespace="com.cu.ufuf.room.mapper.RoomSqlMapper">
 
     <!-- 여기서부터 방 등록 -->
-    <select id="creatRoomInfoPk" resultType="int">
+    <select id="creatRoomInfoId" resultType="int">
         select max(room_info_id)+1 from room_info
     </select>
     <insert id="roomInsert">
@@ -111,17 +111,32 @@
         SELECT COUNT(*)+1 as image_count FROM room_image WHERE room_info_id=#{room_info_id};
     </select>
 
-    <!--예약자 정보-->
-    <select id="roomGuestSelectByRoomInfoAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+    <!--예약자 방 예약 정보-->
+    <select id="roomGuestSelectByRoomAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
         SELECT * from room_guest
-        where room_info_id=#{room_info_id}
+        where user_id=#{user_id}
+        and room_info_id=#{room_info_id}
+    </select>
+
+    <!-- 상세글 보기 -->
+	<select id="roomSelectByRoomAndUserIdForGuest" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT ri.* FROM room_info ri
+        join room_guest rg on ri.room_info_id=rg.room_info_id 
+        where rg.user_id=#{user_id}
+        and rg.room_info_id=#{room_info_id}
+	</select>
+
+    <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest
+        where user_id=#{user_id}
     </select>
 
     <!--몇박인지-->
     <select id="reservationDuration" resultType="int">
         SELECT DATEDIFF(end_reservation_schedule, start_reservation_schedule) AS duration_in_days
         FROM room_guest 
-        where room_info_id=#{room_info_id}
+        where user_id=#{user_id}
+        and room_info_id=#{room_info_id}
     </select>
 
     <!--기본 숙박비-->
@@ -130,6 +145,7 @@
         FROM room_guest rg
         join room_info ri on rg.room_info_id=ri.room_info_id 
         where rg.room_info_id=#{room_info_id}
+        and rg.user_id=#{user_id}
     </select>
 
     <!--추가금-->
@@ -146,6 +162,37 @@
         JOIN
             room_info ri ON rg.room_info_id = ri.room_info_id
         where rg.room_info_id=#{room_info_id}
+        and rg.user_id=#{user_id}
     </select>
+
+    <!--리뷰-->
+    <select id="creatGuestReviewId" resultType="int">
+        select max(room_guest_review_id)+1 from room_guest_review
+    </select>
+
+    <insert id="insertGuestReview">
+        insert into room_guest_review(
+            room_guest_id,
+            review_grade,
+            review_content
+        ) values(
+            #{room_guest_id},
+            #{review_grade},
+            #{review_content}
+        )
+    </insert>
+
+    <!--리뷰 이미지-->
+    <insert id="insertGuestReviewImage">
+        insert into room_guest_review_image(
+            room_guest_review_id,
+            location,
+            original_filename
+        ) values(
+            #{room_guest_review_id},
+            #{location},
+            #{original_filename}
+        )
+    </insert>
 
 </mapper>

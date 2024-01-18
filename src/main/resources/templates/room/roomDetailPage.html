@@ -30,29 +30,34 @@
 
     
     </style>
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     
+
+
+   
 
 </head>
 
 <body>
     <div class="container">
         <!-- 탑부분(뒤로가기, 좋아요, 공유)-->
-        <div class="fixed-top row pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+        <div class="fixed-top row pb-1 bg-white" style="position: fixed; top: 0; width: 100%;">
             <div class="col">
-                <div class="row">
+                <div class="row pt-2 ps-1">
                     <!--뒤로가기-->
-                    <div class="col-1 ps-0 pt-2 me-3 ms-4">
-                        <a class="btn text-secondary" href="./roomListPage"><i class="fi fi-rr-arrow-left"></i></a>
+                    <div class="col-1 ps-0 pt-2 pb-2 me-3 ms-4">
+                        <a class="text-secondary" href="./roomListPage" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
                     </div>
 
                     <div class="col"></div>
 
                     <!--나중에 기능 추가-->
-                    <div class="col-1 ps-0 pt-2 pe-0 me-0">
-                        <a class="btn text-secondary" href="#"><i class="bi bi-heart"></i></a> 
+                    <div class="col-1 ps-0 pt-2 pb-2 pe-0 me-0">
+                        <a class="text-secondary" href="#"><i class="bi bi-heart" style="text-decoration: none;"></i></a> 
                     </div>
-                    <div class="col-1 ps-0 pt-2 pe-0 me-2">
-                        <a class="btn text-secondary" href="#"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
+                    <div class="col-1 ps-0 pt-2 pb-2 pe-0">
+                        <a class="text-secondary" href="#" style="text-decoration: none;"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
                         
                     </div>
                 </div>
@@ -300,12 +305,15 @@
 
         <!--주소(지도)-->
         <div class="row">
-            <div class="col" id="map" style="height:100%; width: 100%;"></div>
+            <div class="col" id="map" style="height:10%; width: 100%;"></div>
         </div>
 
 
         <!--주소-->
-        <div class="row mx-3 mt-2 p-0" th:text="${roomDetail.roomInfoDto.location}"></div>
+        <div class="row mx-3 mt-2 p-0">
+            <div class="col-1 p-0"><i class="bi bi-geo-alt"></i></div>
+            <div class="col ps-0 ms-0" th:text="${roomDetail.roomInfoDto.location}"></div>
+        </div>
 
 
         <!--여백-->

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>리뷰작성</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+        .rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            text-align: center;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            display: inline-block;
+            padding: 5px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .rating label:before {
+            content: '\2605'; /* Bootstrap Icons의 bi-star-half 아이콘 (선으로 이루어진 별) */
+            font-family: 'BootstrapIcons';
+            color: rgb(181, 181, 181); /* 선택되지 않은 별의 색상 (검은색) */
+        }
+        .rating input:checked ~ label:before {
+            content: '\2605'; /* 채워진 별 아이콘 */
+            font-family: 'BootstrapIcons';
+            color: #ffc107; /* 선택된 별의 색상 */
+        }
+    </style>
+    
+</head>
+
+<body>
+    
+    <div class="container">
+        <!-- 페이지 네비-->
+        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+            <!--뒤로가기-->
+            <div class="col-1">
+                <a th:href="@{./roomDetailPage(room_info_id=${ReservationInfo.roomInfoDto.room_info_id})}" style="text-decoration: none;"><i class="bi bi-x-lg text-secondary"></i></a> 
+            </div>
+ 
+            
+
+            <!--무슨페이지인지 알 수 있게-->
+            <div class="col text-center fw-bold text-secondary mt-1 fs-5">리뷰쓰기</div>
+            <div class="col-1"></div> 
+        </div>
+        <!--여백-->
+        <div class="row p-4 mt-4"></div>
+
+        <div class="row mx-2 fw-bold mt-3" th:text="${ReservationInfo.roomInfoDto.title}"></div>
+
+        
+        <!--정보 입력-->
+        <form action="/room/guestReviewProcess" method="post">
+            <div class="row mt-3">
+                <div class="col">
+
+                    <input type="hidden" name="room_info_id" th:value="${ReservationInfo.roomInfoDto.room_info_id}">
+                    <input type="hidden" name="room_guest_id" th:value="${ReservationInfo.roomGuestDto.room_guest_id}">
+                    <!--인원-->
+                    <div class="row mt-4 ms-2 fw-bold text-secondary">별점</div>
+                    <div class="row">
+                        <div class="rating">
+                            <input type="radio" id="star5" name="review_grade" value="5">
+                            <label for="star5"></label>
+                            <input type="radio" id="star4" name="review_grade" value="4">
+                            <label for="star4"></label>
+                            <input type="radio" id="star3" name="review_grade" value="3">
+                            <label for="star3"></label>
+                            <input type="radio" id="star2" name="review_grade" value="2">
+                            <label for="star2"></label>
+                            <input type="radio" id="star1" name="review_grade" value="1">
+                            <label for="star1"></label>
+                        </div>
+                    </div>
+
+                    <!--일정-->
+                    <div class="row mt-4 ms-2 fw-bold text-secondary">리뷰</div>
+                    <div class="row pb-3 ">
+                        <div class="col mx-2 mt-2">
+                            <textarea rows="10" name="review_content" class="form-control" placeholder="리뷰를 입력해주세요."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="fixed-bottom bg-white">
+                        <div class="row text-center pb-2 border-top border-secondery-subtle">
+                            <div class="col d-grid mx-2 mt-2 mb-4">
+                                <input type="submit" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="리뷰 작성하기">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--여백-->
+        <div class="row p-4 mb-5"></div>
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
