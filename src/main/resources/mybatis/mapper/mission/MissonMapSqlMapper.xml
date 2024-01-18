@@ -21,7 +21,9 @@
 
 <!-- 미션 목록 출력 -->
 <select id="selectAllMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
-    select * from mission_info;
+    SELECT mi.* FROM mission_info mi
+    LEFT JOIN mission_accepted ma ON mi.mission_id = ma.mission_id
+    WHERE ma.mission_id IS NULL;
 </select>
 
 <!-- 미션 상세보기 -->
@@ -57,6 +59,12 @@
     select * from order_info
     where order_id = #{order_id};
 </select>
+
+<!-- 미션 수락 -->
+<insert id="insertMissonAcc">
+    insert into mission_accepted(mission_id, user_id, accepted_location)
+    values(#{mission_id}, #{user_id}, #{accepted_location});
+</insert>
 
 
 

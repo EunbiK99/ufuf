@@ -11,13 +11,32 @@
 
 <script>
 
-    var order_id = "[[${order_info}]]"
+    var order_id = "[[${order_id}]]"
+    var pg_token = "[[${pg_token}]]"
+
+    
 
     function getOrderInfo(){
 
-        const data = {
-            order_info
-        };
+        
+
+        fetch("./getOrderInfo?", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                
+                
+
+        });
+    }
+
+    function getPaymentInfo(){
 
         fetch("./getOrderInfo", {
             method: "POST",

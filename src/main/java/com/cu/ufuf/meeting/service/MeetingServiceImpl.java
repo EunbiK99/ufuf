@@ -13,6 +13,7 @@ import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
+import java.util.List;
 
 @Service
 public class MeetingServiceImpl {
@@ -103,6 +104,11 @@ public class MeetingServiceImpl {
     // * 모집글 : 미팅 태그 인서트
     public void registerGroupTag(MeetingGroupTagDto meetingGroupTagDto){
         meetingSqlMapper.insertGroupTag(meetingGroupTagDto);
+    }
+
+    // * 미팅 모집글 리스팅
+    public List<MeetingGroupDto> getGroupListAll(){
+        return meetingSqlMapper.selectGroupListAll();
     }
 
 

@@ -1,5 +1,7 @@
 package com.cu.ufuf.meeting.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
@@ -46,5 +48,7 @@ public interface MeetingSqlMapper {
     public void insertTag(MeetingTagDto meetingTagDto);
 
     public void insertGroupTag(MeetingGroupTagDto meetingGroupTagDto);
+
+    public List<MeetingGroupDto> selectGroupListAll();
 
 }
