@@ -20,6 +20,34 @@
         /* font-family: 'Quicksand', sans-serif; */
         font-family: 'Noto Sans KR', sans-serif;
     }
+
+    .background-wrapper{
+        position: relative;
+        width: 100%;
+        height: 8em;
+        overflow: hidden;
+    }
+
+    .custom-background{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: auto;        
+        filter: brightness(65%);
+        background-position-y: center;
+        background-repeat: no-repeat;        
+    }
+
+    .group-content{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;        
+        text-align: center;
+    }
     </style>
 </head>
 <script>
@@ -27,42 +55,37 @@ function getGroupList(){
     fetch("./api/getGroupList")
     .then(response => response.json())
     .then(response =>{
+        const groupListAll = response.data;
+        console.log('groupListAll: ', groupListAll);
+
+        const groupListCol = document.getElementById("groupListCol");
+        groupListCol.innerHTML = '';
         
+        for(e of groupListAll){
+            const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+            const customBackground = groupListWrapper.querySelector(".custom-background");
+            customBackground.setAttribute("src", `/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`)
+            
+            const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
+            let dateValue = e.groupMeetingDate[0] + "년 " + e.groupMeetingDate[1] + "월 " + e.groupMeetingDate[2] + "일 " + e.groupMeetingDate[3] + "시";
+            groupMeetingDate.innerText = dateValue;
+
+            const groupTitle = groupListWrapper.querySelector("#groupTitle");
+            groupTitle.innerText = e.groupTitle;
+
+            const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
+            let placeText = e.groupMeetingPlace.split(" ");
+            groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
+
+            groupListCol.appendChild(groupListWrapper);
+        }
     });
 }
 
-function getRandomLightColor() {
-  // 밝은 계열의 RGB 색상을 랜덤으로 생성
-    const minBrightness = 200; // 밝은 색상의 최소 밝기
-    const letters = '0123456789ABCDEF';
-    let color = '#';
+document.addEventListener('DOMContentLoaded', ()=>{
+    getGroupList()
+});
 
-    do {
-        color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-        }
-    } while (getBrightness(color) < minBrightness); // 최소 밝기 조건을 만족할 때까지 반복
-
-    return color;
-}
-
-// 색상의 밝기를 계산하는 함수
-function getBrightness(hexColor) {
-  // RGB 값을 추출하여 밝기 계산
-    const rgb = parseInt(hexColor.slice(1), 16);
-    const r = (rgb >> 16) & 0xff;
-    const g = (rgb >>  8) & 0xff;
-    const b = (rgb >>  0) & 0xff;
-    return 0.299 * r + 0.587 * g + 0.114 * b;
-}
-
-function changeBackgroundColor() {
-    const randomColorCol = document.getElementById('randomColorCol');
-    randomColorCol.style.backgroundColor = getRandomLightColor();    
-}
-
-document.addEventListener('DOMContentLoaded', changeBackgroundColor());
 
 </script>
 <body>
@@ -92,37 +115,42 @@ document.addEventListener('DOMContentLoaded', changeBackgroundColor());
         <div class="row">
             <div class="col">
                 <div class="row">
-                    <div class="col">
-                        <div class="row">
-                            <div id="randomColorCol" class="col" style="height:7em;">
-                                <div class="row">
-                                    <div class="col">
-                                        <span id="groupMeetingDate"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span id="groupTitle"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span id="groupMeetingPlace"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="groupListCol" class="col">                        
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row sticky-bottom">
+        <div class="row fixed-bottom">
             <div class="col text-center"  style="height : 3.4em;">
                 푸터 영역
             </div>
         </div>
     </div>
+
+<div id="templete" class="d-none">
+    
+    <div id="groupListWrapper" class="row background-wrapper">        
+        <img class="custom-background">
+        <div id="groupList" class="col-12 group-content">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="fw-bold" id="groupMeetingDate"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <span class="fw-bold" id="groupTitle"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <span class="fw-bold" id="groupMeetingPlace"></span>
+                </div>
+            </div>
+        </div>
+
+</div>
 
 
 

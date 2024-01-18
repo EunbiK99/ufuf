@@ -25,6 +25,7 @@
         #{profileComment}
     )
 </insert>
+
 <!-- * 개인SNS 인서트 쿼리-->
 <insert id="insertNewSNS">
     insert into meeting_sns(profileid, snsURL) 
@@ -59,6 +60,7 @@ meeting_group(
 	profileId,
 	groupTitle,
 	groupContent,
+    groupImage,
 	groupHeadCount,
 	groupMeetingDate,
 	groupApplyStart,
@@ -72,6 +74,7 @@ values (
 	#{profileId},
 	#{groupTitle},
 	#{groupContent},
+    #{groupImage},
 	#{groupHeadCount},
 	#{groupMeetingDate},
 	#{groupApplyStart},
@@ -144,6 +147,11 @@ values (
         #{tagId}
     )
 </insert>
+
+<!-- * 미팅 모집글 리스팅-->
+<select id="selectGroupListAll" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT * from meeting_group
+</select>
 
 
 
