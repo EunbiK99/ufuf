@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -135,9 +134,11 @@ public class RestMeetingController {
         // meetingGroupDto.setGroupMeetingPlace((String)groupData.get("groupMeetingPlace"));
         // meetingGroupDto.setGroupGenderOption((String)groupData.get("groupGenderOption"));
         
+        
+        
         int firstLocationCategoryId = meetingService.createFirstLocationCategoryPk();
-        meetingFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);
-
+        meetingFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);                
+        
         int secondLocationCategoryId = meetingService.createSecondLocationCategoryPk();
         meetingSecondLocationCategoryDto.setSecondLocationCategoryId(secondLocationCategoryId);        
         
@@ -153,12 +154,12 @@ public class RestMeetingController {
 
         meetingService.registerGroupLocationCategory(meetingGroupFirstLocationCategoryDto, meetingGroupSecondLocationCategoryDto);
         
-        for(String tagName : tagNameList){
-
+        for(String tagName : tagNameList){            
             int tagPk = meetingService.createTagPk();
-            MeetingTagDto meetingTagDto = new MeetingTagDto();
-            meetingTagDto.setTagId(tagPk);
+            MeetingTagDto meetingTagDto = new MeetingTagDto();            
             meetingTagDto.setTagName(tagName);
+            meetingTagDto.setTagId(tagPk);
+
             meetingService.registerTag(meetingTagDto);
             
             MeetingGroupTagDto meetingGroupTagDto = new MeetingGroupTagDto();
@@ -196,7 +197,8 @@ public class RestMeetingController {
 
             meetingGroupDto.setGroupImage(todayPath + fileName);
         }
-        
+
+
         meetingService.registerNewGroup(meetingGroupDto);
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
@@ -207,7 +209,7 @@ public class RestMeetingController {
     }
 
     @GetMapping("getGroupList")
-    public MeetingRestResponseDto getGroupList(){       
+    public MeetingRestResponseDto getGroupList(){
 
         List<MeetingGroupDto> groupList = meetingService.getGroupListAll();
         
@@ -218,7 +220,6 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
-    
     
 
 
