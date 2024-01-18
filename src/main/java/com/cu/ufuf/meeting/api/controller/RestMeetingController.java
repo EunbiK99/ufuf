@@ -113,34 +113,34 @@ public class RestMeetingController {
     }
 
     @PostMapping("registerGroupProcess")
-    public MeetingRestResponseDto registerGroupProcess(@RequestBody Map<String, Object> groupData){
+    public MeetingRestResponseDto registerGroupProcess(
+        MeetingGroupDto meetingGroupDto,
+        MeetingFirstLocationCategoryDto meetingFirstLocationCategoryDto,
+        MeetingSecondLocationCategoryDto meetingSecondLocationCategoryDto,        
+        String[] tagNameList,
+        MultipartFile group_image
+    ){
 
-        int groupPk = meetingService.createGroupPk();
-        MeetingGroupDto meetingGroupDto = new MeetingGroupDto();
+        int groupPk = meetingService.createGroupPk();        
         meetingGroupDto.setGroupId(groupPk);
-        meetingGroupDto.setProfileId((int)groupData.get("profileId"));
-        meetingGroupDto.setGroupTitle((String)(groupData.get("groupTitle")));
-        meetingGroupDto.setGroupContent((String)groupData.get("groupContent"));
-        meetingGroupDto.setGroupHeadCount(Integer.parseInt((String)(groupData.get("groupHeadCount"))));
-        meetingGroupDto.setGroupMeetingDate(LocalDateTime.parse((String)groupData.get("groupMeetingDate")));
-        meetingGroupDto.setGroupApplyStart(LocalDate.parse((String)groupData.get("groupApplyStart")));
-        meetingGroupDto.setGroupApplyEnd(LocalDate.parse((String)groupData.get("groupApplyEnd")));
-        meetingGroupDto.setGroupApplyCharge(Integer.parseInt((String)groupData.get("groupApplyCharge")));
-        meetingGroupDto.setGroupMeetingPlace((String)groupData.get("groupMeetingPlace"));
-        meetingGroupDto.setGroupGenderOption((String)groupData.get("groupGenderOption"));
+        // meetingGroupDto.setProfileId((int)groupData.get("profileId"));
+        // meetingGroupDto.setGroupTitle((String)(groupData.get("groupTitle")));
+        // meetingGroupDto.setGroupContent((String)groupData.get("groupContent"));
+        // meetingGroupDto.setGroupHeadCount(Integer.parseInt((String)(groupData.get("groupHeadCount"))));
+        // meetingGroupDto.setGroupMeetingDate(LocalDateTime.parse((String)groupData.get("groupMeetingDate")));
+        // meetingGroupDto.setGroupApplyStart(LocalDate.parse((String)groupData.get("groupApplyStart")));
+        // meetingGroupDto.setGroupApplyEnd(LocalDate.parse((String)groupData.get("groupApplyEnd")));
+        // meetingGroupDto.setGroupApplyCharge(Integer.parseInt((String)groupData.get("groupApplyCharge")));
+        // meetingGroupDto.setGroupMeetingPlace((String)groupData.get("groupMeetingPlace"));
+        // meetingGroupDto.setGroupGenderOption((String)groupData.get("groupGenderOption"));
         
-        meetingService.registerNewGroup(meetingGroupDto);
-
-
-        MeetingFirstLocationCategoryDto meetingFirstLocationCategoryDto = new MeetingFirstLocationCategoryDto();
+        
+        
         int firstLocationCategoryId = meetingService.createFirstLocationCategoryPk();
-        meetingFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);
-        meetingFirstLocationCategoryDto.setFirstLocationCategoryName((String)groupData.get("firstLocationCategoryName"));
+        meetingFirstLocationCategoryDto.setFirstLocationCategoryId(firstLocationCategoryId);                
         
-        MeetingSecondLocationCategoryDto meetingSecondLocationCategoryDto = new MeetingSecondLocationCategoryDto();
         int secondLocationCategoryId = meetingService.createSecondLocationCategoryPk();
-        meetingSecondLocationCategoryDto.setSecondLocationCategoryId(secondLocationCategoryId);
-        meetingSecondLocationCategoryDto.setSecondLocationCategoryName((String)groupData.get("secondLocationCategoryName"));
+        meetingSecondLocationCategoryDto.setSecondLocationCategoryId(secondLocationCategoryId);        
         
         meetingService.registerLocationCategory(meetingFirstLocationCategoryDto, meetingSecondLocationCategoryDto);        
         
@@ -154,17 +154,13 @@ public class RestMeetingController {
 
         meetingService.registerGroupLocationCategory(meetingGroupFirstLocationCategoryDto, meetingGroupSecondLocationCategoryDto);
         
-        for(String tagName : (List<String>)groupData.get("tagNameList")){            
+        for(String tagName : tagNameList){            
             int tagPk = meetingService.createTagPk();
             MeetingTagDto meetingTagDto = new MeetingTagDto();            
             meetingTagDto.setTagName(tagName);
             meetingTagDto.setTagId(tagPk);
-            
-            System.out.println(tagName);
 
-            
             meetingService.registerTag(meetingTagDto);
-
             
             MeetingGroupTagDto meetingGroupTagDto = new MeetingGroupTagDto();
             meetingGroupTagDto.setGroupId(groupPk);
@@ -173,12 +169,57 @@ public class RestMeetingController {
             meetingService.registerGroupTag(meetingGroupTagDto);
         }
 
+        if(group_image != null){
+            String originalFilename = group_image.getOriginalFilename();
+            System.out.println(originalFilename);
+
+            String rootPath = "c:/uploadFiles/ufuf/meeting/groupImage/";
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd/");
+            String todayPath = sdf.format(new Date());
+
+            File todayFolderForCreate = new File(rootPath + todayPath);
+            if(!todayFolderForCreate.exists()){
+                todayFolderForCreate.mkdirs();
+            }
+
+            String uuid = UUID.randomUUID().toString();
+            long curruntTime = System.currentTimeMillis();
+            String fileName = uuid + "_" + curruntTime;
+
+            String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+            fileName += ext;
+
+            try {
+                group_image.transferTo(new File(rootPath + todayPath + fileName));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            meetingGroupDto.setGroupImage(todayPath + fileName);
+        }
+
+
+        meetingService.registerNewGroup(meetingGroupDto);
+
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
         
         return meetingRestResponseDto;
     }
+
+    @GetMapping("getGroupList")
+    public MeetingRestResponseDto getGroupList(){
+
+        List<MeetingGroupDto> groupList = meetingService.getGroupListAll();
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(groupList);
+        return meetingRestResponseDto;
+    }
+
     
 
 

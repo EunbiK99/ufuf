@@ -13,6 +13,7 @@ public class MeetingGroupDto {
     private int profileId;
     private String groupTitle;
     private String groupContent;
+    private String groupImage;
     private int groupHeadCount;
     private LocalDateTime groupMeetingDate;
     private LocalDate groupApplyStart;
