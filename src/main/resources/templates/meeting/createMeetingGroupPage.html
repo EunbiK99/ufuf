@@ -13,6 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">    
 
@@ -29,6 +33,13 @@
         font-family: 'Noto Sans KR', sans-serif;
     }
 
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
     .custom-button-color{
         background-color: blueviolet !important;
         color : white !important;
@@ -39,67 +50,140 @@
 <script th:inline="javascript">
 
 function registerMeetingGroupProcess(){
-    const userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;
-    console.log('userMeetingId: ', userMeetingId);
+
+    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;    
     const groupTitle = document.getElementById('groupTitle').value;
-    console.log('groupTitle: ', groupTitle);
     const groupContent = document.getElementById('groupContent').value;
-    console.log('groupContent: ', groupContent);
     const groupHeadCount = document.getElementById('groupHeadCount').value;
-    console.log('groupHeadCount: ', groupHeadCount);
     const groupMeetingDate = document.getElementById('groupMeetingDate').value;
-    console.log('groupMeetingDate: ', groupMeetingDate);
     const groupApplyCharge = document.getElementById('groupApplyCharge').value.replace(/[^\d]/g, '');
-    console.log('groupApplyCharge: ', groupApplyCharge);
+    
     const groupMeetingPlace = document.getElementById('groupMeetingPlace').value;    
-    console.log('groupMeetingPlace: ', groupMeetingPlace);
-
-    const groupApplyDate = document.getElementById('groupApplyDate').value;
-    console.log('groupApplyDate: ', groupApplyDate);
-
+    const groupMeetingPlaceArray = groupMeetingPlace.split(' ');
+    const firstLocationCategory = groupMeetingPlaceArray[0];
+    const secondLocationCategory = groupMeetingPlaceArray[1];
+    
+    const groupApplyDate = document.getElementById('groupApplyDate').value;        
+    const groupApplyDateArray = groupApplyDate.split(' ~ ');    
+    const groupApplyStart = groupApplyDateArray[0];
+    const groupApplyEnd = groupApplyDateArray[1];
+    
+    const inputGroupImage = document.getElementById("inputGroupImage").files[0];
+    
     const groupGenderOptionList = document.getElementsByName('groupGenderOption');
     const groupGenderOptionListArray = Array.from(groupGenderOptionList);
+    let groupGenderOption;
     for(e of groupGenderOptionListArray){
         if(e.checked){
-            const groupGenderOption = e.value;
-            console.log('groupGenderOption: ', groupGenderOption);
+            groupGenderOption = e.value;
+        }
+    }
+    
+    console.log('profileId: ', userMeetingId);
+    console.log('groupTitle: ', groupTitle);
+    console.log('groupContent: ', groupContent);
+    console.log('groupHeadCount: ', groupHeadCount);
+    console.log('groupMeetingDate: ', groupMeetingDate);
+    console.log('groupApplyCharge: ', groupApplyCharge);
+    
+    console.log('groupMeetingPlace: ', groupMeetingPlace);
+    console.log('firstLocationCategory: ', firstLocationCategory);
+    console.log('secondLocationCategory: ', secondLocationCategory);
+    
+    console.log('groupApplyStart: ', groupApplyStart);    
+    console.log('groupApplyEnd: ', groupApplyEnd);
+    console.log('groupGenderOption: ', groupGenderOption);
+    console.log('inputGroupImage: ', inputGroupImage);
+    
+    
+    const tagButtonList = document.getElementsByClassName("tagButton");
+    const groupTag = Array.from(tagButtonList);
+    const tagNameList = groupTag.map(button => button.innerText);
+
+    let groupData = new FormData();
+    groupData.append("profileId", userMeetingId);
+    groupData.append("groupTitle", groupTitle);
+    groupData.append("groupContent", groupContent);
+    groupData.append("groupHeadCount", groupHeadCount);
+    groupData.append("groupMeetingDate", groupMeetingDate);
+    groupData.append("groupApplyStart", groupApplyStart);
+    groupData.append("groupApplyEnd", groupApplyEnd);
+    groupData.append("groupApplyCharge", groupApplyCharge);
+    groupData.append("groupMeetingPlace", groupMeetingPlace);
+    groupData.append("groupGenderOption", groupGenderOption);
+    groupData.append("firstLocationCategoryName", firstLocationCategory);
+    groupData.append("secondLocationCategoryName", secondLocationCategory);
+    groupData.append("tagNameList", tagNameList);
+    groupData.append("group_image", inputGroupImage);
+
+    // const groupData = {
+    //     profileId : userMeetingId,
+    //     groupTitle : groupTitle,
+    //     groupContent : groupContent,
+    //     groupHeadCount : groupHeadCount,
+    //     groupMeetingDate : groupMeetingDate,
+    //     groupApplyStart : groupApplyStart,
+    //     groupApplyEnd : groupApplyEnd,
+    //     groupApplyCharge : groupApplyCharge,
+    //     groupMeetingPlace : groupMeetingPlace,
+    //     groupGenderOption : groupGenderOption,
+    //     firstLocationCategoryName : firstLocationCategory,
+    //     secondLocationCategoryName : secondLocationCategory,
+    //     tagNameList : tagNameList       
+    // }
+    
+
+    fetch('./api/registerGroupProcess', {
+        method : 'post',        
+        body : groupData 
+    })
+    .then(response => response.json())
+    .then(response =>{
+        const result = response.result;
+        if(result === "success"){
+            alert("모집글이 정상 등록되었습니다.");
+            window.location.href = "./mainPage";
+        }
+        else{
+            alert("오류 발생 ㅅㅂ");
+        }
+        
+    });
+    
+}
+
+function addCategoryTag(){    
+    
+    const tagButtonWrapper = document.getElementById("tagButtonWrapper");
+    const errorMessageRow = document.getElementById('errorMessageRow');
+    const inputCategoryName = document.getElementById("inputCategoryName");
+
+    if(inputCategoryName.value === ""){
+        alert("태그명을 입력해주세요!");
+        return;
+    }
+    else{
+        if(tagButtonWrapper.childElementCount >= 3){        
+            errorMessageRow.classList.remove('d-none');
+            inputCategoryName.value = '';
+        }
+        else{
+            errorMessageRow.classList.add('d-none');
+            
+            inputCategoryNameValue = inputCategoryName.value;
+            
+            const tagButton = document.createElement('button');
+            tagButton.innerText = '#' + inputCategoryNameValue;        
+
+            tagButton.setAttribute('class', 'tagButton btn btn-sm rounded-pill custom-button-color mx-1');        
+            tagButton.setAttribute("onclick", "this.remove()");        
+            
+            tagButtonWrapper.appendChild(tagButton);        
+            inputCategoryName.value = '';
         }
     }
 
     
-
-
-
-
-
-    const formData = new FormData();
-    
-}
-
-function addCategoryTag(){
-    
-    const tagButtonWrapper = document.getElementById("tagButtonWrapper");
-    const errorMessageRow = document.getElementById('errorMessageRow');
-    
-    if(tagButtonWrapper.childElementCount >= 3){        
-        errorMessageRow.classList.remove('d-none');
-        inputCategoryName.value = '';
-    }
-    else{
-        errorMessageRow.classList.add('d-none');
-
-        const inputCategoryName = document.getElementById("inputCategoryName");
-        inputCategoryNameValue = inputCategoryName.value;
-        
-        const tagButton = document.createElement('button');
-        tagButton.innerText = '#' + inputCategoryNameValue;        
-
-        tagButton.setAttribute('class', 'btn btn-sm rounded-pill custom-button-color mx-1');
-        tagButton.setAttribute("onclick", "this.remove()");        
-        
-        tagButtonWrapper.appendChild(tagButton);        
-        inputCategoryName.value = '';
-    }
 }    
 
 let customOverlay;
@@ -116,103 +200,98 @@ function setMeetingLocation(){
     groupMeetingPlace.value = selectLocation;    
 }
 
-function checkMyLocation(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const x = position.coords.latitude; // 위도
-            const y = position.coords.longitude; // 경도
-            console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
+function checkMyLocation(){    
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const x = position.coords.latitude; // 위도
+        const y = position.coords.longitude; // 경도
+        console.log(`현재 위치의 x 좌표: ${x}, y 좌표: ${y}`);
 
-            let kakaoMap = document.getElementById('kakaoMap'),
-                mapOption={
-                    center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
-                    level : 2,  // 지도의 확대 레벨                    
-                };
-            
-            /* 지도 생성 */
-            let map = new kakao.maps.Map(kakaoMap, mapOption);
-            map.relayout();
-            map.setZoomable(false);
-            
-            
-            /* 주소-좌표 변환 객체(지오코더) 생성 */
-            let geocoder = new kakao.maps.services.Geocoder();
+        let kakaoMap = document.getElementById('kakaoMap'),
+            mapOption={
+                center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                level : 2,  // 지도의 확대 레벨                    
+            };
+        
+        /* 지도 생성 */
+        let map = new kakao.maps.Map(kakaoMap, mapOption);
+        map.relayout();
+        map.setZoomable(false);
+        
+        
+        /* 주소-좌표 변환 객체(지오코더) 생성 */
+        let geocoder = new kakao.maps.services.Geocoder();
 
-            const mapControl = new kakao.maps.MapTypeControl();
-            const zoomControl = new kakao.maps.ZoomControl();
+        const mapControl = new kakao.maps.MapTypeControl();
+        const zoomControl = new kakao.maps.ZoomControl();
 
-            map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
-            map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+        map.addControl(mapControl, kakao.maps.ControlPosition.TOPRIGHT);
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
-            function searchAddrFromCoords(coords, callback) {
-                // 좌표로 행정동 주소 정보를 요청합니다
-                geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        function searchAddrFromCoords(coords, callback) {
+            // 좌표로 행정동 주소 정보를 요청합니다
+            geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+        }
+
+        function searchDetailAddrFromCoords(coords, callback) {
+            // 좌표로 법정동 상세 주소 정보를 요청합니다
+            geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        }
+
+        // 지도에 마커를 생성하고 표시한다
+        let marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(x, y), // 마커의 좌표
+            map: map // 마커를 표시할 지도 객체
+        });
+
+        customOverlay = new kakao.maps.CustomOverlay({
+            map : map,
+            position : marker.getPosition(), 
+            content : '',
+            // xAnchor : -0.1,
+            yAnchor: 1.1,
+            clickable : true
+        });
+
+        const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
+        const testLocation = customOverlayWrapper.querySelector("#testLocation");            
+        
+        searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                let detailAddr = result[0].address.address_name;
+                // detailAddr += !!result[0].road_address ? '<br>도로명주소 : ' + result[0].road_address.address_name : '';
+                
+                testLocation.innerText = detailAddr;
+                
+                console.log('detailAddr: ', detailAddr);
+
+                customOverlay.setContent(customOverlayWrapper);
+
+                customOverlay.setMap(map);
             }
+        });
 
-            function searchDetailAddrFromCoords(coords, callback) {
-                // 좌표로 법정동 상세 주소 정보를 요청합니다
-                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-            }
-
-            // 지도에 마커를 생성하고 표시한다
-            let marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(x, y), // 마커의 좌표
-                map: map // 마커를 표시할 지도 객체
-            });
-
-            customOverlay = new kakao.maps.CustomOverlay({
-                map : map,
-                position : marker.getPosition(), 
-                content : '',
-                // xAnchor : -0.1,
-                yAnchor: 1.1,
-                clickable : true
-            });
-
-            const customOverlayWrapper = document.querySelector("#customOverlayWrapper").cloneNode(true);
-            const testLocation = customOverlayWrapper.querySelector("#testLocation");            
-            
-            searchDetailAddrFromCoords(map.getCenter() , function(result, status) {
-                if (status === kakao.maps.services.Status.OK) {
+        // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+            searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {                        
                     let detailAddr = result[0].address.address_name;
-                    // detailAddr += !!result[0].road_address ? '<br>도로명주소 : ' + result[0].road_address.address_name : '';
+                    // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
                     
+                    testLocation.innerHTML = '';
                     testLocation.innerText = detailAddr;
                     
-                    console.log('detailAddr: ', detailAddr);
-
-                    customOverlay.setContent(customOverlayWrapper);
-
+                    console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+                    console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
+                    
+                    let latlng = mouseEvent.latLng;
+                    
+                    marker.setPosition(latlng);
+                    customOverlay.setPosition(latlng);
                     customOverlay.setMap(map);
                 }
             });
-
-            // 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
-		    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {                        
-                        let detailAddr = result[0].address.address_name;
-                        // let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                        
-                        testLocation.innerHTML = '';
-                        testLocation.innerText = detailAddr;
-                        
-                        console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
-                        console.log('지도에서 클릭한 위치의 주소는 ' + detailAddr + ' 입니다.');
-                        
-                        let latlng = mouseEvent.latLng;
-                        
-                        marker.setPosition(latlng);
-                        customOverlay.setPosition(latlng);
-                        customOverlay.setMap(map);
-                    }
-                });
-		    });
-        });    
-    }
-    else {
-        console.error("Geolocation을 지원하지 않는 브라우저입니다.");
-    }
+        });
+    });        
 }
 
 function closeOverlay(){
@@ -272,21 +351,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
-            <div class="col">
-                <div class="row mt-1 align-content-center">
+        <div class="row sticky-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 justify-content-between">
                     <div class="col">
-                        <div class="row justify-content-between">
-                            <div class="col-auto" role="button" onclick="window.location.href='../commons/mainPage'">
-                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
-                            <div class="col-auto">
-                                <span class="fw-bold fs-4 align-middle">ufuf</span>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-list fs-4 fw-bold"></i>
-                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
                         </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
                     </div>
                 </div>
             </div>
@@ -309,7 +388,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
-                                                <span>미팅을 표현하는 한마디!</span>
+                                                <span>미팅 타이틀</span>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -344,6 +423,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                                 <span class="text-danger fw-bold">태그는 최대 3개까지 등록가능합니다.</span>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="row my-2">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span>미팅 대표이미지</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input id="inputGroupImage" type="file" class="form-control" accept="image/*">
+                                            </div>
+                                        </div>                                        
                                     </div>
                                 </div>
 
@@ -397,7 +491,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row my-2">
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
@@ -412,7 +506,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row my-2">
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
@@ -468,7 +562,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row mb-5">
                                     <div class="col">
                                         <div class="row my-2">
                                             <div class="col d-grid">
@@ -485,9 +579,70 @@ document.addEventListener('DOMContentLoaded', ()=>{
             </div>
         </div>
 
-        <div class="row">
-            <div class="col text-center">
-                푸터 영역
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col mx-1">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
             </div>
         </div>
     </div>
@@ -499,7 +654,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <div class="col">
                     <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between">
                         <div class="col-auto">
-                            <span class="fw-bold">주소</span>
+                            <span class="fw-bold" style="font-size: 0.8em">주소</span>
                         </div>
                         <div class="col-auto">
                             <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
@@ -507,7 +662,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     </div>
                     <div class="row">
                         <div class="col">
-                            <span id="testLocation"></span>
+                            <span id="testLocation" style="font-size: 0.8em"></span>
                         </div>
                     </div>
                     <div class="row mt-2 mb-2 justify-content-center">

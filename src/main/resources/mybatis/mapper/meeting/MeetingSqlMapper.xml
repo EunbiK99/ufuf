@@ -25,6 +25,7 @@
         #{profileComment}
     )
 </insert>
+
 <!-- * 개인SNS 인서트 쿼리-->
 <insert id="insertNewSNS">
     insert into meeting_sns(profileid, snsURL) 
@@ -45,6 +46,115 @@
     SELECT * from meeting_profile mp 
     where user_id = #{user_id}
 </select>
+
+<!-- * 미팅 모집글 테이블 PK 생성-->
+<select id="countGroupPk" resultType="int">
+    SELECT count(groupId) from meeting_group
+</select>
+
+<!-- * 미팅 모집글 인서트 쿼리-->
+<insert id="insertNewGroup">
+    INSERT into 
+meeting_group(
+	groupId,
+	profileId,
+	groupTitle,
+	groupContent,
+    groupImage,
+	groupHeadCount,
+	groupMeetingDate,
+	groupApplyStart,
+	groupApplyEnd,
+	groupApplyCharge,
+	groupMeetingPlace,
+	groupGenderOption
+	)
+values (
+	#{groupId},
+	#{profileId},
+	#{groupTitle},
+	#{groupContent},
+    #{groupImage},
+	#{groupHeadCount},
+	#{groupMeetingDate},
+	#{groupApplyStart},
+	#{groupApplyEnd},
+	#{groupApplyCharge},
+	#{groupMeetingPlace},
+	#{groupGenderOption}
+)
+</insert>
+
+<!-- * 지역 대분류 PK 생성-->
+<select id="countFirstLocationCategoryForPk" resultType="int">
+    SELECT count(firstLocationCategoryId) from meeting_firstLocationCategory
+</select>
+
+<!-- * 지역 중분류 PK 생성-->
+<select id="countSecondLocationCategoryForPk" resultType="int">
+    SELECT count(secondLocationCategoryId) from meeting_secondLocationCategory
+</select>
+
+<!-- * 지역 대분류 카테고리 인서트-->
+<insert id="insertFirstLocationCategory">
+    insert into meeting_firstLocationCategory(firstLocationCategoryId, firstLocationCategoryName) values(
+        #{firstLocationCategoryId},
+        #{firstLocationCategoryName}
+    )
+</insert>
+
+<!-- * 지역 중분류 카테고리 인서트-->
+<insert id="insertSecondLocationCategory">
+    insert into meeting_secondLocationCategory (secondLocationCategoryId, secondLocationCategoryName) values(
+        #{secondLocationCategoryId},
+        #{secondLocationCategoryName}
+    )
+</insert>
+
+<!-- * 모집글 : 지역 대분류 카테고리 인서트-->
+<insert id="insertGroupFirstLocationCategory">
+    INSERT into meeting_group_firstLocationCategory(groupId, firstLocationCategoryId) values(
+        #{groupId},
+        #{firstLocationCategoryId}
+    )
+</insert>
+
+<!-- * 모집글 : 지역 중분류 카테고리 인서트-->
+<insert id="insertGroupSecondLocationCategory">
+    INSERT into meeting_group_secondLocationCategory(groupId, secondLocationCategoryId) values(
+        #{groupId},
+        #{secondLocationCategoryId}
+    )
+</insert>
+
+<!-- * 미팅 태그 PK 생성-->
+<select id="countTagForPk" resultType="int">
+    SELECT count(tagId) from meeting_tag
+</select>
+
+<!-- * 미팅 태그 인서트-->
+<insert id="insertTag">
+    insert into meeting_tag(tagId, tagName) values(
+        #{tagId},
+        #{tagName}
+    )
+</insert>
+
+<!-- * 모집글 : 미팅태그 인서트-->
+<insert id="insertGroupTag">
+    insert into meeting_group_tag(groupId, tagId) values(
+        #{groupId},
+        #{tagId}
+    )
+</insert>
+
+<!-- * 미팅 모집글 리스팅-->
+<select id="selectGroupListAll" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT * from meeting_group
+</select>
+
+
+
 
 
 </mapper>

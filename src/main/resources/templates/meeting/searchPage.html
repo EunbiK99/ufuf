@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">    
 
     <style>
     *{
@@ -20,28 +21,150 @@
         /* font-family: 'Quicksand', sans-serif; */
         font-family: 'Noto Sans KR', sans-serif;
     }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
+    .background-wrapper{
+        position: relative;        
+        height: 10em;
+        overflow: hidden;        
+    }
+
+    .custom-background{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: auto;        
+        filter: brightness(65%);        
+    }
+
+    .group-content{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;        
+        text-align: center;        
+    }
+
+    .customModal, .modalDialogCentered {
+        transition: opacity 0.4s, visibility 0.4s;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .customModal {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        transform: translate(-50%, -50%);       
+    }
+
+    .modalDialogCentered {
+        width: 80%;
+        height: auto;
+        background-color: rgba(255,255,255);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);                
+    }    
+
+    .modalDialogCentered {
+        display: none;
+    }
+
+    .active {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
     </style>
 </head>
+<script>
 
-<body>
+// 모집글 상세정보 모달
+function showGroupDetailModal(){
+    // 필요시 여기서 백엔드하고 연동...CSR
+    const customModal = document.querySelector(".customModal");
+    customModal.classList.add('active');
+    const modalDialogCentered = document.querySelector(".modalDialogCentered");
+    modalDialogCentered.classList.add('active');    
+}
+
+function closeGroupDetailModal(){
+    const customModal = document.querySelector(".customModal");
+    customModal.classList.remove('active');
+    const modalDialogCentered = document.querySelector(".modalDialogCentered");
+    modalDialogCentered.classList.remove('active');    
+}
+
+function getGroupList(){
+    fetch("./api/getGroupList")
+    .then(response => response.json())
+    .then(response =>{
+        const groupListAll = response.data;
+        console.log('groupListAll: ', groupListAll);
+
+        const groupListCol = document.getElementById("groupListCol");
+        groupListCol.innerHTML = '';
+        
+        for(e of groupListAll){
+            const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+            const customBackground = groupListWrapper.querySelector(".custom-background");
+            customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
+            
+            const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
+            let dateValue = e.groupMeetingDate[0] + "년 " + e.groupMeetingDate[1] + "월 " + e.groupMeetingDate[2] + "일 " + e.groupMeetingDate[3] + "시";
+            groupMeetingDate.innerText = dateValue;
+
+            const groupTitle = groupListWrapper.querySelector("#groupTitle");
+            groupTitle.innerText = e.groupTitle;
+
+            const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
+            let placeText = e.groupMeetingPlace.split(" ");
+            groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
+
+            groupListCol.appendChild(groupListWrapper);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    getGroupList()
+});
+
+
+</script>
+<body class="pt-5 pb-5">    
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
-            <div class="col">
-                <div class="row mt-1 align-content-center">
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 justify-content-between">
                     <div class="col">
-                        <div class="row justify-content-between">
-                            <div class="col-auto">
-                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
-                            <div class="col-auto">
-                                <span class="fw-bold fs-4 align-middle">ufuf</span>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-list fs-4 fw-bold"></i>
-                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
                         </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
                     </div>
                 </div>
             </div>
@@ -49,20 +172,146 @@
         
         <div class="row">
             <div class="col">
-
+                <div class="row overflow-y-scroll">
+                    <div id="groupListCol" class="col">                        
+                    </div>
+                </div>
             </div>
-        </div>
+        </div>        
 
-        <div class="row">
-            <div class="col text-center">
-                푸터 영역
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col mx-1">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
             </div>
         </div>
     </div>
 
 
 
+<div id="templete" class="d-none">
+    
+    <div id="groupListWrapper" class="row background-wrapper mb-1" role="button" onclick="showGroupDetailModal()">                
+        <div class="col">
+            <img class="custom-background">
+        </div>
+        <div class="col group-content">
+            <div class="row">
+                <div id="groupList" class="col-12">            
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="fw-bold" id="groupMeetingDate"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="fw-bold" id="groupTitle"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="fw-bold" id="groupMeetingPlace"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!--/* 모집글 상세정보 모달 */-->
+<div id="groupDetailModal" class="customModal" tabindex="-1">
+    <div class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col">
+                            <span class="modal-title fw-bold text-white">모집글 타이틀 영역</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeGroupDetailModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
+
+            <div class="row modal-body mt-2">
+                <div class="col">
+                    <span>모달 바디</span>
+                </div>                
+            </div>
+
+            <div class="row modal-footer mt-2 mb-2">                
+                <div class="col">
+                    <span>모달 푸터</span>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
-
 </html>

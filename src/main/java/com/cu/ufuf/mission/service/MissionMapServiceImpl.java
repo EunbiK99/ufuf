@@ -5,14 +5,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
+import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
@@ -76,12 +79,12 @@ public class MissionMapServiceImpl {
 
         Map<String, Object> missionDetail = new HashMap<>();
 
-        MissionInfoDto missionInfo = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionInfoDto missionDto = missionMapsqlMapper.selectMissionById(mission_id);
 
-        int user_id = missionInfo.getUser_id();
+        int user_id = missionDto.getUser_id();
 
-        missionDetail.put("missionInfo", missionInfo);
-        missionDetail.put("userInfo", missionMapsqlMapper.selectUserById(user_id));
+        missionDetail.put("missionDto", missionDto);
+        missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
 
         return missionDetail;
     }
@@ -110,6 +113,41 @@ public class MissionMapServiceImpl {
         return missionMapsqlMapper.getOrderInfo(Order_id);
     }
 
+    // 미션 수락하기
+    public void acceptingMission(MissionAcceptedDto missionAcceptedDto){
+        missionMapsqlMapper.insertMissonAcc(missionAcceptedDto);
+    }
+
+    // 내가 수락한 미션
+    public List<MissionInfoDto> getMyAccMission(int user_id){
+        return missionMapsqlMapper.selectMyAccMission(user_id);
+    }
+
+
+
+
+
+
+    // 유저가 등록한 미션 전부 가져오기
+    // public List<Map<String, Object>> getMyResMissionNotAcc(int user_id){
+        
+    //     List<Map<String, Object>> myResMissionNotAccList = new ArrayList<>();
+
+    //     List<MissionInfoDto> missionInfoList = missionMapsqlMapper.selectMissionListByUserId(user_id);
+    //     int[] notAccMissionId = missionMapsqlMapper.getMissionNotAcc(user_id);
+
+    //     for(MissionInfoDto missionDto : missionInfoList){
+
+    //         Map<String, Object> missionDetail = new HashMap<>();
+
+    //         missionDetail.put("missionDto", missionDto);
+    //         missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+
+    //         myResMissionNotAccList.add(missionDetail);
+    //     }
+
+    //     return myResMissionNotAccList;
+    // }
 
 
 
@@ -131,17 +169,30 @@ public class MissionMapServiceImpl {
         merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
     }
 
-    public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+    public void insertKakaoPayAccResInfo(GetKakaoPaymentAcceptResDto params){
+
+        AmountDto amountDto = params.getAmount();
+        int amount_id = merchanSqlMapper.createAmountPk();
+        amountDto.setAmount_id(amount_id);
+
+        CardInfoDto cardDto = params.getCard_info();
+        int card_id = merchanSqlMapper.createCardInfoPk();
+        cardDto.setCard_id(card_id);
+
+        KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto = new KakaoPaymentAcceptResDto();
+
+        kakaoPaymentAcceptResDto.setTid(params.getTid());
+        kakaoPaymentAcceptResDto.setAid(params.getAid());
+        kakaoPaymentAcceptResDto.setAmount(amount_id);
+        kakaoPaymentAcceptResDto.setCard_info(card_id);
+        kakaoPaymentAcceptResDto.setPartner_order_id(params.getPartner_order_id());
+        kakaoPaymentAcceptResDto.setPartner_user_id(params.getPartner_user_id());
+        kakaoPaymentAcceptResDto.setApproved_at(params.getApproved_at());
+
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
+
     }
 
-    public void insertAmountInfo(AmountDto amountDto){
-        merchanSqlMapper.insertAmountInfo(amountDto);
-    }
-
-    public void insertCardInfo(CardInfoDto cardInfoDto){
-        merchanSqlMapper.insertCardInfo(cardInfoDto);
-    }
 
     
 

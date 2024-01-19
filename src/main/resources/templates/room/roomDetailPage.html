@@ -8,6 +8,13 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gugi&family=Jua&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+
     <style>
         .carousel-indicators {
             position: absolute;
@@ -15,31 +22,127 @@
             left: 50%;
             transform: translateX(-120%);
         }
+
+        .gugi-regular {
+            font-family: "Gugi", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
     
     </style>
+
+    <script>
+        let myId = null;
+        const roomInfoId = "[[${roomDetail.roomInfoDto.room_info_id}]]";
+        
+        
+        function getMyId(){
+            fetch("./getMyId")
+            .then(response => response.json())
+            .then(response => {
+                myId = response.data;
+                // 이전에 관심 글 설정을 했는지 확인
+                reloadHeart();
+            });
+        }
+        
+        function toggleInterest(){
+            
+            if(myId == null){
+                if(confirm("로그인 후 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?")){
+                    location.href = "../login/testloginPage";
+                }
+                return;
+            }
+            
+            fetch("./toggleInterestRoom?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                reloadTotalCount();
+                reloadHeart();
+            });
+        }
+        
+        function reloadTotalCount(){
+            fetch("./getTotalInterestCount?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                const totalCountBox = document.getElementById("totalCountBox");
+                totalCountBox.innerText = response.data;
+                
+            });
+        }
+        
+        function reloadHeart(){
+            
+            if(myId == null){
+                return;
+            }
+            
+            fetch("./isInterest?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                
+                const heartBox = document.getElementById("heartBox");
+                
+                if(response.data == true){
+                    heartBox.classList.remove('bi-heart', 'text-secondary');
+                    heartBox.classList.add('bi-heart-fill', 'text-danger');
+                }else{
+                    heartBox.classList.remove('bi-heart-fill', 'text-danger');
+                    heartBox.classList.add('bi-heart', 'text-secondary');				
+                }
+            });
+        }
+
+       
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            getMyId();
+            reloadTotalCount();
+            
+            
+            //setInterval(reloadCommentList, 15000);
+        });
+
+   
+    </script>
+
     
+    
+    
+
+   
 
 </head>
 
 <body>
     <div class="container">
         <!-- 탑부분(뒤로가기, 좋아요, 공유)-->
-        <div class="fixed-top row pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+        <div class="fixed-top row pb-1 bg-white" style="position: fixed; top: 0; width: 100%;">
             <div class="col">
-                <div class="row">
+                <div class="row pt-2 ps-1">
                     <!--뒤로가기-->
-                    <div class="col-1 ps-0 pt-2 me-3 ms-4">
-                        <a class="btn text-secondary" href="./roomListPage"><i class="fi fi-rr-arrow-left"></i></a>
+                    <div class="col-1 ps-0 pt-2 pb-2 me-3 ms-4">
+                        <a class="text-secondary" href="./roomListPage" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
                     </div>
 
                     <div class="col"></div>
 
                     <!--나중에 기능 추가-->
-                    <div class="col-1 ps-0 pt-2 pe-0 me-0">
-                        <a class="btn text-secondary" href="#"><i class="fi fi-rr-heart"></i></a> 
+                    <div class="col-2 ps-0 pt-2 pb-2 pe-0 me-0">
+                        <div class="row">
+                            <div class="col-6 text-end text-secondary" id="totalCountBox"></div>
+                            <div class="col ms-0 ps-0">
+                                <i id="heartBox" onclick="toggleInterest()" class="bi bi-heart text-secondary"></i>
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="col-1 ps-0 pt-2 pe-0 me-3">
-                        <a class="btn text-secondary" href="#"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
+                    <div class="col-1 ps-0 pt-2 pb-2 pe-0">
+                        <a class="text-secondary" href="#" style="text-decoration: none;"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
                         
                     </div>
                 </div>
@@ -47,14 +150,14 @@
         </div>
 
         <!--여백-->
-        <div class="row p-4 mt-3"></div>
+        <div class="row p-4 mt-2"></div>
 
         <!--이미지 캐러셀-->
-        <div class="row">
+        <div class="row p-0">
             <div id="carouselExampleIndicators" class="carousel slide">
                 <div class="carousel-indicators">
                     <th:block th:each="index : ${#numbers.sequence(0, roomDetail.roomImageCount - 1)}">
-                        <button type="button" th:data-bs-target="'#carouselExampleIndicators'" th:data-bs-slide-to="${index}" th:class="${index == 0} ? 'active' : ''" aria-label="'Slide ' + ${index + 1}"></button>
+                        <button type="button" th:data-bs-target="'#carouselExampleIndicators'" th:data-bs-slide-to="${index}" th:class="${index == 0} ? 'active' : ''" aria-label="'Slide ' + ${index + 1}" style="border-radius: 50%; height: 0.4em; width: 0.4em;"></button>
                     </th:block>
                 </div>
                 <div class="carousel-inner" style="margin: 0%; padding: 0%;">
@@ -65,11 +168,11 @@
                     <img th:src="@{/public/image/room/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <button class="carousel-control-prev px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon p-0" aria-hidden="true"></span>
                   <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <button class="carousel-control-next px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
                   <span class="carousel-control-next-icon" aria-hidden="true"></span>
                   <span class="visually-hidden">Next</span>
                 </button>
@@ -88,12 +191,10 @@
 
                 <!--가격-->
                 <div class="row mt-2">
-                    <div class="col-2 fw-bold py-0 ms-0 ps-0 me-1" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}">
-                    </div>
+                    <div class="col-2 fw-bold py-0 ms-0 ps-0 me-1" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}"></div>
                     <div class="col-1 ps-0 ms-0">원</div>
                     <div class="col ps-0 text-start text-secondary py-0">
                         &nbsp;/1박
-                    </div>
                     </div>
                 </div>
             </div>
@@ -102,14 +203,14 @@
 
         <div class="row pt-3 border-top border-secondery-subtle">
             <div class="col">
-                <div class="row mx-3 fw-bold" style="font-size: 1.2em;">공간 기본 정보</div>
+                <div class="row mx-1 fw-bold" style="font-size: 1.1em;">공간 기본 정보</div>
             </div>
         </div>
 
         <!--방, 화장실, 침대, 방 평수-->
         <div class="row mt-3 pb-1 border-bottom border-secondery-subtle">
             <!--평수-->
-            <div class="col ms-4 mt-2">
+            <div class="col ms-1 mt-2">
                 <div class="row ms-2 px-0 text-secondary"><i class="fi fi-rr-expand-arrows-alt fs-3"></i></div>
                 <div class="row ms-2 mt-1">
                     <div class="col-1 text-secondary ms-2 p-0" th:text="${roomDetail.roomInfoDto.room_area}" style="font-size: 0.8em;"></div>
@@ -118,32 +219,32 @@
             </div>
 
             <!--방 갯수-->
-            <div class="col ms-2 mt-2 me-0 pe-0">
+            <div class="col ms-3 mt-2 me-0 pe-0">
                 <div class="row ps-0 pe-0 text-secondary"><i class="fi fi-rr-layout-fluid fs-3"></i></div>
                 <div class="row mt-1 p-0">
                     <div class="col-1 text-secondary ps-0 pe-0 me-1" style="font-size: 0.8em;">방 &nbsp;</div>
-                    <div class="col-1 text-secondary text-start pe-0 me-1" th:text="${roomDetail.roomInfoDto.room_count}" style="font-size: 0.8em;"></div>
-                    <div class="col text-secondary ps-0 ms-1" style="font-size: 0.8em;">개</div>
+                    <div class="col-1 text-secondary text-start ms-0 pe-0 me-1" th:text="${roomDetail.roomInfoDto.room_count}" style="font-size: 0.8em;"></div>
+                    <div class="col-1 text-secondary ps-0 ms-1" style="font-size: 0.8em;">개</div>
                 </div>
             </div>
             
             <!--침대 갯수-->
             <div class="col mt-2 me-2">
-                <div class="row ms-0 ps-0 pe-0 text-secondary"><i class="fi fi-rr-bed-empty fs-3"></i></div>
+                <div class="row ms-0 ps-0 pe-0 me-1 text-secondary"><i class="fi fi-rr-bed-empty fs-3"></i></div>
                 <div class="row mt-1 p-0">
-                    <div class="col-5 text-secondary ms-1 ps-0 pe-1" style="font-size: 0.8em;">침대 &nbsp;</div>
+                    <div class="col-4 text-secondary ms-1 ps-0 pe-1" style="font-size: 0.8em;">침대 &nbsp;</div>
                     <div class="col-1 text-secondary text-start ps-0 pe-0" th:text="${roomDetail.roomInfoDto.room_count}" style="font-size: 0.8em;"></div>
-                    <div class="col text-secondary ps-0 ms-1" style="font-size: 0.8em;">개</div>
+                    <div class="col-1 text-secondary ps-0 ms-1" style="font-size: 0.8em;">개</div>
                 </div>
             </div>
 
             <!--화장실 갯수-->
-            <div class="col mt-2 me-4">
+            <div class="col mt-2 me-2">
                 <div class="row ms-0 ps-0 pe-0 text-secondary"><i class="fi fi-rr-bath fs-3"></i></div>
                 <div class="row mt-1 p-0">
-                    <div class="col-6 text-secondary ms-0 ps-0 pe-0 me-1" style="font-size: 0.8em;">화장실 &nbsp;</div>
+                    <div class="col-6 text-secondary ms-0 ps-0 pe-0 me-0" style="font-size: 0.8em;">화장실 &nbsp;</div>
                     <div class="col-1 text-secondary text-start ps-0 pe-0 me-1" th:text="${roomDetail.roomInfoDto.room_count}" style="font-size: 0.8em;"></div>
-                    <div class="col text-secondary ps-0" style="font-size: 0.8em;">개</div>
+                    <div class="col-1 text-secondary ps-0" style="font-size: 0.8em;">개</div>
                 </div>
             </div>
         </div>
@@ -151,72 +252,72 @@
         <!--숙소 설명-->
         <div class="row pb-4 border-bottom border-secondery-subtle">
             <div class="col">
-                <div class="row fw-bold mx-3 mt-3" style="font-size: 1.2em;">숙소 설명</div>
-                <div class="row mx-3 mt-2" style="white-space: pre-line;" th:utext="${#strings.replace(roomDetail.roomInfoDto.content, '\n', '<br />')}"></div>
+                <div class="row fw-bold mx-2 mt-3" style="font-size: 1.1em;">숙소 설명</div>
+                <div class="row mx-2 mt-2" style="white-space: pre-line;" th:utext="${#strings.replace(roomDetail.roomInfoDto.content, '\n', '<br />')}"></div>
             </div>
         </div>
 
 
-        <div class="row mx-3 mt-4 mb-3 fw-bold" style="font-size: 1.2em;">숙소 기본 옵션</div>
+        <div class="row mx-1 mt-4 mb-3 fw-bold" style="font-size: 1.1em;">숙소 기본 옵션</div>
 
-        <div class="row border rounded border-secondary-subtle mb-3 mx-4 pt-1 pb-3 ps-1">
-            <div class="col-4 mx-3 mt-3 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
+        <div class="row ms-4 me-1 pt-1 pb-3 pe-0 ps-0">
+            <div class="col-3 mt-3 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
                 <div class="row">
-                    <div class="col ms-5" th:switch="${roomOption.room_option_category_id}">
+                    <div class="col" th:switch="${roomOption.room_option_category_id}">
                         <div th:case="1">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-wifi"></i></div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-wifi"></i></div>
                             <div class="row text-center" style="font-size: 0.8em;">와이파이</div>
                         </div>
                         <div th:case="2">
-                            <div class="row me-3 text-center"><i class="fs-3 text-secondary fi fi-rr-refrigerator"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">냉장고</div>
+                            <div class="row me-3 text-center"><i class="fs-1 text-secondary fi fi-rr-refrigerator"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">냉장고</div>
                         </div> 
                         <div th:case="3">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-washer"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">세탁기</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-washer"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">세탁기</div>
                         </div>
                         <div th:case="4">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-screen"></i></div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-screen"></i></div>
                             <div class="row text-center ms-1" style="font-size: 0.8em;">TV</div>
                         </div>
                         <div th:case="5">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-sink"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">싱크대</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-sink"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">싱크대</div>
                         </div>
                         <div th:case="6">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-air-conditioner"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">에어컨</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-air-conditioner"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">에어컨</div>
                         </div>
                         <div th:case="7">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-bed-empty"></i></div>
-                            <div class="row text-center ps-2" style="font-size: 0.8em;">침대</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-bed-empty"></i></div>
+                            <div class="row ps-1 text-center ps-2" style="font-size: 0.8em;">침대</div>
                         </div>
                         <div th:case="8">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-microwave"></i></div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-microwave"></i></div>
                             <div class="row text-center" style="font-size: 0.8em;">전자레인지</div>
                         </div>
                         <div th:case="9">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rs-makeup-brush"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">화장대</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-makeup-brush"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">화장대</div>
                         </div>
                         <div th:case="10">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-hat-chef"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">인덕션</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-hat-chef"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">인덕션</div>
                         </div>
                         <div th:case="11">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-camera-cctv"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">CCTV</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-camera-cctv"></i></div>
+                            <div class="row ps-2 text-center" style="font-size: 0.8em;">CCTV</div>
                         </div>
                         <div th:case="12">
-                            <div class="row fw-medium text-secondary fs-3">hㅠ</div>
-                            <div class="row text-center" style="font-size: 0.8em;">식탁</div>
+                            <div class="row fw-medium text-secondary fs-3 ps-2 mt-1 gugi-regular">hㅠ</div>
+                            <div class="row ps-2 text-center" style="font-size: 0.8em;">식탁</div>
                         </div>
                         <div th:case="13">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-tablet-android"></i></div>
-                            <div class="row text-center" style="font-size: 0.8em;">도어락</div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-tablet-android"></i></div>
+                            <div class="row ps-1 text-center" style="font-size: 0.8em;">도어락</div>
                         </div>
                         <div th:case="14">
-                            <div class="row"><i class="fs-3 text-secondary fi fi-rr-oven"></i></div>
+                            <div class="row"><i class="fs-1 text-secondary fi fi-rr-oven"></i></div>
                             <div class="row text-center" style="font-size: 0.8em;">전기밥솥</div>
                         </div>
                         <div th:case="*"></div>
@@ -226,18 +327,18 @@
             </div>
         </div>
 
-        <div class="row pt-4 ps-2 border-top border-secondery-subtle mx-2 fw-bold mt-5 mb-1" style="font-size: 1.2em;">예약 공지</div>
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-3 mb-1" style="font-size: 1.1em;">예약 공지</div>
         
-        <div class="row mt-3 ps-2 mx-2 mb-2 text-secondary fw-bold">예약 가능일정</div>
-        <div class="row mx-2">
+        <div class="row mt-3 mx-2 mb-2 text-secondary fw-bold">예약 가능일정</div>
+        <div class="row ps-2">
             <div class="col-4 me-0 pe-0" th:text="${roomDetail.roomInfoDto.start_schedule}"></div>
             <div class="col-1">~</div>
             <div class="col" th:text="${roomDetail.roomInfoDto.end_schedule}"></div>
         </div>
 
 
-        <div class="row ps-2 mx-2 mb-2 mt-3 text-secondary fw-bold">체크인 / 아웃</div>
-        <div class="row mx-2">
+        <div class="row mx-2 mb-2 mt-3 text-secondary fw-bold">체크인 / 아웃</div>
+        <div class="row ps-2">
             <div class="col-1 mt-1 pe-2 me-2"><i class="fi fi-rr-clock-three"></i></div>
             <div class="col">
                 <div class="row">
@@ -251,8 +352,8 @@
             
         </div>
 
-        <div class="row ps-2 mx-2 mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
-        <div class="row mx-2">
+        <div class="row mx-2 mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
+        <div class="row ps-2">
             <div class="col-1 mt-1 pe-1"><i class="fi fi-rr-user"></i></div>
             <div class="col">
                 <div class="row">
@@ -270,7 +371,7 @@
             <div class="col">
                 <div class="row ps-2 mx-2 mt-3 text-secondary fw-bold">인원 추가요금</div>
                 
-                <div class="row mx-3 mt-2">
+                <div class="row ps-2 mt-2">
                     <div class="col-2 ps-0 pe-0 me-0">1인당 </div>
                     <div class="col-2 ms-0 ps-0 pe-0 tent-end me-0 fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></div>
                     <div class="col-1 ms-0 ps-0 pe-0 me-0">원</div>
@@ -285,23 +386,45 @@
             </div>
         </div>
 
-        <div class="row pt-4 ps-2 border-top border-secondery-subtle mx-2 fw-bold mt-5 mb-4" style="font-size: 1.2em;">오시는 길</div>
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">오시는 길</div>
 
         <!--주소(지도)-->
         <div class="row">
-            <div class="col" id="map" style="height:15em; width: 100%;"></div>
+            <div class="col px-0">
+                <div id="map" style="height:10%; width: 100%;">
+                    <script>
+
+                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                            mapOption = { 
+                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                level: 3 // 지도의 확대 레벨
+                            };
+
+                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                        map.setMinLevel(1);
+                        map.setMaxLevel(4);
+
+                    </script>
+                </div>
+            </div>
         </div>
 
 
         <!--주소-->
-        <div class="row mx-3 mt-2" th:text="${roomDetail.roomInfoDto.location}"></div>
+        <div class="row mx-3 mt-2 p-0">
+            <div class="col-1 p-0"><i class="bi bi-geo-alt"></i></div>
+            <div class="col ps-0 ms-0" th:text="${roomDetail.roomInfoDto.location}"></div>
+        </div>
 
-
+        <!--리뷰-->
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">리뷰</div>
+        
         <!--여백-->
         <div class="row p-5 mt-3"></div>
 
         <!--예약하기 버튼-->
-        <div class="fixed-bottom bg-white">
+        <div class="fixed-bottom w-100 bg-white">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
                 <div class="col d-grid mx-2 mt-2 mb-4">
                     <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>
@@ -309,7 +432,7 @@
             </div>
         </div>
     </div>
-
+    
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

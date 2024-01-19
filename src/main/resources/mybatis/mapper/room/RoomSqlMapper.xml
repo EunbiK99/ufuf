@@ -4,7 +4,7 @@
 <mapper namespace="com.cu.ufuf.room.mapper.RoomSqlMapper">
 
     <!-- 여기서부터 방 등록 -->
-    <select id="creatRoomInfoPk" resultType="int">
+    <select id="creatRoomInfoId" resultType="int">
         select max(room_info_id)+1 from room_info
     </select>
     <insert id="roomInsert">
@@ -111,4 +111,177 @@
         SELECT COUNT(*)+1 as image_count FROM room_image WHERE room_info_id=#{room_info_id};
     </select>
 
+    <!--예약자 방 예약 정보-->
+    <select id="roomGuestSelectByRoomAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest
+        where user_id=#{user_id}
+        and room_info_id=#{room_info_id}
+    </select>
+
+    <!-- 상세글 보기 -->
+	<select id="roomSelectByRoomAndUserIdForGuest" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT ri.* FROM room_info ri
+        join room_guest rg on ri.room_info_id=rg.room_info_id 
+        where rg.user_id=#{user_id}
+        and rg.room_info_id=#{room_info_id}
+	</select>
+
+    <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest
+        where user_id=#{user_id}
+    </select>
+
+    <!--몇박인지-->
+    <select id="reservationDuration" resultType="int">
+        SELECT DATEDIFF(end_reservation_schedule, start_reservation_schedule) AS duration_in_days
+        FROM room_guest 
+        where user_id=#{user_id}
+        and room_info_id=#{room_info_id}
+    </select>
+
+    <!--기본 숙박비-->
+    <select id="reservationRoomCharge" resultType="int">
+        SELECT (DATEDIFF(end_reservation_schedule, start_reservation_schedule)+1)* room_charge AS total_cost
+        FROM room_guest rg
+        join room_info ri on rg.room_info_id=ri.room_info_id 
+        where rg.room_info_id=#{room_info_id}
+        and rg.user_id=#{user_id}
+    </select>
+
+    <!--추가금-->
+    <select id="reservationExtraCharge" resultType="int">
+        SELECT
+            <![CDATA[
+                CASE WHEN rg.guest_count > ri.people_count_standard
+            ]]>
+                THEN (rg.guest_count - ri.people_count_standard) * ri.extra_money
+                ELSE 0
+            END AS additional_cost
+        FROM
+            room_guest rg
+        JOIN
+            room_info ri ON rg.room_info_id = ri.room_info_id
+        where rg.room_info_id=#{room_info_id}
+        and rg.user_id=#{user_id}
+    </select>
+
+    <!--리뷰-->
+    <select id="creatGuestReviewId" resultType="int">
+        select max(room_guest_review_id)+1 from room_guest_review
+    </select>
+
+    <insert id="insertGuestReview">
+        insert into room_guest_review(
+            room_guest_id,
+            review_grade,
+            review_content
+        ) values(
+            #{room_guest_id},
+            #{review_grade},
+            #{review_content}
+        )
+    </insert>
+
+    <!--리뷰 이미지-->
+    <insert id="insertGuestReviewImage">
+        insert into room_guest_review_image(
+            room_guest_review_id,
+            location,
+            original_filename
+        ) values(
+            #{room_guest_review_id},
+            #{location},
+            #{original_filename}
+        )
+    </insert>
+
+
+    <!--관심 방-->
+    <insert id="insertInterestRoom">
+        insert into interest_room(
+            room_info_id,
+            user_id
+        ) values(
+            #{room_info_id},
+            #{user_id}
+        )
+    </insert>
+
+    <!--좋아요 취소-->
+    <delete id="deleteInterestRoom">
+        DELETE FROM interest_room 
+        WHERE room_info_id=#{room_info_id}
+        and user_id=#{user_id}
+    </delete>
+
+    <!--글 전체 좋아요 카운트-->
+    <select id="roomInterestTotalCount" resultType="int">
+        SELECT COUNT(*) FROM interest_room
+        WHERE room_info_id=#{room_info_id}
+    </select>
+
+    <!--내가 그 글에 좋아요 했는가-->
+    <select id="roomInterestUserCount" resultType="int">
+        SELECT COUNT(*) FROM interest_room
+        WHERE room_info_id=#{room_info_id}
+        and user_id=#{user_id}
+    </select>
+
+    <!--유저가 좋아요 한 곳 리스트 나오게-->
+    <select id="userInterestRoom" resultType="com.cu.ufuf.dto.InterestRoomDto">
+        SELECT * FROM interest_room where user_id=#{user_id}
+        order by interest_room_id desc
+    </select>
+
+    <update id="updateRoomInfo">
+        UPDATE room_info
+        set main_image=#{main_image}, 
+            title=#{title}, 
+            room_count= #{room_count}, 
+            bed_count=#{bed_count}, 
+            toilet_count=#{toilet_count}, 
+            room_area=#{room_area}, 
+            content=#{content}, 
+            location=#{location}, 
+            checkin_time=#{checkin_time},
+            checkout_time=#{checkout_time},
+            people_count_standard=#{people_count_standard},
+            people_count_limit=#{people_count_limit},
+            extra_money=#{extra_money},
+            room_charge=#{room_charge},
+            start_schedule=#{start_schedule},
+            end_schedule=#{end_schedule}
+        where room_info_id=#{room_info_id}
+    </update>
+
+    <delete id="deleteRoomInfo">
+        DELETE FROM room_info WHERE room_info_id=#{room_info_id}
+    </delete>
+
+    <delete id="deleteRoomImage">
+        DELETE FROM room_image WHERE room_info_id=#{room_info_id}
+    </delete>
+
+    <delete id="deleteRoomOption">
+        DELETE FROM room_option WHERE room_info_id=#{room_info_id}
+    </delete>
+
+    <select id="roomReviewListForRoomInfo" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT rgr.* from room_guest_review rgr
+        join room_guest rg on rg.room_guest_id =rgr.room_guest_id
+        where room_info_id=#{room_info_id}
+    </select>
+
+
+    <select id="roomReviewListForUser" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT rgr.* from room_guest_review rgr
+        join room_guest rg on rg.room_guest_id =rgr.room_guest_id
+        where user_id=#{user_id}
+    </select>
+
+    <select id="roomReviewListForMainPage" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT * from room_guest_review 
+        order by room_guest_review_id desc
+    </select>
+    
 </mapper>

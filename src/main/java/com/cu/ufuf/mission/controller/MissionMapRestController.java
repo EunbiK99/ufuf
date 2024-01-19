@@ -3,25 +3,35 @@ package com.cu.ufuf.mission.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.client.RestTemplate;
 
-import com.cu.ufuf.dto.AmountDto;
-import com.cu.ufuf.dto.CardInfoDto;
+import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
-import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/mission/*")
@@ -123,6 +133,52 @@ public class MissionMapRestController {
     }
 
     @ResponseBody
+    @PostMapping("acceptingMission")
+    public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionMapService.acceptingMission(params);
+        
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @GetMapping("loadMyAccMission")
+    public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getMyAccMission(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
+
+    // @GetMapping("getMyResMissionNotAcc")
+    // public RestResponseDto getMyResMissionNotAcc(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+    //     int user_id = sessionUser.getUser_id();
+    //     RestResponseDto restResponseDto = new RestResponseDto();
+    //     restResponseDto.setData(missionMapService.getMyResMissionNotAcc(user_id));
+    //     restResponseDto.setResult("Success");
+    //     return restResponseDto;
+    // }
+
+
+
+
+
+
+
+
+
+
+
+    @ResponseBody
     @PostMapping("insertKakaoPayReqInfo")
     public RestResponseDto insertKakaoPayReqInfo(@RequestBody KakaoPaymentReqDto params){
 
@@ -165,36 +221,8 @@ public class MissionMapRestController {
     }
 
     @ResponseBody
-    @PostMapping("insertAmountInfo")
-    public RestResponseDto insertAmountInfo(@RequestBody AmountDto params){
-
-        RestResponseDto restResponseDto = new RestResponseDto();
-        
-        missionMapService.insertAmountInfo(params);
-        
-        restResponseDto.setData(params);
-        restResponseDto.setResult("Success");
-        
-        return restResponseDto;
-    }
-
-    @ResponseBody
-    @PostMapping("insertCardInfo")
-    public RestResponseDto insertCardInfo(@RequestBody CardInfoDto params){
-
-        RestResponseDto restResponseDto = new RestResponseDto();
-        
-        missionMapService.insertCardInfo(params);
-        
-        restResponseDto.setData(params);
-        restResponseDto.setResult("Success");
-        
-        return restResponseDto;
-    }
-
-    @ResponseBody
     @PostMapping("insertKakaoPayAccRes")
-    public RestResponseDto insertKakaoPayAccRes(@RequestBody KakaoPaymentAcceptResDto params){
+    public RestResponseDto insertKakaoPayAccRes(@RequestBody GetKakaoPaymentAcceptResDto params){
 
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -203,6 +231,33 @@ public class MissionMapRestController {
         restResponseDto.setData(params);
         restResponseDto.setResult("Success");
         
+        return restResponseDto;
+    }
+
+    @GetMapping("getPaymentInfo")
+    public RestResponseDto getPaymentInfo(@RequestParam String pg_token) {
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        // KakaoPay API 호출을 위한 URL
+        String apiUrl = "https://kapi.kakao.com/v1/payment/approvals/" + pg_token;
+
+        // KakaoPay API 호출을 위한 RestTemplate 사용
+        RestTemplate restTemplate = new RestTemplate();
+
+        // KakaoPay API 호출에 필요한 헤더 설정 (KakaoAK: Admin Key)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK fe6556cbcccecbec99f52226077803d7");
+
+        // HttpEntity 생성 및 헤더 설정
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // KakaoPay API 호출 및 응답 받기
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+        restResponseDto.setData(response.getBody());
+
+        restResponseDto.setResult("Success");
+
         return restResponseDto;
     }
 

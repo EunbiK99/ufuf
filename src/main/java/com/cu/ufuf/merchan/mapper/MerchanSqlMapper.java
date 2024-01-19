@@ -26,7 +26,10 @@ public interface MerchanSqlMapper {
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto);
     public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
     public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
+
+    public int createAmountPk();
     public void insertAmountInfo(AmountDto amountDto);
+    public int createCardInfoPk();
     public void insertCardInfo(CardInfoDto cardInfoDto);
 
     

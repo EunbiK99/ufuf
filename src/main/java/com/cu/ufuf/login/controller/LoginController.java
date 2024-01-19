@@ -224,6 +224,14 @@ public class LoginController {
         }
     }
 
+    @RequestMapping("logoutProcess")
+    public String logoutProcess(HttpSession session){
+
+        session.invalidate();
+
+        return "redirect:../commons/mainPage";
+    }
+
 
 
 

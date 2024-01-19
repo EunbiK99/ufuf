@@ -12,13 +12,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;
+        font-family: 'Noto Sans KR', sans-serif;        
+    }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
     }
     </style>
 </head>
@@ -27,21 +35,21 @@
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
-            <div class="col">
-                <div class="row mt-1 align-content-center">
+        <div class="row sticky-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 justify-content-between">
                     <div class="col">
-                        <div class="row justify-content-between">
-                            <div class="col-auto" role="button" onclick="window.location.href='../commons/mainPage'">
-                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
-                            <div class="col-auto">
-                                <span class="fw-bold fs-4 align-middle">ufuf</span>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-list fs-4 fw-bold"></i>
-                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
                         </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
                     </div>
                 </div>
             </div>
@@ -53,9 +61,70 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col text-center">
-                푸터 영역
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col mx-1">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
             </div>
         </div>
     </div>
