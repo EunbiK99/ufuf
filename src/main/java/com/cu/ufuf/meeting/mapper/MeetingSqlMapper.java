@@ -51,4 +51,17 @@ public interface MeetingSqlMapper {
 
     public List<MeetingGroupDto> selectGroupListAll();
 
+    // * 그룹PK 기준 모집글 셀렉트
+    public MeetingGroupDto selectGroupByGroupId(int groupId);
+
+    // * 그룹PK 기준 모집글 태그 셀렉트
+    public List<MeetingGroupTagDto> selectGroupTagListByGroupId(int groupId);
+
+    // * 미팅프로필PK 기준 프로필정보 셀렉트
+    public MeetingProfileDto selectMeetingProfileByProfileId(int profileId);
+
+    // * 태그PK 기준 태그 셀렉트
+    public MeetingTagDto selectTagByTagId(int tagId);
+
+
 }

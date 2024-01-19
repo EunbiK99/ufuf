@@ -220,6 +220,15 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @GetMapping("getGroupDetailInfo")
+    public MeetingRestResponseDto getGroupDetailInfo(int groupId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getGroupDetailInfo(groupId));
+        return meetingRestResponseDto;
+    }
     
 
 

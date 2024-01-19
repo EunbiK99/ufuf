@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
@@ -46,8 +47,19 @@ public class MeetingController {
     }
 
     @RequestMapping("searchPage")
-    public String searchPage(){
-        return "./meeting/searchPage";
+    public String searchPage(HttpSession session){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        
+        if(meetingProfileDto == null){
+            return "./commons/loginRequierd";
+        }
+        else{
+            session.setAttribute("meetingProfileInfo", meetingProfileDto);
+            System.out.println(meetingProfileDto.getProfileid());
+            System.out.println(meetingProfileDto.getProfileNickname());
+            return "./meeting/searchPage";
+        }        
     }
 
     @RequestMapping("createMeetingGroupPage")

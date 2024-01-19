@@ -13,7 +13,11 @@ import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MeetingServiceImpl {
@@ -110,6 +114,33 @@ public class MeetingServiceImpl {
     public List<MeetingGroupDto> getGroupListAll(){
         return meetingSqlMapper.selectGroupListAll();
     }
+
+    //* 그룹PK 기준 미팅모집글 상세정보 통합해서 조회 */
+    public Map<String, Object> getGroupDetailInfo(int group_pk){
+        
+        Map<String, Object> map = new HashMap<>();        
+        
+        MeetingGroupDto meetingGroupDto = meetingSqlMapper.selectGroupByGroupId(group_pk);
+        List<MeetingGroupTagDto> meetingGroupTagDtoList = meetingSqlMapper.selectGroupTagListByGroupId(group_pk);
+        
+        int profileId = meetingGroupDto.getProfileId();
+        MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(profileId);
+        
+        List<MeetingTagDto> tagDtoList = new ArrayList<>();
+        for(MeetingGroupTagDto meetingGroupTagDto : meetingGroupTagDtoList){
+            int tagId = meetingGroupTagDto.getTagId();
+            tagDtoList.add(meetingSqlMapper.selectTagByTagId(tagId));
+        }
+        
+        map.put("meetingGroupDto", meetingGroupDto);
+        map.put("meetingProfileDto", meetingProfileDto);
+        map.put("tagDtoList", tagDtoList);
+        
+        
+        return map;
+    
+    }
+
 
 
 

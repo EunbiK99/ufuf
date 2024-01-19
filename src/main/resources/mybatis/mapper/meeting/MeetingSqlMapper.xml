@@ -153,6 +153,30 @@ values (
     SELECT * from meeting_group
 </select>
 
+<!-- * 그룹PK 기준 모집글 상세 셀렉트-->
+<select id="selectGroupByGroupId" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT * from meeting_group mg
+    where groupid = #{groupId}
+</select>
+
+<!-- * 그룹PK 기준 모집글 태그 셀렉트-->
+<select id="selectGroupTagListByGroupId" resultType="com.cu.ufuf.dto.MeetingGroupTagDto">
+    SELECT * from meeting_group_tag mgt
+    where groupId = #{groupId}
+</select>
+
+<!-- * 프로필PK 기준 미팅프로필 셀렉트-->
+<select id="selectMeetingProfileByProfileId" resultType="com.cu.ufuf.dto.MeetingProfileDto">
+    SELECT * from meeting_profile mp 
+    where profileid = #{profileId}
+</select>
+
+<!-- * 태그PK 기준 태그데이터 셀렉트-->
+<select id="selectTagByTagId" resultType="com.cu.ufuf.dto.MeetingTagDto">
+    SELECT * from meeting_tag mt 
+    where tagid = #{tagId}
+</select>
+
 
 
 
