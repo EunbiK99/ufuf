@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
+import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -27,5 +28,12 @@ public interface MissionMapSqlMapper {
     public OrderInfoDto getOrderInfo(String order_id);
 
     public void insertMissonAcc(MissionAcceptedDto missionAcceptedDto);
+
+    public List<MissionAcceptedDto> selectMyAccMission(int user_id);
+
+    public List<MissionInfoDto> selectMissionListByUserId(int user_id);
+    public int[] getMissionNotAcc(int user_id);
+
+    public void insertMissionComplete(MissionCompleteDto missionCompleteDto);
 
 }

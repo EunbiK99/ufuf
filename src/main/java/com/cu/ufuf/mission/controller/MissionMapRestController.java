@@ -1,6 +1,10 @@
 package com.cu.ufuf.mission.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -14,19 +18,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
+import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/mission/*")
@@ -140,6 +151,77 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyAccMission")
+    public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getMyAccMission(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
+    @ResponseBody
+    @PostMapping("uploadCompleteMission")
+    public RestResponseDto uploadCompleteImg(@RequestParam(name="complete_img") MultipartFile complete_img,
+            @RequestParam(name="mission_accepted_id") int mission_accepted_id)
+        {
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        MissionCompleteDto missionCompleteDto = new MissionCompleteDto();
+
+        if(complete_img != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/missionComplete";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = complete_img.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				complete_img.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            missionCompleteDto.setComplete_img(todayPath + fileName);
+		}
+
+        missionCompleteDto.setMission_accepted_id(mission_accepted_id);
+        missionMapService.insertMissionComplete(missionCompleteDto);
+        
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+
+    // @GetMapping("getMyResMissionNotAcc")
+    // public RestResponseDto getMyResMissionNotAcc(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+    //     int user_id = sessionUser.getUser_id();
+    //     RestResponseDto restResponseDto = new RestResponseDto();
+    //     restResponseDto.setData(missionMapService.getMyResMissionNotAcc(user_id));
+    //     restResponseDto.setResult("Success");
+    //     return restResponseDto;
+    // }
 
 
 

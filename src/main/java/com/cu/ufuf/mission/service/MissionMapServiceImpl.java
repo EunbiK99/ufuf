@@ -16,6 +16,7 @@ import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
+import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
@@ -117,6 +118,60 @@ public class MissionMapServiceImpl {
     public void acceptingMission(MissionAcceptedDto missionAcceptedDto){
         missionMapsqlMapper.insertMissonAcc(missionAcceptedDto);
     }
+
+    // 내가 수락한 미션
+    public List<Map<String, Object>> getMyAccMission(int user_id){
+        
+        List<Map<String, Object>> accMissionList = new ArrayList<>();
+
+        List<MissionAcceptedDto> missionAcceptedList = missionMapsqlMapper.selectMyAccMission(user_id);
+
+        for(MissionAcceptedDto missionAccDto : missionAcceptedList){
+
+            int mission_id = missionAccDto.getMission_id();
+
+            Map<String, Object> accMissionInfo = new HashMap<>();
+
+            accMissionInfo.put("missionAccDto", missionAccDto);
+            accMissionInfo.put("missionInfoDto", missionMapsqlMapper.selectMissionById(mission_id));
+            accMissionInfo.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+
+            accMissionList.add(accMissionInfo);
+        }
+
+        return accMissionList;
+    }
+
+    // 미션 완료 인증 인서트
+    public void insertMissionComplete(MissionCompleteDto missionCompleteDto){
+        missionMapsqlMapper.insertMissionComplete(missionCompleteDto);
+    }
+
+
+
+
+
+
+    // 유저가 등록한 미션 전부 가져오기
+    // public List<Map<String, Object>> getMyResMissionNotAcc(int user_id){
+        
+    //     List<Map<String, Object>> myResMissionNotAccList = new ArrayList<>();
+
+    //     List<MissionInfoDto> missionInfoList = missionMapsqlMapper.selectMissionListByUserId(user_id);
+    //     int[] notAccMissionId = missionMapsqlMapper.getMissionNotAcc(user_id);
+
+    //     for(MissionInfoDto missionDto : missionInfoList){
+
+    //         Map<String, Object> missionDetail = new HashMap<>();
+
+    //         missionDetail.put("missionDto", missionDto);
+    //         missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+
+    //         myResMissionNotAccList.add(missionDetail);
+    //     }
+
+    //     return myResMissionNotAccList;
+    // }
 
 
 

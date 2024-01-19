@@ -14,7 +14,11 @@ import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
+import com.cu.ufuf.dto.CircleScheduleApplyDto;
+import com.cu.ufuf.dto.CircleScheduleAttendanceDto;
+import com.cu.ufuf.dto.CircleScheduleDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -88,5 +92,32 @@ public interface CircleSqlMapper {
     public void circleVoteInsert(CircleVoteDto circleVoteDto);
     public void circleVoteOptionInsert(CircleVoteOptionDto circleVoteOptionDto);
 
-    // 흠
+    // 투표글max 값 가져오기
+    public int circleVoteMaxCircleVoteId(int circle_member_id);
+
+    // 해당동아리 투표글 모두가져오기
+    public List<CircleVoteDto> circleVoteBoardListByCircleMemberId(int circle_member_id);
+
+    // 투표글번호로 항목리스트 가져오기 & 항목 투표한 동아리 회원번호 찾기 & 인원수로 가져온다면?
+    // 맨위에 항목리스트 1번 2번 3번 가져왔다고 치면 그거 하나씩 넣어서 += 해서 다합치면 투표한거 나올듯 ㅎ;; ==> 해결
+    public List<CircleVoteOptionDto> circleVoteOptionInfoByCircleVoteId(int Circle_vote_id);
+    public List<CircleVoteCompleteDto> circleVoteCompleteInfoByVoteOptionId(int vote_option_id);
+    public int circleVoteCompleteCntByVoteOptionId(int vote_option_id); //항목카운트임.. 조심
+    
+    // 투표글 하나 가져오기 
+    public CircleVoteDto circleVoteInfoByCircleVoteId(int circle_vote_id);
+
+    // 투표하면 내가선택한 항목 저장
+    public void circleVoteCompleteInfoInsert(CircleVoteCompleteDto circleVoteCompleteDto);
+
+    // 동아리 일정 등록 & 동아리 일정신청(일정신청시 item_info insert후 상품코드 같이 들어가게끔 테이블해놨다고함)
+    // 일정출석부
+    public void circleScheduleInfoInsert(CircleScheduleDto circleScheduleDto);
+    public void circleScheduleApplicationInfoInsert(CircleScheduleApplyDto circleScheduleApplyDto);
+    public void circleScheduleAttenDanceInfoInfoInsert(CircleScheduleAttendanceDto circleScheduleAttendanceDto);
+
+    // 동아리 일정 전체리스트(그냥전체)
+    public List<CircleScheduleDto> circleScheduleListAll();
+     
+    
 }

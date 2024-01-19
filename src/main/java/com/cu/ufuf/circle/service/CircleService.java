@@ -18,6 +18,7 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -265,6 +266,66 @@ public class CircleService {
     public void circleVoteOptionInsert(CircleVoteOptionDto circleVoteOptionDto){
 
         circleSqlMapper.circleVoteOptionInsert(circleVoteOptionDto);
+    }
+    public int circleVoteMaxCircleVoteId(int circle_member_id){
+        
+        return circleSqlMapper.circleVoteMaxCircleVoteId(circle_member_id);
+    }
+    public List<Map<String, Object>> circleVoteAllListInfo(int circle_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
+
+        for(CircleMemberDto e : circleMemberDtos){
+            
+            int circle_member_id = e.getCircle_member_id();
+            int user_id = e.getUser_id();
+
+            UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+            
+            List<CircleVoteDto> circleVoteDtos = circleSqlMapper.circleVoteBoardListByCircleMemberId(circle_member_id);
+            
+                if(!circleVoteDtos.equals(null)){
+                    for(CircleVoteDto ee : circleVoteDtos){
+                        
+                        // 게시글 하나하나 나옴 여기서 put add 해야됨
+                        Map<String, Object> map = new HashMap<>();
+                        int circleVoteId = ee.getCircle_vote_id();
+                        List<CircleVoteOptionDto> circleVoteOptionDtos = circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circleVoteId);
+                        int count = 0;
+                        for(CircleVoteOptionDto circleVoteDto : circleVoteOptionDtos){
+                            int voteOptionId = circleVoteDto.getVote_option_id();
+                            int voteCnt = circleSqlMapper.circleVoteCompleteCntByVoteOptionId(voteOptionId);
+                            count += voteCnt;
+                        }
+                        map.put("voteCnt", count);
+                        map.put("circleMemberDto", e);
+                        map.put("userInfoDto", userInfoDto);
+                        map.put("circleVoteDto", ee);
+                        
+                        list.add(map);
+                        
+                    }
+            }
+            
+
+        }
+        
+        return list;
+    }
+
+    public CircleVoteDto voteInfoOne(int circle_vote_id){
+
+        return circleSqlMapper.circleVoteInfoByCircleVoteId(circle_vote_id);
+    }
+    public List<CircleVoteOptionDto> circleVoteOptionInfoByCircleVoteId(int circle_vote_id){
+
+        return circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circle_vote_id);
+    }
+    public void circleVoteCompleteInfoInsert(CircleVoteCompleteDto circleVoteCompleteDto){
+        
+        circleSqlMapper.circleVoteCompleteInfoInsert(circleVoteCompleteDto);
     }
     
 }

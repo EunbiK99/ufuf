@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        // 뒤로이동
+        function goBack() {
+            window.history.go(-1);
+        }
+        // 값이 있나없나 검증을 위한 함수 ==> 만약 이글에 관해서 투표를 이미진행을 했으면 투표를 못하게끔 막아야함
+        const optionComplete = () =>{
+
+            
+
+        }
+        
+        const optionCheckComplete = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_vote_id = urlParams.get("circle_vote_id");
+            const circle_id = urlParams.get("circle_id");
+
+            const radiobutton = document.querySelectorAll(".radiobutton");
+                let selectedValue = "";
+                
+                for (let i = 0; i < radiobutton.length; i++) {
+                if (radiobutton[i].checked) {
+                        selectedValue = radiobutton[i].value;
+                        break;
+                    }
+                }
+
+            const url = "./voteComplete?circle_id=" + circle_id + "&circle_vote_id=" + circle_vote_id;
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // JSON 형식으로 데이터 전송을 명시
+                    },
+                    body: JSON.stringify({ vote_option_id: selectedValue }), // JSON 형식으로 데이터를 문자열로 변환하여 전달
+                })
+            
+            location.href = "./circledVoteListPage?circle_id=" + circle_id;
+
+        }
+        // 특정 투표의 정보값들을 가져옴
+        const voteInfoOne = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_vote_id = urlParams.get("circle_vote_id");
+            
+            const url = "./voteInfoOne?circle_vote_id=" + circle_vote_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                const e = response.data;
+                const vote_title = document.querySelector("#vote_title")
+                vote_title.innerText = e.vote_title;
+                const vote_theme = document.querySelector("#vote_theme")
+                vote_theme.innerText = e.vote_theme;
+                
+
+            })
+
+
+        }
+        const voteOptionPrint = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_vote_id = urlParams.get("circle_vote_id");
+            
+            const url = "./voteOptionInfoArticle?circle_vote_id=" + circle_vote_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                for(e of response.data){
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const option_content = Wrapper.querySelector(".option_content");
+                    option_content.innerText = e.option_content;
+                    const option_image = Wrapper.querySelector(".option_image");
+                    option_image.setAttribute("src", "/uploadFiles/" + e.option_image);
+                    const radiobutton = Wrapper.querySelector(".radiobutton");
+                    radiobutton.setAttribute("value", e.vote_option_id);
+                    
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(Wrapper);
+                    
+
+                }
+
+            })
+
+        }
+
+        
+        
+
+        // 로드됐을때 바로실행
+        window.addEventListener("DOMContentLoaded", () => {
+            voteInfoOne();
+            voteOptionPrint();
+            document.querySelectorAll('input[name="aa"]').forEach(radio => {
+            radio.addEventListener("change", function() {
+                if (this.checked) {
+                console.log("선택된 값: " + this.value);
+                }
+            });
+            });
+        })
+     </script>
+     <style>
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        .pp{
+            margin-left: 0.01em;
+            margin-right: 0.01em;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            
+            }
+        
+            .fixed-bottom {
+              position: fixed;
+              bottom: 0;
+              left: 0;
+              width: 100%;
+              background-color: #ffffff;
+              padding: 1em;
+              text-align: center;
+            }
+        .custom-radio {
+            transform: scale(1.5); /* 크기 조절 */
+            /* margin-right: 5px; */
+        }
+            /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
+        .image-container {
+            width: 10em;
+            height: 10em; /* 높이를 조절하세요 */
+            overflow: hidden;
+        }
+
+        .responsive-img {
+            width: 10em;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- 투표하기 => 음 사진이랑 옵션내용 나오게하고 옵션id 선택했을때 userid랑 circleid 가지고 memberid 찾아서 투표에 넣어줌
+         이미지 + 내용 칸을 만들어서 클릭 라디오버튼 => 체크 중복투표x
+        투표제목, 투표주제, 항목내용 
+    -->
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid" style="background-color: rgb(247,247,247);">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <div class="row align-items-center">
+                            <div id="vote_title" class="col" style="font-size: 1.4em;">
+                                제목
+                            </div>
+                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
+                                중복투표는 불가!
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="vote_theme" class="col" style="font-size: 1.27em;">
+                                투표 주제
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            
+                        </div>
+                        <div class="row mt-0">
+                            <div id="listInsert" class="col"><!-- Wrapper가 들어갈곳-->
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <!-- optionCheckComplete -->
+    <div class="container-fluid">
+        <div class="row mt-3 mx-0 fixed-bottom">
+            <div class="col d-grid">
+                <button class="btn btn-primary" onclick="optionCheckComplete()">투표하기</button>
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper" class="row d-none rounded-3">
+        <div class="col rounded-3">
+            <div class="row py-1 rounded-3 justify-content-center align-items-center">
+                <div class="col image-container rounded-3">
+                    <img class="responsive-img option_image img-fluid rounded-3">
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="option_content">항목내용</span>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <input id="aa" name="aa" type="radio" class="radiobutton form-check custom-radio">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 버튼 꼴뵈기싫음 ==> 나중에 이거 자바스크립트로 radio d-none 처리하고 input checked 이용-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
