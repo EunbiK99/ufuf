@@ -255,6 +255,156 @@ public class RoomController {
 		return "redirect:./roomReservationInfoPage?room_info_id="+room_info_id;
 	}
 
+	
+	//내가 올린 방 목록
+	@RequestMapping("myRoomListPage")
+	public String myRoomListPage(Model model){
 
+		model.addAttribute("roomList", roomService.getRoomInfoList());
+
+		return "room/myRoomListPage";
+	}
+
+	//내가 찜한 방 목록
+	@RequestMapping("myInterestRoomListPage")
+	public String myInterestRoomListPage(HttpSession session,Model model){
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
+
+		model.addAttribute("interestRoomList", roomService.userInterestRoomList(user_id));
+		
+		return "room/myInterestRoomListPage";
+	}
+
+	//내가 예약한 방 목록
+	@RequestMapping("myRoomReservationListPage")
+	public String myRoomReservationListPage(HttpSession session, Model model){
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int user_id=sessionUserInfo.getUser_id();
+
+		model.addAttribute("roomReservationList", roomService.roomReservationList(user_id));
+		return "room/myRoomReservationListPage";
+	}
+
+	//올린 게스트하우스 글 수정
+	@RequestMapping("updateRoomInfoPage")
+	public String updateRoomInfoPage(Model model, @RequestParam("room_info_id") int room_info_id){
+
+		model.addAttribute("roomDetail", roomService.getRoomInfo(room_info_id));
+		model.addAttribute("roomOptionList", roomService.getRoomOptionlist());
+
+		return "room/updateRoomInfoPage";
+	}
+
+	
+
+
+	//올린 게스트하우스 글 수정 값 넘기는거
+    @RequestMapping("updateRoomInfoProcess")
+    public String updateRoomInfoProcess(HttpSession session,RoomInfoDto roomInfoDto, @RequestParam(name = "mainImageFile") MultipartFile mainImageFile, @RequestParam(name = "imageFiles") MultipartFile[] imageFiles, @RequestParam(name = "room_option_category_id") int[] room_option_category_id,String checkin1,String checkin2,String checkout1,String checkout2 ){
+
+		
+
+		//메인이미지
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd/");
+
+		if(mainImageFile != null && !mainImageFile.isEmpty()) {
+			String imageRootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+			String imageTodayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(imageRootPath + imageTodayPath);
+			
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = mainImageFile.getOriginalFilename();
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				mainImageFile.transferTo(new File(imageRootPath + imageTodayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			roomInfoDto.setMain_image(imageTodayPath + fileName);;
+		}else{
+			roomInfoDto.setMain_image(roomInfoDto.getMain_image());
+		}
+
+		//추가사진
+		List<RoomImageDto> roomImageDtoList = new ArrayList<>(); 
+		
+		if(imageFiles != null) {
+			for(MultipartFile multipartFile : imageFiles) {
+				if(multipartFile.isEmpty()) {
+					continue;
+				}
+
+				String rootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+				
+				String todayPath = sdf.format(new Date());
+				
+				File todayFolderForCreate = new File(rootPath + todayPath);
+				
+				if(!todayFolderForCreate.exists()) {
+					todayFolderForCreate.mkdirs();
+				}
+				
+				String originalFileName = multipartFile.getOriginalFilename();
+
+				//파일명 충돌 회피 - 랜덤, 시간 조합
+				String uuid = UUID.randomUUID().toString();
+				long currentTime = System.currentTimeMillis();
+				String fileName = uuid + "_" + currentTime;
+				
+				// 확장자 추출 
+				String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+				fileName += ext;
+				
+				try {
+					multipartFile.transferTo(new File(rootPath + todayPath + fileName));					
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				RoomImageDto roomImageDto = new RoomImageDto();
+				roomImageDto.setLocation(todayPath + fileName);
+				roomImageDto.setOriginal_filename(originalFileName);
+				
+				roomImageDtoList.add(roomImageDto);
+				
+			}
+		}
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		int userPk = sessionUserInfo.getUser_id();
+		
+		roomInfoDto.setUser_id(userPk);
+		
+
+		roomInfoDto.setCheckin_time(checkin1+" "+checkin2);
+		roomInfoDto.setCheckout_time(checkout1+" "+checkout2);
+
+		System.out.println(roomInfoDto.getRoom_info_id());
+		
+		roomService.updateRoom(roomInfoDto, room_option_category_id);
+		roomService.updateRoomDetailImage(roomInfoDto, roomImageDtoList);
+        
+        
+        return "redirect:./roomDetailPage?room_info_id="+roomInfoDto.getRoom_info_id();
+    }
+
+	//방 정보삭제
+	@RequestMapping("deleteRoomInfoProcess")
+	public String deleteRoomInfoProcess( @RequestParam("room_info_id")int room_info_id){
+		roomService.deleteRoomInfo(room_info_id);
+		return "redirect:./roomListPage";
+	}
 
 }

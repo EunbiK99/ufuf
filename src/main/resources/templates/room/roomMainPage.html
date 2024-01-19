@@ -58,7 +58,6 @@
         <div id="global-navi" class="row mt-1">
             <div class="col overflow-x-auto">
                 <div class="row" style="width:200%;">
-                    <!--나중에 리스트 출력으로 바꿀 예정(사진 넣을때 7:5인가로 잘라넣어야 하는데 어카지)-->
                     <div class="col">
                         <div class="row"><a class="btn" href="#"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid" style="width: 13em; height: auto;"></a></div>
                         <div class="row"><a class="btn fw-bold text-start py-0" href="#">진평동구미원룸</a></div>
@@ -198,11 +197,12 @@
 
 
         <!--푸터(임시)-->
-        <div class="fixed-bottom bg-white">
+        <div class="fixed-bottom bg-white mb-0">
             <div class="row pb-2 pt-2 border-top">
                 <div class="col ms-2">
                     <div class="row text-center">
-                        <a class="btn" href="#"><i class="fs-5 bi bi-map text-secondary"></i></a> 
+                        <!--임시로 방 글쓰기 페이지로 이어짐니다-->
+                        <a href="./roomRegisterPage" style=" text-decoration: none;"><i class="fs-5 bi bi-map text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center" style="font-size: 0.8em;">
                         <div class="col">지도</div>
@@ -210,7 +210,7 @@
                 </div>
                 <div class="col">
                     <div class="row text-center">
-                        <a class="btn" href="./roomReservationListPage"><i class="fs-5 bi bi-clipboard-check"></i></a> 
+                        <a href="./roomReservationListPage" style=" text-decoration: none;"><i class="fs-5 bi bi-clipboard-check text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center" style="font-size: 0.8em;">
                         <div class="col">계약</div>
@@ -218,13 +218,13 @@
                 </div>
 
                 <!--홈-->
-                <div class="col ms-1">
+                <div class="col ms-1 mt-1">
                     <a class="btn rounded-circle" href="../commons/mainPage" style="background-color: #FF8827;"><i class="fs-4 bi bi-house-door-fill text-white"></i></a> 
                 </div>
 
                 <div class="col">
                     <div class="row text-center">
-                        <a class="btn" href="#"><i class="fs-5 bi bi-chat-dots"></i></a> 
+                        <a class="btn" href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-chat-dots text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center" style="font-size: 0.8em;">
                         <div class="col">채팅</div>

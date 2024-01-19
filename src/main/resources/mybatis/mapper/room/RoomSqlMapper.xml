@@ -195,4 +195,74 @@
         )
     </insert>
 
+
+    <!--관심 방-->
+    <insert id="insertInterestRoom">
+        insert into interest_room(
+            room_info_id,
+            user_id
+        ) values(
+            #{room_info_id},
+            #{user_id}
+        )
+    </insert>
+
+    <!--좋아요 취소-->
+    <delete id="deleteInterestRoom">
+        DELETE FROM interest_room 
+        WHERE room_info_id=#{room_info_id}
+        and user_id=#{user_id}
+    </delete>
+
+    <!--글 전체 좋아요 카운트-->
+    <select id="roomInterestTotalCount" resultType="int">
+        SELECT COUNT(*) FROM interest_room
+        WHERE room_info_id=#{room_info_id}
+    </select>
+
+    <!--내가 그 글에 좋아요 했는가-->
+    <select id="roomInterestUserCount" resultType="int">
+        SELECT COUNT(*) FROM interest_room
+        WHERE room_info_id=#{room_info_id}
+        and user_id=#{user_id}
+    </select>
+
+    <!--유저가 좋아요 한 곳 리스트 나오게-->
+    <select id="userInterestRoom" resultType="com.cu.ufuf.dto.InterestRoomDto">
+        SELECT * FROM interest_room where user_id=#{user_id}
+        order by interest_room_id desc
+    </select>
+
+    <update id="updateRoomInfo">
+        UPDATE room_info
+        set main_image=#{main_image}, 
+            title=#{title}, 
+            room_count= #{room_count}, 
+            bed_count=#{bed_count}, 
+            toilet_count=#{toilet_count}, 
+            room_area=#{room_area}, 
+            content=#{content}, 
+            location=#{location}, 
+            checkin_time=#{checkin_time},
+            checkout_time=#{checkout_time},
+            people_count_standard=#{people_count_standard},
+            people_count_limit=#{people_count_limit},
+            extra_money=#{extra_money},
+            room_charge=#{room_charge},
+            start_schedule=#{start_schedule},
+            end_schedule=#{end_schedule}
+        where room_info_id=#{room_info_id}
+    </update>
+
+    <delete id="deleteRoomInfo">
+        DELETE FROM room_info WHERE room_info_id=#{room_info_id}
+    </delete>
+
+    <delete id="deleteRoomImage">
+        DELETE FROM room_image WHERE room_info_id=#{room_info_id}
+    </delete>
+
+    <delete id="deleteRoomOption">
+        DELETE FROM room_option WHERE room_info_id=#{room_info_id}
+    </delete>
 </mapper>

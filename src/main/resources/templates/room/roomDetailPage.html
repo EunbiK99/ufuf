@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gugi&family=Jua&display=swap" rel="stylesheet">
 
+
+
     <style>
         .carousel-indicators {
             position: absolute;
@@ -30,6 +32,82 @@
 
     
     </style>
+
+    <script>
+        let myId = null;
+        const roomInfoId = "[[${roomDetail.roomInfoDto.room_info_id}]]";
+        
+        
+        function getMyId(){
+            fetch("./getMyId")
+            .then(response => response.json())
+            .then(response => {
+                myId = response.data;
+                // 이전에 관심 글 설정을 했는지 확인
+                reloadHeart();
+            });
+        }
+        
+        function toggleInterest(){
+            
+            if(myId == null){
+                if(confirm("로그인 후 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?")){
+                    location.href = "../login/testloginPage";
+                }
+                return;
+            }
+            
+            fetch("./toggleInterestRoom?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                reloadTotalCount();
+                reloadHeart();
+            });
+        }
+        
+        function reloadTotalCount(){
+            fetch("./getTotalInterestCount?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                const totalCountBox = document.getElementById("totalCountBox");
+                totalCountBox.innerText = response.data;
+                
+            });
+        }
+        
+        function reloadHeart(){
+            
+            if(myId == null){
+                return;
+            }
+            
+            fetch("./isInterest?roomInfoId=" + roomInfoId)
+            .then(response => response.json())
+            .then(response => {
+                
+                const heartBox = document.getElementById("heartBox");
+                
+                if(response.data == true){
+                    heartBox.classList.remove('bi-heart', 'text-secondary');
+                    heartBox.classList.add('bi-heart-fill', 'text-danger');
+                }else{
+                    heartBox.classList.remove('bi-heart-fill', 'text-danger');
+                    heartBox.classList.add('bi-heart', 'text-secondary');				
+                }
+            });
+        }
+
+        
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            getMyId();
+            reloadTotalCount();
+            
+            
+            //setInterval(reloadCommentList, 15000);
+        });
+    </script>
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     
@@ -53,8 +131,14 @@
                     <div class="col"></div>
 
                     <!--나중에 기능 추가-->
-                    <div class="col-1 ps-0 pt-2 pb-2 pe-0 me-0">
-                        <a class="text-secondary" href="#"><i class="bi bi-heart" style="text-decoration: none;"></i></a> 
+                    <div class="col-2 ps-0 pt-2 pb-2 pe-0 me-0">
+                        <div class="row">
+                            <div class="col-6 text-end text-secondary" id="totalCountBox"></div>
+                            <div class="col ms-0 ps-0">
+                                <i id="heartBox" onclick="toggleInterest()" class="bi bi-heart text-secondary"></i>
+                            </div>
+                        </div>
+                        
                     </div>
                     <div class="col-1 ps-0 pt-2 pb-2 pe-0">
                         <a class="text-secondary" href="#" style="text-decoration: none;"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
@@ -65,14 +149,14 @@
         </div>
 
         <!--여백-->
-        <div class="row p-4 mt-3"></div>
+        <div class="row p-4 mt-2"></div>
 
         <!--이미지 캐러셀-->
-        <div class="row">
+        <div class="row p-0">
             <div id="carouselExampleIndicators" class="carousel slide">
                 <div class="carousel-indicators">
                     <th:block th:each="index : ${#numbers.sequence(0, roomDetail.roomImageCount - 1)}">
-                        <button type="button" th:data-bs-target="'#carouselExampleIndicators'" th:data-bs-slide-to="${index}" th:class="${index == 0} ? 'active' : ''" aria-label="'Slide ' + ${index + 1}"></button>
+                        <button type="button" th:data-bs-target="'#carouselExampleIndicators'" th:data-bs-slide-to="${index}" th:class="${index == 0} ? 'active' : ''" aria-label="'Slide ' + ${index + 1}" style="border-radius: 50%; height: 0.4em; width: 0.4em;"></button>
                     </th:block>
                 </div>
                 <div class="carousel-inner" style="margin: 0%; padding: 0%;">

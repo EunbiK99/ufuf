@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.RoomGuestDto;
 import com.cu.ufuf.dto.RoomGuestReviewDto;
 import com.cu.ufuf.dto.RoomGuestReviewImageDto;
@@ -64,6 +65,34 @@ public interface RoomSqlMapper {
     public int creatGuestReviewId();
     public void insertGuestReview(RoomGuestReviewDto roomGuestReviewDto);
     public void insertGuestReviewImage(RoomGuestReviewImageDto roomGuestReviewImageDto);
+
+
+    //관심 방
+
+    //관심방 등록
+    public void insertInterestRoom(InterestRoomDto interestRoomDto);
+    //관심 취소
+    public void deleteInterestRoom(InterestRoomDto interestRoomDto);
+
+    //글 전체 좋아요 카운트
+    public int roomInterestTotalCount(int room_info_id);
+    //유저 그 글에 좋아요 했는지 카운트
+    public int roomInterestUserCount(InterestRoomDto interestRoomDto);
+
+    //유저 좋아요 목록
+    public List<InterestRoomDto> UserInterestRoom(int user_id);
+
+    //수정용
+    public void updateRoomInfo(RoomInfoDto roomInfoDto);
+
+    //이미지 삭제
+    public void deleteRoomImage(int room_info_id);
+
+    //카테고리 삭제
+    public void deleteRoomOption(int room_info_id);
+
+    //방 정보 삭제
+    public void deleteRoomInfo(int room_info_id);
 
 
 }

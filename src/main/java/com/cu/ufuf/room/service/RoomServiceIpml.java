@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.RoomGuestDto;
 import com.cu.ufuf.dto.RoomGuestReviewDto;
 import com.cu.ufuf.dto.RoomGuestReviewImageDto;
@@ -200,6 +201,90 @@ public class RoomServiceIpml {
     public void guestReviewRegister(RoomGuestReviewDto roomGuestReviewDto){
        
         roomSqlMapper.insertGuestReview(roomGuestReviewDto);
+    }
+
+
+    //좋아요
+    public void toggleInterestRoom(InterestRoomDto interestRoomDto) {
+		
+		if(roomSqlMapper.roomInterestUserCount(interestRoomDto) > 0) {
+			roomSqlMapper.deleteInterestRoom(interestRoomDto);
+		}else {
+			roomSqlMapper.insertInterestRoom(interestRoomDto);
+		}
+	}
+	
+	public int getTotalInterestCount(int room_info_id) {
+		return roomSqlMapper.roomInterestTotalCount(room_info_id);
+	}
+	
+    //얘 머더라
+	public boolean isInterestRoom(InterestRoomDto interestRoomDto) {
+		return roomSqlMapper.roomInterestUserCount(interestRoomDto) > 0 ? true : false;
+	}
+
+
+    //유저가 좋아요 한 방 목록
+    public List<Map<String,Object>> userInterestRoomList(int user_id){
+
+        List<Map<String, Object>> InterestRoomList=new ArrayList<>();
+		
+        List<InterestRoomDto> interestRoomDtoList=roomSqlMapper.UserInterestRoom(user_id);
+
+		for(InterestRoomDto interestRoomDto:interestRoomDtoList) {
+
+            RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(interestRoomDto.getRoom_info_id());
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(interestRoomDto.getUser_id());
+            
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			map.put("interestRoomDto", interestRoomDto);
+
+			InterestRoomList.add(map);
+
+			
+		}
+		
+		return InterestRoomList;
+    }
+
+
+    //방 수정하기
+    public void updateRoom(RoomInfoDto roomInfoDto, int[] roomOptionCategoryIdList){
+        //옵션
+        if(roomOptionCategoryIdList != null) {
+            roomSqlMapper.deleteRoomOption(roomInfoDto.getRoom_info_id());
+            
+            for(int roomOptionCategoryId : roomOptionCategoryIdList) {
+                RoomOptionDto roomOptionDto=new RoomOptionDto();
+                roomOptionDto.setRoom_option_category_id(roomOptionCategoryId); 
+                roomOptionDto.setRoom_info_id(roomInfoDto.getRoom_info_id());
+                
+                roomSqlMapper.insertRoomOption(roomOptionDto);
+            }
+        }
+        
+        roomSqlMapper.updateRoomInfo(roomInfoDto);
+    }
+
+    //방 이미지 수정
+    public void updateRoomDetailImage(RoomInfoDto roomInfoDto, List<RoomImageDto> roomImageDtoList){
+        roomSqlMapper.deleteRoomImage(roomInfoDto.getRoom_info_id());
+
+        //사진
+        for(RoomImageDto roomImageDto : roomImageDtoList) {
+            roomImageDto.setRoom_info_id(roomInfoDto.getRoom_info_id());
+            roomSqlMapper.insertRoomDetailImage(roomImageDto);
+        }
+
+    }
+
+    public void deleteRoomInfo(int room_info_id){
+        roomSqlMapper.deleteRoomInfo(room_info_id);
+        roomSqlMapper.deleteRoomImage(room_info_id);
+        roomSqlMapper.deleteRoomOption(room_info_id);
     }
     
 }
