@@ -16,6 +16,7 @@ import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
+import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
@@ -119,8 +120,31 @@ public class MissionMapServiceImpl {
     }
 
     // 내가 수락한 미션
-    public List<MissionInfoDto> getMyAccMission(int user_id){
-        return missionMapsqlMapper.selectMyAccMission(user_id);
+    public List<Map<String, Object>> getMyAccMission(int user_id){
+        
+        List<Map<String, Object>> accMissionList = new ArrayList<>();
+
+        List<MissionAcceptedDto> missionAcceptedList = missionMapsqlMapper.selectMyAccMission(user_id);
+
+        for(MissionAcceptedDto missionAccDto : missionAcceptedList){
+
+            int mission_id = missionAccDto.getMission_id();
+
+            Map<String, Object> accMissionInfo = new HashMap<>();
+
+            accMissionInfo.put("missionAccDto", missionAccDto);
+            accMissionInfo.put("missionInfoDto", missionMapsqlMapper.selectMissionById(mission_id));
+            accMissionInfo.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+
+            accMissionList.add(accMissionInfo);
+        }
+
+        return accMissionList;
+    }
+
+    // 미션 완료 인증 인서트
+    public void insertMissionComplete(MissionCompleteDto missionCompleteDto){
+        missionMapsqlMapper.insertMissionComplete(missionCompleteDto);
     }
 
 

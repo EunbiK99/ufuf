@@ -435,12 +435,12 @@
                         const myMissionLocation = myMissionWrapper.querySelector(".myMissionLocation");
                         const myMissionReward = myMissionWrapper.querySelector(".myMissionReward");
 
-                        myMissionTitle.innerText = mission.title;
-                        myMissionReward.innerText = mission.reward;
+                        myMissionTitle.innerText = mission.missionInfoDto.title;
+                        myMissionReward.innerText = mission.missionInfoDto.reward;
                         myMissionStatus.innerText = "진행중";
                         
                         
-                        var missionLocation = mission.registerd_location;
+                        var missionLocation = mission.missionInfoDto.registerd_location;
                         const cutIndex = missionLocation.indexOf(",");
                         const lat = missionLocation.substring(0, cutIndex);
                         const lng = missionLocation.substring(cutIndex + 1);
@@ -464,7 +464,7 @@
                             myMissionWrapper.onclick = function () {
                                 loadMyAccMisisonDetail(currentMissionId);
                             };
-                        })(myMissionWrapper, mission.mission_id);
+                        })(myMissionWrapper, mission);
     
                         setMissionMarkers(lat,lng);
     
@@ -479,7 +479,7 @@
     }
 
     // 내가 수락한 미션 상세
-    function loadMyAccMisisonDetail(mission_id){
+    function loadMyAccMisisonDetail(mission){
 
         const myMissionBox = document.getElementById("myMissionBox");
         myMissionBox.classList.add("d-none");
@@ -497,59 +497,42 @@
         const dtUserName = accMissionDetailBox.querySelector(".dtUserName");
         const writeMissionCompleteBtn = document.getElementById("writeMissionCompleteBtn");
 
-        const data = {
-            mission_id: mission_id
-        };
+        dtTitle.innerText = mission.missionInfoDto.title;
+        dtDetail.innerText = mission.missionInfoDto.detail;
+        dtReward.innerText = mission.missionInfoDto.reward;
+        dtUserName.innerText = mission.userDto.name;
+        
+        dtUserProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + mission.userDto.profile_img);
 
-        fetch("./getMissionDetail", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
+        var missionLocation = mission.missionInfoDto.registerd_location;
+        const cutIndex = missionLocation.indexOf(",");
+        const lat = missionLocation.substring(0, cutIndex);
+        const lng = missionLocation.substring(cutIndex + 1);
 
-                const info = response.data;
+        setMissionMarkers(lat,lng);
 
-                dtTitle.innerText = info.missionDto.title;
-                dtDetail.innerText = info.missionDto.detail;
-                dtReward.innerText = info.missionDto.reward;
-                dtUserName.innerText = info.userDto.name;
-                
-                dtUserProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + info.userDto.profile_img);
-
-                var missionLocation = info.missionDto.registerd_location;
-                const cutIndex = missionLocation.indexOf(",");
-                const lat = missionLocation.substring(0, cutIndex);
-                const lng = missionLocation.substring(cutIndex + 1);
-
-                setMissionMarkers(lat,lng);
-
-                (function (currentLat, currentLng) {
-                    var geocoder = new kakao.maps.services.Geocoder();
-                    geocoder.coord2Address(currentLng, currentLat, function (result, status) {
-                        if (status === kakao.maps.services.Status.OK) {
-                            if (result[0].road_address === null) {
-                                dtResLocation.innerText = result[0].address.address_name;
-                            } else {
-                                dtResLocation.innerText = result[0].road_address.address_name;
-                            }
-                        } else {
-                            console.log('주소를 가져오지 못했습니다.');
-                        }
-                    });
-                })(lat, lng);
-
-                writeMissionCompleteBtn.onclick = function(){
-                    openMissionComplModal(mission_id);
+        (function (currentLat, currentLng) {
+            var geocoder = new kakao.maps.services.Geocoder();
+            geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    if (result[0].road_address === null) {
+                        dtResLocation.innerText = result[0].address.address_name;
+                    } else {
+                        dtResLocation.innerText = result[0].road_address.address_name;
+                    }
+                } else {
+                    console.log('주소를 가져오지 못했습니다.');
                 }
-        });
+            });
+        })(lat, lng);
+
+        writeMissionCompleteBtn.onclick = function(){
+            openMissionComplModal(mission);
+        }
     }
 
     // 미션완료 인증 모달
-    function openMissionComplModal(mission_id){
+    function openMissionComplModal(mission){
 
         const modal = bootstrap.Modal.getOrCreateInstance("#missionComplModal");
         const missionComplModal = document.getElementById("missionComplModal");
@@ -566,76 +549,23 @@
         modalReward.innerText = dtReward.innerText;
         modalResLocation.innerText = dtResLocation.innerText;
 
-
-
-
-
-
         submitMissionComplBtn.onclick = function(){
-            // 서브밋 펑션 호출
+            submitMissionComplete(mission);
         }
 
     	modal.show();
     }
 
-    // 미션 완료 보고
-    function writeMissionComplete(mission_id){
+    // 미션완료 인증 모달 닫기
+    function closeMissionComplModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#missionComplModal");
+    	
+        modal.hide();
+	}
 
-        const accMissionDetailBox = document.getElementById("accMissionDetailBox");
-        accMissionDetailBox.classList.add("d-none");
-
-        const submitMissionCompleteBox = document.getElementById("submitMissionCompleteBox");
-        submitMissionCompleteBox.classList.remove("d-none");
-
-        const dtTitle = submitMissionCompleteBox.querySelector(".dtTitle");
-        const dtResLocation = submitMissionCompleteBox.querySelector(".dtResLocation");
-        const dtReward = submitMissionCompleteBox.querySelector(".dtReward");
-
-
-        const data = {
-            mission_id: mission_id
-        };
-
-        fetch("./getMissionDetail", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                const info = response.data;
-
-                dtTitle.innerText = info.missionDto.title;
-                dtReward.innerText = info.missionDto.reward;
-
-                var missionLocation = info.missionDto.registerd_location;
-                const cutIndex = missionLocation.indexOf(",");
-                const lat = missionLocation.substring(0, cutIndex);
-                const lng = missionLocation.substring(cutIndex + 1);
-
-                setMissionMarkers(lat,lng);
-
-                (function (currentLat, currentLng) {
-                    var geocoder = new kakao.maps.services.Geocoder();
-                    geocoder.coord2Address(currentLng, currentLat, function (result, status) {
-                        if (status === kakao.maps.services.Status.OK) {
-                            if (result[0].road_address === null) {
-                                dtResLocation.innerText = result[0].address.address_name;
-                            } else {
-                                dtResLocation.innerText = result[0].road_address.address_name;
-                            }
-                        } else {
-                            console.log('주소를 가져오지 못했습니다.');
-                        }
-                    });
-                })(lat, lng);
-
-            
-        });
-
+    function submitMissionComplete(mission){
+        
 
 
     }
@@ -1004,6 +934,7 @@
             };
 
             reader.readAsDataURL(input.files[0]);
+
         } else {
             document.getElementById('loadImg').src = "";
         }
@@ -1053,9 +984,15 @@
         overflow-wrap: break-word;
     }
     
-    .modal {
+    #missionAccModal {
         width: 95%;
         top: 21%;
+        left: 2.5%;
+    }
+
+    #missionComplModal{
+        width: 95%;
+        top: 17%;
         left: 2.5%;
     }
 
@@ -1256,7 +1193,7 @@
                         <!-- 내가 수락한 미션 -->
                         <div id="myMissionBox" class="row border-top d-none" style="height:16em; box-shadow: inset 0 -1.8em 1.5em -2.5em #cacaca;">
                             <div class="col">
-                                <div class="row text-center fw-semibold" style="color: #adadad; font-size: 1.05em;">
+                                <div class="row text-center fw-semibold" style="color: #adadad;">
                                     <div class="col pt-2 pb-2 border-end border-bottom">
                                         등록 내역
                                     </div>
@@ -1352,51 +1289,7 @@
                             </div>
                         </div>
 
-                        <!-- 미션 완료 작성 -->
-                        <div id="submitMissionCompleteBox" class="row border-top d-none" style="height:15.5em;">
-                            <div class="col px-0">
-                                <div class="row mt-2 pb-2 border-bottom mx-2">
-                                    <div class="col px-2 mx-1">
-                                        <div class="row mt-1">
-                                            <div class="dtTitle col fw-semibold pe-0 align-self-center d-flex" style="font-size: 1.1em;">  
-                                            </div>
-                                            <div class="col-3 text-end align-self-center d-flex justify-content-end">
-                                                <span class="dtReward fw-bold ms-1 align-self-center" style="color: #fa7e18; font-size: 1.03em;"></span>
-                                                <span class="align-self-center ps-1" style="color: #a3a3a3;"> 원</span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="dtResLocation col" style="font-size: 0.83em; color: #b1b1b1;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div clsass="row">
-                                    <div class="overflow-y-scroll overflow-x-hidden" style="height: 11.7em;">
-                                    <div class="col px-3 mx-2">
-                                        <div class="row mt-3">
-                                            <div class="col fw-semibold text-secondary">
-                                                미션 완료 인증  
-                                            </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col border d-flex justify-content-center mx-2 py-3">
-                                                <label for="complete_img">
-                                                    <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 4.5em;">
-                                                </label>
-                                                <input class="form-control border-dark-subtle" type="file" name="complete_img" id="complete_img" accept="image/*" style="display:none;" onchange="showSelectedImg(this);">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         
 
                     </div>
@@ -1448,8 +1341,8 @@
                         
                     </div>
                     <div class="col-4 text-end align-self-center">
-                        <span class="myMissionReward fw-bold" style="font-size: 1.15em; color: #8a8a8a; letter-spacing: 0.04em;">10000</span>
-                        <span style="color: #a5a5a5;"> 원</span>
+                        <span class="myMissionReward fw-bold" style="font-size: 1.05em; color: #9c9c9c; letter-spacing: 0.04em;">10000</span>
+                        <span style="color: #bbbbbb;"> 원</span>
                     </div>
                 </div>
             </div>
@@ -1504,21 +1397,38 @@
     <div id="missionComplModal" class="modal mx-auto">
 		<div class="modal-dialog shadow">
 			<div class="modal-content rounded-2">
-				<div class="modal-body px-3 pt-4">
+				<div class="modal-body px-3 pt-3">
 					<div class="row mt-1">
                         <div class="title col fw-semibold pe-0 align-self-center d-flex">
                         </div>
-                        <div class="col-3 text-end align-self-center">
-                            <span class="reward align-self-center" style="color: #fa7e18; font-size: 0.8em;"></span>
-                            <span class="align-self-center" style="color: #a3a3a3; font-size: 0.75em;">원</span>
+                    </div>
+                    <div class="row border-bottom pb-2">
+                        <div class="resLocation col align-self-center" style="font-size: 0.85em; color: #b1b1b1;">
+                        </div>
+                        <div class="col-4 text-end align-self-center">
+                            <span class="reward align-self-center fw-semibold" style="color: #ff9c4c; font-size: 0.9em;"></span>
+                            <span class="align-self-center" style="color: #a3a3a3; font-size: 0.9em;">원</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="resLocation col" style="font-size: 0.83em; color: #b1b1b1;">
+                    <div class="row mt-3">
+                        <div class="col mt-1">
+                            <div class="row">
+                                <div class="col fw-semibold text-secondary">
+                                    미션완료 인증 사진
+                                </div>
+                            </div>
+                            <div class="row mt-2 px-1">
+                                <div class="col border d-flex justify-content-center mx-2 py-5">
+                                    <label for="complete_img">
+                                        <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 4.5em;">
+                                    </label>
+                                    <input class="form-control border-dark-subtle" type="file" name="complete_img" id="complete_img" accept="image/*" style="display:none;" onchange="showSelectedImg(this);">
+                                </div>
+                            </div>
                         </div>
                     </div>
 				</div>
-				<div class="modal-footer border-0 my-2 d-grid">
+				<div class="modal-footer border-0 mt-1 mb-2 d-grid">
                     <div class="gap-2 d-md-block">
                         <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionComplModal()">
                             취소
