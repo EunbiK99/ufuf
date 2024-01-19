@@ -7,6 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script>
         const voteOptionAdd = () => {
             const voteInput = document.querySelector("#templete .vote-input").cloneNode(true);
@@ -37,28 +42,95 @@
             // circleid 랑 userid로 동아리회원정보를 확인할 수 있음
 
             const vote_title = document.querySelector("#vote_title").value;
-            console.log(vote_title);
             const vote_theme = document.querySelector("#vote_theme").value;
-            console.log(vote_theme);
-
-            // fetch("./voteRegister?circle_id=" + circleId)
-            // .then(response => response.data)
-            // .then(response => {
-
-            // })
-
-            // 여긴 반복문 돌려서 여러개 insert가 되어야함 여러개니까.. class명으로 받아야하나..
-            const option_content = document.querySelectorAll("#addSpace .option_content").value;
-            console.log(option_content);
-            const option_image = document.querySelectorAll("#addSpace .option_image");
-            option_image.files[0];
+            const vote_end_time = document.querySelector("#vote_end_time").value;
+            const end_time = new Date(vote_end_time);
             
 
-            // fetch("./voteOptionRegister?circle_id=" + circleId)
-            // .then(response => response.json())
-            // .then(response => {
+            
 
-            // })
+            const postData = {
+                vote_title: vote_title,
+                vote_theme: vote_theme,
+                vote_end_time: end_time.toISOString()
+                
+            };
+
+            const url = "./voteRegister?circle_id=" + circleId;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형태로 데이터를 전송할 것임
+                },
+                body: JSON.stringify(postData), // 데이터를 JSON 문자열로 변환하여 전송
+                })
+            .then(response => response.json())
+            .then(response => {
+
+                    voteOptionSubmit();
+                
+                })
+            
+            
+
+        }
+
+        const voteOptionSubmit = () => {
+
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const circleId = urlParams.get("circle_id");
+                const circleIId = parseInt(circleId);
+                
+                
+                // 이미지도 여러개 등록해야됨
+                const formData = new FormData();
+                // 옵션값 String => String[] 로 받자..
+                // 여긴 반복문 돌려서 여러개 insert가 되어야함 여러개니까.. class명으로 받아야하나..
+                const option_content_elements = document.querySelectorAll("#addSpace .option_content");
+                const option_content_values = [];
+
+                option_content_elements.forEach(element => {
+                    formData.append('option_content', element.value);
+                    console.log(element.value);
+                });
+                
+                const option_image_elements = document.querySelectorAll("#addSpace .option_image");
+
+                for (const fileInput of option_image_elements) {
+                    const files = fileInput.files;
+                    console.log("files : "  + files);
+                    for (const file of files) {
+                        formData.append("files", file);  // 각 파일을 FormData에 추가
+                        console.log("file : " + file);
+                    }
+                }
+                
+
+
+                // 서버에 전송
+                // $.ajax({
+                //             type: 'POST'
+                //             , enctype: 'multipart/form-data'
+                //             , url: './voteOptionRegister'
+                //             , processData: false
+                //             , contentType: false
+                //             , data: formData
+                // });
+                
+                fetch("./voteOptionRegister?circle_id=" + circleId, {
+                    method: 'post',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('서버 응답:', data);
+                })
+                .catch(error => {
+                    console.error('오류 발생:', error);
+                });
+                // 투표글리스트로 이동.
+                location.href = "./circleVoteListPage?circle_id=" + circleId;
 
         }
 
@@ -83,6 +155,12 @@
                 transition: height 0.3s;
                 overflow-y: scroll;
             
+            }
+            *{
+                /* font-family: 'Dongle', sans-serif; */
+                font-family: 'Gowun Dodum', sans-serif;
+                /* font-family: 'Quicksand', sans-serif; */
+                /* font-family: 'Noto Sans KR', sans-serif; */
             }
             
     </style>
@@ -114,17 +192,27 @@
             </div>
             <div class="row mt-2">
                 <div class="col d-flex align-items-center">
+                    투표마감일<span class="text-danger">＊</span>
+                </div>         
+            </div>
+            <div class="row mt-1">
+                <div class="col d-grid align-items-center">
+                    <input id="vote_end_time" type="datetime-local" class="form-control">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col d-flex align-items-center">
                     항목내용<span class="text-danger">＊</span>
                 </div>         
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <textarea id="option_content" class="form-control" placeholder="내용을 입력하세요" rows="1"></textarea>
+                    <textarea class="option_content form-control" placeholder="내용을 입력하세요" rows="1"></textarea>
                 </div>
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <input id="option_image" class="form-control" type="file" accept="image/*">
+                    <input class="option_image form-control" type="file" accept="image/*">
                 </div>
             </div>
             <div class="row mt-2">
@@ -165,7 +253,7 @@
 <div class="container-fluid">
     <div class="row mt-3 mx-0 fixed-bottom">
         <div class="col d-grid">
-            <button class="btn btn-primary" onclick="circleComplete()">투표개설</button>
+            <button class="btn btn-primary" onclick="allSubmit()">투표개설</button>
         </div>
     </div>
 </div>
@@ -179,12 +267,12 @@
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <textarea id="option_content" class="form-control" placeholder="내용을 입력하세요" rows="1"></textarea>
+                    <textarea class="option_content form-control" placeholder="내용을 입력하세요" rows="1"></textarea>
                 </div>
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <input id="option_image" name="circle_image" class="form-control" type="file" accept="image/*">
+                    <input class="option_image form-control" type="file" accept="image/*">
                 </div>
             </div>
         </div>

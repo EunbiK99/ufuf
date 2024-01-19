@@ -9,5 +9,4 @@ public class CircleVoteCompleteDto {
     private int vote_complete_id;
     private int vote_option_id;
     private int circle_member_id;
-    private LocalDateTime vote_end_time;
 }

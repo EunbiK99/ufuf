@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +20,9 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
+import com.cu.ufuf.dto.CircleVoteCompleteDto;
+import com.cu.ufuf.dto.CircleVoteDto;
+import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
@@ -258,75 +260,212 @@ public class CircleRestController {
 
     @RequestMapping("circleboardApplyComplete")
     public RestResponseDto circleboardApplyComplete(@RequestParam("board_title") String board_title,
-            @RequestParam("board_content") String board_content,@RequestParam("circle_id") int circle_id, @RequestParam("file") MultipartFile file, HttpSession session) {
-                
-                UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-                int user_id = userInfoDto.getUser_id();
+            @RequestParam("board_content") String board_content, @RequestParam("circle_id") int circle_id,
+            @RequestParam("file") MultipartFile file, HttpSession session) {
 
-                // circle_id랑 user_id를 통해서 memberid를 찾아서 게시글 등록하는데 insert시켜줌
-                CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-                int circle_member_id = circleMemberDto.getCircle_member_id();
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
 
-                // 게시글 대표이미지
-                String filename = file.getOriginalFilename();
-                long randomFilename = System.currentTimeMillis();
-                String Path = "C:/uploadFiles/";
-                
-                File realtodayPath = new File(Path);
+        // circle_id랑 user_id를 통해서 memberid를 찾아서 게시글 등록하는데 insert시켜줌
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
 
-                if (!realtodayPath.exists()) {
-                    realtodayPath.mkdirs();
-                }
-                
-                String commafile = filename.substring(filename.lastIndexOf("."));
-                String fileLink = randomFilename + commafile;
+        // 게시글 대표이미지
+        String filename = file.getOriginalFilename();
+        long randomFilename = System.currentTimeMillis();
+        String Path = "C:/uploadFiles/";
 
-                try {
-                    file.transferTo(new File(Path + fileLink));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        File realtodayPath = new File(Path);
 
+        if (!realtodayPath.exists()) {
+            realtodayPath.mkdirs();
+        }
 
-                CircleBoardDto circleBoardDto = new CircleBoardDto();
-                circleBoardDto.setBoard_title(board_title);
-                circleBoardDto.setBoard_content(board_content);
-                circleBoardDto.setCircle_member_id(circle_member_id);
-                circleBoardDto.setMain_image(fileLink);
-                circleBoardDto.setBoard_cnt(0);
+        String commafile = filename.substring(filename.lastIndexOf("."));
+        String fileLink = randomFilename + commafile;
 
-                circleService.circleboardDtoInsert(circleBoardDto);
+        try {
+            file.transferTo(new File(Path + fileLink));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                RestResponseDto responseDto = new RestResponseDto();
+        CircleBoardDto circleBoardDto = new CircleBoardDto();
+        circleBoardDto.setBoard_title(board_title);
+        circleBoardDto.setBoard_content(board_content);
+        circleBoardDto.setCircle_member_id(circle_member_id);
+        circleBoardDto.setMain_image(fileLink);
+        circleBoardDto.setBoard_cnt(0);
 
-                responseDto.setResult("success");
+        circleService.circleboardDtoInsert(circleBoardDto);
 
-                return responseDto;
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setResult("success");
+
+        return responseDto;
     }
 
     @RequestMapping("circleInfoOne")
-        public RestResponseDto asdfasdfasdfasdf(@RequestParam("circle_id") int circle_id){
+    public RestResponseDto asdfasdfasdfasdf(@RequestParam("circle_id") int circle_id) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.circleInfoVarious(circle_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // 여긴 투표항목 등록임 잘생각해야됨 맴버아이디랑 투표번호 max값 가져와서 등록해주어야함
+    // 왜 String배열안되냐 소리지르고싶네.. 안되면 걍 나눠서 해도되긴함
+    // (value = "/voteOptionRegister", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping("voteOptionRegister")
+    public RestResponseDto voteOptionRegister(
+        @RequestParam("circle_id") int circle_id,
+        @RequestParam("files") MultipartFile[] imagFiles,
+        @RequestParam("option_content") String[] option_content,
+        HttpSession session
+        ) {
+              
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        
+        int circle_member_id = circleMemberDto.getCircle_member_id(); //이 키 이용
+        
+        int circle_vote_id = circleService.circleVoteMaxCircleVoteId(circle_member_id);
+        
+        // 일단 여기까진 건들지말고 값넘어오는지 확인부터 ㄱㄱ
+        // 이거근데 .. 값을넘겨주는게 맞나 싶다..
+        
+        for(int i = 0; i < option_content.length ; i++){
+            String filename = imagFiles[i].getOriginalFilename();
+            long randomFilename = System.currentTimeMillis();
+            String Path = "C:/uploadFiles/";
+
+            File realtodayPath = new File(Path);
+
+            if (!realtodayPath.exists()) {
+                realtodayPath.mkdirs();
+            }
+
+            String commafile = filename.substring(filename.lastIndexOf("."));
+            String fileLink = randomFilename + commafile;
+
+            try {
+                imagFiles[i].transferTo(new File(Path + fileLink));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            CircleVoteOptionDto circleVoteOptionDto = new CircleVoteOptionDto();
+            circleVoteOptionDto.setCircle_vote_id(circle_vote_id);
+            circleVoteOptionDto.setOption_image(fileLink);
+            circleVoteOptionDto.setOption_content(option_content[i]);
+            circleService.circleVoteOptionInsert(circleVoteOptionDto);
+
+        }
+        
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // 여긴 투표글 등록
+    @RequestMapping("voteRegister")
+    public RestResponseDto voteRegister(@RequestParam("circle_id") int circle_id, @RequestBody CircleVoteDto circleVoteDto, HttpSession session){
         
         RestResponseDto responseDto = new RestResponseDto();
         
-        responseDto.setData(circleService.circleInfoVarious(circle_id));
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id(); //이 키 이용
+        
+        circleVoteDto.setCircle_member_id(circle_member_id);
+        circleService.circleVoteInsert(circleVoteDto);
+
         responseDto.setResult("success");
         
         return responseDto;
     }
 
-    // RESTAPI 양식
-    /*
-    @RequestMapping("asdfasdfasdf")
-        public RestResponseDto asdfasdfasdfasdf(){
+    @RequestMapping("voteAllList")
+    public RestResponseDto voteAllList(@RequestParam("circle_id") int circle_id){
+    
+        //동아리 관련된 동아리회원들 모두가져오고 회원들이 쓴 모든투표글 가져올거임
         
         RestResponseDto responseDto = new RestResponseDto();
         
-        responseDto.setData(null);
+        responseDto.setData(circleService.circleVoteAllListInfo(circle_id));
         responseDto.setResult("success");
         
         return responseDto;
     }
+    // voteArticle에 들어갈 정보
+    @RequestMapping("voteInfoOne")
+    public RestResponseDto voteInfoOne(@RequestParam("circle_vote_id") int circle_vote_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.voteInfoOne(circle_vote_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // option 정보꺼냄
+    @RequestMapping("voteOptionInfoArticle")
+        public RestResponseDto voteOptionInfoArticle(@RequestParam("circle_vote_id") int circle_vote_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleVoteOptionInfoByCircleVoteId(circle_vote_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    // voteCompleteDto에 insert
+    // 
+    @RequestMapping("voteComplete")
+        public RestResponseDto voteComplete(@RequestParam("circle_id") int circle_id, @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session,
+        @RequestBody CircleVoteCompleteDto circleVoteCompleteDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circleMemberId = circleMemberDto.getCircle_member_id();
+        circleVoteCompleteDto.setCircle_member_id(circleMemberId);
+
+        circleService.circleVoteCompleteInfoInsert(circleVoteCompleteDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    
+    //
+
+    // RESTAPI 양식
+    /*
+        @RequestMapping("asdfasdfasdf")
+            public RestResponseDto asdfasdfasdfasdf(){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+            
+            responseDto.setData(null);
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
      */
 
 }
