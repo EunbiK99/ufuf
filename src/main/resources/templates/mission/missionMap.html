@@ -21,11 +21,11 @@
     var map;
     var missionMarker = [];
 
-    var imageSrc = "https://192.168.219.103:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    var imageSrc = "https://172.30.1.95:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
     imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
     imageOption = {offset: new kakao.maps.Point(24, 30)};
 
-    var personImg = "https://192.168.219.103:8888/public/image/mission/free-icon-person-8226827.png",
+    var personImg = "https://172.30.1.95:8888/public/image/mission/free-icon-person-8226827.png",
     personImgSize = new kakao.maps.Size(42, 41),
     personImgOption = {offset: new kakao.maps.Point(24, 20)};
 
@@ -308,7 +308,7 @@
                 })(lat, lng);
 
                 // 세션 유저와 미션등록자가 같으면 삭제/수정버튼 생성
-                if(sessionUser == info.missionDto.user_id){
+                if(sessionUser === info.missionDto.user_id){
 
                     ifMyMission.innerHTML = `<div class="gap-2 d-md-block">
                                                <button class="btn rounded-1" type="button" onclick="modifyMission()" style="color:#FF8827; border: 0.12em solid #FF8827;">수정</button>
@@ -329,7 +329,8 @@
     	
     	const modal = bootstrap.Modal.getOrCreateInstance("#missionAccModal");
 
-        const dtTitle = document.getElementById("dtTitle");
+        const dtTitle = missionDetailBox.querySelector(".dtTitle");
+
         const missionTitle = document.getElementById("missionTitle");
         const missionAccBtn = document.getElementById("missionAccBtn");
 
@@ -542,9 +543,39 @@
                 })(lat, lng);
 
                 writeMissionCompleteBtn.onclick = function(){
-                    writeMissionComplete(mission_id);
+                    openMissionComplModal(mission_id);
                 }
         });
+    }
+
+    // 미션완료 인증 모달
+    function openMissionComplModal(mission_id){
+
+        const modal = bootstrap.Modal.getOrCreateInstance("#missionComplModal");
+        const missionComplModal = document.getElementById("missionComplModal");
+        const submitMissionComplBtn = document.getElementById("submitMissionComplBtn");
+
+        const dtTitle = accMissionDetailBox.querySelector(".dtTitle");
+        const dtReward = accMissionDetailBox.querySelector(".dtReward");
+        const dtResLocation = accMissionDetailBox.querySelector(".dtResLocation");
+
+        const modalTitle = missionComplModal.querySelector(".title");
+        const modalReward = missionComplModal.querySelector(".reward");
+        const modalResLocation = missionComplModal.querySelector(".resLocation");
+        modalTitle.innerText = dtTitle.innerText;
+        modalReward.innerText = dtReward.innerText;
+        modalResLocation.innerText = dtResLocation.innerText;
+
+
+
+
+
+
+        submitMissionComplBtn.onclick = function(){
+            // 서브밋 펑션 호출
+        }
+
+    	modal.show();
     }
 
     // 미션 완료 보고
@@ -961,7 +992,22 @@
         });
     }
 
+    // 이미지 파일 선택하면 바로 프론트에서 호출
+    function showSelectedImg(input) {
 
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+            document.getElementById('loadImg').src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            document.getElementById('loadImg').src = "";
+        }
+    }
 
 
 
@@ -984,7 +1030,7 @@
         margin: 0 auto;
         left: 0;
         right: 0;
-    } 
+    }
 
     #footer{
         position: fixed;
@@ -1008,9 +1054,9 @@
     }
     
     .modal {
-        width: 90%;
+        width: 95%;
         top: 21%;
-        left: 5%;
+        left: 2.5%;
     }
 
     #writeMissionCompleteBtn{
@@ -1154,7 +1200,7 @@
                                                     
                                                 </div>
                                                 <div class="col-3 d-flex justify-content-end">
-                                                    <span><i class="fi fi-rr-track" style="font-size: 1.2em; color: #ffa154;"></i></span>
+                                                    <span><i class="fi fi-rr-track" style="font-size: 1.2em; color: #ffb375;"></i></span>
                                                     <span class="ms-1 align-self-center" style="font-size: 0.9em; color: #b1b1b1;">125m</span>
                                                 </div>
                                             </div>
@@ -1220,7 +1266,7 @@
                                 </div>
                                 <div class="row mx-2">
                                     <div class="col px-1">
-                                        <div class="row d-flex mt-2 pb-1 border-bottom">
+                                        <!-- <div class="row d-flex mt-2 pb-1 border-bottom">
                                             <div class="col-3 pe-0 d-flex">
                                                 <div class="form-check d-flex align-self-center">
                                                     <input id="showOngoingMission" class="form-check-input align-self-center mb-1" type="checkbox" value="" style="color: #838383; font-size: 0.9em;" checked>
@@ -1229,9 +1275,9 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="row">
-                                            <div class="overflow-y-scroll overflow-x-hidden" style="height:11.1em;">
+                                            <div class="overflow-y-scroll overflow-x-hidden" style="height:13.2em;">
                                                 <div id="myAccMissionListBox" class="col">
                                                     
                                                 </div>
@@ -1250,35 +1296,33 @@
                                         <div class="col">
                                             <div class="row mt-1">
                                                 <div class="dtTitle col fw-semibold pe-0 align-self-center" style="font-size: 1.22em;">
-                                                    
                                                 </div>
                                                 <div class="col-3 d-flex justify-content-end">
-                                                    <span><i class="fi fi-rr-track" style="font-size: 1.2em; color: #ffa154;"></i></span>
+                                                    <span><i class="fi fi-rr-track" style="font-size: 1.2em; color: #ffb375;"></i></span>
                                                     <span class="ms-1 align-self-center" style="font-size: 0.83em; color: #adadad;">125m</span>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="dtResLocation col" style="font-size: 0.83em; color: #b1b1b1;">
-                                                    
                                                 </div>
                                             </div>
                                             <div class="row mt-1">
                                                 <div class="col-4 d-flex text-end justify-content-start align-self-center" style="overflow: hidden;">
                                                     <img class="dtUserProfileImg img-fluid rounded-circle me-1 align-self-center" 
-                                                        style="height: 1.45em; width: 1.45em; object-fit: cover; border-radius: 50%;">
+                                                        style="height: 1.4em; width: 1.4em; object-fit: cover; border-radius: 50%;">
                                                     <span class="dtUserName align-self-center fw-semibold ms-2" 
-                                                        style="letter-spacing: 0.08em; font-size: 1.05em; color: #7a7a7a;"></span>
+                                                        style="letter-spacing: 0.08em; font-size: 1.0em; color: #7a7a7a;"></span>
                                                 </div>
                                                 <div class="col text-end align-self-center">
-                                                    <span class="pe-1 fw-semibold align-self-center" style="font-size: 1.05em; color: #a3a3a3;">상금 </span>
-                                                    <span class="dtReward fw-bold ms-1 align-self-center" style="font-size: 1.3em; color: #fa7e18;"></span>
-                                                    <span class="pb-3 align-self-center" style="font-size: 1.05em; color: #a3a3a3;"> 원</span>
+                                                    <span class="pe-1 fw-semibold align-self-center" style="font-size: 1.0em; color: #a3a3a3;">상금 </span>
+                                                    <span class="dtReward fw-bold ms-1 align-self-center" style="font-size: 1.2em; color: #fa7e18;"></span>
+                                                    <span class="pb-3 align-self-center" style="font-size: 1.0em; color: #a3a3a3;"> 원</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row mt-1 mx-2">
-                                        <div class="dtDetail col text-dark-emphasis pt-1 pb-5 mt-1" style="font-size: 1.05em;">
+                                        <div class="dtDetail col text-dark-emphasis pt-1 pb-5 mt-1" style="font-size: 1em;">
                                             
                                         </div>    
                                     </div>
@@ -1311,24 +1355,45 @@
                         <!-- 미션 완료 작성 -->
                         <div id="submitMissionCompleteBox" class="row border-top d-none" style="height:15.5em;">
                             <div class="col px-0">
-                                <div class="overflow-y-auto overflow-x-hidden" style="height: 12.5em;">
-                                    <div class="row mt-2 pb-2 mx-2 border-bottom">
-                                        <div class="col">
-                                            <div class="row mt-1">
-                                                <div class="dtTitle col fw-semibold pe-0 align-self-center d-flex" style="font-size: 1.1em;">  
-                                                </div>
-                                                <div class="col-3 text-end align-self-center d-flex justify-content-end">
-                                                    <span class="dtReward fw-bold ms-1 align-self-center" style="color: #fa7e18; font-size: 1.03em;"></span>
-                                                    <span class="align-self-center ps-1" style="color: #a3a3a3;"> 원</span>
-                                                </div>
+                                <div class="row mt-2 pb-2 border-bottom mx-2">
+                                    <div class="col px-2 mx-1">
+                                        <div class="row mt-1">
+                                            <div class="dtTitle col fw-semibold pe-0 align-self-center d-flex" style="font-size: 1.1em;">  
                                             </div>
-                                            <div class="row">
-                                                <div class="dtResLocation col" style="font-size: 0.83em; color: #b1b1b1;">
-                                                </div>
+                                            <div class="col-3 text-end align-self-center d-flex justify-content-end">
+                                                <span class="dtReward fw-bold ms-1 align-self-center" style="color: #fa7e18; font-size: 1.03em;"></span>
+                                                <span class="align-self-center ps-1" style="color: #a3a3a3;"> 원</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="dtResLocation col" style="font-size: 0.83em; color: #b1b1b1;">
                                             </div>
                                         </div>
                                     </div>
-
+                                </div>
+                                <div clsass="row">
+                                    <div class="overflow-y-scroll overflow-x-hidden" style="height: 11.7em;">
+                                    <div class="col px-3 mx-2">
+                                        <div class="row mt-3">
+                                            <div class="col fw-semibold text-secondary">
+                                                미션 완료 인증  
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col border d-flex justify-content-center mx-2 py-3">
+                                                <label for="complete_img">
+                                                    <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 4.5em;">
+                                                </label>
+                                                <input class="form-control border-dark-subtle" type="file" name="complete_img" id="complete_img" accept="image/*" style="display:none;" onchange="showSelectedImg(this);">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1433,6 +1498,36 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+    <!-- 미션 완료 인증 모달 -->
+    <div id="missionComplModal" class="modal mx-auto">
+		<div class="modal-dialog shadow">
+			<div class="modal-content rounded-2">
+				<div class="modal-body px-3 pt-4">
+					<div class="row mt-1">
+                        <div class="title col fw-semibold pe-0 align-self-center d-flex">
+                        </div>
+                        <div class="col-3 text-end align-self-center">
+                            <span class="reward align-self-center" style="color: #fa7e18; font-size: 0.8em;"></span>
+                            <span class="align-self-center" style="color: #a3a3a3; font-size: 0.75em;">원</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="resLocation col" style="font-size: 0.83em; color: #b1b1b1;">
+                        </div>
+                    </div>
+				</div>
+				<div class="modal-footer border-0 my-2 d-grid">
+                    <div class="gap-2 d-md-block">
+                        <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionComplModal()">
+                            취소
+                        </button>
+                        <button id="submitMissionComplBtn" class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;">완료 인증</button>
+                    </div>
+				</div>
+			</div>
+        </div>
 	</div>
 
     <!-- 하단 메뉴 바 -->
