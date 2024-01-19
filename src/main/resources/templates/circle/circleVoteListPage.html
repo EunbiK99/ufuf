@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+        const voteAllList = () => {
+            
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+            
+            const url = "./voteAllList?circle_id=" + circle_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const vote_title = Wrapper.querySelector(".vote_title");
+                    vote_title.innerText = e.circleVoteDto.vote_title;
+                    const vote_theme = Wrapper.querySelector(".vote_theme");
+                    vote_theme.innerText = e.circleVoteDto.vote_theme;
+                    const vote_end_time = Wrapper.querySelector(".vote_end_time");
+                    const dateArray  = e.circleVoteDto.vote_end_time;
+                    const aa = new Date(...dateArray);
+
+                   
+
+                    const year = aa.getFullYear();
+                    const month = aa.getMonth() + 1;
+                    const day = aa.getDate();
+                    const hour = aa.getUTCHours();
+                    const min = aa.getUTCMinutes();
+
+
+                    const formattedDate = year + '-' + month + '-' + day + ' ' + hour + "시" + min + "분";
+
+
+                    vote_end_time.innerText = formattedDate;
+                    const voteCnt = Wrapper.querySelector(".voteCnt");
+                    voteCnt.innerText = e.voteCnt;
+                    voteCnt.style.fontSize = "0.8em";
+                    // 아마 시간 수정해줘야할듯
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleVoteListArticlePage?circle_id=" + circle_id + "&circle_vote_id=" + e.circleVoteDto.circle_vote_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(a);
+                    // a 태그만들어서 링크 => 동아리id랑 게시글id둘다 쿼리스트링으로 보내야함
+                    // 이거 나중에 투표수도 가져올거임 
+                    
+
+                }
+
+                
+
+            })
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            voteAllList();
+        })
+    </script>
+    <style>
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        .pp{
+            margin-left: 0.01em;
+            margin-right: 0.01em;
+        }
+        .shadow-box {
+        background-color: #ffffff;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 하나 만들어놓고 랜덤으로 돌릴거.. 베이스만 잡아놓자.. -->
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid" style="background-color: rgb(247,247,247);">
+        <div class="row">
+            <div class="col pt-2 align-items-center">
+                <i class="bi bi-envelope-paper-fill" style="font-size: 1.4em;color: #fb7928;"></i>&nbsp;&nbsp;<span class="fw-semibold" style="font-size: 1.3em;">투표</span>
+            </div>
+        </div>
+        <div id="listInsert" class="row">
+            
+        </div>
+    </div>
+    <div id="Wrapper" class="col d-none">
+        <div class="row pp">
+            <div class="col">
+                <div class="row my-2 rounded-3 shadow-box" style="background-color: white;">
+                    <div class="col py-2 px-3">
+                        <div class="row mb-0">
+                            <div class="vote_title col pb-0" style="font-size: 1.2em;">
+                                글제목
+                            </div>
+                        </div>
+                        <div class="row mt-0">
+                            <div class="vote_theme col pt-0" style="font-size: 1.08em; color: rgb(102, 102, 102);">
+                                투표주제
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-5">
+                                <span class="voteCnt fw-semibold" style="color: #ff9e62;"></span><span style="font-size: 0.8em;">명 참여</span>
+                            </div>
+                            <div class="col text-end">
+                                <span class="vote_end_time" style="text-align: end; font-size: 0.8em;">마감 ㅇ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

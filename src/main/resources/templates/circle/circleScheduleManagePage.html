@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
+
+
+    <script>
+        // 캘린더..
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            contentHeight: 10000
+            });
+            calendar.render();
+        });
+
+        window.onload = async function() {
+            console.log("");
+            console.log("=========================================");
+            console.log("[window onload] : [start]");
+            console.log("=========================================");
+            console.log(""); 
+
+
+            // [현재 날짜 및 시간 확인]
+            var korea_date = dayjs(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+            var format = "YYYY-MM-DDTHH:mm:ss"; // 포맷 타입
+            var koreaNow = korea_date.format(format);
+
+
+            // [calendar 객체 지정]
+            var calendarElement = document.getElementById("calendar");
+
+
+            // [full-calendar 생성]
+            var calendar = new FullCalendar.Calendar(calendarElement, {
+                
+                expandRows: true, // 화면에 맞게 높이 재설정
+                slotMinTime: '00:00', // 캘린더에서 일정 시작 시간
+                slotMaxTime: '23:59', // 캘린더에서 일정 종료 시간
+
+                // 해더에 표시할 툴바
+                headerToolbar: {
+                    left: 'title', // 이전, 다음
+                    //left: 'prev,next,today', // 이전, 다음, 오늘
+                    center: 'prev,next', // 중앙 타이틀
+                    right: 'dayGridMonth,timeGridDay' // 월, 일
+                    //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // 월, 주, 일, 일정목록
+                },
+
+                initialView: 'dayGridMonth', // 초기 로드 될때 보이는 캘린더 화면 (기본 설정: 달)
+                
+                //initialDate: '2023-08-06', // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)
+                
+                navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
+                
+                editable: true, // 수정 가능 여부
+                
+                selectable: true, // 달력 일자 드래그 설정가능
+                
+                nowIndicator: true, // 현재 시간 마크
+                
+                dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
+                
+                locale: 'ko', // 한국어 설정
+        
+                selectLongPressDelay:300, // 선택 클릭 발동 시간 
+
+            })
+
+            calendar.render(); 
+        }
+        // 일정등록 누를시 로케이션 // 동아리번호 + 세션유저번호 = 동아리회원번호
+        const scheduleApply = () => {
+
+            // !!! 여기서 검증하나 해야함 ==> 직책이 M이거나 동아리회원번호 정보가 없을경우에 alert같은걸 하나띄우면 될듯 그리고 return;
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            location.href = "./circleScheduleApplyPage?circle_id=" + circle_id;
+
+        }
+
+
+
+    </script>
+    <style>
+        
+    
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 1em;
+            text-align: center;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin : 0 auto;
+            padding : 0;
+            border : none;    
+        }
+
+
+        /* [컨테이너 크기 설정] */
+        #calendar {            
+            width: 95%;
+            height: auto;
+            margin: 0 auto;
+            position: relative;
+            top: 5%;
+        }
+        *{
+            /* font-family: 'Dongle', sans-serif; */
+            font-family: 'Gowun Dodum', sans-serif;
+            /* font-family: 'Quicksand', sans-serif; */
+            /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="calendar" class="col">
+
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row mt-3 mx-0 fixed-bottom">
+            <div class="col d-grid">
+                <button class="btn btn-primary" onclick="scheduleApply()">일정 등록</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

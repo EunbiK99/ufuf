@@ -25,7 +25,10 @@ public class AppConfig implements WebMvcConfigurer{
         registry.addResourceHandler("/uploadFiles/**")
             .addResourceLocations("file:///C:/uploadFiles/")
             // .setCachePeriod(60 * 60 * 24 * 365);
-        ;  
+        ;
+
+        
+          
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cu.ufuf.circle.service.CircleService;
@@ -17,7 +16,6 @@ import com.cu.ufuf.dto.UserInfoDto;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -277,6 +275,31 @@ public class CircleController {
 
         return "circle/circleVoteWritePage";
     }
+    @RequestMapping("circleVoteListPage")
+    public String circleVoteListPage(){
+
+        return "circle/circleVoteListPage";
+    }
+    @RequestMapping("circleVoteListArticlePage")
+    public String circleVoteListArticlePage(){
+
+        return "circle/circleVoteListArticlePage";
+    }
+
+    // 일정관리페이지 그냥 만들어놨음.. UI작업하자,
+    @RequestMapping("circleScheduleManagePage")
+    public String circleScheduleManagePage(){
+
+        return "circle/circleScheduleManagePage";
+    }
+
+    @RequestMapping("circleScheduleApplyPage")
+    public String circleScheduleApplyPage(){
+        
+        return "circle/circleScheduleApplyPage";
+    }
+    
+    
     
     
     

@@ -12,6 +12,7 @@ public class CircleVoteDto {
     private int circle_member_id;
     private String vote_title;
     private String vote_theme;
+    private LocalDateTime vote_end_time;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime created_at;
 }
