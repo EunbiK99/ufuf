@@ -95,4 +95,15 @@ public interface RoomSqlMapper {
     public void deleteRoomInfo(int room_info_id);
 
 
+    //방 상세페이지용 리뷰 리스트
+    public List<RoomGuestReviewDto> roomReviewListForRoomInfo(int room_info_id);
+
+    //유저용 리뷰 리스트
+    public List<RoomGuestReviewDto> roomReviewListForUser(int room_info_id);
+
+    //메인페이지용 리뷰 리스트
+    public List<RoomGuestReviewDto> roomReviewListForMainPage();
+
+
+
 }

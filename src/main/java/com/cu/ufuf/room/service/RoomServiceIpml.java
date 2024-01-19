@@ -101,6 +101,7 @@ public class RoomServiceIpml {
         List<RoomImageDto> roomImageDto=roomSqlMapper.roomImageSelectById(room_info_id);
         List<RoomOptionDto> roomOptionDto=roomSqlMapper.roomOptionSelectById(room_info_id);
         List<RoomOptionCategoryDto> roomOptionCategoryDto = new ArrayList<>();
+        List<RoomGuestReviewDto> roomGuestReviewDto=roomSqlMapper.roomReviewListForRoomInfo(room_info_id);
         for (RoomOptionDto optionDto : roomOptionDto) {
             int categoryId = optionDto.getRoom_option_category_id();
             RoomOptionCategoryDto categoryDto = roomSqlMapper.roomOptionCategorySelectById(categoryId);
@@ -115,6 +116,7 @@ public class RoomServiceIpml {
 		roomMap.put("roomOptionDto", roomOptionDto);
 		roomMap.put("roomOptionCategoryDto", roomOptionCategoryDto);
         roomMap.put("roomImageCount", roomImageCount);
+        roomMap.put("roomGuestReviewDto",roomGuestReviewDto);
 
         //이미지랑 옵션 반복문 돌려야하나 멩,,,,일단 해야지
 		

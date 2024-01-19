@@ -265,4 +265,23 @@
     <delete id="deleteRoomOption">
         DELETE FROM room_option WHERE room_info_id=#{room_info_id}
     </delete>
+
+    <select id="roomReviewListForRoomInfo" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT rgr.* from room_guest_review rgr
+        join room_guest rg on rg.room_guest_id =rgr.room_guest_id
+        where room_info_id=#{room_info_id}
+    </select>
+
+
+    <select id="roomReviewListForUser" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT rgr.* from room_guest_review rgr
+        join room_guest rg on rg.room_guest_id =rgr.room_guest_id
+        where user_id=#{user_id}
+    </select>
+
+    <select id="roomReviewListForMainPage" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
+        SELECT * from room_guest_review 
+        order by room_guest_review_id desc
+    </select>
+    
 </mapper>
