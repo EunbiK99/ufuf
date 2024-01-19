@@ -118,6 +118,37 @@ public class MissionMapServiceImpl {
         missionMapsqlMapper.insertMissonAcc(missionAcceptedDto);
     }
 
+    // 내가 수락한 미션
+    public List<MissionInfoDto> getMyAccMission(int user_id){
+        return missionMapsqlMapper.selectMyAccMission(user_id);
+    }
+
+
+
+
+
+
+    // 유저가 등록한 미션 전부 가져오기
+    // public List<Map<String, Object>> getMyResMissionNotAcc(int user_id){
+        
+    //     List<Map<String, Object>> myResMissionNotAccList = new ArrayList<>();
+
+    //     List<MissionInfoDto> missionInfoList = missionMapsqlMapper.selectMissionListByUserId(user_id);
+    //     int[] notAccMissionId = missionMapsqlMapper.getMissionNotAcc(user_id);
+
+    //     for(MissionInfoDto missionDto : missionInfoList){
+
+    //         Map<String, Object> missionDetail = new HashMap<>();
+
+    //         missionDetail.put("missionDto", missionDto);
+    //         missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+
+    //         myResMissionNotAccList.add(missionDetail);
+    //     }
+
+    //     return myResMissionNotAccList;
+    // }
+
 
 
 

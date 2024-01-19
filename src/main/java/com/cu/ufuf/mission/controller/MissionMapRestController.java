@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.client.RestTemplate;
 
 import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
@@ -24,9 +25,13 @@ import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/mission/*")
@@ -140,6 +145,28 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyAccMission")
+    public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getMyAccMission(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
+
+    // @GetMapping("getMyResMissionNotAcc")
+    // public RestResponseDto getMyResMissionNotAcc(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+    //     int user_id = sessionUser.getUser_id();
+    //     RestResponseDto restResponseDto = new RestResponseDto();
+    //     restResponseDto.setData(missionMapService.getMyResMissionNotAcc(user_id));
+    //     restResponseDto.setResult("Success");
+    //     return restResponseDto;
+    // }
 
 
 
