@@ -3,6 +3,7 @@ package com.cu.ufuf.meeting.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -131,14 +132,31 @@ public class MeetingServiceImpl {
             int tagId = meetingGroupTagDto.getTagId();
             tagDtoList.add(meetingSqlMapper.selectTagByTagId(tagId));
         }
+
+        List<MeetingProfileDto> applyUserProfileDtoList = new ArrayList<>();
+        List<MeetingApplyUserDto> applyUserDtoList = meetingSqlMapper.selectGroupApplyUserList(group_pk);
+        for(MeetingApplyUserDto meetingApplyUserDto : applyUserDtoList){
+            int applyUserProfileId = meetingApplyUserDto.getProfileId();
+            MeetingProfileDto applyUserMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(applyUserProfileId);
+            applyUserProfileDtoList.add(applyUserMeetingProfileDto);
+        }
         
         map.put("meetingGroupDto", meetingGroupDto);
         map.put("meetingProfileDto", meetingProfileDto);
         map.put("tagDtoList", tagDtoList);
+        map.put("applyUserProfileDtoList", applyUserProfileDtoList);        
         
-        
-        return map;
-    
+        return map;    
+    }
+
+    // * 미팅 신청자 인서트
+    public void registerMeetingApplyUser(MeetingApplyUserDto meetingApplyUserDto){
+        meetingSqlMapper.insertMeetingApplyUser(meetingApplyUserDto);
+    }
+
+    // * 미팅 신청내역 존재 확인
+    public int checkExistApplyUser(int profileId, int groupId){
+        return meetingSqlMapper.countMeetingApplyUserByProfileId(profileId, groupId);
     }
 
 

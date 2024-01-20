@@ -23,22 +23,26 @@ public class MeetingController {
         
         UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-        if(sessionUserInfo == null){
-            model.addAttribute("meetingProfileCheck", "guest");
+        if(sessionUserInfo == null){            
+            session.setAttribute("userType", "guest");
             return "./meeting/mainPage";
         }else{
+            session.setAttribute("userType", "user");
+            session.setAttribute("sessionUserInfo", sessionUserInfo);
+            
             int user_id = sessionUserInfo.getUser_id();        
-            int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
-            model.addAttribute("meetingProfileCheck", profileCheckValue);
+            int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);            
 
             if(profileCheckValue > 0){                
+                session.setAttribute("meetingProfileExist", "Y");
                 session.setAttribute("meetingProfileInfo", meetingService.getMeetingProfileByUserId(user_id));
+                return "./meeting/mainPage";
             }
-
-            return "./meeting/mainPage";
+            else{
+                session.setAttribute("meetingProfileExist", "N");
+                return "./meeting/mainPage";
+            }
         }
-
-        
     }
 
     @RequestMapping("registerProfile")
@@ -67,5 +71,37 @@ public class MeetingController {
         return "./meeting/createMeetingGroupPage";
     }
 
+    @RequestMapping("myPage")
+    public String myPage(HttpSession session, Model model){
+        
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        if(sessionUserInfo == null){            
+            session.setAttribute("userType", "guest");
+            return "./meeting/myPage";
+        }else{
+            session.setAttribute("userType", "user");
+            session.setAttribute("sessionUserInfo", sessionUserInfo);
+            
+            int user_id = sessionUserInfo.getUser_id();        
+            int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
+            System.out.println(profileCheckValue);            
+
+            if(profileCheckValue > 0){                
+                session.setAttribute("meetingProfileExist", "Y");
+                session.setAttribute("meetingProfileInfo", meetingService.getMeetingProfileByUserId(user_id));
+                return "./meeting/myPage";
+            }
+            else{
+                session.setAttribute("meetingProfileExist", "N");
+                return "./meeting/myPage";
+            }
+        }        
+    }
+
+    @RequestMapping("myRecruitGroupPage")
+    public String myRecruitGroupPage(int profileId){
+        return "./meeting/myRecruitGroupPage";
+    }
 
 }
