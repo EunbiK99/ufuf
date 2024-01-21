@@ -11,6 +11,7 @@ public class MissionInfoDto {
 	private String title;
 	private String detail;
 	private int reward;
-	private String registerd_location;
+	private String status;
+	private String registered_location;
 	private LocalDateTime created_at;
 }

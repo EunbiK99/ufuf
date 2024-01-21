@@ -164,6 +164,19 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyResMission")
+    public RestResponseDto loadMyResMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getMyResMission(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
     @ResponseBody
     @PostMapping("uploadCompleteMission")
     public RestResponseDto uploadCompleteImg(@RequestParam(name="complete_img") MultipartFile complete_img,
@@ -213,15 +226,32 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyNotification")
+    public RestResponseDto loadMyNotification(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
 
-    // @GetMapping("getMyResMissionNotAcc")
-    // public RestResponseDto getMyResMissionNotAcc(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
-    //     int user_id = sessionUser.getUser_id();
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-    //     restResponseDto.setData(missionMapService.getMyResMissionNotAcc(user_id));
-    //     restResponseDto.setResult("Success");
-    //     return restResponseDto;
-    // }
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.getNotificationList(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
+    @GetMapping("isExistNotification")
+    public RestResponseDto isExistNotification(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+
+        int user_id = sessionUser.getUser_id();
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.isExistNotification(user_id));
+        restResponseDto.setResult("Success");
+
+        return restResponseDto;
+    }
+
 
 
 

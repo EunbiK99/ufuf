@@ -18,7 +18,9 @@ import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionNotificationDto;
 import com.cu.ufuf.dto.OrderInfoDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
 import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
 
@@ -116,7 +118,25 @@ public class MissionMapServiceImpl {
 
     // 미션 수락하기
     public void acceptingMission(MissionAcceptedDto missionAcceptedDto){
-        missionMapsqlMapper.insertMissonAcc(missionAcceptedDto);
+
+        int mission_accepted_id = missionMapsqlMapper.createMissionAccPk();
+        missionAcceptedDto.setMission_accepted_id(mission_accepted_id);
+
+        int mission_id = missionAcceptedDto.getMission_id();
+        MissionInfoDto missionDto = missionMapsqlMapper.selectMissionById(mission_id);
+
+        int accUser_id = missionAcceptedDto.getUser_id();
+        UserInfoDto userInfoDto = missionMapsqlMapper.selectUserById(accUser_id);
+
+        missionMapsqlMapper.insertMissionAcc(missionAcceptedDto);
+        missionMapsqlMapper.updateStatus(mission_id, "진행중");
+
+        String content = """
+                        %s님이 "%s" 미션을 수락하셨습니다.
+                        """.formatted(userInfoDto.getName(), missionDto.getTitle());
+
+        insertNotification(missionDto.getUser_id(), mission_id, content);
+
     }
 
     // 내가 수락한 미션
@@ -130,11 +150,14 @@ public class MissionMapServiceImpl {
 
             int mission_id = missionAccDto.getMission_id();
 
+            MissionInfoDto missionInfoDto = missionMapsqlMapper.selectMissionById(mission_id);
+            int userId = missionInfoDto.getUser_id();
+
             Map<String, Object> accMissionInfo = new HashMap<>();
 
             accMissionInfo.put("missionAccDto", missionAccDto);
-            accMissionInfo.put("missionInfoDto", missionMapsqlMapper.selectMissionById(mission_id));
-            accMissionInfo.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+            accMissionInfo.put("missionInfoDto", missionInfoDto);
+            accMissionInfo.put("userDto", missionMapsqlMapper.selectUserById(userId));
 
             accMissionList.add(accMissionInfo);
         }
@@ -144,35 +167,62 @@ public class MissionMapServiceImpl {
 
     // 미션 완료 인증 인서트
     public void insertMissionComplete(MissionCompleteDto missionCompleteDto){
+
+        int mission_complete_id = missionMapsqlMapper.createMissionComplPk();
+        missionCompleteDto.setMission_complete_id(mission_complete_id);
+
+        int mission_accepted_id = missionCompleteDto.getMission_accepted_id();
+        int mission_id = missionMapsqlMapper.getMissionIdByMissionAccId(mission_accepted_id);
+
+        MissionInfoDto missionDto = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionAcceptedDto missionAcceptedDto = missionMapsqlMapper.selectAccMissionByAccId(mission_accepted_id);
+        
+        int accUser_id = missionAcceptedDto.getUser_id();
+        UserInfoDto userInfoDto = missionMapsqlMapper.selectUserById(accUser_id);
+
         missionMapsqlMapper.insertMissionComplete(missionCompleteDto);
+        missionMapsqlMapper.updateStatus(mission_id, "인증완료");
+
+        String content = """
+                        %s님이 "%s" 미션 완료 인증을 등록하셨습니다.
+                        """.formatted(userInfoDto.getName(), missionDto.getTitle());
+
+        insertNotification(missionDto.getUser_id(), mission_id, content);
     }
 
-
-
-
-
-
     // 유저가 등록한 미션 전부 가져오기
-    // public List<Map<String, Object>> getMyResMissionNotAcc(int user_id){
+    public List<Map<String, Object>> getMyResMission(int user_id){
         
-    //     List<Map<String, Object>> myResMissionNotAccList = new ArrayList<>();
+        List<Map<String, Object>> myResMission = new ArrayList<>();
 
-    //     List<MissionInfoDto> missionInfoList = missionMapsqlMapper.selectMissionListByUserId(user_id);
-    //     int[] notAccMissionId = missionMapsqlMapper.getMissionNotAcc(user_id);
+        List<MissionInfoDto> missionInfoList = missionMapsqlMapper.selectMissionListByUserId(user_id);
 
-    //     for(MissionInfoDto missionDto : missionInfoList){
+        for(MissionInfoDto missionInfoDto : missionInfoList){
 
-    //         Map<String, Object> missionDetail = new HashMap<>();
+            Map<String, Object> missionDetail = new HashMap<>();
 
-    //         missionDetail.put("missionDto", missionDto);
-    //         missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+            missionDetail.put("missionInfoDto", missionInfoDto);
+            missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
 
-    //         myResMissionNotAccList.add(missionDetail);
-    //     }
+            myResMission.add(missionDetail);
+        }
 
-    //     return myResMissionNotAccList;
-    // }
+        return myResMission;
+    }
 
+    // 유저 미션 알림리스트
+    public List<MissionNotificationDto> getNotificationList(int user_id){
+        return missionMapsqlMapper.selectNotifcationByUser(user_id);
+    }
+
+    public boolean isExistNotification(int user_id){
+
+        if(0 < missionMapsqlMapper.isExistNotification(user_id)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
 
@@ -217,8 +267,17 @@ public class MissionMapServiceImpl {
 
     }
 
+    // 미션 알림
+    public void insertNotification(int user_id, int mission_id, String content){
 
-    
+        MissionNotificationDto missionNotificationDto = new MissionNotificationDto();
+        
+        missionNotificationDto.setUser_id(user_id);
+        missionNotificationDto.setMission_id(mission_id);
+        missionNotificationDto.setContent(content);
+
+        missionMapsqlMapper.insertNotification(missionNotificationDto);
+    }
 
 
 }
