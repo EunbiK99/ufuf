@@ -116,6 +116,8 @@
         SELECT * from room_guest
         where user_id=#{user_id}
         and room_info_id=#{room_info_id}
+        ORDER BY room_info_id DESC
+        LIMIT 1
     </select>
 
     <!-- 상세글 보기 -->
@@ -266,22 +268,35 @@
         DELETE FROM room_option WHERE room_info_id=#{room_info_id}
     </delete>
 
+    <!--방 상세글용 리뷰 리스트-->
     <select id="roomReviewListForRoomInfo" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
         SELECT rgr.* from room_guest_review rgr
         join room_guest rg on rg.room_guest_id =rgr.room_guest_id
         where room_info_id=#{room_info_id}
     </select>
 
+    <!--방 리뷰 카운트-->
+    <select id="roomReviewCount" resultType="int">
+        SELECT COUNT(*) 
+        FROM room_guest_review rgr
+        JOIN room_guest rg ON rg.room_guest_id = rgr.room_guest_id
+        WHERE rg.room_info_id = #{room_info_id}
+    </select>
 
+
+    <!--사용자가 쓴 리뷰 리스트-->
     <select id="roomReviewListForUser" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
         SELECT rgr.* from room_guest_review rgr
         join room_guest rg on rg.room_guest_id =rgr.room_guest_id
         where user_id=#{user_id}
     </select>
 
+    <!--메인페이지용 전체 리뷰 리스트-->
     <select id="roomReviewListForMainPage" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
         SELECT * from room_guest_review 
         order by room_guest_review_id desc
     </select>
+
+    
     
 </mapper>

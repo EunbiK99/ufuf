@@ -36,15 +36,82 @@
 </head>
 <script th:inline="javascript">
 
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
+let meetingProfileExist;
+
+function moveRegisterProfilePage(){
+    let userType = /*[[${session.userType}]]*/;
+    
+    if(userType === "user"){
+        window.location.href="./registerProfile";
+    }
+    else{
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");
+        window.location.href="../login/loginPage";
+    }
+}
+
+function moveSearchPage(){
+    if(meetingProfileExist === "Y"){
+        window.location.href="./searchPage";
+    }
+    else{
+        let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+        if(result){
+            window.location.href="./registerProfile";
+        }
+        else{
+            return;
+        }
+    }
+}
+
+function moveCreateMeetingGroupPage(){
+    if(meetingProfileExist === "Y"){
+        window.location.href="./createMeetingGroupPage";
+    }
+    else{
+        let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+        if(result){
+            window.location.href="./registerProfile";
+        }
+        else{
+            return;
+        }
+    }
+}
+
+function checkMeetingProfile(){
+    const sessionUserId = sessionUserInfo.user_id;
+    fetch("./api/checkMeetingProfile?user_id=" + sessionUserId)
+    .then(response => response.json())
+    .then(response => {
+        const resultValue = response.data;
+        console.log('resultValue: ', resultValue);
+
+        if(resultValue === 0){
+            meetingProfileExist = "N";
+        }
+        else{
+            meetingProfileExist = "Y";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    
+    checkMeetingProfile()
+
+});
 
 
 </script>
 
-<body>
+<body class="pt-5 pb-5">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row sticky-top bg-white" style="height: 3.3em;">
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 justify-content-between">
                     <div class="col">
@@ -166,7 +233,7 @@
                     </div>
                 </div>
 
-                <div id="main04" class="row" th:if="${meetingProfileCheck == 'guest' or meetingProfileCheck == 0}">
+                <div id="main04" class="row" th:if="${session.userType == 'guest' or session.meetingProfileExist == 'N'}">
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -188,8 +255,8 @@
                             </div>
                             <div class="col">
                                 <div class="row mt-5">
-                                    <div class="col-10 text-center border-0 rounded" style="background-color: #FF8827;">
-                                        <a href="./registerProfile" type="button" class="btn fs-3" style="color:white">Make your profile!</a>
+                                    <div class="col-10 text-center border-0 rounded btn" role="button" style="background-color: #FF8827;" onclick="moveRegisterProfilePage()">
+                                        <span class="fs-3 fw-bold text-white">Make your profile!</span>
                                     </div>                                    
                                 </div>
                             </div> 
@@ -213,7 +280,7 @@
                         <div class="row">
                             <div class="col mx-1">
                                 <div class="row justify-content-around">
-                                    <div class="col-auto text-center mx-2" onclick="window.location.href='./searchPage'">
+                                    <div class="col-auto text-center mx-2" onclick="moveSearchPage()">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
@@ -225,7 +292,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                                    <div class="col-auto text-center" onclick="moveCreateMeetingGroupPage()">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
@@ -256,7 +323,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto text-center">
+                                    <div class="col-auto text-center" onclick="window.location.href='./myPage'">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
