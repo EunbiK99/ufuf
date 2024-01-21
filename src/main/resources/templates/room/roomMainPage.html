@@ -38,53 +38,48 @@
 
         <div class="row ms-2 mt-4">
             <div class="col">
-                <div class="row fw-bold fs-4">내 특별한 하루를 </div>
+                <div class="row fw-bold fs-4">나를 위한 특별한 하루를 </div>
                 <div class="row fw-bold fs-4">만들어보세요</div>
-                <div class="row">
-                    <a href="./roomListPage" class="text-secondary text-start ms-0 ps-0" style="font-size: 0.7em; text-decoration: none;">게스트하우스 찾으러가기<i class="bi bi-arrow-right"></i></a>
+                <div class="row mt-1">
+                    <a href="./roomListPage" class="text-secondary text-start ms-0 ps-0" style="font-size: 0.8em; text-decoration: none;">게스트하우스 찾으러가기<i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
 
         <!--내 근처 숙소-->
         <div class="row mt-4">
-            <div class="col-8"><a class="btn fw-bold text-start ps-0" href="#">내 근처 숙소</a></div>
+            <div class="col-8"><a class="btn fw-bold text-start ps-0" href="./roomListPage">방금 올라온 숙소</a></div>
             <div class="col"></div>
             <div class="col">
                 <a class="btn" href="#"><i class="bi bi-arrow-right text-end"></i></a>
             </div>
         </div>
         <!--숙소 리스트-->
-        <div id="global-navi" class="row mt-1">
+        <div id="global-navi" class="row mt-2 ms-1">
             <div class="col overflow-x-auto">
-                <div class="row" style="width:200%;">
-                    <div class="col">
-                        <div class="row"><a class="btn" href="#"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid" style="width: 13em; height: auto;"></a></div>
-                        <div class="row"><a class="btn fw-bold text-start py-0" href="#">진평동구미원룸</a></div>
-                        <div class="row"><a class="btn text-secondary-subtle text-start py-0" href="#" style="font-size: 0.7em;">경상북도 구미시 진평동 561-19</a></div>
-                        <div class="row"><a class="btn text-start py-0" href="#">75,000원/1박</a></div>
+                <div class="row" style="width:380%;">
+                    <div class="col p-0 mx-2" th:each="room : ${roomList}">
+                        <div class="row ms-1">
+                            <a class=" p-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}">
+                                <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid" style="width: 13em; height: 7em; overflow: hidden; position: relative; object-fit: cover;">
+                            </a>
+                        </div>
+
+                        <div class="row mt-2">
+                            <a class="fw-bold text-start py-0 ms-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
+                        </div>
+
+                        <div class="row ms-1 ps-0">
+                            <div class="col ps-0 text-truncate" style="max-width: 200px;"><a class="text-secondary text-start py-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.location}" style="font-size: 0.7em; color: black; text-decoration: none;"></a></div>
+                            
+                        </div>
+
+                        <div class="row mb-2 mt-1">
+                            <div class="col-2"> <a class="text-start ms-0 ps-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${#numbers.formatDecimal(room.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}" style="color: black; text-decoration: none;"></a></div>
+                            <div class="col ms-3 text-start text-secondary">&nbsp;/1박</div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div class="row"><a class="btn" href="#"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid" style="width: 13em; height: auto;"></a></div>
-                        <div class="row"><a class="btn fw-bold text-start py-0" href="#">진평동구미원룸</a></div>
-                        <div class="row"><a class="btn text-secondary-subtle text-start py-0" href="#" style="font-size: 0.7em;">경상북도 구미시 진평동 561-19</a></div>
-                        <div class="row"><a class="btn text-start py-0" href="#">75,000원/1박</a></div>
-                        
-                    </div>
-                    <div class="col">
-                        <div class="row"><a class="btn" href="#"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid" style="width: 13em; height: auto;"></a></div>
-                        <div class="row"><a class="btn fw-bold text-start py-0" href="#">진평동구미원룸</a></div>
-                        <div class="row"><a class="btn text-secondary-subtle text-start py-0" href="#" style="font-size: 0.7em;">경상북도 구미시 진평동 561-19</a></div>
-                        <div class="row"><a class="btn text-start py-0" href="#">75,000원/1박</a></div>
-                        
-                    </div>
-                    <div class="col">
-                        <div class="row"><a class="btn" href="#"><img src="/public/image/room/bedroom_1.jpg" class="img-fluid" style="width: 13em; height: auto;"></a></div>
-                        <div class="row"><a class="btn fw-bold text-start py-0" href="#">진평동구미원룸</a></div>
-                        <div class="row"><a class="btn text-secondary-subtle text-start py-0" href="#" style="font-size: 0.7em;">경상북도 구미시 진평동 561-19</a></div>
-                        <div class="row"><a class="btn text-start py-0" href="#">75,000원/1박</a></div>
-                        
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -93,7 +88,7 @@
         <!--실시간 리뷰(간단한 방 정보랑 게스트 리뷰로 싹다 올리기)-->
         <div class="row mt-3">
             <!--리뷰 상세페이지(메인페이지용) 연결해야할듯-->
-            <div class="col-8"><a class="btn fw-bold text-start ps-0" href="#">실시간 리뷰</a></div>
+            <div class="col-8"><a class="btn fw-bold text-start ps-0">실시간 리뷰</a></div>
             <div class="col"></div>
             <div class="col">
                 <a class="btn" href="#"><i class="bi bi-arrow-right text-end"></i></a>
@@ -197,22 +192,21 @@
 
 
         <!--푸터(임시)-->
-        <div class="fixed-bottom bg-white mb-0">
+        <div class="fixed-bottom bg-white mb-0 mx-1">
             <div class="row pb-2 pt-2 border-top">
                 <div class="col ms-2">
-                    <div class="row text-center">
-                        <!--임시로 방 글쓰기 페이지로 이어짐니다-->
-                        <a href="./roomRegisterPage" style=" text-decoration: none;"><i class="fs-5 bi bi-map text-secondary"></i></a> 
+                    <div class="row text-center mt-2">
+                        <a href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-map text-secondary"></i></a> 
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.8em;">
+                    <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
                         <div class="col">지도</div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="row text-center">
+                    <div class="row text-center mt-2">
                         <a href="./roomReservationListPage" style=" text-decoration: none;"><i class="fs-5 bi bi-clipboard-check text-secondary"></i></a> 
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.8em;">
+                    <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
                         <div class="col">계약</div>
                     </div>
                 </div>
@@ -223,18 +217,19 @@
                 </div>
 
                 <div class="col">
-                    <div class="row text-center">
-                        <a class="btn" href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-chat-dots text-secondary"></i></a> 
+                    <div class="row text-center mt-2">
+                        <a href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-chat-dots text-secondary"></i></a> 
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.8em;">
+                    <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
                         <div class="col">채팅</div>
                     </div>
                 </div>
                 <div class="col me-2">
-                    <div class="row text-center">
-                        <a class="btn" href="#"><i class="fs-5 bi bi-three-dots"></i></a> 
+                    <div class="row text-center mt-2">
+                        <!--임시로 방 글쓰기 페이지로 이어짐니다-->
+                        <a href="./roomRegisterPage" style=" text-decoration: none;"><i class="fs-5 bi bi-three-dots text-secondary"></i></a> 
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.8em;">
+                    <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
                         <div class="col">더보기</div>
                     </div>
                 </div>

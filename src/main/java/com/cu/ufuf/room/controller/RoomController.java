@@ -38,8 +38,11 @@ public class RoomController {
 
 	//게스트하우스 메인페이지
 	@RequestMapping("roomMainPage")
-    public String roomMainPage(){
-		
+    public String roomMainPage(Model model){
+
+		// Controller에서 Thymeleaf에 전달하기 전에 리스트를 처리
+		model.addAttribute("roomList", roomService.getRoomInfoList().subList(0, Math.min(roomService.getRoomInfoList().size(), 5)));
+
 		//나중에 인기 숙소, 내근처 숙소, 리뷰목록 가져오기
 
         return "room/roomMainPage";
@@ -406,5 +409,7 @@ public class RoomController {
 		roomService.deleteRoomInfo(room_info_id);
 		return "redirect:./roomListPage";
 	}
+
+	//전체 방 표시해주는 
 
 }
