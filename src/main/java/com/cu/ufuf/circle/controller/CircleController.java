@@ -298,6 +298,18 @@ public class CircleController {
         
         return "circle/circleScheduleApplyPage";
     }
+    // 마이페이지 같은느낌? 여기서 동아리 관리 페이지 만들어서 들어가면 => 가입신청 받아주는 곳이 있어야함
+    @RequestMapping("circleMyPage")
+    public String circleMyPage(){
+        
+        return "circle/circleMyPage";
+    }
+
+    @RequestMapping("circleManagerOnlyPage")
+    public String circleManagerOnlyPage(){
+
+        return "circle/circleManagerOnlyPage";
+    }
     
     
     

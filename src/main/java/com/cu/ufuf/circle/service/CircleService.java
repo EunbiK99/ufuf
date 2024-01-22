@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
 import com.cu.ufuf.dto.CircleBoardDto;
@@ -17,6 +18,8 @@ import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
+import com.cu.ufuf.dto.CircleScheduleApplyDto;
+import com.cu.ufuf.dto.CircleScheduleDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
@@ -326,6 +329,84 @@ public class CircleService {
     public void circleVoteCompleteInfoInsert(CircleVoteCompleteDto circleVoteCompleteDto){
         
         circleSqlMapper.circleVoteCompleteInfoInsert(circleVoteCompleteDto);
+    }
+    public Boolean voteChecked(int vote_option_id, int circle_member_id){
+
+        return circleSqlMapper.voteChecked(vote_option_id, circle_member_id);
+    }
+    public void circleScheduleInfoInsert(CircleScheduleDto circleScheduleDto){
+
+        circleSqlMapper.circleScheduleInfoInsert(circleScheduleDto);
+    }
+    public List<CircleScheduleDto> circleScheduleListAll(int circle_id){
+
+        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
+
+        List<CircleScheduleDto> list = new ArrayList<>();
+
+        for(CircleMemberDto e : circleMemberDtos){
+            int circle_member_id = e.getCircle_member_id();
+            List<CircleScheduleDto> circleScheduleDtos = circleSqlMapper.circleScheduleListAllByCircleMemberId(circle_member_id);
+            for(CircleScheduleDto ee : circleScheduleDtos){
+                list.add(ee);
+            }
+        }
+
+        return list;
+    }
+    public void circleScheduleApplicationInfoInsert(CircleScheduleApplyDto circleScheduleApplyDto){
+
+        circleSqlMapper.circleScheduleApplicationInfoInsert(circleScheduleApplyDto);
+    }
+    public Boolean scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(int circle_member_id, int circle_schedule_id){
+
+        return circleSqlMapper.scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(circle_member_id, circle_schedule_id);
+    }
+
+    public Boolean scheduleApplyCheckPAndAByCircleMemberId(int circle_member_id){
+
+        return circleSqlMapper.scheduleApplyCheckPAndAByCircleMemberId(circle_member_id);
+    }
+    
+    public List<Map<String, Object>> circleListOnlyManager(int user_id){
+
+        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByUserId(user_id);
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        for(CircleMemberDto e : circleMemberDtos){
+
+            String circlePosition = e.getCircle_position();
+            
+
+            if(circlePosition.equals("P") || circlePosition.equals("A")){
+                Map<String, Object> map = new HashMap<>();
+                // 정보 다엮어봐?
+                int circle_id = e.getCircle_id();
+                CircleDto circleDto = circleSqlMapper.circleInfoByCircleId(circle_id);
+                int circle_grade_id = circleDto.getCircle_grade_id();
+                CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
+                int circle_small_category_id = circleDto.getCircle_small_category_id();
+                CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+                int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+                CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
+                int memberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+                int circleBoartCnt = circleSqlMapper.circleBoartCnt(circle_id);
+                map.put("circleBoartCnt", circleBoartCnt);
+                map.put("memberCnt",memberCnt);
+                map.put("circleMemberDto", e);
+                map.put("circleDto", circleDto);
+                map.put("circleGradeDto", circleGradeDto);
+                map.put("circleSmallCategoryDto", circleSmallCategoryDto);
+                map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
+
+                list.add(map);
+
+            }
+
+        }
+        
+        return list;
     }
     
 }

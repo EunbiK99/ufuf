@@ -66,7 +66,38 @@
                     member_profile_img.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
                     const board_main_image = Wrapper.querySelector(".board_main_image");
                     board_main_image.setAttribute("src", "/uploadFiles/" + e.circleBoardDto.main_image);
+                    const createdtime = Wrapper.querySelector(".createdtime")
+                    const changetime = e.circleBoardDto.created_at;
+
+                    const currentDateTime = new Date();
+                    const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4], changetime[5]);
+
+                    const timeDifference = currentDateTime - postDateTime;
+                    const minutesDifference = Math.floor(timeDifference / (1000 * 60));
+                    const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+                    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
                     
+
+                    let result;
+
+                    if (minutesDifference < 1) {
+                        result = "방금 전";
+                    } else if (minutesDifference < 60) {
+                        result = `${minutesDifference}분 전`;
+                    } else if (hoursDifference < 24) {
+                        result = `${hoursDifference}시간 전`;
+                    } else if (daysDifference < 7) {
+                        result = `${daysDifference}일 전`;
+                    } else {
+                        // 7일 이상이면 날짜를 표시
+                        const options = { year: "numeric", month: "short", day: "numeric" };
+                        result = postDateTime.toLocaleDateString("ko-KR", options);
+                    }
+                    createdtime.innerText = result;
+
+                    // 변수에 저장된 값을 사용
+                    
+
                     const boardInsert = document.querySelector("#boardInsert");
                     boardInsert.appendChild(Wrapper);
                 }
@@ -324,7 +355,9 @@
             })()">
                 <i class="bi bi-people-fill"></i>
             </div>
-            <div class="button col py-0 text-center fs-1">
+            <div class="button col py-0 text-center fs-1" onclick="(() => {
+                location.href = './circleMyPage'
+            })()">
                 <i class="bi bi-person-circle"></i>
             </div>
         </div>
@@ -382,7 +415,7 @@
                 </div>
             </div>
             <div class="row mt-1">
-                <div class="col" style="font-size: 0.7em;">
+                <div class="col createdtime" style="font-size: 0.7em;">
                     1분전
                 </div>
             </div> 

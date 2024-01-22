@@ -147,6 +147,9 @@
 
 
     }
+    function goBack() {
+            window.history.go(-1);
+        }
     
     window.addEventListener("DOMContentLoaded", () => {
         middleCategoryList();
@@ -159,6 +162,7 @@
         body {
           margin: 0;
           padding: 0;
+          
         }
     
         .fixed-bottom {
@@ -170,6 +174,14 @@
           padding: 1em;
           text-align: center;
         }
+        .cf {
+                transition: 0.3s;
+                overflow-y: scroll;
+                height: 50em;
+                
+                
+            
+            }
         *{
         /* font-family: 'Dongle', sans-serif; */
         font-family: 'Gowun Dodum', sans-serif;
@@ -179,8 +191,9 @@
       </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
+<th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+<div class="container-fluid cf">
+    <div class="row" style="height: 100%;">
         <div class="col">
             <div class="row mt-2">
                 <div class="col d-flex align-items-center">
@@ -258,11 +271,13 @@
                     <img id="previewImage" src="" alt="미리 보기" class="img-fluid d-none">
                 </div>
             </div>
-            <div class="row mt-3 mx-0 fixed-bottom">
-                <div class="col d-grid">
-                    <button class="btn btn-primary" onclick="circleComplete()">개설하기</button>
-                </div>
-            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row mt-3 mx-0 fixed-bottom">
+        <div class="col d-grid">
+            <button class="btn fw-semibold" onclick="circleComplete()" style="background-color: #fb7928;color: white;">개설하기</button>
         </div>
     </div>
 </div>

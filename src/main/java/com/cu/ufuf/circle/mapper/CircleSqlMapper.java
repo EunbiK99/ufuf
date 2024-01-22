@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleBoardImageDto;
@@ -117,7 +118,14 @@ public interface CircleSqlMapper {
     public void circleScheduleAttenDanceInfoInfoInsert(CircleScheduleAttendanceDto circleScheduleAttendanceDto);
 
     // 동아리 일정 전체리스트(그냥전체)
-    public List<CircleScheduleDto> circleScheduleListAll();
-     
+    public List<CircleScheduleDto> circleScheduleListAllByCircleMemberId(int circle_member_id);
+    
+    // 투표했는지 안했는지 boolean타입 체크 & 일정등록하는사람이 관리자 + 매니저인지 확인 & 일정신청을 했는지 안했는지 확인
+    public Boolean voteChecked(@Param("vote_option_id") int vote_option_id, @Param("circle_member_id") int circle_member_id);
+    public Boolean scheduleApplyCheckPAndAByCircleMemberId(int circle_member_id);
+    public Boolean scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(@Param("circle_member_id") int circle_member_id, @Param("circle_schedule_id") int circle_schedule_id);
+    
+    // 
+    public int circleBoartCnt(int circle_id);
     
 }

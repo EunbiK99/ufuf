@@ -19,6 +19,8 @@ import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
+import com.cu.ufuf.dto.CircleScheduleApplyDto;
+import com.cu.ufuf.dto.CircleScheduleDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
@@ -450,9 +452,149 @@ public class CircleRestController {
         
         return responseDto;
     }
+    // 체크한 항목이 존재한가? true false로 하면 될거 같은데.
+    // 투표글에는 항목이 여러개 존재 ==> 여러개 항목 중에서 하나라도 체크를 했으면 true가 나와야 함
+    @RequestMapping("voteChecked")
+        public RestResponseDto voteChecked(@RequestParam("circle_id") int circle_id, @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        // 일단 동아리 회원번호
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        // 이 리스트안에 여러개 항목들존재하는데 항목번호, 동아리회원번호 넣고 찾아서 있는지만 체크
+        List<CircleVoteOptionDto> circleVoteOptionDto = circleService.circleVoteOptionInfoByCircleVoteId(circle_vote_id); //투표의 항목들
+        int cntSwitch = 0;
+        for(CircleVoteOptionDto e : circleVoteOptionDto){
+            int vote_option_id = e.getVote_option_id();
+            Boolean check = circleService.voteChecked(vote_option_id, circle_member_id);
+            
+            if(check){
+                cntSwitch = 1;
+                break;
+            }
+            
+        }
+        if(cntSwitch == 0){
+            responseDto.setData(true); // 없으니까 투표가능
+        }else{
+            responseDto.setData(false); // 있으니까 투표불가
+        }
 
-    
-    //
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // scheduleApplyInsert
+    @RequestMapping("scheduleApplyInsert")
+            public RestResponseDto scheduleApplyInsert(@RequestParam("circle_id") int circle_id, @RequestBody CircleScheduleDto circleScheduleDto, HttpSession session){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+            
+            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+
+            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+            int circle_member_id = circleMemberDto.getCircle_member_id();
+            
+            circleScheduleDto.setCircle_member_id(circle_member_id);
+            circleService.circleScheduleInfoInsert(circleScheduleDto);
+            // insert 완료
+            
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+    @RequestMapping("circleScheduleListAll")
+        public RestResponseDto circleScheduleListAll(@RequestParam("circle_id") int circle_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleScheduleListAll(circle_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleScheduleApplyInsert
+    @RequestMapping("circleScheduleApplyInsert")
+            public RestResponseDto circleScheduleApplyInsert(@RequestParam("circle_id") int circle_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+            
+            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+
+            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+            int circle_member_id = circleMemberDto.getCircle_member_id();
+
+            CircleScheduleApplyDto circleScheduleApplyDto = new CircleScheduleApplyDto();
+            circleScheduleApplyDto.setCircle_member_id(circle_member_id);
+            circleScheduleApplyDto.setCircle_schedule_id(circle_schedule_id);
+
+            circleService.circleScheduleApplicationInfoInsert(circleScheduleApplyDto);
+            
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+        //circleScheduleAppleyCheck
+        @RequestMapping("circleScheduleAppleyCheck")
+            public RestResponseDto circleScheduleAppleyCheck(@RequestParam("circle_id") int circle_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+
+            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+
+            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+            int circle_member_id = circleMemberDto.getCircle_member_id();
+
+            Boolean check = circleService.scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(circle_member_id, circle_schedule_id);
+            
+            responseDto.setData(check);
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+        //circleScheduleRegisterCheck
+        @RequestMapping("circleScheduleRegisterCheck")
+            public RestResponseDto circleScheduleRegisterCheck(@RequestParam("circle_id") int circle_id, HttpSession session){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+
+            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+
+            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+            int circle_member_id = circleMemberDto.getCircle_member_id();
+
+            Boolean RegisterCheck = circleService.scheduleApplyCheckPAndAByCircleMemberId(circle_member_id);
+
+            responseDto.setData(RegisterCheck);
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+        //circleListOnlyManager
+        @RequestMapping("circleListOnlyManager")
+            public RestResponseDto circleListOnlyManager(HttpSession session){
+            
+            RestResponseDto responseDto = new RestResponseDto();
+
+            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+            int user_id = userInfoDto.getUser_id();
+            // 여기서 user_id 넣었을때 동아리회원목록이 전부나오게해야함
+            
+            responseDto.setData(circleService.circleListOnlyManager(user_id));
+            responseDto.setResult("success");
+            
+            return responseDto;
+        }
+
+
+
 
     // RESTAPI 양식
     /*

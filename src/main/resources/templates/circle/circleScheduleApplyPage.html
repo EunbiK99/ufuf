@@ -12,6 +12,55 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+        const scheduleApplyComplete = () => {
+            
+            const schedule_title = document.querySelector("#schedule_title").value;
+            console.log(schedule_title);
+            const schedule_content = document.querySelector("#schedule_content").value;
+            console.log(schedule_content);
+            const participation = parseInt(document.querySelector("#participation").value);
+            console.log(participation);
+            const schedule_fee = parseInt(document.querySelector("#schedule_fee").value);
+            console.log(schedule_fee);
+            const start_time = document.querySelector("#start_time").value;
+            console.log(start_time);
+            const end_time = document.querySelector("#end_time").value;
+            console.log(end_time);
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            const requestData = {
+                schedule_title: schedule_title,
+                schedule_content: schedule_content,
+                participation: participation,
+                schedule_fee: schedule_fee,
+                start_time: start_time,
+                end_time: end_time
+            }
+
+            fetch("./scheduleApplyInsert?circle_id=" + circle_id,{
+                method: "post",
+                headers: {
+                            "Content-Type": "application/json"
+                        },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(response => {
+                
+                location.href = "circleScheduleManagePage?circle_id=" + circle_id;
+
+            })            
+
+        }
+        
+     </script>
      <style>
         *{
         /* font-family: 'Dongle', sans-serif; */
@@ -19,10 +68,20 @@
         /* font-family: 'Quicksand', sans-serif; */
         /* font-family: 'Noto Sans KR', sans-serif; */
         }
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 1em;
+            text-align: center;
+        }
         
     </style>
 </head>
 <body>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid">
         <div class="row">
             <div class="col">
@@ -33,7 +92,37 @@
                 </div>
                 <div class="row mt-1">
                     <div class="col d-grid align-items-center">
-                        <input id="" class="form-control" type="text" placeholder="일정명을 입력하세요">
+                        <input id="schedule_title" class="form-control" type="text" placeholder="일정명을 입력하세요">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col d-flex align-items-center">
+                        일정내용<span class="text-danger">＊</span>
+                    </div>         
+                </div>
+                <div class="row mt-1">
+                    <div class="col d-grid align-items-center">
+                        <input id="schedule_content" class="form-control" type="text" placeholder="내용을 입력하세요">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col d-flex align-items-center">
+                        참여인원<span class="text-danger">＊</span>
+                    </div>         
+                </div>
+                <div class="row mt-1">
+                    <div class="col d-grid align-items-center">
+                        <input id="participation" class="form-control" type="text" placeholder="인원수를 입력하세요">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col d-flex align-items-center">
+                        총 회비<span class="text-danger">＊</span>
+                    </div>         
+                </div>
+                <div class="row mt-1">
+                    <div class="col d-grid align-items-center">
+                        <input id="schedule_fee" class="form-control" type="text" placeholder="회비를 입력하세요">
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -43,7 +132,7 @@
                 </div>
                 <div class="row mt-1">
                     <div class="col d-grid align-items-center">
-                        <input id="" class="form-control" type="date">
+                        <input id="start_time" class="form-control" type="datetime-local">
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -53,9 +142,16 @@
                 </div>
                 <div class="row mt-1">
                     <div class="col d-grid align-items-center">
-                        <input id="" class="form-control" type="date">
+                        <input id="end_time" class="form-control" type="datetime-local">
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row mt-3 mx-0 fixed-bottom">
+            <div class="col d-grid">
+                <button class="btn fw-semibold" onclick="scheduleApplyComplete()" style="background-color: #fb7928;color: white;">등록 완료</button>
             </div>
         </div>
     </div>  

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+        // 내가 동아리회원인데 P or A 인 동아리 리스트만 가져옴
+        const circleListOnlyManager = () => {
+
+            fetch("./circleListOnlyManager")
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    // 관리자용이니까 동아리 등급, 총 게시물수?, 현재 동아리 인원, 카테고리이름2, 동아리명, 학교명
+                    const circlelist = document.querySelector("#Wrapper .circlelist").cloneNode(true);
+                    const middle_category_name = circlelist.querySelector(".middle_category_name");
+                    middle_category_name.innerText = e.circleMiddleCategoryDto.category_name;
+                    const small_category_name = circlelist.querySelector(".small_category_name");
+                    small_category_name.innerText = e.circleSmallCategoryDto.category_name;
+                    const circle_name = circlelist.querySelector(".circle_name");
+                    circle_name.innerText = e.circleDto.circle_name;
+                    const circle_university = circlelist.querySelector(".circle_university");
+                    circle_university.innerText = e.circleDto.circle_university;
+                    const circle_position = circlelist.querySelector(".circle_position");
+                    const position = e.circleMemberDto.circle_position;
+
+                    if(position === 'P'){
+                        circle_position.innerText = '관리자';
+                    }else if(position === 'A'){
+                        circle_position.innerText = '매니저';
+                    }
+
+                    const grade_name = circlelist.querySelector(".grade_name");
+                    grade_name.innerText = e.circleGradeDto.grade_name;
+                    const circle_people = circlelist.querySelector(".circle_people");
+                    circle_people.innerText = e.circleGradeDto.circle_people;
+                    const currentpeople = circlelist.querySelector(".currentpeople");
+                    currentpeople.innerText = e.memberCnt;
+                    const boardCnt = circlelist.querySelector(".boardCnt");
+                    boardCnt.innerText = e.circleBoartCnt;
+                    
+
+
+                     
+                    
+                    
+
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(circlelist);
+                    
+
+                }
+
+            })
+
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            circleListOnlyManager();
+        })
+     </script>
+     <style>
+        
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="listInsert" class="col">
+                
+            </div>
+        </div>
+    </div> 
+    <div id="Wrapper" class="d-none">
+        <div class="circlelist row border-bottom">
+            <div class="col">
+                <div class="row py-2">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <span class="middle_category_name"></span>&nbsp;<span class="small_category_name"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <span class="circle_name"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-0">
+                            <div class="col">
+                                <span class="circle_university" style="color: rgba(93, 93, 93, 0.794);"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        
+                    </div>
+                    <div class="col">
+                        <div class="row align-items-center">
+                            <div class="col fw-semibold text-end">
+                                <span class="grade_name"></span>·<span class="circle_position"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-1 align-items-center">
+                            <div class="col text-end">
+                                <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="currentpeople"></span>&nbsp;/&nbsp;<span class="circle_people"></span>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col text-end">
+                                총 게시물: <span class="boardCnt"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -32,6 +32,9 @@
 
         window.addEventListener("DOMContentLoaded", () => {
              adjustContainerHeight();
+             const currentTime = new Date();
+            console.log(currentTime);
+            console.log(currentTime.toISOString());
         });
 
         const allSubmit = () => {
@@ -45,6 +48,9 @@
             const vote_theme = document.querySelector("#vote_theme").value;
             const vote_end_time = document.querySelector("#vote_end_time").value;
             const end_time = new Date(vote_end_time);
+            console.log("마감시간 확인 :" + vote_end_time);
+            console.log("endtime :" + end_time);
+            console.log("insert되는 시간 :" + end_time.toISOString);
             
 
             
@@ -52,7 +58,7 @@
             const postData = {
                 vote_title: vote_title,
                 vote_theme: vote_theme,
-                vote_end_time: end_time.toISOString()
+                vote_end_time: vote_end_time
                 
             };
 
@@ -71,6 +77,16 @@
                 
                 })
             
+            
+
+        }
+        const checksibal = () => {
+            
+            const vote_end_time = document.querySelector("#vote_end_time").value;
+            const end_time = new Date(vote_end_time);
+            console.log("마감시간 확인 :" + vote_end_time);
+            console.log("endtime :" + end_time);
+            console.log("insert되는 시간 :" + end_time.toISOString());
             
 
         }
@@ -133,6 +149,9 @@
                 location.href = "./circleVoteListPage?circle_id=" + circleId;
 
         }
+        function goBack() {
+            window.history.go(-1);
+        }
 
     </script>
     <style>
@@ -152,9 +171,10 @@
               text-align: center;
             }
             .cf {
-                transition: height 0.3s;
-                overflow-y: scroll;
-            
+                transition: 0.3s;
+                overflow: auto;
+                
+                
             }
             *{
                 /* font-family: 'Dongle', sans-serif; */
@@ -167,8 +187,9 @@
 </head>
 
 <body>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div id="addSpace" class="container-fluid cf">
-    <div class="row">
+    <div class="row" style="height: 100%;">
         <div class="col">
             <div class="row mt-2">
                 <div class="col d-flex align-items-center">
@@ -235,9 +256,9 @@
 
                 </div>
             </div>
-            <div class="row mt-1">
+            <div class="row mt-2">
                 <div class="col d-grid">
-                    <button onclick="voteOptionAdd()" class="btn btn-outline-primary">+</button>
+                    <button onclick="voteOptionAdd()" class="btn fw-semibold" style="background-color: #fb7928;color: white;">+</button>
                 </div> 
             </div>
             
@@ -253,7 +274,7 @@
 <div class="container-fluid">
     <div class="row mt-3 mx-0 fixed-bottom">
         <div class="col d-grid">
-            <button class="btn btn-primary" onclick="allSubmit()">투표개설</button>
+            <button class="btn fw-semibold" onclick="allSubmit()" style="background-color: #fb7928;color: white;">투표개설</button>
         </div>
     </div>
 </div>

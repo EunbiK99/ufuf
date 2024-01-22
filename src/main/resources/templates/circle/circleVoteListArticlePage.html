@@ -20,11 +20,30 @@
         // 값이 있나없나 검증을 위한 함수 ==> 만약 이글에 관해서 투표를 이미진행을 했으면 투표를 못하게끔 막아야함
         const optionComplete = () =>{
 
-            
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_vote_id = urlParams.get("circle_vote_id");
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./voteChecked?circle_id=" + circle_id + "&circle_vote_id=" + circle_vote_id)
+            .then(response => response.json())
+            .then(response => {
+                console.log(response.data);
+                if(response.data === false){
+                    alert("이미 투표했습니다.");
+                    return;
+                }
+
+                optionCheckComplete();
+
+            })
 
         }
         
         const optionCheckComplete = () => {
+
+            // 이쪽에 위에 함수가 들어가고 값이 있으면 알림창띄우고 return
+            
 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
@@ -50,7 +69,7 @@
                     body: JSON.stringify({ vote_option_id: selectedValue }), // JSON 형식으로 데이터를 문자열로 변환하여 전달
                 })
             
-            location.href = "./circledVoteListPage?circle_id=" + circle_id;
+            location.href = "./circleVoteListPage?circle_id=" + circle_id;
 
         }
         // 특정 투표의 정보값들을 가져옴
@@ -70,6 +89,22 @@
                 vote_title.innerText = e.vote_title;
                 const vote_theme = document.querySelector("#vote_theme")
                 vote_theme.innerText = e.vote_theme;
+                // 여기에 vote_end_time 존재 만약 
+                const Array = e.vote_end_time;
+                const endtime = new Date(Array[0], Array[1] - 1, Array[2], Array[3], Array[4]); // 이거 가져올때 또 한달빼먹고 가져오네?
+                const currentTime = new Date();
+                console.log("마감시간 :" + endtime);
+                console.log("현재시간 :" + currentTime);
+                console.log(endtime.getTime())
+                console.log(currentTime.getTime());
+                    
+                
+                if(currentTime > endtime){
+                    
+                    document.querySelector("#controldisabled").setAttribute("disabled","");
+                    document.querySelector("#controldisabled").innerText = "투표마감";
+                    
+                }
                 
 
             })
@@ -112,16 +147,11 @@
         
 
         // 로드됐을때 바로실행
+        
         window.addEventListener("DOMContentLoaded", () => {
             voteInfoOne();
             voteOptionPrint();
-            document.querySelectorAll('input[name="aa"]').forEach(radio => {
-            radio.addEventListener("change", function() {
-                if (this.checked) {
-                console.log("선택된 값: " + this.value);
-                }
-            });
-            });
+            
         })
      </script>
      <style>
@@ -140,16 +170,15 @@
             padding: 0;
             
             }
-        
-            .fixed-bottom {
-              position: fixed;
-              bottom: 0;
-              left: 0;
-              width: 100%;
-              background-color: #ffffff;
-              padding: 1em;
-              text-align: center;
-            }
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 1em;
+            text-align: center;
+        }
         .custom-radio {
             transform: scale(1.5); /* 크기 조절 */
             /* margin-right: 5px; */
@@ -174,11 +203,11 @@
         투표제목, 투표주제, 항목내용 
     -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid" style="background-color: rgb(247,247,247);">
+    <div class="container-fluid" style="background-color: rgb(247,247,247); min-height: 44em;">
         <div class="row">
             <div class="col">
                 <div class="row">
-                    <div class="col">
+                    <div class="col mt-2">
                         <div class="row align-items-center">
                             <div id="vote_title" class="col" style="font-size: 1.4em;">
                                 제목
@@ -209,7 +238,7 @@
     <div class="container-fluid">
         <div class="row mt-3 mx-0 fixed-bottom">
             <div class="col d-grid">
-                <button class="btn btn-primary" onclick="optionCheckComplete()">투표하기</button>
+                <button id="controldisabled" class="btn fw-semibold" onclick="optionComplete()" style="background-color: #fb7928;color: white;">투표하기</button>
             </div>
         </div>
     </div>

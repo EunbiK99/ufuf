@@ -16,14 +16,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
 
-
     <script>
         // 캘린더..
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            contentHeight: 10000
+            initialView: 'dayGridWeek',
+            views: {
+                    dayGridWeek: {
+                    dayMaxEventRows: 3, // 한 행에 표시될 일 수
+                    },
+                },
+            //contentHeight: 10
             });
             calendar.render();
         });
@@ -48,42 +52,135 @@
 
             // [full-calendar 생성]
             var calendar = new FullCalendar.Calendar(calendarElement, {
+
+            events: function (fetchInfo, successCallback, failureCallback) {
+            // fetchInfo 객체를 통해 시작 날짜, 종료 날짜 등의 정보를 받을 수 있습니다.
+            // fetchInfo에 따라 서버에 필요한 데이터를 요청할 수 있습니다.
+            
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+            
+            fetch('./circleScheduleListAll?circle_id=' + circle_id)
+            .then(response => response.json())
+            .then(response => {
+                const eventsData = [];
+
+
+                for(e of response.data){
+
+                    const changetime = e.start_time;
+                    const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4]);
+                    const changetime2 = e.end_time;
+                    const postDateTime2 = new Date(changetime2[0], changetime2[1] - 1, changetime2[2], changetime2[3], changetime2[4]);
+
+                    // 데이터는 이렇게 넣으면 들어가긴함.
+                    const eventData  = {
+                        "title": e.schedule_title,
+                        "start": postDateTime,
+                        "end": postDateTime2,
+                        "textColor": "#fb7928",
+                        "color": "#f7f7f7",
+                        "extendedProps":{
+                            schedule_title: e.schedule_title,
+                            schedule_content: e.schedule_content,
+                            start_time: postDateTime,
+                            end_time: postDateTime2,
+                            participation: e.participation,
+                            schedule_fee: e.schedule_fee,
+                            circle_schedule_id: e.circle_schedule_id
+                        }
+                    }
+                    
+                     // 확인용 로그
+                    eventsData.push(eventData);
+                    console.log(eventsData);
+
+
+
+                }
+                successCallback(eventsData);
                 
-                expandRows: true, // 화면에 맞게 높이 재설정
+
+            })
+            },
+
+            eventClick: function (info) {
+                // 클릭한 일정의 정보
+                var eventData = info.event.extendedProps;
+                var title = eventData['schedule_title'];
+                var start_time = eventData.start_time;
+                console.log(eventData);
+                // 이 부분에서 모달을 띄우는 로직을 추가합니다.
+                modalScheduleShow(eventData);
+            },
+             
+                
                 slotMinTime: '00:00', // 캘린더에서 일정 시작 시간
                 slotMaxTime: '23:59', // 캘린더에서 일정 종료 시간
 
                 // 해더에 표시할 툴바
                 headerToolbar: {
-                    left: 'title', // 이전, 다음
+                     // 이전, 다음
                     //left: 'prev,next,today', // 이전, 다음, 오늘
-                    center: 'prev,next', // 중앙 타이틀
-                    right: 'dayGridMonth,timeGridDay' // 월, 일
+                    right: 'prev,today,next' // 중앙 타이틀
+                     // 월, 일
                     //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // 월, 주, 일, 일정목록
                 },
+                buttonText:{
+                    today: '오늘'
+                },
 
-                initialView: 'dayGridMonth', // 초기 로드 될때 보이는 캘린더 화면 (기본 설정: 달)
                 
                 //initialDate: '2023-08-06', // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)
-                
+                initialView: 'dayGridWeek',
+
                 navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
                 
                 editable: true, // 수정 가능 여부
                 
                 selectable: true, // 달력 일자 드래그 설정가능
                 
-                nowIndicator: true, // 현재 시간 마크
+                contentHeight: 1000,
                 
-                dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
+                expandRows: false,
+
+                
+                
+                dayMaxEventRows: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
                 
                 locale: 'ko', // 한국어 설정
         
                 selectLongPressDelay:300, // 선택 클릭 발동 시간 
 
+                
+
             })
 
             calendar.render(); 
         }
+        // 해당 동아리의 일정 리스트
+        const circleScheduleListAll = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./circleScheduleListAll?circle_id=" + circle_id)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    //원래는 여기 리스트 출력을시키는
+
+                }
+                
+            })
+
+        }
+        
+
         // 일정등록 누를시 로케이션 // 동아리번호 + 세션유저번호 = 동아리회원번호
         const scheduleApply = () => {
 
@@ -96,13 +193,126 @@
             location.href = "./circleScheduleApplyPage?circle_id=" + circle_id;
 
         }
+        function goBack() {
+            window.history.go(-1);
+        }
+        // 모달로 일정 가져와서 등록
+        const circleScheduleApply = (circle_schedule_id) => {
 
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            console.log(circle_schedule_id);
+
+            fetch("./circleScheduleApplyInsert?circle_id=" + circle_id + "&circle_schedule_id=" + circle_schedule_id)
+            .then(response => response.json())
+            .then(response => {
+
+                location.href = "./circleScheduleManagePage?circle_id=" + circle_id;
+
+            })
+
+        }
+        // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
+        // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
+        const circleScheduleApplyCheck = (circle_schedule_id) => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./circleScheduleAppleyCheck?circle_id=" + circle_id + "&circle_schedule_id=" + circle_schedule_id)
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data === true){
+
+                    alert("이미 신청완료되었습니다!");
+                    return ;
+
+                }
+
+                circleScheduleApply(circle_schedule_id);
+
+
+
+            })
+
+        }// ★★★이거다음에 인원수 체크!
+
+        // 모달띄우기 함수
+        const modalScheduleShow = (eventData) => {
+
+            // 여기서 이제 이벤트데이터를 모달창에 데이터를 입력해서 출력해야됨
+            const ScheduleModal = document.querySelector("#ScheduleModal");
+            const schedule_title = ScheduleModal.querySelector(".schedule_title");
+            schedule_title.innerText = eventData.schedule_title;
+            const schedule_content = ScheduleModal.querySelector(".schedule_content");
+            schedule_content.innerText = eventData.schedule_content;
+            const participation = ScheduleModal.querySelector(".participation");
+            participation.innerText = eventData.participation;
+            const schedule_fee = ScheduleModal.querySelector(".schedule_fee");
+            schedule_fee.innerText = eventData.schedule_fee;
+            const start_time = ScheduleModal.querySelector(".start_time");
+            const startDummytime = eventData.start_time;
+            const formattedDate = startDummytime.toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+            });
+            start_time.innerText = formattedDate;
+            const end_time = ScheduleModal.querySelector(".end_time");
+            const endDummytime = eventData.end_time;
+            const formattedDate2 = endDummytime.toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+            });
+            end_time.innerText = formattedDate2;
+            const sinchung = ScheduleModal.querySelector(".sinchung");
+            sinchung.setAttribute("onclick","circleScheduleApplyCheck("+ eventData.circle_schedule_id +")");
+            
+            console.log(eventData.circle_schedule_id);
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#ScheduleModal");
+            modal.show();
+
+        }
+        // 일정등록할수있는지 여부를 판단 아닐경우 disabled
+        const circleScheduleRegister = () =>{
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            fetch("./circleScheduleRegisterCheck?circle_id=" + circle_id)
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data === false){
+
+                    const registerS = document.querySelector("#registerS");
+                    registerS.setAttribute("disabled","");
+
+                }
+
+            })
+
+        }
+        
 
 
     </script>
     <style>
         
-    
+        .fc-scrollgrid{
+            text-decoration: none;
+        }
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -128,6 +338,7 @@
             margin: 0 auto;
             position: relative;
             top: 5%;
+            
         }
         *{
             /* font-family: 'Dongle', sans-serif; */
@@ -135,23 +346,91 @@
             /* font-family: 'Quicksand', sans-serif; */
             /* font-family: 'Noto Sans KR', sans-serif; */
         }
+        .fc {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            /* 기타 스타일 설정 */
+        }
+
+        /* FullCalendar 일정 제목 스타일 */
+        .fc-title {
+            font-size: 16px;
+            color: #555;
+            /* 기타 스타일 설정 */
+        }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid d-grid">
         <div class="row">
-            <div id="calendar" class="col">
+            <div id="calendar" class="col py-2">
 
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col d-grid">
+                <button onclick="modalScheduleShow()"> 모달</button>
             </div>
         </div>
     </div>
     <div class="container-fluid">
         <div class="row mt-3 mx-0 fixed-bottom">
             <div class="col d-grid">
-                <button class="btn btn-primary" onclick="scheduleApply()">일정 등록</button>
+                <button id="registerS" class="btn fw-semibold" onclick="scheduleApply()" style="background-color: #fb7928;color: white;">일정 등록</button>
             </div>
         </div>
     </div>
+    <div id="Wrapper d-none">
+    <div id="ScheduleModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">일정 상세설명</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        일정제목: &nbsp;<span class="schedule_title"></span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        일정내용: &nbsp;<span class="schedule_content"></span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        인원&nbsp;<span class="participation fw-semibold" style="color: #fb7928;"></span>명 / 총회비:&nbsp;<span class="schedule_fee fw-semibold" style="color: #fb7928;"></span>원
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <span class="start_time fw-semibold"></span>
+                    </div>
+                </div>
+                <div class="row fw-semibold my-2">
+                    <div class="col text-center">
+                        ~
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">
+                        <span class="end_time fw-semibold"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn fw-semibold sinchung" style="background-color: #fb7928;color: white;">일정 신청</button>
+              <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>
