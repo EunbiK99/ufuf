@@ -49,7 +49,7 @@ function getMyRecruitMeetingList(){
             myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./meetingGroupDetailPage?groupId=' + ${e.groupId}`);
             
             const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
+            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.groupImage}`);
 
             const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
             myMeetingGroupTitle.innerText = e.groupTitle;

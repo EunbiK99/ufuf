@@ -49,13 +49,81 @@ let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
 
-function addGroupMember(profileid){
-    const groupId = groupDetailInfo.groupId;
+function countMeetingGroupMember(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    fetch("./api/countMeetingGroupMember?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response =>{        
+        const countValue = response.data;
+
+        const curruntApplyUserCount = document.getElementById("curruntApplyUserCount");
+        curruntApplyUserCount.innerText = countValue;
+    });
+}
+
+function getMeetingGroupMemberList(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    fetch("./api/getMeetingGroupMemberList?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response =>{
+        const groupMemberList = response.data;
+        console.log('groupMemberList: ', groupMemberList);
+
+        const groupMemberListWrapperRow = document.getElementById("groupMemberListWrapperRow");
+        groupMemberListWrapperRow.innerHTML = "";
+
+        for(e of groupMemberList){
+            const groupMemberListCol = document.querySelector("#templete #groupMemberListCol").cloneNode(true);
+            const groupMemberProfileImage = groupMemberListCol.querySelector("#groupMemberProfileImage");
+            groupMemberProfileImage.setAttribute("src", `/public/image/meeting/profileImage/${e.profileImg}`);
+
+            const groupMemberNickname = groupMemberListCol.querySelector("#groupMemberNickname");
+            groupMemberNickname.innerText = e.profileNickname;
+
+            if(groupDetailInfo.meetingGroupDto.profileId === e.profileId){
+                const groupMemberProfileImageCol = groupMemberListCol.querySelector("#groupMemberProfileImageCol");
+                const crownBadge = document.querySelector("#templete #crownBadge");
+                groupMemberProfileImageCol.appendChild(crownBadge);
+            }
+
+            groupMemberListWrapperRow.appendChild(groupMemberListCol);
+        }
+
+    });
+}
+
+function addGroupMember(target){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
     console.log('groupId: ', groupId);
-    const profileId = profileid;
-    console.log('profileId: ', profileId);
+    const applyUserProfileId = target.getAttribute("profileid");
+    console.log('applyUserProfileId: ', applyUserProfileId);
+    const applyProfileListRow = target.closest('[id^="applyProfileListRow"]');
+    const applyUserNickname = applyProfileListRow.querySelector("#applyProfileNickname").innerText;
+    console.log('applyProfileNickname: ', applyUserNickname);
 
-
+    const confirmValue = confirm("[" + applyUserNickname + "]" + " 님을 선발하시겠습니까?");
+    if(confirmValue){
+        fetch("./api/addGroupMember", {
+            method : "POST",
+            body : new URLSearchParams({
+                groupId : groupId,
+                profileId : applyUserProfileId
+            }),
+            header : {
+                "Content-Type" : "application/x-www-form-urlencoded"
+            }
+            
+        })
+        .then(response => response.json())
+        .then(response =>{
+            alert("[" + applyUserNickname + "]" + " 님이 미팅멤버로 선발되었습니다.");
+            getMeetingGroupMemberList();
+            countMeetingGroupMember();
+        });
+    }
+    else{
+        return;
+    }
 }
 
 function makeGroupDetailPage(){
@@ -63,10 +131,13 @@ function makeGroupDetailPage(){
     groupTitle.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
 
     const groupCreateUserImage = document.getElementById("groupCreateUserImage");
-    groupCreateUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
+    groupCreateUserImage.setAttribute("src", `/public/image/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
 
     const groupCreateUserNickname = document.getElementById("groupCreateUserNickname");
     groupCreateUserNickname.innerText = groupDetailInfo.meetingProfileDto.profileNickname;
+
+    const recruitMemberCount = document.getElementById("recruitMemberCount");
+    recruitMemberCount.innerText = groupDetailInfo.meetingGroupDto.groupHeadCount;
 
     const applyProfileListWrapperCol = document.getElementById("applyProfileListWrapperCol");
     applyProfileListWrapperCol.innerHTML = "";
@@ -82,7 +153,7 @@ function makeGroupDetailPage(){
         for(e of applyUserMapList){
             const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
             const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
-            applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
+            applyProfileImage.setAttribute("src", `/public/image/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
 
             const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
             applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
@@ -91,7 +162,8 @@ function makeGroupDetailPage(){
             applyText.innerText = e.applyDto.applyComment;
 
             const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
-            applyProfilePickButton.setAttribute("onclick", `addGroupMember(${e.applyUserProfileDto.profileid})`);
+            applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
+            applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
 
             applyProfileListWrapperCol.appendChild(applyProfileListRow);
         }        
@@ -101,6 +173,8 @@ function makeGroupDetailPage(){
 document.addEventListener("DOMContentLoaded", ()=>{
 
     makeGroupDetailPage();
+    getMeetingGroupMemberList();
+    countMeetingGroupMember();
 
 });
 
@@ -175,13 +249,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         <div class="row mt-3">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col-auto">
                                         <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="fs-5 fw-bold">[</span>
+                                        <span id="curruntApplyUserCount" class="fs-5 fw-bold"></span>
+                                        <span class="fs-5 fw-bold">/</span>
+                                        <span id="recruitMemberCount" class="fs-5 fw-bold"></span>
+                                        <span class="fs-5 fw-bold">]</span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col border border-black rounded mx-1 overflow-y-scroll" style="">
+                                    <div class="col border border-black rounded mx-1 overflow-x-scroll" style="width: 200%; max-width: 100%;">
+                                        <div id="groupMemberListWrapperRow" class="row mt-2 mb-2">
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -315,6 +398,25 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     <div id="noApplyProfileCol" class="col text-center align-self-center">
         <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-danger"></span>
+    </div>
+
+    <div id="groupMemberListCol" class="col-auto">
+        <div class="row">
+            <div id="groupMemberProfileImageCol" class="col position-relative">
+                <div class="userImageBox">
+                    <img id="groupMemberProfileImage" class="userImage">
+                </div>                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span id="groupMemberNickname" style="font-size: 0.8em;"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="crownBadge" class="badge position-absolute" style="top: -17%; left: 0%;">
+        <img src="/public/image/meeting/crown.png" style="width: 2em; height: 2em;">
     </div>
 
 </div>

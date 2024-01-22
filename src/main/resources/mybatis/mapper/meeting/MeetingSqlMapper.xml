@@ -203,7 +203,9 @@ values (
 <!-- * 모집글에 신청한 유저 미팅프로필 리스트 셀렉트-->
 <select id="selectGroupApplyUserList" resultType="com.cu.ufuf.dto.MeetingApplyUserDto">
     SELECT * from meeting_applyUser 
-    where groupId = #{groupId}
+    where 1=1
+    and applyStatus = 'N'
+    and groupId = #{groupId}
 </select>
 
 <!-- * 유저PK기준 모집중인 미팅 리스트 셀렉트-->
@@ -219,6 +221,41 @@ values (
         #{profileId}
     )
 </insert>
+
+<!-- * 모집글PK 기준 해당 모집글 확정멤버 셀렉트-->
+<select id="selectMeetingGroupMemberListByGroupPk" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember mgm 
+    where groupId = #{groupId}
+</select>
+
+<!-- * 모집글 확정 멤버 리스트 셀렉트(AJAX)-->
+<select id="selectGroupMemberListByGroupIdForAJAX" resultType="map">
+    SELECT 
+        mgm.*,
+        mp.user_id as user_id,
+        mp.profileNickname as profileNickname,
+        mp.profileImg as profileImg,
+        mp.profileComment as profileComment,
+        mp.isPlusplanUser as inPlusplanUser
+    from meeting_groupMember mgm
+    inner join meeting_profile mp on mp.profileid = mgm.profileId
+    where groupId = #{groupId}
+</select>
+
+<!-- * 모집 확정 멤버 선발됨과 동시에 신청자 목록 업데이트-->
+<update id="updateApplyUserApplyStatus">
+    UPDATE meeting_applyUser 
+    SET applyStatus = 'Y'
+    where 1=1
+    and groupId = #{groupId}
+    and profileId = #{profileId}
+</update>
+
+<!-- * 모집글PK 기준 해당 모집글 미팅확정멤버 카운팅-->
+<select id="countMeetingGroupMemberByGroupId" resultType="int">
+    SELECT count(*) from meeting_groupMember mgm 
+    where groupId = #{groupId}
+</select>
 
 
 

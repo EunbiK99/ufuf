@@ -1,6 +1,7 @@
 package com.cu.ufuf.meeting.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -80,6 +81,18 @@ public interface MeetingSqlMapper {
 
     // * 미팅 확정멤버 인서트
     public void insertMeetingGroupMember(MeetingGroupMemberDto meetingGroupMemberDto);
+
+    // * 미팅 모집글PK 기준 확정멤버 셀렉트
+    public List<MeetingGroupMemberDto> selectMeetingGroupMemberListByGroupPk(int groupId);
+
+    // * 미팅 모집글PK기준 확정멤버 셀렉트(AJAX)
+    public List<Map<String, Object>> selectGroupMemberListByGroupIdForAJAX(int groupId);
+
+    // * 미팅 확정멤버됨과 동시에 신청자 리스트에서 업데이트
+    public void updateApplyUserApplyStatus(int groupId, int profileId);
+
+    // * 미팅 모집글PK 기준 확정멤버수 카운트
+    public int countMeetingGroupMemberByGroupId(int groupId);
 
 
 }
