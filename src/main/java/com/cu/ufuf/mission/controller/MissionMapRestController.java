@@ -252,6 +252,70 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @ResponseBody
+    @PostMapping("updateNotifReadStatus")
+    public RestResponseDto updateNotifReadStatus(@RequestBody String mission_notification_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_notification_id != null && !mission_notification_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_notification_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_notification_id")) {
+                    int notifyId = jsonNode.get("notifyId").asInt();
+                    missionMapService.updateNotifReadStatus(notifyId);
+                } else {
+                    System.out.println("mission_notification_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @ResponseBody
+    @PostMapping("getMissionProcessInfo")
+    public RestResponseDto getMissionProcessInfo(@RequestBody String mission_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_id != null && !mission_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_id")) {
+                    // mission_id 필드 추출 및 정수로 변환
+                    int missionId = jsonNode.get("mission_id").asInt();
+                    restResponseDto.setData(missionMapService.getMissionProcessInfo(missionId));
+                    
+                } else {
+                    System.out.println("mission_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    
+
 
 
 

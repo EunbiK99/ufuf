@@ -21,11 +21,11 @@
     var map;
     var missionMarker = [];
 
-    var imageSrc = "https://192.168.219.103:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    var imageSrc = "https://172.30.1.95:8888/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
     imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
     imageOption = {offset: new kakao.maps.Point(24, 30)};
 
-    var personImg = "https://192.168.219.103:8888/public/image/mission/free-icon-person-8226827.png",
+    var personImg = "https://172.30.1.95:8888/public/image/mission/free-icon-person-8226827.png",
     personImgSize = new kakao.maps.Size(42, 41),
     personImgOption = {offset: new kakao.maps.Point(24, 20)};
 
@@ -918,10 +918,15 @@
 
                         (function (currentWrapper, currentNotification) {
                             notificationWrapper.onclick = function () {
-                                clickNotification(currentNotification);
-                                readNotification(currentNotification);
+                                loadMissionProcess(currentNotification);
                             };
                         })(notificationWrapper, notification);
+
+                        (function (currentWrapper, currentNotificationId) {
+                            notificationWrapper.onclick = function () {
+                                readNotification(currentNotificationId);
+                            };
+                        })(notificationWrapper, notification.mission_notification_id);
 
                         notificationListBox.appendChild(notificationWrapper);
                     }
@@ -932,8 +937,23 @@
     }
 
     // 알림 읽음 백그라운드 화이트
-    function readNotification(currentNotification){
-        
+    function readNotification(notificationId){
+
+        const data = {
+            mission_notification_id: notificationId
+        };
+
+        fetch("./updateNotifReadStatus", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
     }
 
     // 미션알림 켜진 상태에서 뒤로가기
@@ -943,7 +963,7 @@
     }
 
     // 누군가 내 미션 수락했을 때 알림창에서 이동
-    function clickNotification(currentNotification){
+    function loadMissionProcess(notification){
 
         backFromMyNotification();
 
@@ -958,8 +978,108 @@
         const accMissionBox = document.getElementById("accMissionBox");
         accMissionBox.classList.remove("d-none");
 
+        const data = {
+            mission_id: notification.mission_id
+        };
+
+        fetch("./getMissionProcessInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const info = response.data;
+
+                const title = accMissionBox.querySelector(".title");
+                const status = accMissionBox.querySelector(".status");
+                const resLocation = accMissionBox.querySelector(".resLocation");
+                const reward = accMissionBox.querySelector(".reward");
+                const userProfileImg = accMissionBox.querySelector(".userProfileImg");
+                const userName = accMissionBox.querySelector(".userName");
+                const accLocation = accMissionBox.querySelector(".accLocation");
+                const accCreatedAt = accMissionBox.querySelector(".accCreatedAt");
+
+                if(notification.mission_notification_category_id == 1){
+
+                    title.innerText = info.missionInfoDto.title;
+                    status.innerText = info.missionInfoDto.status;
+                    reward.innerText = info.missionInfoDto.reward;
+                    userProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + info.accUserDto.profile_img);
+                    userName.innerText = info.accUserDto.name;
+
+                    var missionResLocation = info.missionInfoDto.registered_location;
+                    const resCutIndex = missionResLocation.indexOf(",");
+                    const resLat = missionResLocation.substring(0, resCutIndex);
+                    const resLng = missionResLocation.substring(resCutIndex + 1);
+
+                    var missionAccLocation = info.missionAcceptedDto.accepted_location;
+                    const accCutIndex = missionAccLocation.indexOf(",");
+                    const accLat = missionAccLocation.substring(0, accCutIndex);
+                    const accLng = missionAccLocation.substring(accCutIndex + 1);
+
+                    setMissionMarkers(resLat,resLng);
+
+                    // resLoc
+                    (function (currentLat, currentLng) {
+                        var geocoder = new kakao.maps.services.Geocoder();
+                        geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                            if (status === kakao.maps.services.Status.OK) {
+                                if (result[0].road_address === null) {
+                                    resLocation.innerText = result[0].address.address_name;
+                                } else {
+                                    resLocation.innerText = result[0].road_address.address_name;
+                                }
+
+                                var locPosition = new kakao.maps.LatLng(lat, lng);
+                                panTo(locPosition);
+                                
+                            } else {
+                                console.log('주소를 가져오지 못했습니다.');
+                            }
+                        });
+                    })(resLat, resLng);
+
+                    // acdLoc
+                    (function (currentLat, currentLng) {
+                        var geocoder = new kakao.maps.services.Geocoder();
+                        geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                            if (status === kakao.maps.services.Status.OK) {
+                                if (result[0].road_address === null) {
+                                    accLocation.innerText = result[0].address.address_name;
+                                } else {
+                                    accLocation.innerText = result[0].road_address.address_name;
+                                }
+                                
+                            } else {
+                                console.log('주소를 가져오지 못했습니다.');
+                            }
+                        });
+                    })(accLat, accLng);
+
+                    let accDate = new Date(info.missionAcceptedDto.created_at);
+                    let accYear = accDate.getFullYear();
+                    let accMonth = accDate.getMonth() + 1;
+                    let accDay = accDate.getDate();
+                    let accHour = accDate.getHours();
+                    let accMinute = accDate.getMinutes();
+
+                    accCreatedAt.innerText = accYear + "년 " + accMonth + "월 " + accDay + "일 " + accHour + "시 " + accMinute + "분";
+
+                }else if(notification.mission_notification_category_id == 2){
+
+                }
 
 
+                
+
+                
+                
+
+        });
 
     }
 
@@ -989,9 +1109,9 @@
         const item_name = document.getElementById("inputTitle").value;
         const total_amount = document.getElementById("inputReward").value;
 
-        const approval_url = `https://192.168.219.103:8888/mission/paymentSuccessPage?order_id=${res.orderInfoDto.order_id}`;
-        const cancel_url = `https://192.168.219.103:8888/mission/paymentCancelPage?order_id=${res.orderInfoDto.order_id}`;
-        const fail_url = `https://192.168.219.103:8888/mission/paymentFailPage?order_id=${res.orderInfoDto.order_id}`;
+        const approval_url = `https://172.30.1.95:8888/mission/paymentSuccessPage?order_id=${res.orderInfoDto.order_id}`;
+        const cancel_url = `https://172.30.1.95:8888/mission/paymentCancelPage?order_id=${res.orderInfoDto.order_id}`;
+        const fail_url = `https://172.30.1.95:8888/mission/paymentFailPage?order_id=${res.orderInfoDto.order_id}`;
 
         const data = new URLSearchParams();
         data.append("cid", "TC0ONETIME");
@@ -1175,8 +1295,8 @@
         loadNotificationBage();
         // setInterval(function() {
         //     loadNotificationBage();
-        // }, 2000);
-    });
+        // }, 10000);
+    }); 
 
 </script>
 
@@ -1248,7 +1368,7 @@
 
     .bg-danger{
         top: 0.42em;
-        left: 18.5em;
+        left: 17.5em;
         right: 0;
     }
 
@@ -1571,9 +1691,9 @@
                                     <div class="col text-center mt-2 mb-1">
                                         <div class="row py-2">
                                             <div class="col d-flex justify-content-center">
-                                                <img class="dtUserProfileImg img-fluid rounded-circle me-1 align-self-center" 
+                                                <img class="userProfileImg img-fluid rounded-circle me-1 align-self-center" 
                                                     style="height: 1.5em; width: 1.5em; object-fit: cover; border-radius: 50%;">
-                                                <span class="dtUserName align-self-center fw-bold ms-1" 
+                                                <span class="userName align-self-center fw-bold ms-1" 
                                                     style="letter-spacing: 0.06em; font-size: 1.1em;">김은비</span>
                                                 <span class="fw-semibold text-dark-emphasis align-self-center"  style="font-size: 1em;">
                                                      님께서 미션을 
@@ -1585,13 +1705,13 @@
                                         <div class="row mt-2">
                                             <div class="col mt-1">
                                                 <i class="bi bi-pin-map me-2 fw-semibold" style="color: #bbbbbb;"></i>
-                                                <span class="text-secondary" style="font-size: 0.95em;">서울특별시 광진구 군자로 7길 24</span>
+                                                <span class="accLocation text-secondary" style="font-size: 0.95em;">서울특별시 광진구 군자로 7길 24</span>
                                             </div>
                                         </div>
                                         <div class="row mt-1">
                                             <div class="col">
                                                 <i class="bi bi-calendar-check me-2 fw-semibold" style="color: #bbbbbb;"></i>
-                                                <span class="text-secondary" style="font-size: 0.95em;">2024년 01월 22일 07시 00분</span>
+                                                <span class="accCreatedAt text-secondary" style="font-size: 0.95em;">2024년 01월 22일 07시 00분</span>
                                             </div>
                                         </div>
                                     </div>

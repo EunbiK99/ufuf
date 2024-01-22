@@ -129,18 +129,24 @@
     where mission_accepted_id = #{mission_accepted_id}
 </select>
 
+<select id="selectMissionAccInfoByMissionId" resultType="com.cu.ufuf.dto.MissionAcceptedDto">
+    select * from mission_accepted
+    where mission_id = #{mission_id}
+</select>
 
 
 
 <!-- 알림 전송 -->
 <insert id="insertNotification">
     insert into mission_notification(
+        mission_notification_category_id,
         user_id,
         mission_id,
         content,
         read_status
         )
     values(
+        #{mission_notification_category_id},
         #{user_id}, 
         #{mission_id},
         #{content},
@@ -155,11 +161,22 @@
     order by created_at DESC
 </select>
 
+<select id="selectNotifcationCategory" resultType="com.cu.ufuf.dto.MissionNotificationCategoryDto">
+    select * from mission_notification_category
+    where mission_notification_category_id = #{mission_notification_category_id}
+</select>
+
 <select id="isExistNotification" resultType="int">
     select count(*) from mission_notification
     where user_id = #{user_id}
     and read_status = 'N'
 </select>
+
+<update id="updateNotifReadStatus">
+    update mission_notification
+    set read_status = 'Y'
+    where mission_notification_id = #{mission_notification_id}
+</update>
 
 
 </mapper>
