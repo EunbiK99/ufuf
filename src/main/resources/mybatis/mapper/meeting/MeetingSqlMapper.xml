@@ -206,6 +206,20 @@ values (
     where groupId = #{groupId}
 </select>
 
+<!-- * 유저PK기준 모집중인 미팅 리스트 셀렉트-->
+<select id="selectMeetingGroupListByProfilePk" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT * from meeting_group mg
+    where profileId = #{profileId}
+</select>
+
+<!-- * 미팅 확정멤버 인서트-->
+<insert id="insertMeetingGroupMember">
+    insert into meeting_groupMember(groupId, profileId) values(
+        #{groupId},
+        #{profileId}
+    )
+</insert>
+
 
 
 

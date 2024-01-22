@@ -22,6 +22,7 @@ import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
@@ -30,6 +31,8 @@ import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/meeting/api/*")
@@ -115,6 +118,7 @@ public class RestMeetingController {
 
     @PostMapping("registerGroupProcess")
     public MeetingRestResponseDto registerGroupProcess(
+        HttpSession session,
         MeetingGroupDto meetingGroupDto,
         MeetingFirstLocationCategoryDto meetingFirstLocationCategoryDto,
         MeetingSecondLocationCategoryDto meetingSecondLocationCategoryDto,        
@@ -201,6 +205,12 @@ public class RestMeetingController {
 
 
         meetingService.registerNewGroup(meetingGroupDto);
+        
+        MeetingGroupMemberDto meetingGroupMemberDto = new MeetingGroupMemberDto();
+        meetingGroupMemberDto.setGroupId(groupPk);
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileDto");
+        meetingGroupMemberDto.setProfileId(meetingProfileDto.getProfileid());
+        meetingService.registerGroupMember(meetingGroupMemberDto);
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
@@ -260,6 +270,22 @@ public class RestMeetingController {
 
         meetingRestResponseDto.setResult("success");
         meetingRestResponseDto.setData(result);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getMyRecruitMeetingList")
+    public MeetingRestResponseDto getMyRecruitMeetingList(HttpSession session){
+
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileDto");
+        
+        int profileId = meetingProfileDto.getProfileid();
+
+        List<MeetingGroupDto> myMeetingGroupDtoList = meetingService.getMeetingGroupListByProfilePk(profileId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(myMeetingGroupDtoList);
         return meetingRestResponseDto;
     }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>내가 모집중인 미팅</title>
+    <title th:text="|${groupDetailInfo.meetingGroupDto.groupTitle} 상세페이지|"></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -28,49 +28,84 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
     </style>
 </head>
 <script th:inline="javascript">
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/;
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+console.log('groupDetailInfo: ', groupDetailInfo);
 
-function getMyRecruitMeetingList(){
-    fetch("./api/getMyRecruitMeetingList")
-    .then(response => response.json())
-    .then(response =>{
-        const myMeetingGroupList = response.data;
-        console.log('myMeetingGroupList: ', myMeetingGroupList);
+function addGroupMember(profileid){
+    const groupId = groupDetailInfo.groupId;
+    console.log('groupId: ', groupId);
+    const profileId = profileid;
+    console.log('profileId: ', profileId);
 
-        const myRecruitGroupWrapperCol = document.getElementById("myRecruitGroupWrapperCol");
-        myRecruitGroupWrapperCol.innerHTML = "";
 
-        for(e of myMeetingGroupList){
-            
-            const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
-            myMeetingGroupListRow.setAttribute("groupId", e.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./meetingGroupDetailPage?groupId=' + ${e.groupId}`);
-            
-            const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
+}
 
-            const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
-            myMeetingGroupTitle.innerText = e.groupTitle;
+function makeGroupDetailPage(){
+    const groupTitle = document.getElementById("groupTitle");
+    groupTitle.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
 
-            const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-            const orginalRegdate = e.regdate;
-            const newRegdate = orginalRegdate[0] + "-" + orginalRegdate[1] + "-" + orginalRegdate[2] + "-  " + orginalRegdate[3] + ":" + orginalRegdate[4] + ":" + orginalRegdate[5];
-            myMeetingGroupRegdate.innerText = newRegdate;
+    const groupCreateUserImage = document.getElementById("groupCreateUserImage");
+    groupCreateUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
 
-            myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
-        }
-    });
+    const groupCreateUserNickname = document.getElementById("groupCreateUserNickname");
+    groupCreateUserNickname.innerText = groupDetailInfo.meetingProfileDto.profileNickname;
+
+    const applyProfileListWrapperCol = document.getElementById("applyProfileListWrapperCol");
+    applyProfileListWrapperCol.innerHTML = "";
+    
+    const applyUserMapList = groupDetailInfo.applyUserMapList;    
+    if(applyUserMapList.length === 0){
+        const noApplyProfileCol = document.querySelector("#templete #noApplyProfileCol").cloneNode(true);
+        const noApplyProfileInfoText = noApplyProfileCol.querySelector("#noApplyProfileInfoText");
+        noApplyProfileInfoText.innerText = "아직 신청한 사람이 없어요 ㅠ_ㅠ";
+        applyProfileListWrapperCol.appendChild(noApplyProfileCol);
+    }
+    else{
+        for(e of applyUserMapList){
+            const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
+            const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
+            applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
+
+            const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
+            applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
+
+            const applyText = applyProfileListRow.querySelector("#applyText");
+            applyText.innerText = e.applyDto.applyComment;
+
+            const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
+            applyProfilePickButton.setAttribute("onclick", `addGroupMember(${e.applyUserProfileDto.profileid})`);
+
+            applyProfileListWrapperCol.appendChild(applyProfileListRow);
+        }        
+    }    
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    
-    getMyRecruitMeetingList();
 
-})
+    makeGroupDetailPage();
+
+});
 
 </script>
+
 <body class="pt-5 pb-5">
     <div class="container-fluid">
         
@@ -95,23 +130,62 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
         
-        <div class="row mt-3">
+        <div class="row">
             <div class="col">
-                
+
                 <div class="row">
-                    <div class="col">
-
+                    <div class="col border border-0 rounded">
                         <div class="row">
+                            <div class="col text-center" style="background-color: #FF8827;">
+                                <span id="groupTitle" class="fs-4 fw-bold text-white"></span>
+                                <span class="fs-4 fw-bold text-white">미팅방</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto align-self-center">
+                                <span class="fs-5 fw-bold">방장 : </span>
+                            </div>
+                            <div class="col-auto align-self-center">
+                                <div class="userImageBox">
+                                    <img id="groupCreateUserImage" class="userImage">
+                                </div>                                
+                            </div>
+                            <div class="col-auto align-self-center">
+                                <span id="groupCreateUserNickname" class="fs-5 fw-bold"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col">
-                                <span class="fs-3 fw-bold">내가 모집중인 미팅</span>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div id="myRecruitGroupWrapperCol" class="col">                                
-                            </div>
-                        </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">참여 신청자 리스트</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll" style="height: 20em; max-height: 20em;">
 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col border border-black rounded mx-1 overflow-y-scroll" style="">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -189,29 +263,59 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="myMeetingGroupListRow" class="row mt-1">
+    <div id="applyProfileListRow" class="row mt-2 mb-2">
         <div class="col">
             <div class="row">
-                <div class="col-auto">
-                    <img id="myMeetingGroupImage" style="width: 5em; height: 5em;">
-                </div>
                 <div class="col">
                     <div class="row">
-                        <div class="col">
-                            <span id="myMeetingGroupTitle" class="fw-bold"></span>
+                        <div class="col-auto">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="userImageBox">
+                                        <img id="applyProfileImage" class="userImage">                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span id="applyProfileNickname" style="font-size: 0.8em;"></span>
+                                </div>
+                            </div>                    
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <span id="myMeetingGroupRegdate"></span>
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="fw-bold">Comment</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span id="applyText" class="fs-6"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-auto align-self-center">
+                    <div class="row">
+                        <div class="col px-1 mx-1 text-center btn btn-success" role="button">
+                            <span class="align-middle" style="font-size: 0.8em;">프로필보기</span>    
+                        </div>                        
+                    </div>
+                    <div class="row mt-2">
+                        <div id="applyProfilePickButton" class="col px-1 mx-1 text-center btn btn-primary" role="button">
+                            <span style="font-size: 0.8em;">선발하기</span>    
+                        </div>
+                    </div>
+                </div>
+                
+            </div>                        
         </div>
     </div>
 
-
+    <div id="noApplyProfileCol" class="col text-center align-self-center">
+        <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-danger"></span>
+    </div>
 
 </div>
 

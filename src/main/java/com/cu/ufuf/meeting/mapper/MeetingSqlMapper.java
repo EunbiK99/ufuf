@@ -8,6 +8,7 @@ import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
+import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
@@ -73,6 +74,12 @@ public interface MeetingSqlMapper {
 
     // * 미팅 모집글에 신청한 신청자리스트 셀렉트
     public List<MeetingApplyUserDto> selectGroupApplyUserList(int groupId);
+
+    // * 접속유저 프로필PK기준 미팅모집글 리스팅
+    public List<MeetingGroupDto> selectMeetingGroupListByProfilePk(int profileId);
+
+    // * 미팅 확정멤버 인서트
+    public void insertMeetingGroupMember(MeetingGroupMemberDto meetingGroupMemberDto);
 
 
 }

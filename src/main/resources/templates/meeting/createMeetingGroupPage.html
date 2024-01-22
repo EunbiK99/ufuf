@@ -48,10 +48,14 @@
 </head>
 
 <script th:inline="javascript">
+let meetingProfileDto = /*[[${session.meetingProfileDto}]]*/;
+console.log('meetingProfileDto: ', meetingProfileDto);
 
 function registerMeetingGroupProcess(){
 
-    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;
+    const userMeetingId = meetingProfileDto.profileid;
+    console.log('userMeetingId: ', userMeetingId);
+
     const groupTitle = document.getElementById('groupTitle').value;
     const groupContent = document.getElementById('groupContent').value;
     const groupHeadCount = document.getElementById('groupHeadCount').value;
