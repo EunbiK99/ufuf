@@ -4,38 +4,54 @@
 <mapper namespace="com.cu.ufuf.mission.mapper.MissionMapSqlMapper">
 
 <select id="createMissionPk" resultType="int">
-    select ifnull(MAX(mission_id)+1, 1) mission_id from mission_info;
+    select ifnull(MAX(mission_id)+1, 1) mission_id from mission_info
+</select>
+
+<select id="createMissionAccPk" resultType="int">
+    select ifnull(MAX(mission_accepted_id)+1, 1) mission_accepted_id from mission_accepted
+</select>
+
+<select id="createMissionComplPk" resultType="int">
+    select ifnull(MAX(mission_complete_id)+1, 1) mission_complete_id from mission_complete
 </select>
 
 <!-- 미션 등록 -->
 <insert id="insertMission">
-    insert into mission_info(mission_id, user_id, title, detail, reward, registerd_location)
-    values(#{mission_id}, 
+    insert into mission_info(mission_id, user_id, title, detail, reward, status, registered_location)
+    values(
+        #{mission_id}, 
         #{user_id}, 
         #{title}, 
         #{detail}, 
-        #{reward}, 
-        #{registerd_location}
-    );
+        #{reward},
+        '수락대기중',
+        #{registered_location}
+    )
 </insert>
+
+<update id="updateStatus" parameterType="hashMap">
+    update mission_info
+    set status = #{param2}
+    where mission_id = #{param1}
+</update>
 
 <!-- 미션 목록 출력(미션 수락이 되지 않은 미션들) -->
 <select id="selectAllMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
     SELECT mi.* FROM mission_info mi
     LEFT JOIN mission_accepted ma ON mi.mission_id = ma.mission_id
-    WHERE ma.mission_id IS NULL;
+    WHERE ma.mission_id IS NULL
 </select>
 
 <!-- 미션 상세보기 -->
 <select id="selectMissionById" resultType="com.cu.ufuf.dto.MissionInfoDto">
     select * from mission_info
-    where mission_id = #{mission_id};
+    where mission_id = #{mission_id}
 </select>
 
 <!-- 미션 등록자 정보 -->
 <select id="selectUserById" resultType="com.cu.ufuf.dto.UserInfoDto">
     select * from user_info
-    where user_id = #{user_id};
+    where user_id = #{user_id}
 </select>
 
 <!--주문 번호로 미션내용 조회 (결제 결과 페이지에서 출력)-->
@@ -51,43 +67,99 @@
 <!-- 아이템 id 출력 -->
 <select id="getItemInfo" resultType="com.cu.ufuf.dto.ItemInfoDto">
     select * from item_info
-    where item_id = #{item_id};
+    where item_id = #{item_id}
 </select>
 
 <!-- 주문번호로 주문내용가져오기 -->
 <select id="getOrderInfo" resultType="com.cu.ufuf.dto.OrderInfoDto">
     select * from order_info
-    where order_id = #{order_id};
+    where order_id = #{order_id}
 </select>
 
 <!-- 미션 수락 -->
-<insert id="insertMissonAcc">
-    insert into mission_accepted(mission_id, user_id, accepted_location)
-    values(#{mission_id}, #{user_id}, #{accepted_location});
+<insert id="insertMissionAcc">
+    insert into mission_accepted(
+        mission_accepted_id,
+        mission_id, 
+        user_id, 
+        accepted_location
+        )
+    values(
+        #{mission_accepted_id}, 
+        #{mission_id}, 
+        #{user_id}, 
+        #{accepted_location}
+    )
 </insert>
 
 <!-- 유저가 등록한 미션 전부 출력 -->
 <select id="selectMissionListByUserId" resultType="com.cu.ufuf.dto.MissionInfoDto">
     select * from mission_info
-    where user_id = #{user_id};
-</select>
-
-<!-- 유저가 등록한 미션 중 아직 미션 수락 내역이 없는 미션 출력 -->
-<select id="getMissionNotAcc" resultType="int">
-    select mi.mission_id from mission_info mi
-    left join mission_accepted ma ON mi.mission_id = ma.mission_id
-    where ma.mission_id IS NULL
-    and mi.user_id = #{user_id};
+    where user_id = #{user_id}
 </select>
 
 <!-- 내가 수락한 미션 -->
-<select id="selectMyAccMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
-    select mi.* from mission_info mi 
-    inner join mission_accepted ma
-    on mi.mission_id = ma.mission_id
-    where ma.user_id = #{user_id};
+<select id="selectMyAccMission" resultType="com.cu.ufuf.dto.MissionAcceptedDto">
+    select * from mission_accepted
+    where user_id = #{user_id}
 </select>
 
+<!-- 수락 미션 정보 -->
+<select id="selectAccMissionByAccId" resultType="com.cu.ufuf.dto.MissionAcceptedDto">
+    select * from mission_accepted
+    where mission_accepted_id = #{mission_accepted_id}
+</select>
+
+<!-- 미션 완료인증 인서트 -->
+<insert id="insertMissionComplete">
+    insert into mission_complete(
+        mission_complete_id, 
+        mission_accepted_id, 
+        complete_img
+        )
+    values(
+        #{mission_complete_id},
+        #{mission_accepted_id}, 
+        #{complete_img}
+    );
+</insert>
+
+<select id="getMissionIdByMissionAccId" resultType="int">
+    SELECT mission_id from mission_accepted
+    where mission_accepted_id = #{mission_accepted_id}
+</select>
+
+
+
+
+<!-- 알림 전송 -->
+<insert id="insertNotification">
+    insert into mission_notification(
+        user_id,
+        mission_id,
+        content,
+        read_status
+        )
+    values(
+        #{user_id}, 
+        #{mission_id},
+        #{content},
+        'N'
+    );
+</insert>
+
+<!-- 알림 가져오기 -->
+<select id="selectNotifcationByUser" resultType="com.cu.ufuf.dto.MissionNotificationDto">
+    select * from mission_notification
+    where user_id = #{user_id}
+    order by created_at DESC
+</select>
+
+<select id="isExistNotification" resultType="int">
+    select count(*) from mission_notification
+    where user_id = #{user_id}
+    and read_status = 'N'
+</select>
 
 
 </mapper>

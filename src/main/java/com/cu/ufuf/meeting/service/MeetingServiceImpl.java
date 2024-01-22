@@ -3,6 +3,7 @@ package com.cu.ufuf.meeting.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -13,7 +14,11 @@ import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MeetingServiceImpl {
@@ -110,6 +115,50 @@ public class MeetingServiceImpl {
     public List<MeetingGroupDto> getGroupListAll(){
         return meetingSqlMapper.selectGroupListAll();
     }
+
+    //* 그룹PK 기준 미팅모집글 상세정보 통합해서 조회 */
+    public Map<String, Object> getGroupDetailInfo(int group_pk){
+        
+        Map<String, Object> map = new HashMap<>();        
+        
+        MeetingGroupDto meetingGroupDto = meetingSqlMapper.selectGroupByGroupId(group_pk);
+        List<MeetingGroupTagDto> meetingGroupTagDtoList = meetingSqlMapper.selectGroupTagListByGroupId(group_pk);
+        
+        int profileId = meetingGroupDto.getProfileId();
+        MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(profileId);
+        
+        List<MeetingTagDto> tagDtoList = new ArrayList<>();
+        for(MeetingGroupTagDto meetingGroupTagDto : meetingGroupTagDtoList){
+            int tagId = meetingGroupTagDto.getTagId();
+            tagDtoList.add(meetingSqlMapper.selectTagByTagId(tagId));
+        }
+
+        List<MeetingProfileDto> applyUserProfileDtoList = new ArrayList<>();
+        List<MeetingApplyUserDto> applyUserDtoList = meetingSqlMapper.selectGroupApplyUserList(group_pk);
+        for(MeetingApplyUserDto meetingApplyUserDto : applyUserDtoList){
+            int applyUserProfileId = meetingApplyUserDto.getProfileId();
+            MeetingProfileDto applyUserMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(applyUserProfileId);
+            applyUserProfileDtoList.add(applyUserMeetingProfileDto);
+        }
+        
+        map.put("meetingGroupDto", meetingGroupDto);
+        map.put("meetingProfileDto", meetingProfileDto);
+        map.put("tagDtoList", tagDtoList);
+        map.put("applyUserProfileDtoList", applyUserProfileDtoList);        
+        
+        return map;    
+    }
+
+    // * 미팅 신청자 인서트
+    public void registerMeetingApplyUser(MeetingApplyUserDto meetingApplyUserDto){
+        meetingSqlMapper.insertMeetingApplyUser(meetingApplyUserDto);
+    }
+
+    // * 미팅 신청내역 존재 확인
+    public int checkExistApplyUser(int profileId, int groupId){
+        return meetingSqlMapper.countMeetingApplyUserByProfileId(profileId, groupId);
+    }
+
 
 
 

@@ -151,6 +151,59 @@ values (
 <!-- * 미팅 모집글 리스팅-->
 <select id="selectGroupListAll" resultType="com.cu.ufuf.dto.MeetingGroupDto">
     SELECT * from meeting_group
+    order by groupId desc
+</select>
+
+<!-- * 그룹PK 기준 모집글 상세 셀렉트-->
+<select id="selectGroupByGroupId" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT * from meeting_group mg
+    where groupid = #{groupId}
+</select>
+
+<!-- * 그룹PK 기준 모집글 태그 셀렉트-->
+<select id="selectGroupTagListByGroupId" resultType="com.cu.ufuf.dto.MeetingGroupTagDto">
+    SELECT * from meeting_group_tag mgt
+    where groupId = #{groupId}
+</select>
+
+<!-- * 프로필PK 기준 미팅프로필 셀렉트-->
+<select id="selectMeetingProfileByProfileId" resultType="com.cu.ufuf.dto.MeetingProfileDto">
+    SELECT * from meeting_profile mp 
+    where profileid = #{profileId}
+</select>
+
+<!-- * 태그PK 기준 태그데이터 셀렉트-->
+<select id="selectTagByTagId" resultType="com.cu.ufuf.dto.MeetingTagDto">
+    SELECT * from meeting_tag mt 
+    where tagid = #{tagId}
+</select>
+
+<!-- * 미팅 신청자 인서트-->
+<insert id="insertMeetingApplyUser">
+    insert into meeting_applyUser(
+        groupId,
+        profileId,
+        applyComment	
+    )
+    values(
+        #{groupId},
+        #{profileId},
+        #{applyComment}
+    )
+</insert>
+
+<!-- * 미팅 신청자 신청내역 존재여부 확인-->
+<select id="countMeetingApplyUserByProfileId" resultType="int">
+    SELECT COUNT(*) from meeting_applyUser
+    where 1=1
+    and profileId = #{profileId}
+    and groupId = #{groupId}
+</select>
+
+<!-- * 모집글에 신청한 유저 미팅프로필 리스트 셀렉트-->
+<select id="selectGroupApplyUserList" resultType="com.cu.ufuf.dto.MeetingApplyUserDto">
+    SELECT * from meeting_applyUser 
+    where groupId = #{groupId}
 </select>
 
 

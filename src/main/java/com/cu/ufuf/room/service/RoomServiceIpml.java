@@ -109,6 +109,7 @@ public class RoomServiceIpml {
         }
 		
         int roomImageCount=roomSqlMapper.roomImageCount(room_info_id);
+        int roomReviewCount=roomSqlMapper.roomReviewCount(room_info_id);
 
         roomMap.put("roomInfoDto", roomInfoDto);
         roomMap.put("userDto", userDto);
@@ -117,6 +118,7 @@ public class RoomServiceIpml {
 		roomMap.put("roomOptionCategoryDto", roomOptionCategoryDto);
         roomMap.put("roomImageCount", roomImageCount);
         roomMap.put("roomGuestReviewDto",roomGuestReviewDto);
+        roomMap.put("roomReviewCount",roomReviewCount);
 
         //이미지랑 옵션 반복문 돌려야하나 멩,,,,일단 해야지
 		

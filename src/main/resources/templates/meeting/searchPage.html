@@ -29,6 +29,11 @@
         /* font-family: 'Tangerine', cursive; */
     }
 
+    .custom-button-color{
+        background-color: blueviolet !important;
+        color : white !important;
+    }
+
     .background-wrapper{
         position: relative;        
         height: 10em;
@@ -55,58 +60,291 @@
     }
 
     .customModal, .modalDialogCentered {
+        /* 트랜지션으로 표시 부드럽게 처리 */
         transition: opacity 0.4s, visibility 0.4s;
         opacity: 0;
         visibility: hidden;
     }
 
     .customModal {
-        width: 100%;
-        height: 100%;
+        /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
         position: fixed;
+        width: 100%;
+        height: 100%;        
+        background-color: rgba(0, 0, 0, 0.5);
+        
+        /* 아래 CSS 모달 화면 중앙에 위치*/
         top: 50%;
         left: 50%;
-        background-color: rgba(0, 0, 0, 0.5);
-        transform: translate(-50%, -50%);       
+        transform: translate(-50%, -50%);
     }
 
     .modalDialogCentered {
+        /* 아래 CSS 모달 컨텐츠 표시*/
+        position: absolute;
         width: 80%;
         height: auto;
         background-color: rgba(255,255,255);
-        position: absolute;
+        
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);                
+        transform: translate(-50%, -50%);
+        display: none;
     }    
 
-    .modalDialogCentered {
-        display: none;
-    }
-
     .active {
+        /* 액티브 토글로 출력-비출력 처리 */
         opacity: 1;
         visibility: visible;
         display: block;
     }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
     </style>
 </head>
-<script>
+<script th:inline="javascript">
+let sessionUserMeetingProfile = /*[[${session.meetingProfileInfo}]]*/;
+
+function applyCheck(groupId){
+    
+    const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
+    
+    fetch("./api/applyCheck?profileId=" + sessionUserMeetingProfileId + "&groupId=" + groupId)
+    .then(response => response.json())
+    .then(response => {
+        const checkResult = response.data;
+        console.log('checkResult: ', checkResult);
+        
+        if(checkResult === 0){
+            showApplyModal(groupId);            
+        }
+        else{
+            alert("이미 신청한 미팅입니다.");
+            closeGroupDetailModal();
+            return;
+        }        
+    });
+    
+}
+
+function registerApplyUser(groupId){        
+    
+    const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;    
+
+    const applyModal = document.getElementById("applyModal");
+    const applyComment = applyModal.querySelector("#applyComment");
+    const applyCommentValue = applyComment.value;
+    
+    if(applyCommentValue.length === 0){
+        alert("가입신청글은 필수 입력항목입니다.");
+        applyComment.focus();
+        return;
+    }
+    
+    // console.log('groupId: ', groupId);
+    // console.log('sessionUserMeetingProfileId: ', sessionUserMeetingProfileId);
+    // console.log('applyCommentValue: ', applyCommentValue);    
+
+    const applyData = {
+        "groupId" : groupId,
+        "profileId" : sessionUserMeetingProfileId,
+        "applyComment" : applyCommentValue
+    }
+
+    fetch("./api/registerApplyUser", {
+        method:'post',
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(applyData)})
+    .then(response => response.json())
+    .then(response =>{
+        const result = response.result;
+        if(result === "success"){
+            alert("미팅 가입 신청이 정상적으로 완료되었습니다.");
+            closeApplyModal();
+            getGroupDetailInfo(groupId);
+        }
+        else{
+            alert("오류 발생");
+        }
+    });    
+}
+
+function getGroupApplyForm(groupId){
+    
+    console.log('sessionUserMeetingProfile: ', sessionUserMeetingProfile);    
+    
+    const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
+    const sessionuserMeetingProfileNickname = sessionUserMeetingProfile.profileNickname;
+
+    const applyModal = document.getElementById("applyModal");
+
+    const applyUserNickname = applyModal.querySelector("#applyUserNickname");
+    applyUserNickname.innerText = sessionuserMeetingProfileNickname;
+
+    const sessionUserImage = applyModal.querySelector("#sessionUserImage");
+    sessionUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${sessionUserMeetingProfile.profileImg}`);
+
+    const applyComment = applyModal.querySelector("#applyComment");
+    applyComment.value = "";
+
+    const applySubmit = applyModal.querySelector("#applySubmit");
+    applySubmit.setAttribute("onclick", `registerApplyUser(${groupId})`);
+    
+}
+
+function getGroupDetailInfo(groupId){
+    fetch("./api/getGroupDetailInfo?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response =>{
+        const groupDetailInfo = response.data;
+
+        console.log('groupDetailInfo: ', groupDetailInfo);
+        console.log('meetingGroupDto: ', groupDetailInfo.meetingGroupDto);
+        console.log('meetingProfileDto: ', groupDetailInfo.meetingProfileDto);
+        console.log('tagDtoList: ', groupDetailInfo.tagDtoList);
+
+        const groupDetailModal = document.getElementById('groupDetailModal');
+        const meetingTitleDetail = groupDetailModal.querySelector("#meetingTitleDetail");
+        meetingTitleDetail.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
+
+        const meetingDateDetail = groupDetailModal.querySelector("#meetingDateDetail");
+        const meetingDate = groupDetailInfo.meetingGroupDto.groupMeetingDate;
+        const dateDetail = meetingDate[0] + '년 ' + meetingDate[1] + '월 ' + meetingDate[2] + '일  ' + meetingDate[3] + '시 ' + meetingDate[4] + '분';
+        meetingDateDetail.innerText = dateDetail;
+
+        const meetingLocationDetail = groupDetailModal.querySelector("#meetingLocationDetail");
+        meetingLocationDetail.innerText = groupDetailInfo.meetingGroupDto.groupMeetingPlace;
+
+        const groupLeaderImage = groupDetailModal.querySelector("#groupLeaderImage");
+        groupLeaderImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
+
+        const groupLeaderNickname = groupDetailModal.querySelector("#groupLeaderNickname");
+        groupLeaderNickname.innerText = groupDetailInfo.meetingProfileDto.profileNickname;
+
+        const groupContentDetail = groupDetailModal.querySelector('#groupContentDetail');
+        groupContentDetail.innerText = groupDetailInfo.meetingGroupDto.groupContent;
+
+        const groupApplyStart = groupDetailModal.querySelector("#groupApplyStart");
+        const startDate = groupDetailInfo.meetingGroupDto.groupApplyStart;
+        const formattedStartDate = startDate[0] + "-" + startDate[1] + "-" + startDate[2];
+        groupApplyStart.innerText = formattedStartDate;
+
+        const groupApplyEnd = groupDetailModal.querySelector("#groupApplyEnd");
+        const endDate = groupDetailInfo.meetingGroupDto.groupApplyEnd;
+        const formattedEndDate = startDate[0] + "-" + startDate[1] + "-" + startDate[2];
+        groupApplyEnd.innerText = formattedEndDate;
+
+        const groupHeadCount = groupDetailModal.querySelector('#groupHeadCount');
+        groupHeadCount.innerText = groupDetailInfo.meetingGroupDto.groupHeadCount;
+
+        const groupGenderOption = groupDetailModal.querySelector("#groupGenderOption");
+        if(groupDetailInfo.meetingGroupDto.groupGenderOption === "M"){
+            groupGenderOption.innerText = '남자만';
+        }
+        else if(groupDetailInfo.meetingGroupDto.groupGenderOption === "F"){
+            groupGenderOption.innerText = '여자만';
+        }
+        else{
+            groupGenderOption.innerText = '남녀무관';
+        }
+
+        const groupApplyCharge = groupDetailModal.querySelector("#groupApplyCharge");
+        groupApplyCharge.innerText = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+
+        const groupTagWrapper = groupDetailModal.querySelector("#groupTagWrapper");
+        groupTagWrapper.innerHTML = "";
+        const tagList = groupDetailInfo.tagDtoList;
+        for(e of tagList){
+            const groupTag = document.createElement("button");
+            groupTag.setAttribute('class', 'tagButton btn btn-sm rounded-pill custom-button-color mx-1');
+            groupTag.innerText = e.tagName;
+            groupTagWrapper.appendChild(groupTag);
+        }
+
+        const applyUserProfieImageListRow = groupDetailModal.querySelector("#applyUserProfieImageListRow");
+        applyUserProfieImageListRow.innerHTML = "";
+        const applyUserProfileDtoList = groupDetailInfo.applyUserProfileDtoList;
+        
+        if(applyUserProfileDtoList.length === 0){
+            const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
+            applyUserProfieImageListRow.appendChild(applyUserNotExist);
+        }
+        else{
+            for(e of applyUserProfileDtoList){
+                const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
+                const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
+                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.profileImg}`)
+                applyUserImage.setAttribute("alt", e.profileNickname);               
+                applyUserImage.setAttribute("title", e.profileNickname);               
+                
+                const applyImageNickname = applyUserImageBox.querySelector("#applyImageNickname");
+                applyImageNickname.innerText = e.profileNickname;
+
+                applyUserProfieImageListRow.appendChild(applyUserImageBox);
+            }
+        }
+
+        const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
+        console.log("sessionUserMeetingProfileId : " + sessionUserMeetingProfileId + "/ type : " + typeof sessionUserMeetingProfileId);
+        console.log("profileId : " + groupDetailInfo.meetingGroupDto.profileId + "/ type : " + typeof groupDetailInfo.meetingGroupDto.profileId);
+        
+        if(groupDetailInfo.meetingGroupDto.profileId === sessionUserMeetingProfileId){
+            const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');
+            const groupApplyButtonText = groupApplyButton.querySelector("#groupApplyButtonText");
+            groupApplyButtonText.innerText = "모집관리"
+            groupApplyButton.setAttribute("onclick", "");
+        }
+        else{
+            const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');            
+            groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);
+        }
+    });
+}
 
 // 모집글 상세정보 모달
-function showGroupDetailModal(){
-    // 필요시 여기서 백엔드하고 연동...CSR
-    const customModal = document.querySelector(".customModal");
-    customModal.classList.add('active');
-    const modalDialogCentered = document.querySelector(".modalDialogCentered");
-    modalDialogCentered.classList.add('active');    
+function showGroupDetailModal(groupId){    
+    getGroupDetailInfo(groupId);
+    const groupDetailModal = document.querySelector("#groupDetailModal");
+    groupDetailModal.classList.add('active');
+    const groupDetailModalDialog = document.querySelector("#groupDetailModalDialog");
+    groupDetailModalDialog.classList.add('active');    
 }
 
 function closeGroupDetailModal(){
-    const customModal = document.querySelector(".customModal");
-    customModal.classList.remove('active');
-    const modalDialogCentered = document.querySelector(".modalDialogCentered");
-    modalDialogCentered.classList.remove('active');    
+    const groupDetailModal = document.querySelector("#groupDetailModal");
+    groupDetailModal.classList.remove('active');
+    const groupDetailModalDialog = document.querySelector("#groupDetailModalDialog");
+    groupDetailModalDialog.classList.remove('active');    
+}
+
+// 지원하기 모달
+function showApplyModal(groupId){
+    getGroupApplyForm(groupId);
+    const applyModal = document.getElementById("applyModal");
+    applyModal.classList.add('active');
+    const applyModalDialog = document.getElementById("applyModalDialog");
+    applyModalDialog.classList.add('active');
+}
+
+function closeApplyModal(){
+    const applyModal = document.getElementById("applyModal");
+    applyModal.classList.remove('active');
+    const applyModalDialog = document.getElementById("applyModalDialog");
+    applyModalDialog.classList.remove('active');
 }
 
 function getGroupList(){
@@ -121,6 +359,7 @@ function getGroupList(){
         
         for(e of groupListAll){
             const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+            groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
             const customBackground = groupListWrapper.querySelector(".custom-background");
             customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
             
@@ -228,7 +467,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
@@ -248,10 +487,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     </div>
 
 
-
+<!--/* 템플릿 */-->
 <div id="templete" class="d-none">
     
-    <div id="groupListWrapper" class="row background-wrapper mb-1" role="button" onclick="showGroupDetailModal()">                
+    <!--/* 미팅메인 모집글 템플릿 */-->
+    <div id="groupListWrapper" class="row background-wrapper mb-1" role="button">                
         <div class="col">
             <img class="custom-background">
         </div>
@@ -275,20 +515,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     </div>
                 </div>
             </div>
-        </div>
-        
+        </div>        
     </div>
+
+    <!--/* 모집글 상세 신청자명단 템플릿 */-->
+    <div id="applyUserImageBox" class="col-auto">
+        <div class="row">
+            <div class="col">
+                <div class="userImageBox">
+                    <img id="applyUserImage" class="userImage">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span id="applyImageNickname" style="font-size: 0.8em;"></span>
+            </div>
+        </div>        
+    </div>
+
+    <!--/* 신청자 없을 시 안내문구 템플릿 */-->
+    <div id="applyUserNotExist" class="col">
+        <span class="fw-bold text-danger fs-5">아직 신청한 인원이 없습니다.</span>
+    </div>
+    
 </div>
 
 <!--/* 모집글 상세정보 모달 */-->
 <div id="groupDetailModal" class="customModal" tabindex="-1">
-    <div class="modal-dialog border border-0 rounded modalDialogCentered">
+    <div id="groupDetailModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
         <div class="modal-content container-fluid rounded-2">
             <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span class="modal-title fw-bold text-white">모집글 타이틀 영역</span>
+                            <span id="meetingTitleDetail" class="modal-title fw-bold text-white fs-4"></span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeGroupDetailModal()" class="btn btn-close"></button>                            
@@ -299,13 +560,201 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
             <div class="row modal-body mt-2">
                 <div class="col">
-                    <span>모달 바디</span>
+                    <div class="row border-bottom">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">                                    
+                                    <span id="meetingDateDetail" class="fs-5"></span>
+                                </div>                                
+                            </div>
+                            <div class="row mt-2 mb-2">
+                                <div class="col">
+                                    <span id="meetingLocationDetail" class="fs-5"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <div class="userImageBox">
+                                                <img id="groupLeaderImage" class="userImage">
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col align-self-center">
+                                    <span id="groupLeaderNickname" class="fs-5"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 border-bottom">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <span id="groupContentDetail"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-2 mt-2">
+                                <div id="groupTagWrapper" class="col">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <span>모집기한 : </span>
+                                    <span id="groupApplyStart"></span>
+                                    <span> ~ </span>
+                                    <span id="groupApplyEnd"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col">
+                                    <span>인원 : (</span>
+                                    <span>/</span>
+                                    <span id="groupHeadCount"></span>
+                                    <span>)</span>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col">
+                                    <span>모집성별 : </span>
+                                    <span id="groupGenderOption"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-1 border-bottom">
+                                <div class="col">
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <span>회비 : </span>
+                                            <span id="groupApplyCharge"></span>
+                                            <span>원</span>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <span>신청자명단</span>
+                                </div>
+                            </div>
+                            <div class="row mt-2 mb-3">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div id="applyUserProfieImageListRow" class="row overflow-x-auto" style="width: 200%;">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>                
             </div>
 
-            <div class="row modal-footer mt-2 mb-2">                
+            <div class="row modal-footer border-top">                
+                <div id="groupApplyButton" class="col border-end btn" type="button">
+                    <div class="row mt-2 mb-2">
+                        <div class="col text-center">
+                            <span id="groupApplyButtonText">참가신청</span>
+                        </div>                         
+                    </div>                    
+                </div>
+                <div class="col btn" role="button" onclick="closeGroupDetailModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* 모집글 지원 모달 */-->
+<div id="applyModal" class="customModal" tabindex="-1">
+    <div id="applyModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
                 <div class="col">
-                    <span>모달 푸터</span>
+                    <div class="row my-2">
+                        <div class="col">
+                            <span id="" class="modal-title fw-bold text-white fs-4">참가 신청서 작성</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeApplyModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
+
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="co-auto">
+                                            <div class="userImageBox">
+                                                <img id="sessionUserImage" class="img-fluid userImage">
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col align-self-center">
+                                    <span id="applyUserNickname" class="fs-5"></span>
+                                    <span class="fs-5">님</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <span>Apply Comment</span>
+                                </div>
+                            </div>
+                            <div class="row mt-1 mb-3">
+                                <div class="col">
+                                    <textarea id="applyComment" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row modal-footer">                
+                <div id="applySubmit" class="col border-end btn" type="button">
+                    <div class="row mt-2 mb-2">
+                        <div class="col text-center">
+                            <span>작성완료!</span>
+                        </div>                         
+                    </div>                    
+                </div>
+                <div class="col btn" role="button" onclick="closeApplyModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
                 </div>                
             </div>
         </div>

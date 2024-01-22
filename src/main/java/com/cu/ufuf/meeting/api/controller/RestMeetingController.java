@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -63,7 +64,7 @@ public class RestMeetingController {
             String originalFilename = profile_Img.getOriginalFilename();
             System.out.println(originalFilename);
 
-            String rootPath = "c:/uploadFiles/ufuf/meeting/";
+            String rootPath = "c:/uploadFiles/ufuf/meeting/profileImage/";
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd/");
             String todayPath = sdf.format(new Date());
 
@@ -217,6 +218,48 @@ public class RestMeetingController {
 
         meetingRestResponseDto.setResult("success");
         meetingRestResponseDto.setData(groupList);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getGroupDetailInfo")
+    public MeetingRestResponseDto getGroupDetailInfo(int groupId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getGroupDetailInfo(groupId));
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerApplyUser")
+    public MeetingRestResponseDto registerApplyUser(@RequestBody MeetingApplyUserDto meetingApplyUserDto){
+        System.out.println("registerApplyUser 실행됨");
+        System.out.println(meetingApplyUserDto.getGroupId());
+        System.out.println(meetingApplyUserDto.getProfileId());
+        System.out.println(meetingApplyUserDto.getApplyComment());
+
+
+        meetingService.registerMeetingApplyUser(meetingApplyUserDto);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("applyCheck")
+    public MeetingRestResponseDto applyCheck(int profileId, int groupId){
+        System.out.println("applyCheck 실행됨");
+        System.out.println("profileId : " + profileId);
+        System.out.println("groupId : " + groupId);
+
+        int result = meetingService.checkExistApplyUser(profileId, groupId);
+        System.out.println("result : " + result);
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(result);
         return meetingRestResponseDto;
     }
 

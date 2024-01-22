@@ -51,7 +51,7 @@
 
 function registerMeetingGroupProcess(){
 
-    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;    
+    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;
     const groupTitle = document.getElementById('groupTitle').value;
     const groupContent = document.getElementById('groupContent').value;
     const groupHeadCount = document.getElementById('groupHeadCount').value;
@@ -347,11 +347,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 
-<body>
+<body class="pt-5 pb-5">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row sticky-top bg-white" style="height: 3.3em;">
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 justify-content-between">
                     <div class="col">
@@ -628,7 +628,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
