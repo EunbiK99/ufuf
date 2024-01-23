@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gugi&family=Jua&display=swap" rel="stylesheet">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c1a3fb01af622d05a21a2037b7b02bc&libraries=services"></script>
+    
 
     <style>
         .carousel-indicators {
@@ -33,6 +34,9 @@
     </style>
 
     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
         let myId = null;
         const roomInfoId = "[[${roomDetail.roomInfoDto.room_info_id}]]";
         
@@ -135,9 +139,11 @@
             //setInterval(reloadCommentList, 15000);
         });
 
+      
    
     </script>
 
+    
     
     
     
@@ -149,12 +155,12 @@
 <body>
     <div class="container">
         <!-- 탑부분(뒤로가기, 좋아요, 공유)-->
-        <div class="fixed-top row pb-1 bg-white" style="position: fixed; top: 0; width: 100%;">
+        <div class="fixed-top row pb-1 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <div class="col">
                 <div class="row pt-2 ps-1">
                     <!--뒤로가기-->
                     <div class="col-1 ps-0 pt-2 pb-2 me-3 ms-4">
-                        <a class="text-secondary" href="./roomListPage" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
+                        <a class="text-secondary" onclick="goBack()" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
                     </div>
 
                     <div class="col"></div>
@@ -397,9 +403,9 @@
         </div>
         <div class="row" th:if="${roomDetail.roomInfoDto.people_count_standard != roomDetail.roomInfoDto.people_count_limit}">
             <div class="col">
-                <div class="row ps-2 mx-2 mt-3 text-secondary fw-bold">인원 추가요금</div>
+                <div class="row ps-1 mx-1 mt-3 text-secondary fw-bold">인원 추가요금</div>
                 
-                <div class="row ps-2 mt-2">
+                <div class="row ps-1 ms-1 mt-2">
                     <div class="col-2 ps-0 pe-0 me-0">1인당 </div>
                     <div class="col-2 ms-0 ps-0 pe-0 tent-end me-0 fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></div>
                     <div class="col-1 ms-0 ps-0 pe-0 me-0">원</div>
@@ -455,11 +461,16 @@
         <div class="row">
             <div class="col" th:if="${roomDetail.roomReviewCount!=0}">
                 <div class="row m-2 border rounded" th:each="review:${roomDetail.roomGuestReviewDto}">
-                    <div class="col mx-2">
-                        
-                        <span th:utext="${'&#9733;'.repeat(review.review_grade)}"></span>
-                        <div class="row border-bottom pb-2 mt-3" th:text="${review.review_grade}"></div>
-                        <div class="row mt-2 mb-3" th:text="${review.review_content}"></div>
+                    <div class="col ms-2 mx-2">
+                        <div class="row ms-0 ps-0 pb-2 mt-3">
+                            <div class="col-4 ms-0 ps-0 me-0 pe-0">
+                                <span class="p-0 me-0 pe-0 m-0 text-warning" th:utext="${'&#9733;'.repeat(review.review_grade)}"></span>
+                                <span class="ps-0 ms-0 me-0 pe-0 pb-1 m-0 text-secondary" th:utext="${'&#9734;'.repeat(5 - review.review_grade)}"></span>
+                            </div>
+                            <div class="col ms-0 ps-0 pt-1 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
+                            <div class="col-4 ms-0 ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
+                        </div>
+                        <div class="row ps-3 mt-2 mb-3" th:text="${review.review_content}"></div>
                     </div>
                 </div>
             </div>

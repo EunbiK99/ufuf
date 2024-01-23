@@ -12,7 +12,7 @@
 <body>
     <div class="container" th:if="${session.sessionUserInfo.user_id == reservationInfo.roomGuestDto.user_id}">
          <!-- 페이지 네비-->
-         <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+         <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <!--뒤로가기-->
             <div class="col-1">
                 <a class="btn" th:href="@{./roomDetailPage(room_info_id=${reservationInfo.roomInfoDto.room_info_id})}"><i class="bi bi-x-lg text-secondary"></i></a> 

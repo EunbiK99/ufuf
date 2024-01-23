@@ -10,6 +10,7 @@
     
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
+        //주소 자동 넣어주는거
         function execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function(data) {
@@ -78,6 +79,183 @@
                 // 오류 처리를 수행합니다.
             });
         }
+
+
+        function roomFormSubmit() {
+            const roomSubmit=document.getElementById("roomSubmit");
+            
+            
+            //방 메인이미지
+            const roomMainImage=document.getElementById("roomMainImage");
+            if(roomMainImage.value==''){
+                alert("메인이미지를 업로드 해야 합니다.");
+                roomMainImage.focus();
+                return;
+            }
+            
+            //방 상세이미지
+            const roomDetailImage=document.getElementById("roomDetailImage");
+            if(roomDetailImage.value==''){
+                alert("추가 이미지를 1개 이상 업로드 해야 합니다.");
+                roomDetailImage.focus();
+                return;
+            }
+            
+            //제목
+            const roomTitle=document.getElementById("roomTitle");
+            if(roomTitle.value==''){
+                alert("제목을 입력해 주세요.");
+                roomTitle.focus();
+                return;
+            }
+            
+            //내용
+            const roomContent=document.getElementById("roomContent");
+            if(roomContent.value==''){
+                alert("내용을 입력해 주세요.");
+                roomContent.focus();
+                return;
+            }
+        
+            //방 갯수
+            const roomCount=document.getElementById("roomCount");
+            if(roomCount.value==''){
+                alert("방 갯수를 입력해 주세요.");
+                roomCount.focus();
+                return;
+            }
+            //침대 갯수
+            const bedCount=document.getElementById("bedCount");
+            if(bedCount.value==''){
+                alert("침대 갯수를 입력해 주세요");
+                bedCount.focus();
+                return;
+            }
+            
+            
+            //화장실 갯수
+            const toiletCount=document.getElementById("toiletCount");
+            if(toiletCount.value==''){
+                alert("화장실 갯수를 입력해 주세요");
+                toiletCount.focus();
+                return;
+            }
+            
+            //전용면적
+            const roomArea=document.getElementById("roomArea");
+            if(roomArea.value==''){
+                alert("전용면적(평)을 입력해 주세요.");
+                roomArea.focus();
+                return;
+            }
+            
+            //주소1
+            const postcode=document.getElementById("postcode");
+            if(postcode.value==''){
+                alert("우편번호를 입력해 주세요.");
+                postcode.focus();
+                return;
+            }
+            
+            //주소2
+            const address=document.getElementById("address");
+            if(address.value==''){
+                alert("주소를 입력해 주세요.");
+                address.focus();
+                return;
+            }
+
+            //주소2
+            const detailAddress=document.getElementById("detailAddress");
+            if(detailAddress.value==''){
+                alert("상세주소를 입력해 주세요.");
+                detailAddress.focus();
+                return;
+            }
+            
+            //기준인원
+            const peopleStandardCount=document.getElementById("peopleStandardCount");
+            if(peopleStandardCount.value==''){
+                alert("기준인원을 입력해 주세요.");
+                peopleStandardCount.focus();
+                return;
+            }
+            
+            //최대인원
+            const peoplelimitCount=document.getElementById("peoplelimitCount");
+            if(peoplelimitCount.value==''){
+                alert("최대인원을 입력해 주세요.");
+                peoplelimitCount.focus();
+                return;
+            }
+
+            //추가금
+            const extraMoney=document.getElementById("extraMoney");
+            if(extraMoney.value==''){
+                alert("추가금액을 입력해 주세요.");
+                extraMoney.focus();
+                return;
+            }
+
+            //1박 가격
+            const roomCharge=document.getElementById("roomCharge");
+            if(roomCharge.value==''){
+                alert("숙박비를 입력해 주세요.");
+                roomCharge.focus();
+                return;
+            }
+
+            //예약가능일정(시작)
+            const startSchedule=document.getElementById("startSchedule");
+            if(startSchedule.value==''){
+                alert("예약가능 일정을 입력해 주세요.");
+                startSchedule.focus();
+                return;
+            }
+
+            //예약가능일정(끝)
+            const endSchedule=document.getElementById("endSchedule");
+            if(endSchedule.value==''){
+                alert("예약가능 일정을 입력해 주세요.");
+                endSchedule.focus();
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="room_option_category_id"]:checked');
+            if (checkboxes.length === 0) {
+                alert('기본 옵션을 선택해 주세요.');
+                // 추가적인 처리나 포커스 등을 원하는 대로 설정할 수 있습니다.
+                return;
+            }
+ 
+            roomSubmit.submit();
+        }
+
+        function checkSchedule() {
+            const startScheduleInput = document.getElementById("startSchedule");
+            const endScheduleInput = document.getElementById("endSchedule");
+
+            // 값이 비어있는지 확인
+            if (startScheduleInput.value === '' || endScheduleInput.value === '') {
+                alert("날짜를 입력해 주세요.");
+                return;
+            }
+
+            // 날짜 형식인지 확인
+            const startSchedule = new Date(startScheduleInput.value);
+            const endSchedule = new Date(endScheduleInput.value);
+
+            // 시작 날짜가 종료 날짜보다 늦으면
+            if (startSchedule > endSchedule) {
+                // 알림 메시지 출력
+                alert("일정을 다시 확인 해주세요.");
+
+                // 입력값 초기화
+                startScheduleInput.value = "";
+                endScheduleInput.value = "";
+                startScheduleInput.focus();
+            }
+        }
     </script>
 </head>
 
@@ -85,11 +263,11 @@
     
     <div class="container">
         <!-- 페이지 네비-->
-        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <!--뒤로가기-->
             <div class="col-1">
                 <!--나중에 게스트하우스 목록페이지나 마이페이지같은데로 링크 삽입-->
-                <a class="btn" href="#"><i class="bi bi-x-lg text-secondary"></i></a> 
+                <a href="./roomMainPage"><i class="bi bi-x-lg text-secondary"></i></a> 
             </div>
 
             <!--무슨페이지인지 알 수 있게-->
@@ -101,55 +279,55 @@
 
         
         <!--정보 입력-->
-        <form action="./roomRegisterProcess" method="post" enctype="multipart/form-data">
+        <form id="roomSubmit" action="./roomRegisterProcess" method="post" enctype="multipart/form-data">
             <div class="row mt-3">
                 <div class="col">
                     <!--방 메인사진-->
                     <div class="row mt-2 ms-2 fw-bold text-secondary">메인사진 등록</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="file" name="mainImageFile" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="roomMainImage" type="file" name="mainImageFile" class="form-control"></div>
                     </div>
 
                     <!--추가 사진 등록-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">추가 사진 등록</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="file" name="imageFiles" class="form-control" multiple></div>
+                        <div class="col mx-2 mt-2"><input id="roomDetailImage" type="file" name="imageFiles" class="form-control" multiple></div>
                     </div>
 
                     <!--제목-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">제목</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="text" name="title" class="form-control" placeholder="제목을 입력해주세요."></div>
+                        <div class="col mx-2 mt-2"><input id="roomTitle" type="text" name="title" class="form-control" placeholder="제목을 입력해주세요."></div>
                     </div>
 
                     <!--설명-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">설명</div>
                     <div class="row pb-3 ">
                         <div class="col mx-2 mt-2">
-                            <textarea rows="10" name="content" class="form-control" placeholder="설명을 입력해주세요."></textarea>
+                            <textarea id="roomContent" rows="10" name="content" class="form-control" placeholder="설명을 입력해주세요."></textarea>
                         </div>
                     </div>
 
                     <!--방, 침대, 화장실 갯수-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">방 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" name="room_count" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="roomCount" type="number" name="room_count" class="form-control"></div>
                     </div>
 
                     <div class="row mt-4 ms-2 fw-bold text-secondary">침대 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" name="bed_count" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="bedCount" type="number" name="bed_count" class="form-control"></div>
                     </div>
                     
                     <div class="row mt-4 ms-2 fw-bold text-secondary">화장실 갯수</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" name="toilet_count" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="toiletCount" type="number" name="toilet_count" class="form-control"></div>
                     </div>
 
                     <!--전용면적-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">전용면적(평)</div>
                     <div class="row">
-                        <div class="col ms-2"><input type="number" name="room_area" class="form-control"></div>
+                        <div class="col ms-2"><input id="roomArea" type="number" name="room_area" class="form-control"></div>
                         <div class="col-1 me-3 pt-1 text-secondary ms-1">평</div>
                     </div>
 
@@ -157,7 +335,7 @@
                     <div class="row mt-4 ms-2 fw-bold text-secondary">게스트하우스 주소</div>
                     <div class="row mt-3">
                         <div class="col-7 ms-2 me-0"><input type="text" name="location" class="form-control" id="postcode" placeholder="우편번호"></div>
-                        <div class="col-3 ms-3 me-1"><input  type="button" class="btn btn-secondary" onclick="execDaumPostcode()" value="우편번호 찾기"></div>
+                        <div class="col-3 ms-3 me-1"><input type="button" class="btn btn-secondary" onclick="execDaumPostcode()" value="우편번호 찾기"></div>
                     </div>
                     <div class="row">
                         <div class="col mx-2 mt-2"><input type="text" name="location" id="address" class="form-control" placeholder="주소"></div>
@@ -235,34 +413,35 @@
                     <!--기준인원, 최대 인원-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">기준 인원</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" name="people_count_standard" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="peopleStandardCount" type="number" name="people_count_standard" class="form-control"></div>
                     </div>
                     <div class="row mt-4 ms-2 fw-bold text-secondary">최대 인원</div>
                     <div class="row">
-                        <div class="col mx-2 mt-2"><input type="number" name="people_count_limit" class="form-control"></div>
+                        <div class="col mx-2 mt-2"><input id="peoplelimitCount" type="number" name="people_count_limit" class="form-control"></div>
                     </div>
 
                     <!--인원 추가금-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">인원 추가금(1인당)</div>
                     <div class="row mt-2">
-                        <div class="col ms-2"><input type="number" name="extra_money" class="form-control"></div>
+                        <div class="col ms-2"><input id="extraMoney" type="number" name="extra_money" class="form-control"></div>
                         <div class="col-1 me-3 pt-1 text-secondary ms-1">원</div>
                     </div>
 
                     <!--1박당 가격-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">1박 가격</div>
                     <div class="row mt-2">
-                        <div class="col ms-2"><input type="number" name="room_charge" class="form-control"></div>
+                        <div class="col ms-2"><input id="roomCharge" type="number" name="room_charge" class="form-control"></div>
                         <div class="col-1 me-3 pt-1 text-secondary ms-1">원</div>
                     </div>
 
                     <!--일정-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 가능 일정</div>
                     <div class="row">
-                        <div class="col-5 mx-2 mt-2"><input type="date" name="start_schedule" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input id="startSchedule" type="date" name="start_schedule" class="form-control"></div>
                         <div class="col-1 fs-5 fw-bold text-secondary pt-2">~</div>
-                        <div class="col-5 mx-2 mt-2"><input type="date" name="end_schedule" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input id="endSchedule" type="date" name="end_schedule" class="form-control" onblur="checkSchedule()"></div>
                     </div>
+                    
 
                     <!--기본옵션-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">기본옵션</div>
@@ -289,7 +468,7 @@
                     <div class="fixed-bottom bg-white">
                         <div class="row text-center pb-2 border-top border-secondery-subtle">
                             <div class="col d-grid mx-2 mt-2 mb-4">
-                                <input type="submit" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="등록하기">
+                                <input onclick="roomFormSubmit()" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="등록하기">
                             </div>
                         </div>
                     </div>
