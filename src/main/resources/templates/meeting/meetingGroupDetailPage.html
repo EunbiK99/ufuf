@@ -117,6 +117,7 @@ function addGroupMember(target){
         .then(response => response.json())
         .then(response =>{
             alert("[" + applyUserNickname + "]" + " 님이 미팅멤버로 선발되었습니다.");
+            makeGroupDetailPage();
             getMeetingGroupMemberList();
             countMeetingGroupMember();
         });
@@ -146,7 +147,7 @@ function makeGroupDetailPage(){
     if(applyUserMapList.length === 0){
         const noApplyProfileCol = document.querySelector("#templete #noApplyProfileCol").cloneNode(true);
         const noApplyProfileInfoText = noApplyProfileCol.querySelector("#noApplyProfileInfoText");
-        noApplyProfileInfoText.innerText = "아직 신청한 사람이 없어요 ㅠ_ㅠ";
+        noApplyProfileInfoText.innerText = "현재 신청한 인원이 없습니다.";
         applyProfileListWrapperCol.appendChild(noApplyProfileCol);
     }
     else{

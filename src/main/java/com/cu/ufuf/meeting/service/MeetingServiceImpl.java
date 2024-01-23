@@ -147,12 +147,16 @@ public class MeetingServiceImpl {
         }
 
         List<MeetingGroupMemberDto> groupMemberDtoList = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
+        int groupMemberCountValue = meetingSqlMapper.countMeetingGroupMemberByGroupId(group_pk);
+        int groupApplyUserCountValue = meetingSqlMapper.countMeetingGroupApplyUserByGroupId(group_pk);
         
         map.put("meetingGroupDto", meetingGroupDto);
         map.put("meetingProfileDto", meetingProfileDto);
         map.put("tagDtoList", tagDtoList);
         map.put("applyUserMapList", applyUserMapList);
         map.put("groupMemberDtoList", groupMemberDtoList);
+        map.put("groupMemberCountValue", groupMemberCountValue);
+        map.put("groupApplyUserCountValue", groupApplyUserCountValue);
         
         return map;    
     }

@@ -257,6 +257,12 @@ values (
     where groupId = #{groupId}
 </select>
 
+<!-- * 모집글PK 기준 해당 모집글 지원인원 카운팅-->
+<select id="countMeetingGroupApplyUserByGroupId" resultType="map">
+    SELECT count(*) from meeting_applyUser mau 
+    where groupId = #{groupId}
+</select>
+
 
 
 

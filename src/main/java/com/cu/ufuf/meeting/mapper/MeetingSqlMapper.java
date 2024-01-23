@@ -94,5 +94,8 @@ public interface MeetingSqlMapper {
     // * 미팅 모집글PK 기준 확정멤버수 카운트
     public int countMeetingGroupMemberByGroupId(int groupId);
 
+    // * 미팅 모집글PK 기준 신청멤버수 카운트
+    public int countMeetingGroupApplyUserByGroupId(int groupId);
+
 
 }

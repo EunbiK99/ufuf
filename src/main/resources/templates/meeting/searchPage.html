@@ -238,10 +238,17 @@ function getGroupDetailInfo(groupId){
         const groupContentDetail = groupDetailModal.querySelector('#groupContentDetail');
         groupContentDetail.innerText = groupDetailInfo.meetingGroupDto.groupContent;
 
+        const applyUserCount = groupDetailModal.querySelector("#applyUserCount");
+        applyUserCount.innerText = groupDetailInfo.groupApplyUserCountValue;
+
         const groupApplyStart = groupDetailModal.querySelector("#groupApplyStart");
         const startDate = groupDetailInfo.meetingGroupDto.groupApplyStart;
         const formattedStartDate = startDate[0] + "-" + startDate[1] + "-" + startDate[2];
         groupApplyStart.innerText = formattedStartDate;
+
+        const groupMemberCount = groupDetailModal.querySelector("#groupMemberCount");
+        groupMemberCount.innerText = groupDetailInfo.groupMemberCountValue;
+
 
         const groupApplyEnd = groupDetailModal.querySelector("#groupApplyEnd");
         const endDate = groupDetailInfo.meetingGroupDto.groupApplyEnd;
@@ -277,22 +284,22 @@ function getGroupDetailInfo(groupId){
 
         const applyUserProfieImageListRow = groupDetailModal.querySelector("#applyUserProfieImageListRow");
         applyUserProfieImageListRow.innerHTML = "";
-        const applyUserProfileDtoList = groupDetailInfo.applyUserProfileDtoList;
+        const applyUserMapList = groupDetailInfo.applyUserMapList;
         
-        if(applyUserProfileDtoList.length === 0){
+        if(applyUserMapList.length === 0){
             const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
             applyUserProfieImageListRow.appendChild(applyUserNotExist);
         }
         else{
-            for(e of applyUserProfileDtoList){
+            for(e of applyUserMapList){
                 const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
                 const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
-                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.profileImg}`)
-                applyUserImage.setAttribute("alt", e.profileNickname);               
-                applyUserImage.setAttribute("title", e.profileNickname);               
+                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserMeetingProfileDto.profileImg}`)
+                applyUserImage.setAttribute("alt", e.applyUserMeetingProfileDto.profileNickname);               
+                applyUserImage.setAttribute("title", e.applyUserMeetingProfileDto.profileNickname);               
                 
                 const applyImageNickname = applyUserImageBox.querySelector("#applyImageNickname");
-                applyImageNickname.innerText = e.profileNickname;
+                applyImageNickname.innerText = e.applyUserMeetingProfileDto.profileNickname;
 
                 applyUserProfieImageListRow.appendChild(applyUserImageBox);
             }
@@ -317,6 +324,8 @@ function getGroupDetailInfo(groupId){
 
 // 모집글 상세정보 모달
 function showGroupDetailModal(groupId){    
+    
+    document.body.style.overflow = 'hidden';
     getGroupDetailInfo(groupId);
     const groupDetailModal = document.querySelector("#groupDetailModal");
     groupDetailModal.classList.add('active');
@@ -325,6 +334,8 @@ function showGroupDetailModal(groupId){
 }
 
 function closeGroupDetailModal(){
+    
+    document.body.style.overflow = 'auto';
     const groupDetailModal = document.querySelector("#groupDetailModal");
     groupDetailModal.classList.remove('active');
     const groupDetailModalDialog = document.querySelector("#groupDetailModalDialog");
@@ -535,7 +546,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     </div>
 
     <!--/* 신청자 없을 시 안내문구 템플릿 */-->
-    <div id="applyUserNotExist" class="col">
+    <div id="applyUserNotExist" class="col text-center">
         <span class="fw-bold text-danger fs-5">아직 신청한 인원이 없습니다.</span>
     </div>
     
@@ -618,7 +629,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             </div>
                             <div class="row mt-1">
                                 <div class="col">
-                                    <span>인원 : (</span>
+                                    <span>확정인원 : (</span>
+                                    <span id="groupMemberCount"></span>
                                     <span>/</span>
                                     <span id="groupHeadCount"></span>
                                     <span>)</span>
@@ -646,15 +658,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     <div class="row mt-2">
                         <div class="col">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-auto">
                                     <span>신청자명단</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span>(</span>
+                                    <span id="applyUserCount"></span>
+                                    <span>)</span>
                                 </div>
                             </div>
                             <div class="row mt-2 mb-3">
                                 <div class="col">
                                     <div class="row">
                                         <div class="col">
-                                            <div id="applyUserProfieImageListRow" class="row overflow-x-auto" style="width: 200%;">
+                                            <div id="applyUserProfieImageListRow" class="row overflow-x-auto" style="width: 200%; max-width: 100%;">
 
                                             </div>
                                         </div>
