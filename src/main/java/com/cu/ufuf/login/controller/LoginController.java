@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -204,7 +205,10 @@ public class LoginController {
     }
 
     @RequestMapping("loginPage")
-    public String loginPage(){
+    public String loginPage(Model model){
+
+        model.addAttribute("reqKakaoLogin", loginService.reqKakaoLogin());
+
         return "login/loginPage";
     }
 
@@ -237,7 +241,10 @@ public class LoginController {
 
 
     @RequestMapping("aaa")
-    public String aaa(HttpSession session){
+    public String aaa(HttpSession session, Model model){
+
+        
+
         return "login/aaa";
     }
 
