@@ -34,6 +34,9 @@
     </style>
 
     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
         let myId = null;
         const roomInfoId = "[[${roomDetail.roomInfoDto.room_info_id}]]";
         
@@ -157,7 +160,7 @@
                 <div class="row pt-2 ps-1">
                     <!--뒤로가기-->
                     <div class="col-1 ps-0 pt-2 pb-2 me-3 ms-4">
-                        <a class="text-secondary" href="./roomListPage" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
+                        <a class="text-secondary" onclick="goBack()" style="text-decoration: none;"><i class="fi fi-rr-arrow-left" style="text-decoration: none;"></i></a>
                     </div>
 
                     <div class="col"></div>

@@ -10,6 +10,9 @@
     
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
           function reservationFormSubmit() {
             const reservationSubmit=document.getElementById("reservationSubmit");
             
@@ -75,7 +78,7 @@
         <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <!--뒤로가기-->
             <div class="col-1">
-                <a th:href="@{./roomDetailPage(room_info_id=${roomInfo.roomInfoDto.room_info_id})}" style="color: black; text-decoration: none;"><i class="bi bi-x-lg text-secondary"></i></a> 
+                <a onclick="goBack()" style="color: black; text-decoration: none;"><i class="bi bi-x-lg text-secondary"></i></a> 
             </div>
  
             

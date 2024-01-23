@@ -401,7 +401,7 @@ public class RoomController {
 		roomService.updateRoomDetailImage(roomInfoDto, roomImageDtoList);
         
         
-        return "redirect:./roomDetailPage?room_info_id="+roomInfoDto.getRoom_info_id();
+        return "redirect:./myRoomListPage";
     }
 
 	//방 정보삭제
