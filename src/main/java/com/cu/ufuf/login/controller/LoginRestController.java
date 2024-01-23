@@ -74,14 +74,16 @@ public class LoginRestController {
         RestTemplate restTemplate = new RestTemplate();
         // 서버로 POST 요청 전송
         String response = restTemplate.postForObject("https://kauth.kakao.com/oauth/token", httpEntity, String.class);
+        
+        loginService.parseToJson(response);
 
         restResponseDto.setData(response);
-
         restResponseDto.setResult("Success");
 
         return restResponseDto;
     }
    
+
 
 
 

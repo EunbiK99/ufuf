@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.mapper.UserLoginMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class LoginServiceImpl {
@@ -45,6 +47,31 @@ public class LoginServiceImpl {
 
     public String returnCode(String code){
         return code;
+    }
+
+    public void parseToJson(String response){
+
+         try {
+            // ObjectMapper를 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // 문자열을 JsonNode로 파싱
+            JsonNode jsonNode = objectMapper.readTree(response);
+
+            // JsonNode에서 필요한 값을 추출
+            String access_token = jsonNode.get("access_token").asText();
+            String token_type = jsonNode.get("token_type").asText();
+            String refresh_token = jsonNode.get("refresh_token").asText();
+            String expires_in = jsonNode.get("expires_in").asText();
+            String scope = jsonNode.get("scope").asText();
+            String refresh_token_expires_in = jsonNode.get("refresh_token_expires_in").asText();
+            
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
