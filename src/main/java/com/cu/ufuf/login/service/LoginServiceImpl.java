@@ -26,5 +26,9 @@ public class LoginServiceImpl {
         return userLoginMapper.isUserExist(userInfoDto);
     }
 
+    public String returnCode(String code){
+        return code;
+    }
+
     
 }

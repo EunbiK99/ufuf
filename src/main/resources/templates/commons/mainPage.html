@@ -13,6 +13,53 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
+    <script>
+
+        function getCode() {
+
+            let currentUrl = window.location.href;
+
+            // URL에서 쿼리스트링 부분 가져오기
+            let queryString = currentUrl.split('?')[1];
+
+            // 쿼리스트링을 객체로 파싱하기
+            let queryParams = {};
+            if (queryString) {
+                let pairs = queryString.split('&');
+                for (let i = 0; i < pairs.length; i++) {
+                    let pair = pairs[i].split('=');
+                    let key = decodeURIComponent(pair[0]);
+                    let value = decodeURIComponent(pair[1] || '');
+                    queryParams[key] = value;
+                }
+            }
+
+        const data = new URLSearchParams();
+        data.append("client_id", "2f4f6f75265cd70ebabfb64c519f9843");
+        data.append("redirect_uri", "https://192.168.219.103:8888/commons/mainPage");
+        data.append("response_type", queryParams['code']);
+        
+
+        fetch("https://kapi.kakao.com/v1/payment/ready", {
+            method: "POST",
+            headers: {
+                "Authorization": "KakaoAK fe6556cbcccecbec99f52226077803d7",
+                "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+            },
+            body: data
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+        });
+
+    }
+
+    </script>
+
+
     <style>
     @font-face {
         font-family: 'myCustomFont';

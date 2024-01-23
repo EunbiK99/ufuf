@@ -289,7 +289,44 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
-    
+    @GetMapping("getMeetingGroupMemberList")
+    public MeetingRestResponseDto getMeetingGroupMemberList(int groupId){
+
+        meetingService.getGroupMemberListForAJAX(groupId);
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getGroupMemberListForAJAX(groupId));
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("addGroupMember")
+    public MeetingRestResponseDto addGroupMember(MeetingGroupMemberDto params){
+        
+        System.out.println("addGroupMember 실행됨");
+        int groupId = params.getGroupId();
+        int profileId = params.getProfileId();        
+
+        meetingService.registerGroupMember(params);
+        meetingService.updateApplyUserApplyStatus(groupId, profileId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("countMeetingGroupMember")
+    public MeetingRestResponseDto countMeetingGroupMember(int groupId){        
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.countMeetingGroupMember(groupId));
+        return meetingRestResponseDto;
+    }    
 
 
     

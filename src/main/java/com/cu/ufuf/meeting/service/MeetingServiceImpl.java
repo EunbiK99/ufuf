@@ -145,11 +145,14 @@ public class MeetingServiceImpl {
 
             applyUserMapList.add(applyUserMap);
         }
+
+        List<MeetingGroupMemberDto> groupMemberDtoList = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
         
         map.put("meetingGroupDto", meetingGroupDto);
         map.put("meetingProfileDto", meetingProfileDto);
         map.put("tagDtoList", tagDtoList);
-        map.put("applyUserMapList", applyUserMapList);        
+        map.put("applyUserMapList", applyUserMapList);
+        map.put("groupMemberDtoList", groupMemberDtoList);
         
         return map;    
     }
@@ -172,6 +175,21 @@ public class MeetingServiceImpl {
     // * 미팅 확정멤버 인서트
     public void registerGroupMember(MeetingGroupMemberDto meetingGroupMemberDto){
         meetingSqlMapper.insertMeetingGroupMember(meetingGroupMemberDto);
+    }
+
+    // * 모집글PK기준 확정 멤버 셀렉트(AJAX)
+    public List<Map<String, Object>> getGroupMemberListForAJAX(int groupId){    
+        return meetingSqlMapper.selectGroupMemberListByGroupIdForAJAX(groupId);
+    }
+
+    // * 미팅 확정멤버됨과 동시에 신청자 리스트에서 업데이트
+    public void updateApplyUserApplyStatus(int groupId, int profileId){
+        meetingSqlMapper.updateApplyUserApplyStatus(groupId, profileId);
+    }
+
+    // * 미팅 모집글PK 기준 확정멤버수 카운트
+    public int countMeetingGroupMember(int groupId){
+        return meetingSqlMapper.countMeetingGroupMemberByGroupId(groupId);
     }
 
 
