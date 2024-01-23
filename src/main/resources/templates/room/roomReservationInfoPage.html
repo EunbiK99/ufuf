@@ -41,8 +41,37 @@
                 map.setCenter(coords);
             } 
         });    
+
+        
     </script>
 
+    <style>
+        .rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            text-align: center;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            display: inline-block;
+            padding: 5px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .rating label:before {
+            content: '\2605'; /* Bootstrap Icons의 bi-star-half 아이콘 (선으로 이루어진 별) */
+            font-family: 'BootstrapIcons';
+            color: rgb(181, 181, 181); /* 선택되지 않은 별의 색상 (검은색) */
+        }
+        .rating input:checked ~ label:before {
+            content: '\2605'; /* 채워진 별 아이콘 */
+            font-family: 'BootstrapIcons';
+            color: #ffc107; /* 선택된 별의 색상 */
+        }
+    </style>
 </head>
 
 <body>
@@ -204,8 +233,64 @@
         
         <div class="fixed-bottom w-100 bg-white">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
-                <div class="col d-grid mx-2 mt-2 mb-4">
-                    <a  th:href="@{./guestReviewPage(room_info_id=${reservationInfo.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">리뷰쓰기</a>
+                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount!=0}">
+                    <button type="button" disabled class="btn text-white fw-bold py-2 btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">리뷰작성완료</button>
+                </div>
+                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount==0}">
+                    <button type="button"  class="btn text-white fw-bold py-2" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: #FF8827;">리뷰쓰기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade mx-0" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog mx-0">
+                <div class="modal-content">
+                    <div class="modal-header mt-0">
+                        <div class="modal-title fw-bold" id="exampleModalLabel" style="font-size: 1.2em;">리뷰 작성하기</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body pb-0">
+                        <form action="/room/guestReviewProcess" method="post">
+                            <div class="row">
+                                <div class="col">
+                
+                                    <input type="hidden" name="room_info_id" th:value="${reservationInfo.roomInfoDto.room_info_id}">
+                                    <input type="hidden" name="room_guest_id" th:value="${reservationInfo.roomGuestDto.room_guest_id}">
+                                    <!--인원-->
+                                    <div class="row mt-2 ms-2 fw-bold text-secondary">별점</div>
+                                    <div class="row">
+                                        <div class="rating">
+                                            <input type="radio" id="star5" name="review_grade" value="5">
+                                            <label for="star5"></label>
+                                            <input type="radio" id="star4" name="review_grade" value="4">
+                                            <label for="star4"></label>
+                                            <input type="radio" id="star3" name="review_grade" value="3">
+                                            <label for="star3"></label>
+                                            <input type="radio" id="star2" name="review_grade" value="2">
+                                            <label for="star2"></label>
+                                            <input type="radio" id="star1" name="review_grade" value="1">
+                                            <label for="star1"></label>
+                                        </div>
+                                    </div>
+                
+                                    <!--일정-->
+                                    <div class="row mt-4 ms-2 fw-bold text-secondary">리뷰</div>
+                                    <div class="row pb-3 ">
+                                        <div class="col mx-2 mt-2">
+                                            <textarea rows="10" name="review_content" class="form-control" placeholder="리뷰를 입력해주세요."></textarea>
+                                        </div>
+                                    </div>
+                
+                                    <div class="row text-center pb-2">
+                                        <div class="col d-grid mx-2 mt-2 mb-4">
+                                            <input type="submit" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="리뷰 작성하기">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

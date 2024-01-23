@@ -86,6 +86,36 @@ public class RoomServiceIpml {
 		return roomList;
 		
 	}
+
+    public List<Map<String, Object>> getReviewList() {
+		
+		List<Map<String, Object>> roomReviewList=new ArrayList<>();
+		
+		List<RoomGuestReviewDto> roomGuestReviewDtoList=roomSqlMapper.roomReviewListForMainPage();
+		
+		for(RoomGuestReviewDto roomGuestReviewDto:roomGuestReviewDtoList) {
+
+            List<RoomGuestDto> roomGuestDtoList=roomSqlMapper.roomGuestSelectByGuestId(roomGuestReviewDto.getRoom_guest_id());
+            
+            for(RoomGuestDto roomGuestDto:roomGuestDtoList){
+                RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
+
+                int UserPK=roomGuestDto.getUser_id();
+                UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+                
+                Map<String, Object> map=new HashMap<>();
+                map.put("roomInfoDto", roomInfoDto);
+                map.put("userDto", userDto);
+                map.put("roomGuestReviewDto",roomGuestReviewDto);
+                map.put("roomGuestDto",roomGuestDto);
+                
+                roomReviewList.add(map);
+            };
+		}
+		
+		return roomReviewList;
+		
+	}
 	
     //룸 상세보기
 	public Map<String, Object> getRoomInfo(int room_info_id){
@@ -162,6 +192,8 @@ public class RoomServiceIpml {
         int UserPK=roomGuestDto.getUser_id();
 		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
 
+        int roomReviewCount=roomSqlMapper.guestRoomReviewCount(roomGuestDto.getRoom_guest_id());
+
         roomMap.put("roomInfoDto", roomInfoDto);
         roomMap.put("userDto", userDto);
         roomMap.put("roomGuestDto", roomGuestDto);
@@ -170,6 +202,7 @@ public class RoomServiceIpml {
         roomMap.put("standardRoomCharge", standardRoomCharge);
         roomMap.put("extraCharge", extraCharge);
         roomMap.put("totalCost", totalCost);
+        roomMap.put("roomReviewCount", roomReviewCount);
 
 		return roomMap;
 		
@@ -185,12 +218,13 @@ public class RoomServiceIpml {
 
             RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
 			UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
-            
+            int roomReviewCount=roomSqlMapper.guestRoomReviewCount(roomGuestDto.getRoom_guest_id());
 			
 			Map<String, Object> map=new HashMap<>();
 			map.put("roomInfoDto", roomInfoDto);
 			map.put("userDto", userDto);
 			map.put("roomGuestDto", roomGuestDto);
+            map.put("roomReviewCount", roomReviewCount);
 
 			roomList.add(map);
 
@@ -233,7 +267,7 @@ public class RoomServiceIpml {
 
         List<Map<String, Object>> InterestRoomList=new ArrayList<>();
 		
-        List<InterestRoomDto> interestRoomDtoList=roomSqlMapper.UserInterestRoom(user_id);
+        List<InterestRoomDto> interestRoomDtoList=roomSqlMapper.userInterestRoom(user_id);
 
 		for(InterestRoomDto interestRoomDto:interestRoomDtoList) {
 
@@ -285,10 +319,13 @@ public class RoomServiceIpml {
 
     }
 
+    //방 삭제
     public void deleteRoomInfo(int room_info_id){
         roomSqlMapper.deleteRoomInfo(room_info_id);
         roomSqlMapper.deleteRoomImage(room_info_id);
         roomSqlMapper.deleteRoomOption(room_info_id);
+        roomSqlMapper.deleteRoomGuest(room_info_id);
+        roomSqlMapper.deleteRoomGuestReview(room_info_id);
     }
     
 }

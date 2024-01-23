@@ -45,6 +45,9 @@ public interface RoomSqlMapper {
      //예약자 정보
      public int roomGuestSelectByRoomAndUserId(RoomGuestDto roomGuestDto);
 
+     //게스트 아이디로 뽑아오는거
+     public List<RoomGuestDto> roomGuestSelectByGuestId(int room_guest_id);
+
      //예약자가 예약한곳 리스트
      public List<RoomGuestDto> roomGuestSelectByUserId(int user_id);
  
@@ -80,7 +83,7 @@ public interface RoomSqlMapper {
     public int roomInterestUserCount(InterestRoomDto interestRoomDto);
 
     //유저 좋아요 목록
-    public List<InterestRoomDto> UserInterestRoom(int user_id);
+    public List<InterestRoomDto> userInterestRoom(int user_id);
 
     //수정용
     public void updateRoomInfo(RoomInfoDto roomInfoDto);
@@ -94,6 +97,12 @@ public interface RoomSqlMapper {
     //방 정보 삭제
     public void deleteRoomInfo(int room_info_id);
 
+    //게스트 삭제
+    public void deleteRoomGuest(int room_info_id);
+
+    //게스트 리뷰 삭제
+    public void deleteRoomGuestReview(int room_info_id);
+
 
     //방 상세페이지용 리뷰 리스트
     public List<RoomGuestReviewDto> roomReviewListForRoomInfo(int room_info_id);
@@ -106,6 +115,9 @@ public interface RoomSqlMapper {
 
     //메인페이지용 리뷰 리스트
     public List<RoomGuestReviewDto> roomReviewListForMainPage();
+
+    //리뷰 썼나 안썼나
+    public int guestRoomReviewCount(int room_guest_id);
 
 
 

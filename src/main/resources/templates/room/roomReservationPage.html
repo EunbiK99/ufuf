@@ -9,14 +9,70 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    
+    <script>
+          function reservationFormSubmit() {
+            const reservationSubmit=document.getElementById("reservationSubmit");
+            
+            //인원수
+            const guestCount=document.getElementById("guestCount");
+            if(guestCount.value==''){
+                alert("인원수를 입력해 주세요.");
+                guestCount.focus();
+                return;
+            }
+            
+            //예약가능일정(시작)
+            const startSchedule=document.getElementById("startSchedule");
+            if(startSchedule.value==''){
+                alert("예약 일정을 입력해 주세요.");
+                startSchedule.focus();
+                return;
+            }
+
+            //예약가능일정(끝)
+            const endSchedule=document.getElementById("endSchedule");
+            if(endSchedule.value==''){
+                alert("예약 일정을 입력해 주세요.");
+                endSchedule.focus();
+                return;
+            }
+
+            reservationSubmit.submit();
+        }
+
+        function checkSchedule() {
+            const startScheduleInput = document.getElementById("startSchedule");
+            const endScheduleInput = document.getElementById("endSchedule");
+
+            // 값이 비어있는지 확인
+            if (startScheduleInput.value === '' || endScheduleInput.value === '') {
+                alert("날짜를 입력해 주세요.");
+                return;
+            }
+
+            // 날짜 형식인지 확인
+            const startSchedule = new Date(startScheduleInput.value);
+            const endSchedule = new Date(endScheduleInput.value);
+
+            // 시작 날짜가 종료 날짜보다 늦으면
+            if (startSchedule > endSchedule) {
+                // 알림 메시지 출력
+                alert("일정을 다시 확인 해주세요.");
+
+                // 입력값 초기화
+                startScheduleInput.value = "";
+                endScheduleInput.value = "";
+                startScheduleInput.focus();
+            }
+        }
+    </script>
 </head>
 
 <body>
     
     <div class="container">
         <!-- 페이지 네비-->
-        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%;">
+        <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <!--뒤로가기-->
             <div class="col-1">
                 <a th:href="@{./roomDetailPage(room_info_id=${roomInfo.roomInfoDto.room_info_id})}" style="color: black; text-decoration: none;"><i class="bi bi-x-lg text-secondary"></i></a> 
@@ -35,7 +91,7 @@
 
         
         <!--정보 입력-->
-        <form action="/room/roomReservationProcess" method="post">
+        <form id="reservationSubmit" action="/room/roomReservationProcess" method="post">
             <div class="row mt-3">
                 <div class="col">
 
@@ -44,7 +100,7 @@
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 인원</div>
                     <div class="row">
                         <div class="col mx-2 me-0 mt-2">
-                            <input type="number" name="guest_count" id="guest_count" class="form-control">
+                            <input id="guestCount" type="number" name="guest_count" class="form-control">
                         </div>
                         <div class="col ms-0 mt-3 text-secondary">명</div>
                     </div>
@@ -52,15 +108,15 @@
                     <!--일정-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 일정</div>
                     <div class="row">
-                        <div class="col-5 mx-2 mt-2"><input type="date" name="start_reservation_schedule" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input id="startSchedule" type="date" name="start_reservation_schedule" class="form-control"></div>
                         <div class="col-1 fs-5 fw-bold text-secondary pt-2">~</div>
-                        <div class="col-5 mx-2 mt-2"><input type="date" name="end_reservation_schedule" class="form-control"></div>
+                        <div class="col-5 mx-2 mt-2"><input onblur="checkSchedule()" id="endSchedule" type="date" name="end_reservation_schedule" class="form-control"></div>
                     </div>
 
                     <div class="fixed-bottom bg-white">
                         <div class="row text-center pb-2 border-top border-secondery-subtle">
                             <div class="col d-grid mx-2 mt-2 mb-4">
-                                <input type="submit" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="예약하기">
+                                <input onclick="reservationFormSubmit()" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="예약하기">
                             </div>
                         </div>
                     </div>
