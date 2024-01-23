@@ -13,20 +13,6 @@
     <script>
 
 
-    function KakaoRequestLogin(){
-
-        const url = 'https://kauth.kakao.com/oauth/authorize?client_id=' + '7319aff03174c9825e5552818af66d19' +
-        '&redirect_uri=' + "https://192.168.219.103:8888/login/getKakaoLogin" +
-        '&response_type=code&' + 'profile_nickname profile_image';
-
-        const kakaoLoginBtn = document.getElementById("kakaoLoginBtn");
-        kakaoLoginBtn.setAttribute("href", url);
-
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-        KakaoRequestLogin();
-    });
     
 
 
@@ -109,7 +95,7 @@
                         </div>
                         <div class="row mt-3 mb-5">
                             <div class="col mt-1 mb-1">
-                                <a id="kakaoLoginBtn">
+                                <a id="kakaoLoginBtn" th:href="${reqKakaoLogin}">
                                     <img class="img-fluid" th:src="@{/public/image/commons/kakao_login_large_wide.png}">
                                 </a>
                             </div>
