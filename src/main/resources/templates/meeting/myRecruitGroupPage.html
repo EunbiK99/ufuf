@@ -46,7 +46,7 @@ function getMyRecruitMeetingList(){
             
             const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
             myMeetingGroupListRow.setAttribute("groupId", e.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./meetingGroupDetailPage?groupId=' + ${e.groupId}`);
+            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruidGroupDetailPage?groupId=' + ${e.groupId}`);
             
             const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
             myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.groupImage}`);
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                

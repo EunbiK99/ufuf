@@ -135,12 +135,19 @@ public class MeetingServiceImpl {
         }
 
         List<Map<String, Object>> applyUserMapList = new ArrayList<>();
+        
         List<MeetingApplyUserDto> applyDtoList = meetingSqlMapper.selectGroupApplyUserList(group_pk);
+        
         for(MeetingApplyUserDto meetingApplyUserDto : applyDtoList){
+            
             Map<String, Object> applyUserMap = new HashMap<>();
+            
             int applyUserProfileId = meetingApplyUserDto.getProfileId();
+            
             MeetingProfileDto applyUserMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(applyUserProfileId);
+            
             applyUserMap.put("applyUserProfileDto", applyUserMeetingProfileDto);
+            
             applyUserMap.put("applyDto", meetingApplyUserDto);
 
             applyUserMapList.add(applyUserMap);

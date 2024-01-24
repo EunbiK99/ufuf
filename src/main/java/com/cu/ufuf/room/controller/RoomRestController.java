@@ -72,6 +72,7 @@ public class RoomRestController {
 		return restResponseDto;
 	}
 
+	@RequestMapping("getReviewList")
     public RestResponseDto getReviewList() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -96,6 +97,16 @@ public class RoomRestController {
 		}
 		
 		return restResponseDto;
+	}
+
+	@RequestMapping("getRoomList")
+    public RestResponseDto getRoomList() {
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setResult("success");
+		
+		restResponseDto.setData(roomService.getRoomInfoList());
+        return restResponseDto;
 	}
 
 	public RestResponseDto templete() {

@@ -15,8 +15,110 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <script>
+        //숙소리스트!
+        function roomList(){
+            // 처음에 초기화
+            document.querySelector("#roomListBox").innerHTML = "";
+            const url = "./getRoomList";
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+                    
+                    // 동아리 리스트 생성
+                    const roomList = document.querySelector("#roomList").cloneNode(true);
+                    roomList.classList.remove("d-none");
+                    const roomMainImage = roomList.querySelector(".roomMainImage");
+                    roomMainImage.removeAttribute("src");
+                    roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                    const roomTitle = roomList.querySelector(".roomTitle");
+                    roomTitle.innerHTML = "";
+                    roomTitle.innerText = e.roomInfoDto.title;
+                    const roomLocation = roomList.querySelector(".roomLocation");
+                    roomLocation.innerHTML = "";
+                    roomLocation.innerText = e.roomInfoDto.location;
+                    const roomCharge = roomList.querySelector(".roomCharge");
+                    roomCharge.innerHTML = "";
+                    roomCharge.innerText = Number(e.roomInfoDto.room_charge).toLocaleString();
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./roomDetailPage?room_info_id=" +e.roomInfoDto.room_info_id);
+                    a.setAttribute("style", "text-decoration: none; color: black; width: 13em;");
+                    a.appendChild(roomList);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const roomListBox = document.querySelector("#roomListBox");
+                    roomListBox.appendChild(a);
+                    
+
+                }
+
+            })
+        }
+
+        //리뷰리스트!
+        function reviewList(){
+            // 처음에 초기화
+            document.querySelector("#reviewListBox").innerHTML = "";
+            const url = "./getReviewList";
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    if(e.roomInfoDto!=null){
+                    
+                        // 리뷰 리스트 생성
+                        const reviewList = document.querySelector("#reviewList").cloneNode(true);
+                        reviewList.classList.remove("d-none");
+                        const reviewRoomMainImage = reviewList.querySelector(".reviewRoomMainImage");
+                        reviewRoomMainImage.removeAttribute("src");
+                        reviewRoomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        const reviewRoomTitle = reviewList.querySelector(".reviewRoomTitle");
+                        reviewRoomTitle.innerHTML = "";
+                        reviewRoomTitle.innerText = e.roomInfoDto.title;
+                        const reviewGrade = reviewList.querySelector(".reviewGrade");
+                        reviewGrade.innerHTML = "";
+                        reviewGrade.innerText = e.roomGuestReviewDto.review_grade;
+                        const reviewContent = reviewList.querySelector(".reviewContent");
+                        reviewContent.innerHTML = "";
+                        reviewContent.innerText = e.roomGuestReviewDto.review_content;
+
+                        // 링크태그 여기서 하나씩 잡아주어야함
+                        const a = document.createElement("a");
+                        a.setAttribute("href", "./roomDetailPage?room_info_id=" +e.roomInfoDto.room_info_id);
+                        a.setAttribute("style", "text-decoration: none; color: black;");
+                        a.appendChild(reviewList);
+                        
+
+                        // 본문에 붙이는 코드(리스트들)
+                        const reviewListBox = document.querySelector("#reviewListBox");
+                        reviewListBox.appendChild(a);
+                    }
+
+                }
+
+            })
+
+
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            reviewList();
+            roomList();
+
+        })
+    </script>
     <style> 
+
+
         body {
             margin: 0;
             padding: 0;
@@ -83,12 +185,41 @@
         height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
         overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
+
         *{
         /* font-family: 'Dongle', sans-serif; */
         font-family: 'Gowun Dodum', sans-serif;
         /* font-family: 'Quicksand', sans-serif; */
         /* font-family: 'Noto Sans KR', sans-serif; */
         }
+
+        
+        #reviewListBox {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap; /* 아이템이 한 줄에 3개씩 나오도록 설정 */
+            gap: 0.07em; /* 각 아이템 사이의 간격 조절 */
+            max-height: 25em; /* 원하는 높이로 설정 */
+            overflow-y: auto; /* 세로 스크롤바를 표시 */
+            overflow-y: hidden; /* 내용이 넘치면 스크롤바를 표시 */
+            overflow-x: auto;
+        }
+
+        #roomListBox {
+            display: flex;
+            flex-direction: column;
+            gap: 0; /* 각 아이템 사이의 간격 조절 */
+            max-height: 15em; /* 원하는 높이로 설정 */
+            overflow-y: auto; /* 세로 스크롤바를 표시 */
+            overflow-y: hidden; /* 내용이 넘치면 스크롤바를 표시 */
+            overflow-x: auto;
+        }
+
+
+        #reviewList {
+            flex: 0 0 calc(33.33% - 0.07em); /* 3개씩 나오도록 설정, 여백 고려 */
+        }
+
         
     </style>
 </head>
@@ -114,7 +245,7 @@
         <div class="row p-4"></div>
 
         <!--캐러셀 넣을지 버튼만 넣을지는 고민해야할 것 같음-->
-        <div class="row" style="background-size: cover; background-image: url(/public/image/room/room_main_page_img.png); height: 17em;">
+        <div class="row" style="background-size: cover; background-image: url(/public/image/room/room_main_page_img.png); height: 18em;">
         
         </div>
 
@@ -128,81 +259,88 @@
             </div>
         </div>
 
+        <!-- 여백용-->
+        <div class="row p-3"></div>
         <!--내 근처 숙소-->
-        <div class="row mt-4 ps-2">
-            <div class="col-8"><a class="btn fw-bold text-start ps-0" href="./roomListPage">방금 올라온 숙소</a></div>
+        <div class="row mt-4 ps-2 mb-3">
+            <div class="col-8"><a class="fw-bold text-start ps-0" href="./roomListPage" style="color: black; text-decoration: none;">방금 올라온 숙소</a></div>
             <div class="col"></div>
             <div class="col">
-                <a class="btn" href="./roomListPage"><i class="bi bi-arrow-right text-end"></i></a>
+                <a href="./roomListPage" style="color: black; text-decoration: none;"><i class="bi bi-arrow-right text-end"></i></a>
             </div>
         </div>
-        <!--숙소 리스트-->
-        <div id="global-navi" class="row mt-2 ms-1">
-            <div class="col overflow-x-auto">
-                <div class="row" style="width:380%;">
-                    <div class="col p-0 mx-2" th:each="room : ${roomList}">
-                        <div class="row ms-1">
-                            <a class=" p-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}">
-                                <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid" style="width: 13em; height: 7em; overflow: hidden; position: relative; object-fit: cover;">
-                            </a>
-                        </div>
 
-                        <div class="row mt-2">
-                            <a class="fw-bold text-start py-0 ms-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
-                        </div>
-
-                        <div class="row ms-1 ps-0">
-                            <div class="col ps-0 text-truncate" style="max-width: 200px;"><a class="text-secondary text-start py-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${room.roomInfoDto.location}" style="font-size: 0.7em; color: black; text-decoration: none;"></a></div>
-                            
-                        </div>
-
-                        <div class="row mb-2 mt-1">
-                            <div class="col-2"> <a class="text-start ms-0 ps-0" th:href="@{./roomDetailPage(room_info_id=${room.roomInfoDto.room_info_id})}" th:text="${#numbers.formatDecimal(room.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}" style="color: black; text-decoration: none;"></a></div>
-                            <div class="col ms-3 text-start text-secondary">&nbsp;/1박</div>
-                        </div>
-                    </div>
-
-                </div>
+        <div id="global-navi" class="mt-1 overflow-x-auto">
+            <div class="row" id="roomListBox">
             </div>
         </div>
+
+        <!--숙소 나오는거-->
+        <div class="col ms-1 mx-1 d-none" id="roomList">
+            <div class="row">
+                <a>
+                    <img src="/public/image/room/bedroom_2.jpg" class="img-fluid roomMainImage " style="width: 13em; height: 7em; overflow: hidden; position: relative;">
+                </a>
+            </div>
+
+            <div class="row mt-2 ps-1">
+                <a class="fw-bold text-start py-0 ms-0 roomTitle text-truncate" style="color: black; text-decoration: none; max-width: 13em;"></a>
+            </div>
+
+            <div class="row ms-1" style="max-width: 13em;">
+                <div class="col text-secondary ps-0 text-truncate" style="max-width: 13em;"><a class="text-secondary text-start py-0 roomLocation" style="font-size: 0.7em; color: black; text-decoration: none; max-width: 11em;"></a></div>
+                
+            </div>
+
+            <div class="row mb-2 mt-1 ps-1" style="max-width: 13em;">
+                <div class="col-2"> <a class="text-start ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a></div>
+                <div class="col ms-3 text-start text-secondary">&nbsp;/1박</div>
+            </div>
+        </div>
+
+        
+        <!-- 여백용-->
+        <div class="row p-3"></div>
 
 
         <!--실시간 리뷰(간단한 방 정보랑 게스트 리뷰로 싹다 올리기)-->
-        <div class="row mt-3 ps-2">
+        <div class="row mt-4 ps-3 mb-3 ">
             <!--리뷰 상세페이지(메인페이지용) 연결해야할듯-->
-            <div class="col-8"><a class="btn fw-bold text-start ps-0">실시간 리뷰</a></div>
+            <div class="col-8 fw-bold text-start ps-0">실시간 리뷰</div>
         </div>
-        
-        <!--리뷰 나오는곳-->
+
+        <!--리뷰 리스트 나오는곳-->
         <div id="global-navi" class="mt-1 overflow-x-auto">
-            <div class="row">
-                <th:block th:each="review, iterStat : ${reviewList}">
-                    <div th:if="${review.roomInfoDto != null}" class="col-md-4">
-                        <div class="row border border-secondary-subtle rounded mt-2 mx-1 py-2">
-                            <div class="col-4">
-                                <div class="row">
-                                    <a th:href="@{./roomDetailPage(room_info_id=${review.roomInfoDto.room_info_id})}"><img th:src="@{/public/image/room/}+${review.roomInfoDto.main_image}" class="img-fluid" style="width: 6em; height: auto;"></a>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col ms-0 ps-0 fw-bold">
-                                        <a th:href="@{./roomDetailPage(room_info_id=${review.roomInfoDto.room_info_id})}" th:text="${review.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
-                                    </div>
-                                    <div class="col-1 ms-0 ps-0 me-0 pe-0">
-                                        <i class="bi bi-star-fill" style="font-size: 0.9em;"></i>
-                                    </div>
-                                    <div class="col-1 ms-0 ps-0 pt-1" th:text="${review.roomGuestReviewDto.review_grade}" style="font-size: 0.9em;"></div>
-                                </div>
-                                <div class="row" th:text="${review.roomGuestReviewDto.review_content}"></div>
-                            </div>
+            <div class="row" id="reviewListBox">
+            </div>
+        </div>
+
+        <!--리뷰-->
+        <div id="reviewList" class="col-md-4 d-none">
+            <div class="row border border-secondary-subtle rounded mt-2 mx-1 py-2">
+                <div class="col-4">
+                    <div class="row">
+                        <a ><img class="reviewRoomMainImage img-fluid rounded" src="/public/image/room/bedroom_2.jpg" style="width: 6em; height: 5em; overflow: hidden; position: relative;"></a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row border-bottom border-secondery-subtle pb-2 me-1">
+                        <div class="col ms-0 ps-0 fw-bold text-truncate" style="max-width: 16em;">
+                            <a class="reviewRoomTitle text-truncate" style="max-width: 10em; font-size: 0.9em; color: black; text-decoration: none;">방 제목</a>
+                        </div>
+                        <div class="col-1 ms-0 ps-0 me-0 pe-0">
+                            <i class="bi bi-star-fill text-warning" style="font-size: 0.8em;"></i>
+                        </div>
+                        <div class="col-1 ms-0 ps-0 me-0">
+                            <a class="reviewGrade" style="font-size: 0.8em; color: black; text-decoration: none;">5</a>
                         </div>
                     </div>
-                    <!-- 한 줄에 3개씩 나오도록 줄 바꿈 -->
-                    <th:block th:if="${iterStat.count % 3 == 0}">
-                        <div class="w-100"></div>
-                    </th:block>
-                </th:block>
+                    <div class="row pt-2">
+                        <div class="col ms-0 ps-0" style="max-width: 15em; max-height: 5em;">
+                            <a class="reviewContent ps-0 ms-0 " style="font-size: 0.8em; color: black; text-decoration: none;">썅빠큐!!</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -241,8 +379,8 @@
 
 
         <!--푸터(임시)-->
-        <div class="fixed-bottom bg-white mb-0 mx-1">
-            <div class="row pb-2 pt-2 border-top">
+        <div class="fixed-bottom border-top bg-white mb-0 mx-1" style="bottom: 0;">
+            <div class="row pb-2">
                 <div class="col ms-2">
                     <div class="row text-center mt-2">
                         <a href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-map text-secondary"></i></a> 
@@ -261,7 +399,7 @@
                 </div>
 
                 <!--홈-->
-                <div class="col ms-1 mt-1">
+                <div class="col ms-1 pt-1">
                     <a class="btn rounded-circle" href="../commons/mainPage" style="background-color: #FF8827;"><i class="fs-4 bi bi-house-door-fill text-white"></i></a> 
                 </div>
 
