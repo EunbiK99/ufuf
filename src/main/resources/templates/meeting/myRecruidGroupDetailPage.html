@@ -141,17 +141,17 @@ function makeGroupDetailPage(){
     recruitMemberCount.innerText = groupDetailInfo.meetingGroupDto.groupHeadCount;
 
     const applyProfileListWrapperCol = document.getElementById("applyProfileListWrapperCol");
-    applyProfileListWrapperCol.innerHTML = "";
+    applyProfileListWrapperCol.innerHTML = "";    
     
-    const applyUserMapList = groupDetailInfo.applyUserMapList;    
-    if(applyUserMapList.length === 0){
-        const noApplyProfileCol = document.querySelector("#templete #noApplyProfileCol").cloneNode(true);
-        const noApplyProfileInfoText = noApplyProfileCol.querySelector("#noApplyProfileInfoText");
-        noApplyProfileInfoText.innerText = "현재 신청한 인원이 없습니다.";
-        applyProfileListWrapperCol.appendChild(noApplyProfileCol);
-    }
-    else{
-        for(e of applyUserMapList){
+    const applyUserMapList = groupDetailInfo.applyUserMapList;
+    
+    let watingUserCountValue = 0;
+    const watingUserCount = document.getElementById("watingUserCount");
+    watingUserCount.innerText = watingUserCountValue;
+
+    for(e of applyUserMapList){
+        if(e.applyDto.applyStatus === "N"){
+            watingUserCountValue++;
             const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
             const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
             applyProfileImage.setAttribute("src", `/public/image/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
@@ -165,10 +165,16 @@ function makeGroupDetailPage(){
             const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
             applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
             applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
-
+            
             applyProfileListWrapperCol.appendChild(applyProfileListRow);
-        }        
-    }    
+        }
+    }
+    if(watingUserCountValue === 0){
+        const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+        const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+        noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+        applyProfileListWrapperCol.appendChild(noApplyProfileRow);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
@@ -237,12 +243,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fs-5 fw-bold">참여 신청자 리스트</span>
+                                        <span class="fs-5 fw-bold">
+                                            선발대기 신청자 List
+                                            <span>[ </span>
+                                            <span id="watingUserCount"></span>
+                                            <span> ]</span>
+                                        </span>                                        
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll" style="height: 20em; max-height: 20em;">
-
+                                    <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll" style="height: 20em; max-height: 20em;">                                        
                                     </div>
                                 </div>
                             </div>
@@ -294,7 +304,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
@@ -397,9 +407,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="noApplyProfileCol" class="col text-center align-self-center">
-        <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-danger"></span>
+    <div id="noApplyProfileRow" class="row">
+        <div class="col text-center align-self-center">
+            <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-secondary"></span>
+        </div>
     </div>
+    
 
     <div id="groupMemberListCol" class="col-auto">
         <div class="row">

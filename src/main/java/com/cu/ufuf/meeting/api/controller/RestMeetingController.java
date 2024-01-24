@@ -326,7 +326,19 @@ public class RestMeetingController {
         meetingRestResponseDto.setResult("success");
         meetingRestResponseDto.setData(meetingService.countMeetingGroupMember(groupId));
         return meetingRestResponseDto;
-    }    
+    }
+
+    @GetMapping("getMyApplyGroupData")
+    public MeetingRestResponseDto getMyApplyGroupData(int profileId){
+
+
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(1);
+        return meetingRestResponseDto;
+    }
 
 
     

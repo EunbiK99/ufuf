@@ -66,13 +66,13 @@ public class MeetingController {
         }        
     }
 
-    @RequestMapping("createMeetingGroupPage")
-    public String createMeetingGroupPage(HttpSession session){
+    @RequestMapping("createNewGroupPage")
+    public String createNewGroupPage(HttpSession session){
 
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         session.setAttribute("meetingProfileDto", meetingProfileDto);
 
-        return "./meeting/createMeetingGroupPage";
+        return "./meeting/createNewGroupPage";
     }
 
     @RequestMapping("myPage")
@@ -112,8 +112,8 @@ public class MeetingController {
         return "./meeting/myRecruitGroupPage";
     }
 
-    @RequestMapping("meetingGroupDetailPage")
-    public String meetingGroupDetailPage(HttpSession session, Model model, int groupId){
+    @RequestMapping("myRecruidGroupDetailPage")
+    public String myRecruidGroupDetailPage(HttpSession session, Model model, int groupId){
         
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         
@@ -121,7 +121,19 @@ public class MeetingController {
 
         model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
 
-        return "./meeting/meetingGroupDetailPage";
+        return "./meeting/myRecruidGroupDetailPage";
+    }
+
+    @RequestMapping("myApplyGroupPage")
+    public String myApplyGroupPage(HttpSession session, int profileId){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        System.out.println("profileId : " + profileId);
+        System.out.println("profileNickname : " + meetingProfileDto.getProfileNickname());
+
+        return "./meeting/myApplyGroupPage";
     }
 
 }

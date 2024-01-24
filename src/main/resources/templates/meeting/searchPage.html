@@ -294,12 +294,12 @@ function getGroupDetailInfo(groupId){
             for(e of applyUserMapList){
                 const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
                 const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
-                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserMeetingProfileDto.profileImg}`)
-                applyUserImage.setAttribute("alt", e.applyUserMeetingProfileDto.profileNickname);               
-                applyUserImage.setAttribute("title", e.applyUserMeetingProfileDto.profileNickname);               
+                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`)
+                applyUserImage.setAttribute("alt", e.applyUserProfileDto.profileNickname);               
+                applyUserImage.setAttribute("title", e.applyUserProfileDto.profileNickname);               
                 
                 const applyImageNickname = applyUserImageBox.querySelector("#applyImageNickname");
-                applyImageNickname.innerText = e.applyUserMeetingProfileDto.profileNickname;
+                applyImageNickname.innerText = e.applyUserProfileDto.profileNickname;
 
                 applyUserProfieImageListRow.appendChild(applyUserImageBox);
             }
@@ -309,14 +309,15 @@ function getGroupDetailInfo(groupId){
         console.log("sessionUserMeetingProfileId : " + sessionUserMeetingProfileId + "/ type : " + typeof sessionUserMeetingProfileId);
         console.log("profileId : " + groupDetailInfo.meetingGroupDto.profileId + "/ type : " + typeof groupDetailInfo.meetingGroupDto.profileId);
         
-        if(groupDetailInfo.meetingGroupDto.profileId === sessionUserMeetingProfileId){
-            const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');
-            const groupApplyButtonText = groupApplyButton.querySelector("#groupApplyButtonText");
-            groupApplyButtonText.innerText = "모집관리"
-            groupApplyButton.setAttribute("onclick", "");
+        const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');
+        const groupApplyButtonText = groupApplyButton.querySelector("#groupApplyButtonText");        
+        
+        if(groupDetailInfo.meetingGroupDto.profileId === sessionUserMeetingProfileId){            
+            groupApplyButtonText.innerText = "모집관리";
+            groupApplyButton.setAttribute("onclick", `window.location.href='./myRecruidGroupDetailPage?groupId=${groupId}'`);
         }
         else{
-            const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');            
+            groupApplyButtonText.innerText = "참가신청";
             groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);
         }
     });
@@ -447,7 +448,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
@@ -659,7 +660,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         <div class="col">
                             <div class="row">
                                 <div class="col-auto">
-                                    <span>신청자명단</span>
+                                    <span>신청List</span>
                                 </div>
                                 <div class="col-auto">
                                     <span>(</span>
@@ -687,7 +688,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <div id="groupApplyButton" class="col border-end btn" type="button">
                     <div class="row mt-2 mb-2">
                         <div class="col text-center">
-                            <span id="groupApplyButtonText">참가신청</span>
+                            <span id="groupApplyButtonText"></span>
                         </div>                         
                     </div>                    
                 </div>

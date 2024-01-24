@@ -203,8 +203,7 @@ values (
 <!-- * 모집글에 신청한 유저 미팅프로필 리스트 셀렉트-->
 <select id="selectGroupApplyUserList" resultType="com.cu.ufuf.dto.MeetingApplyUserDto">
     SELECT * from meeting_applyUser 
-    where 1=1
-    and applyStatus = 'N'
+    where 1=1    
     and groupId = #{groupId}
 </select>
 
@@ -258,7 +257,7 @@ values (
 </select>
 
 <!-- * 모집글PK 기준 해당 모집글 지원인원 카운팅-->
-<select id="countMeetingGroupApplyUserByGroupId" resultType="map">
+<select id="countMeetingGroupApplyUserByGroupId" resultType="int">
     SELECT count(*) from meeting_applyUser mau 
     where groupId = #{groupId}
 </select>
