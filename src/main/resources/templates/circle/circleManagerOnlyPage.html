@@ -53,14 +53,13 @@
                     const boardCnt = circlelist.querySelector(".boardCnt");
                     boardCnt.innerText = e.circleBoartCnt;
                     
-
-
-                     
-                    
-                    
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleApprovalJoinPage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(circlelist);
 
                     const listInsert = document.querySelector("#listInsert");
-                    listInsert.appendChild(circlelist);
+                    listInsert.appendChild(a);
                     
 
                 }

@@ -18,148 +18,220 @@
 
     <script>
         // 캘린더..
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridWeek',
-            views: {
-                    dayGridWeek: {
-                    dayMaxEventRows: 3, // 한 행에 표시될 일 수
-                    },
-                },
-            //contentHeight: 10
-            });
-            calendar.render();
-        });
+        
 
-        window.onload = async function() {
-            console.log("");
-            console.log("=========================================");
-            console.log("[window onload] : [start]");
-            console.log("=========================================");
-            console.log(""); 
+        // window.onload = async function() {
+        //     console.log("");
+        //     console.log("=========================================");
+        //     console.log("[window onload] : [start]");
+        //     console.log("=========================================");
+        //     console.log(""); 
 
 
+        //     // [현재 날짜 및 시간 확인]
+        //     var korea_date = dayjs(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+        //     var format = "YYYY-MM-DDTHH:mm:ss"; // 포맷 타입
+        //     var koreaNow = korea_date.format(format);
+
+
+        //     // [calendar 객체 지정]
+        //     var calendarElement = document.getElementById("calendar");
+
+
+        //     // [full-calendar 생성]
+        //     var calendar = new FullCalendar.Calendar(calendarElement, {
+
+        //     events: function (fetchInfo, successCallback, failureCallback) {
+        //     // fetchInfo 객체를 통해 시작 날짜, 종료 날짜 등의 정보를 받을 수 있습니다.
+        //     // fetchInfo에 따라 서버에 필요한 데이터를 요청할 수 있습니다.
+            
+        //     const queryString = window.location.search;
+        //     const urlParams = new URLSearchParams(queryString);
+        //     const circle_id = urlParams.get("circle_id");
+            
+        //     fetch('./circleScheduleListAll?circle_id=' + circle_id)
+        //     .then(response => response.json())
+        //     .then(response => {
+        //         const eventsData = [];
+
+
+        //         for(e of response.data){
+
+        //             const changetime = e.start_time;
+        //             const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4]);
+        //             const changetime2 = e.end_time;
+        //             const postDateTime2 = new Date(changetime2[0], changetime2[1] - 1, changetime2[2], changetime2[3], changetime2[4]);
+
+        //             // 데이터는 이렇게 넣으면 들어가긴함.
+        //             const eventData  = {
+        //                 "title": e.schedule_title,
+        //                 "start": postDateTime,
+        //                 "end": postDateTime2,
+        //                 "textColor": "#fb7928",
+        //                 "color": "#f7f7f7",
+        //                 "extendedProps":{
+        //                     schedule_title: e.schedule_title,
+        //                     schedule_content: e.schedule_content,
+        //                     start_time: postDateTime,
+        //                     end_time: postDateTime2,
+        //                     participation: e.participation,
+        //                     schedule_fee: e.schedule_fee,
+        //                     circle_schedule_id: e.circle_schedule_id
+        //                 }
+        //             }
+                    
+        //              // 확인용 로그
+        //             eventsData.push(eventData);
+                    
+
+
+
+        //         }
+        //         // 성공시 1출력
+        //         successCallback(eventsData);
+                
+
+        //     })
+        //     },
+
+        //     eventClick: function (info) {
+        //         // 클릭한 일정의 정보
+        //         var eventData = info.event.extendedProps;
+        //         var title = eventData['schedule_title'];
+        //         var start_time = eventData.start_time;
+        //         console.log(eventData);
+        //         // 이 부분에서 모달을 띄우는 로직을 추가합니다.
+        //         modalScheduleShow(eventData);
+        //     },
+             
+                
+        //         slotMinTime: '00:00', // 캘린더에서 일정 시작 시간
+        //         slotMaxTime: '23:59', // 캘린더에서 일정 종료 시간
+
+        //         // 해더에 표시할 툴바
+        //         headerToolbar: {
+        //              // 이전, 다음
+        //             //left: 'prev,next,today', // 이전, 다음, 오늘
+        //             right: 'prev,today,next' // 중앙 타이틀
+        //              // 월, 일
+        //             //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // 월, 주, 일, 일정목록
+        //         },
+        //         buttonText:{
+        //             today: '오늘'
+        //         },
+
+                
+        //         //initialDate: '2023-08-06', // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)
+        //         initialView: 'dayGridWeek',
+        //         navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
+        //         editable: true, // 수정 가능 여부
+        //         selectable: true, // 달력 일자 드래그 설정가능
+        //         contentHeight: 600,
+        //         expandRows: false,
+        //         dayMaxEventRows: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
+        //         locale: 'ko', // 한국어 설정
+        //         selectLongPressDelay:300, // 선택 클릭 발동 시간 
+                
+
+        //     })
+
+        //     calendar.render(); 
+        // }
+
+        // 캘린더 2
+        document.addEventListener('DOMContentLoaded', async function() {
+            // console.log("");
+            // console.log("=========================================");
+            // console.log("[window onload] : [start]");
+            // console.log("=========================================");
+            // console.log(""); 
+            
             // [현재 날짜 및 시간 확인]
             var korea_date = dayjs(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
             var format = "YYYY-MM-DDTHH:mm:ss"; // 포맷 타입
             var koreaNow = korea_date.format(format);
 
-
             // [calendar 객체 지정]
             var calendarElement = document.getElementById("calendar");
 
-
             // [full-calendar 생성]
             var calendar = new FullCalendar.Calendar(calendarElement, {
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    const queryString = window.location.search;
+                    const urlParams = new URLSearchParams(queryString);
+                    const circle_id = urlParams.get("circle_id");
 
-            events: function (fetchInfo, successCallback, failureCallback) {
-            // fetchInfo 객체를 통해 시작 날짜, 종료 날짜 등의 정보를 받을 수 있습니다.
-            // fetchInfo에 따라 서버에 필요한 데이터를 요청할 수 있습니다.
-            
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const circle_id = urlParams.get("circle_id");
-            
-            fetch('./circleScheduleListAll?circle_id=' + circle_id)
-            .then(response => response.json())
-            .then(response => {
-                const eventsData = [];
+                    fetch('./circleScheduleListAll?circle_id=' + circle_id)
+                    .then(response => response.json())
+                    .then(response => {
+                        const eventsData = [];
 
+                        for(e of response.data){
+                            const changetime = e.start_time;
+                            const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4]);
+                            const changetime2 = e.end_time;
+                            const postDateTime2 = new Date(changetime2[0], changetime2[1] - 1, changetime2[2], changetime2[3], changetime2[4]);
 
-                for(e of response.data){
-
-                    const changetime = e.start_time;
-                    const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4]);
-                    const changetime2 = e.end_time;
-                    const postDateTime2 = new Date(changetime2[0], changetime2[1] - 1, changetime2[2], changetime2[3], changetime2[4]);
-
-                    // 데이터는 이렇게 넣으면 들어가긴함.
-                    const eventData  = {
-                        "title": e.schedule_title,
-                        "start": postDateTime,
-                        "end": postDateTime2,
-                        "textColor": "#fb7928",
-                        "color": "#f7f7f7",
-                        "extendedProps":{
-                            schedule_title: e.schedule_title,
-                            schedule_content: e.schedule_content,
-                            start_time: postDateTime,
-                            end_time: postDateTime2,
-                            participation: e.participation,
-                            schedule_fee: e.schedule_fee,
-                            circle_schedule_id: e.circle_schedule_id
+                            const eventData  = {
+                                "title": e.schedule_title,
+                                "start": postDateTime,
+                                "end": postDateTime2,
+                                "textColor": "white",
+                                "color": "#fb7928",
+                                "extendedProps":{
+                                    schedule_title: e.schedule_title,
+                                    schedule_content: e.schedule_content,
+                                    schedule_address: e.schedule_address,
+                                    start_time: postDateTime,
+                                    end_time: postDateTime2,
+                                    participation: e.participation,
+                                    schedule_fee: e.schedule_fee,
+                                    circle_schedule_id: e.circle_schedule_id
+                                }
+                            }
+                            
+                            eventsData.push(eventData);
                         }
-                    }
-                    
-                     // 확인용 로그
-                    eventsData.push(eventData);
-                    console.log(eventsData);
-
-
-
-                }
-                successCallback(eventsData);
-                
-
-            })
-            },
-
-            eventClick: function (info) {
-                // 클릭한 일정의 정보
-                var eventData = info.event.extendedProps;
-                var title = eventData['schedule_title'];
-                var start_time = eventData.start_time;
-                console.log(eventData);
-                // 이 부분에서 모달을 띄우는 로직을 추가합니다.
-                modalScheduleShow(eventData);
-            },
-             
-                
-                slotMinTime: '00:00', // 캘린더에서 일정 시작 시간
-                slotMaxTime: '23:59', // 캘린더에서 일정 종료 시간
-
-                // 해더에 표시할 툴바
-                headerToolbar: {
-                     // 이전, 다음
-                    //left: 'prev,next,today', // 이전, 다음, 오늘
-                    right: 'prev,today,next' // 중앙 타이틀
-                     // 월, 일
-                    //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // 월, 주, 일, 일정목록
+                        successCallback(eventsData);
+                    })
                 },
-                buttonText:{
+
+                eventClick: function (info) {
+                    var eventData = info.event.extendedProps;
+                    var title = eventData['schedule_title'];
+                    var start_time = eventData.start_time;
+                    console.log(eventData);
+                    modalScheduleShow(eventData);
+                },
+                
+                slotMinTime: '00:00',
+                slotMaxTime: '23:59',
+                headerToolbar: {
+                    right: 'prev,today,next'
+                },
+                buttonText: {
                     today: '오늘'
                 },
-
+                initialView: 'dayGridMonth',
                 
-                //initialDate: '2023-08-06', // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)
-                initialView: 'dayGridWeek',
-
-                navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
-                
-                editable: true, // 수정 가능 여부
-                
-                selectable: true, // 달력 일자 드래그 설정가능
-                
-                contentHeight: 1000,
-                
+                navLinks: true,
+                editable: true,
+                selectable: true,
                 expandRows: false,
+                dayMaxEventRows: true,
+                locale: 'ko',
+                selectLongPressDelay: 300,
+                aspectRatio: 0.8,
+            });
 
-                
-                
-                dayMaxEventRows: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
-                
-                locale: 'ko', // 한국어 설정
+            calendar.render();
+             
+        });
+
         
-                selectLongPressDelay:300, // 선택 클릭 발동 시간 
 
-                
-
-            })
-
-            calendar.render(); 
-        }
         // 해당 동아리의 일정 리스트
+        // !!!!이건 캘린더 밑에 조금 편하게 쓸려고 그냥 임시로 만들어놈!!!!
         const circleScheduleListAll = () => {
 
             const queryString = window.location.search;
@@ -197,6 +269,11 @@
             window.history.go(-1);
         }
         // 모달로 일정 가져와서 등록
+        // 검증 1 => 인원수가 꽉찼을시 불가 / 검증 2 => 일정 시작일되면 일정신청을 못하게 막아야함
+        // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
+        // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
+
+        // 맨마지막 - 순서 %% 결제 순번 ==> 검증이 다 끝나고 난뒤에야 결제를 하면됨 // 
         const circleScheduleApply = (circle_schedule_id) => {
 
             const queryString = window.location.search;
@@ -214,8 +291,12 @@
             })
 
         }
-        // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
-        // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
+
+        
+
+
+
+        // 검증1
         const circleScheduleApplyCheck = (circle_schedule_id) => {
 
             const queryString = window.location.search;
@@ -240,8 +321,9 @@
             })
 
         }// ★★★이거다음에 인원수 체크!
-
+        
         // 모달띄우기 함수
+        // ★★★여기서 정보를 가지고 와서 지도를 표시해야됨★★★
         const modalScheduleShow = (eventData) => {
 
             // 여기서 이제 이벤트데이터를 모달창에 데이터를 입력해서 출력해야됨
@@ -250,6 +332,8 @@
             schedule_title.innerText = eventData.schedule_title;
             const schedule_content = ScheduleModal.querySelector(".schedule_content");
             schedule_content.innerText = eventData.schedule_content;
+            const schedule_address = ScheduleModal.querySelector(".schedule_address");
+            schedule_address.innerText = eventData.schedule_address;
             const participation = ScheduleModal.querySelector(".participation");
             participation.innerText = eventData.participation;
             const schedule_fee = ScheduleModal.querySelector(".schedule_fee");
@@ -275,15 +359,87 @@
             });
             end_time.innerText = formattedDate2;
             const sinchung = ScheduleModal.querySelector(".sinchung");
-            sinchung.setAttribute("onclick","circleScheduleApplyCheck("+ eventData.circle_schedule_id +")");
-            
-            console.log(eventData.circle_schedule_id);
+            //sinchung.setAttribute("onclick","circleScheduleApplyCheck("+ eventData.circle_schedule_id +")");
+            sinchung.setAttribute("onclick","kakaoPayment("+ eventData.circle_schedule_id +")");
+            // 여기가 &일정신청버튼
+            const mapboot = document.querySelector("#map");
+            mapboot.innerHTML = "";
 
+            // 여기서 맵을 만들어야할듯?
+            // 주소-좌표 변환 객체를 생성합니다
+            const geocoder = new kakao.maps.services.Geocoder();
+
+            // 주소로 좌표를 검색합니다
+            // 와.... C-bal 안되서 구조 개조함 (이거 자꾸 화면깨지면서 위치지맘대로 조정되서 개조함)
+            geocoder.addressSearch(eventData.schedule_address, function(result, status) {
+
+                // 정상적으로 검색이 완료됐으면 
+                if (status === kakao.maps.services.Status.OK) {
+
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = {
+                        center: new kakao.maps.LatLng(coords.getLat(), coords.getLng()), // 지도의 중심좌표
+                        level: 3 // 지도의 확대 레벨
+                    };  
+                    
+                    // 지도를 생성합니다    
+                    var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+                    const marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                } 
+            }); 
+            
             const modal = bootstrap.Modal.getOrCreateInstance("#ScheduleModal");
             modal.show();
 
         }
-        // 일정등록할수있는지 여부를 판단 아닐경우 disabled
+        // 결제시스템 -> 총회비 / 인원수 => 결제해야되는 금액 // 넘겨야되는값
+        const kakaoPayment = (circle_schedule_id) => {
+
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';  // 개발자 센터에서 발급받은 Secret Key
+            const API_URL = 'https://kapi.kakao.com/v1/payment/ready'; // 결제 준비 url
+
+            const requestData = new URLSearchParams({
+                "cid": "TC0ONETIME",
+                "partner_order_id": "partner_order_id",
+                "partner_user_id": "partner_user_id",
+                "item_name": "초코파이",
+                "quantity": "1",
+                "total_amount": "2200",
+                "vat_amount": "200",
+                "tax_free_amount": "0",
+                "approval_url": "https://developers.kakao.com/success",
+                "fail_url": "https://developers.kakao.com/fail",
+                "cancel_url": "https://developers.kakao.com/cancel"
+            });
+
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': `KakaoAK ${ADMIN_KEY}`
+                },
+                body: requestData.toString()
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // 모바일 결제페이지 url로 이동시켜야함 여기서 값
+                    location.href = data.next_redirect_mobile_url
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+        }
+                    // 일정등록할수있는지 여부를 판단 아닐경우 disabled
         const circleScheduleRegister = () =>{
 
             const queryString = window.location.search;
@@ -310,9 +466,7 @@
     </script>
     <style>
         
-        .fc-scrollgrid{
-            text-decoration: none;
-        }
+        
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -332,32 +486,56 @@
 
 
         /* [컨테이너 크기 설정] */
-        #calendar {            
-            width: 95%;
-            height: auto;
-            margin: 0 auto;
-            position: relative;
-            top: 5%;
-            
-        }
+        
         *{
             /* font-family: 'Dongle', sans-serif; */
             font-family: 'Gowun Dodum', sans-serif;
             /* font-family: 'Quicksand', sans-serif; */
             /* font-family: 'Noto Sans KR', sans-serif; */
+            /* font-family: 'IBM Plex Sans KR', sans-serif; */
+            /* font-family: 'Nanum Gothic Coding', monospace; */
         }
         .fc {
             font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
-            color: #333;
+            background-color: #fafafa;
+            color: #3e3e3e;
+            font-size: 0.7em;
+            text-decoration: none;
             /* 기타 스타일 설정 */
         }
-
-        /* FullCalendar 일정 제목 스타일 */
-        .fc-title {
-            font-size: 16px;
-            color: #555;
-            /* 기타 스타일 설정 */
+        .fc-daygrid-day-number{
+            text-decoration: none;
+            color: black;
+        }
+        .fc-col-header-cell-cushion{
+            text-decoration: none;
+            color: black;
+        }
+        .fc-daygrid-event {
+            background-color: #fb7928; /* 이벤트의 배경색을 변경 */
+            color: white; /* 이벤트의 텍스트 색상을 변경 */
+            padding-right: 0;
+        }
+        .fc-daygrid-event-dot {
+            display: none !important;
+        }
+        .fc-daygrid-event-harness{
+            padding-right: 0;
+            margin-right: 0;
+        }
+        .fc-event-time{
+            font-weight: bold;
+        }
+        .fc-event-title{
+            font-weight: bolder;
+        }
+        .fc-event:hover {
+            background-color: initial;
+            color: initial;
+        }
+        .fc-event:active {
+            background-color: initial;
+            color: initial;
         }
     </style>
 </head>
@@ -365,13 +543,8 @@
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid d-grid">
         <div class="row">
-            <div id="calendar" class="col py-2">
+            <div id="calendar" class="col py-2 px-0">
 
-            </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col d-grid">
-                <button onclick="modalScheduleShow()"> 모달</button>
             </div>
         </div>
     </div>
@@ -411,7 +584,7 @@
                         <span class="start_time fw-semibold"></span>
                     </div>
                 </div>
-                <div class="row fw-semibold my-2">
+                <div class="row fw-semibold my-1">
                     <div class="col text-center">
                         ~
                     </div>
@@ -419,6 +592,16 @@
                 <div class="row">
                     <div class="col text-end">
                         <span class="end_time fw-semibold"></span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col ps-0">
+                        <span class="schedule_address fw-semibold" style="font-size: 0.85em; color: #6b6b6b;"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col px-0"><!-- 일정에 주소좌표가 들어갈 예정 --> 
+                        <div id="map" style="width: 100%; height: 17em;"></div>
                     </div>
                 </div>
             </div>
@@ -430,7 +613,9 @@
         </div>
       </div>
     </div>
-    
+    <!-- 라이브러리 쓰려면 라이브러리 추가한거사용하면됨 7319aff03174c9825e5552818af66d19 -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf&libraries=services"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>

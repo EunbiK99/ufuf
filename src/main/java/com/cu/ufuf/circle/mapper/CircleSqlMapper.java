@@ -128,4 +128,14 @@ public interface CircleSqlMapper {
     // 
     public int circleBoartCnt(int circle_id);
     
+    // 동아리 가입신청 N인애들 끌어오기 & 가입신청 Y로바꿔주기
+    public List<CircleJoinApplyDto> ApprovalJoinAllListByCircleIdAndSubmitN(int circle_id);
+    public void circleJoinApplyCompleteUpdateByCircleJoinApplyId(int circle_join_apply_id); 
+
+    // 검증1 => 가입신청을 했는가?
+    public Boolean verificationjoinApplyByUserIdAndCircleId(@Param("circle_id") int circle_id, @Param("user_id") int user_id);
+    
+    // 동아리 게시글 이미지 리스트 가져오기
+    public List<CircleBoardImageDto> circleBoardImageInfoByCircleBoardId(int circle_board_id);
+    
 }

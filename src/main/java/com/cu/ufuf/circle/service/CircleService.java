@@ -408,5 +408,47 @@ public class CircleService {
         
         return list;
     }
+
+    public List<Map<String, Object>> ApprovalJoinAllListByCircleIdAndSubmitN(int circle_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleJoinApplyDto> circleJoinApplyDtos = circleSqlMapper.ApprovalJoinAllListByCircleIdAndSubmitN(circle_id);
+
+        for(CircleJoinApplyDto e : circleJoinApplyDtos){
+
+            Map<String, Object> map = new HashMap<>();
+
+            int user_id = e.getUser_id();
+
+            UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+
+            map.put("circleJoinApplyDto", e);
+            map.put("userInfoDto", userInfoDto);
+
+            list.add(map);
+            
+        }
+
+        return list;
+
+    }
+
+    public void circleJoinApplyCompleteUpdateByCircleJoinApplyId(int circle_join_apply_id){
+
+        circleSqlMapper.circleJoinApplyCompleteUpdateByCircleJoinApplyId(circle_join_apply_id);
+    }
+    public Boolean verificationjoinApplyByUserIdAndCircleId(int circle_id, int user_id){
+
+        return circleSqlMapper.verificationjoinApplyByUserIdAndCircleId(circle_id, user_id);
+    }
+    public CircleDto circleInfo(int circle_id){
+
+        return circleSqlMapper.circleInfoByCircleId(circle_id);
+    }
+    public List<CircleBoardImageDto> circleBoardImageInfoByCircleBoardId(int circle_board_id){
+
+        return circleSqlMapper.circleBoardImageInfoByCircleBoardId(circle_board_id);
+    }
     
 }
