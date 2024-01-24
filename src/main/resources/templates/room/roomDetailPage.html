@@ -129,6 +129,7 @@
                 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                 map.setCenter(coords);
             } 
+            
         });    
 
         window.addEventListener("DOMContentLoaded", () => {
@@ -451,8 +452,9 @@
             <div class="col ps-0 ms-0" th:text="${roomDetail.roomInfoDto.location}"></div>
         </div>
         
+
         <!--리뷰-->
-        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">
+        <div class="row pt-3 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">
             <div class="col-2 me-0 pe-0">리뷰</div>
             <div class="col" th:text="${roomDetail.roomReviewCount}"></div>
         </div>
