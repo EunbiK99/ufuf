@@ -5,32 +5,42 @@
 
 <insert id="insertItemCategory">
     insert into item_category(category_name)
-    values(#{category_name});
+    values(#{category_name})
 </insert>
 
-<select id="createItemPk" resultType="int">
-    select ifnull(MAX(item_id)+1, 1) item_id from item_info;
-</select>
-
 <insert id="insertItemInfo">
-    insert into item_info(item_id, item_category_id, merchan_id)
-    values(#{item_id}, #{item_category_id}, #{merchan_id});
+    <selectKey keyProperty="item_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID() AS item_id
+    </selectKey>
+    INSERT INTO item_info(
+        item_category_id, 
+        merchan_id
+        )
+    VALUES(
+        #{item_category_id}, 
+        #{merchan_id}
+    )
 </insert>
 
 <insert id="insertOrderInfo">
-    insert into order_info(order_id, item_id, user_id, status)
+    insert into order_info(
+        order_id, 
+        item_id, 
+        user_id, 
+        status
+        )
     values(
         #{order_id},
         #{item_id},
         #{user_id},
         #{status}
-    );
+    )
 </insert>
 
 <update id="updateOrderStatus">
     update order_info
     set status = #{status}
-    where order_id = #{order_id};
+    where order_id = #{order_id}
 </update>
 
 <insert id="insertKakaoPayReqInfo">
@@ -53,7 +63,7 @@
         #{quantity},
         #{total_amount},
         #{tax_free_amount}
-    );
+    )
 </insert>
 
 <insert id = "insertKakaoPayResInfo">
@@ -66,7 +76,7 @@
         #{tid},
         #{next_redirect_mobile_url},
         #{created_at}
-    );
+    )
 </insert>
 
 <insert id = "insertKakaoPayAccReqInfo">
@@ -83,7 +93,7 @@
         #{partner_order_id},
         #{partner_user_id},
         #{pg_token}
-    );
+    )
 </insert>
 
 <insert id="insertKakaoPayAccResInfo">
@@ -108,22 +118,22 @@
         #{aid},
     	#{payment_method_type},
         #{approved_at}
-    );
+    )
 </insert>
 
 <!-- create amountPk -->
 <select id="createAmountPk" resultType="int">
-    select ifnull(MAX(amount_id)+1, 1) amount_id from amount;
+    select ifnull(MAX(amount_id)+1, 1) amount_id from amount
 </select>
 
 <insert id="insertAmountInfo">
 	insert into amount(amount_id, total, point)
-    values(#{amount_id}, #{total},#{point});
+    values(#{amount_id}, #{total},#{point})
 </insert>
 
 <!-- create amountPk -->
 <select id="createCardInfoPk" resultType="int">
-    select ifnull(MAX(card_id)+1, 1) card_id from card_info;
+    select ifnull(MAX(card_id)+1, 1) card_id from card_info
 </select>
 
 <insert id="insertCardInfo">
@@ -140,7 +150,7 @@
         #{card_type},
         #{install_month},
         #{approved_id},
-    );
+    )
 </insert>
 
 </mapper>

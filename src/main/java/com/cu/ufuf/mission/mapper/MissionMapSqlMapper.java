@@ -5,13 +5,20 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cu.ufuf.dto.MissionInfoDto;
+
 
 @Mapper
 public interface MissionMapSqlMapper {
 
-//     public int createMissionPk();
-//     public int createMissionAccPk();
-//     public int createMissionComplPk();
+    public void insertMission(MissionInfoDto missionInfoDto);
+
+
+
+
+
+
+
 
 //     public void insertMission(MissionInfoDto missionInfoDto);
 //     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);

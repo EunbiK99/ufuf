@@ -2,18 +2,74 @@ package com.cu.ufuf.mission.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.OrderInfoDto;
+import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
+import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 public class MissionMapServiceImpl {
 
-    // @Autowired
-    // private MissionMapSqlMapper missionMapsqlMapper;
-    // @Autowired
-    // private MerchanSqlMapper merchanSqlMapper;
+    @Autowired
+    private MissionMapSqlMapper missionMapsqlMapper;
+    @Autowired
+    private MerchanSqlMapper merchanSqlMapper;
+
+    // 미션 등록
+    public void registerMissionProcess(MissionInfoDto missionInfoDto){
+
+        missionMapsqlMapper.insertMission(missionInfoDto);
+        int missionId = missionInfoDto.getMission_id();
+        int userId = missionInfoDto.getUser_id();
+
+        ItemInfoDto itemInfoDto = new ItemInfoDto();
+        itemInfoDto.setItem_category_id(1);
+        itemInfoDto.setMerchan_id(missionId);
+
+        merchanSqlMapper.insertItemInfo(itemInfoDto);
+        int itemId = itemInfoDto.getItem_id();
+        
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+        String order_id = "MI";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String today = sdf.format(new Date());
+
+        UUID uuid = UUID.randomUUID();
+        String ramdomUUID = uuid.toString().replace("-", "");
+        ramdomUUID = ramdomUUID.substring(0, 10);
+        ramdomUUID = ramdomUUID.toUpperCase();
+
+        order_id = order_id + itemId + today + ramdomUUID;
+
+        orderInfoDto.setOrder_id(order_id);
+        orderInfoDto.setItem_id(itemId);
+        orderInfoDto.setUser_id(userId);
+        orderInfoDto.setStatus("주문완료");
+
+        merchanSqlMapper.insertOrderInfo(orderInfoDto);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // // 미션 등록
     // public void registerMissionProcess(MissionInfoDto missionInfoDto){

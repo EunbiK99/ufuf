@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>미션맵</title>
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+
+<script>
+
+    var relativePath = window.location.origin;
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+    var personImg = relativePath + "/public/image/mission/free-icon-person-8226827.png",
+    personImgSize = new kakao.maps.Size(42, 41),
+    personImgOption = {offset: new kakao.maps.Point(24, 20)};
+
+    // 지금 현재 위치 가져오기
+    function getNowLocation(){
+
+        if (navigator.geolocation) {
+
+            function getLocation() {
+                
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude; // 위도
+                    var lon = position.coords.longitude; // 경도
+
+                    var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+                    getNowAddress(lat, lon);
+
+                    const nowCoords = document.getElementById("nowCoords");
+                    nowCoords.setAttribute("value", lat + "," + lon);
+
+                    if (map) {
+                        map.relayout();
+                        map = null;
+                    }
+
+                    // // 새로운 지도 객체 생성
+                    // map = new kakao.maps.Map(mapContainer, mapOption);
+                    // map.setMinLevel(1);
+                    // map.setMaxLevel(4);
+
+                    setZoomable(true);
+
+                    if (nowMarker) {
+                        nowMarker.setMap(null);
+                    }
+
+                    nowMarker = new kakao.maps.Marker({
+                        map: map,
+                        position: locPosition,
+                        image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
+                    });
+
+                    nowMarker.setZIndex(2);
+
+                    // 가운데 표시
+                    panTo(locPosition);
+
+                });
+            }
+            getLocation();
+
+        } else { // HTML5의 GeoLocation을 사용할 수 없을때
+            console.log("GeoLocation 사용불가");
+            var locPosition = new kakao.maps.LatLng(37.49962779517117, 127.03048032853766);
+
+            if (nowMarker) {
+                nowMarker.setMap(null);
+            }
+
+            nowMarker = new kakao.maps.Marker({
+                map: map,
+                position: locPosition,
+                image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
+            });
+
+            nowMarker.setZIndex(2);
+
+            panTo(locPosition);
+
+        }
+    }
+
+    // 지도 중심으로 이동시키기
+    function panTo(moveLatLon) {
+        map.panTo(moveLatLon);            
+    }
+
+    function setZoomable(zoomable) {
+        map.setZoomable(zoomable);    
+    }
+
+    // 주소 가져오기
+    function getNowAddress(lat, lng) {
+
+        let geocoder = new kakao.maps.services.Geocoder();
+
+        let coord = new kakao.maps.LatLng(lat, lng);
+        let callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                displayNowLocation(result);
+            }
+        }
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+    }
+
+    // 주소 출력하기
+    function displayNowLocation(data) {
+
+        const nowLocation = document.getElementById("nowLocation");
+
+        if (data[0].road_address === null) {
+            nowLocation.innerText = data[0].address.address_name;
+        } else {
+            nowLocation.innerText = data[0].road_address.address_name;
+        }
+
+    }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        upDateOrderstatus();
+    });
+
+</script>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col">
+
+                        <!-- 현재 위치 출력 -->
+                        <div class="row">
+                            <div class="fixed-top z-2">
+                                <div class="col bg-white text-center mt-3 mx-3 shadow-sm rounded-5 border border-secondary-subtle">
+                                    <span><i class="bi bi-geo-alt align-self-center"></i></span>
+                                    <input type="hidden" id="nowCoords"></span>
+                                    <span id="nowLocation" class="text-secondary align-self-center"
+                                        style="font-size: 0.9em;"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 지도 -->
+                        <div class="row">
+                            <div class="col px-0">
+                                <div id="map" style="height:37.91em; width: 100%;">
+                                    <script>
+
+                                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                                            mapOption = { 
+                                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                                level: 3 // 지도의 확대 레벨
+                                            };
+
+                                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                                        map.setMinLevel(1);
+                                        map.setMaxLevel(4);
+
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

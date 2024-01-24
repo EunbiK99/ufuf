@@ -24,6 +24,31 @@ public class MissionMapController {
         return "mission/missionMap";
     }
 
+    @RequestMapping("map")
+    public String map(HttpSession session, Model model){
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        model.addAttribute("sessionUserInfo", sessionUserInfo);
+
+        return "mission/map";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @RequestMapping("paymentSuccessPage")
     public String paymentSuccessPage(@RequestParam(name="order_id") String order_id,
             @RequestParam(name="pg_token") String pg_token, Model model){

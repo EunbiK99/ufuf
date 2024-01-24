@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -36,21 +37,21 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/mission/*")
 public class MissionMapRestController {
 
-    // @Autowired
-    // private MissionMapServiceImpl missionMapService;
+    @Autowired
+    private MissionMapServiceImpl missionMapService;
 
-    // @PostMapping("registerMissionProcess")
-    // public RestResponseDto registerMissionProcess(@RequestBody MissionInfoDto params){
+    @PostMapping("registerMissionProcess")
+    public RestResponseDto registerMissionProcess(@RequestBody MissionInfoDto params){
 
-    //     RestResponseDto restResponseDto = new RestResponseDto();
+        RestResponseDto restResponseDto = new RestResponseDto();
 
-    //     missionMapService.registerMissionProcess(params);
+        missionMapService.registerMissionProcess(params);
         
-    //     restResponseDto.setData(params);
-    //     restResponseDto.setResult("Success");
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
         
-    //     return restResponseDto;
-    // }
+        return restResponseDto;
+    }
 
     // @RequestMapping("loadMissionList")
     // public RestResponseDto loadMissionList(){
