@@ -321,29 +321,29 @@ public class CircleRestController {
 
     // 여긴 투표항목 등록임 잘생각해야됨 맴버아이디랑 투표번호 max값 가져와서 등록해주어야함
     // 왜 String배열안되냐 소리지르고싶네.. 안되면 걍 나눠서 해도되긴함
-    // (value = "/voteOptionRegister", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // (value = "/voteOptionRegister", consumes =
+    // MediaType.MULTIPART_FORM_DATA_VALUE)
     @RequestMapping("voteOptionRegister")
     public RestResponseDto voteOptionRegister(
-        @RequestParam("circle_id") int circle_id,
-        @RequestParam("files") MultipartFile[] imagFiles,
-        @RequestParam("option_content") String[] option_content,
-        HttpSession session
-        ) {
-              
+            @RequestParam("circle_id") int circle_id,
+            @RequestParam("files") MultipartFile[] imagFiles,
+            @RequestParam("option_content") String[] option_content,
+            HttpSession session) {
+
         RestResponseDto responseDto = new RestResponseDto();
-        
+
         UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
         int user_id = userInfoDto.getUser_id();
         CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-        
-        int circle_member_id = circleMemberDto.getCircle_member_id(); //이 키 이용
-        
+
+        int circle_member_id = circleMemberDto.getCircle_member_id(); // 이 키 이용
+
         int circle_vote_id = circleService.circleVoteMaxCircleVoteId(circle_member_id);
-        
+
         // 일단 여기까진 건들지말고 값넘어오는지 확인부터 ㄱㄱ
         // 이거근데 .. 값을넘겨주는게 맞나 싶다..
-        
-        for(int i = 0; i < option_content.length ; i++){
+
+        for (int i = 0; i < option_content.length; i++) {
             String filename = imagFiles[i].getOriginalFilename();
             long randomFilename = System.currentTimeMillis();
             String Path = "C:/uploadFiles/";
@@ -362,7 +362,7 @@ public class CircleRestController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
             CircleVoteOptionDto circleVoteOptionDto = new CircleVoteOptionDto();
             circleVoteOptionDto.setCircle_vote_id(circle_vote_id);
             circleVoteOptionDto.setOption_image(fileLink);
@@ -370,7 +370,7 @@ public class CircleRestController {
             circleService.circleVoteOptionInsert(circleVoteOptionDto);
 
         }
-        
+
         responseDto.setResult("success");
 
         return responseDto;
@@ -378,236 +378,336 @@ public class CircleRestController {
 
     // 여긴 투표글 등록
     @RequestMapping("voteRegister")
-    public RestResponseDto voteRegister(@RequestParam("circle_id") int circle_id, @RequestBody CircleVoteDto circleVoteDto, HttpSession session){
-        
+    public RestResponseDto voteRegister(@RequestParam("circle_id") int circle_id,
+            @RequestBody CircleVoteDto circleVoteDto, HttpSession session) {
+
         RestResponseDto responseDto = new RestResponseDto();
-        
+
         UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
         int user_id = userInfoDto.getUser_id();
-        
+
         CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-        int circle_member_id = circleMemberDto.getCircle_member_id(); //이 키 이용
-        
+        int circle_member_id = circleMemberDto.getCircle_member_id(); // 이 키 이용
+
         circleVoteDto.setCircle_member_id(circle_member_id);
         circleService.circleVoteInsert(circleVoteDto);
 
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
 
     @RequestMapping("voteAllList")
-    public RestResponseDto voteAllList(@RequestParam("circle_id") int circle_id){
-    
-        //동아리 관련된 동아리회원들 모두가져오고 회원들이 쓴 모든투표글 가져올거임
-        
+    public RestResponseDto voteAllList(@RequestParam("circle_id") int circle_id) {
+
+        // 동아리 관련된 동아리회원들 모두가져오고 회원들이 쓴 모든투표글 가져올거임
+
         RestResponseDto responseDto = new RestResponseDto();
-        
+
         responseDto.setData(circleService.circleVoteAllListInfo(circle_id));
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
+
     // voteArticle에 들어갈 정보
     @RequestMapping("voteInfoOne")
-    public RestResponseDto voteInfoOne(@RequestParam("circle_vote_id") int circle_vote_id){
-        
+    public RestResponseDto voteInfoOne(@RequestParam("circle_vote_id") int circle_vote_id) {
+
         RestResponseDto responseDto = new RestResponseDto();
 
         responseDto.setData(circleService.voteInfoOne(circle_vote_id));
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
+
     // option 정보꺼냄
     @RequestMapping("voteOptionInfoArticle")
-        public RestResponseDto voteOptionInfoArticle(@RequestParam("circle_vote_id") int circle_vote_id){
-        
+    public RestResponseDto voteOptionInfoArticle(@RequestParam("circle_vote_id") int circle_vote_id) {
+
         RestResponseDto responseDto = new RestResponseDto();
-        
+
         responseDto.setData(circleService.circleVoteOptionInfoByCircleVoteId(circle_vote_id));
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
 
     // voteCompleteDto에 insert
-    // 
+    //
     @RequestMapping("voteComplete")
-        public RestResponseDto voteComplete(@RequestParam("circle_id") int circle_id, @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session,
-        @RequestBody CircleVoteCompleteDto circleVoteCompleteDto){
+    public RestResponseDto voteComplete(@RequestParam("circle_id") int circle_id,
+            @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session,
+            @RequestBody CircleVoteCompleteDto circleVoteCompleteDto) {
         
         RestResponseDto responseDto = new RestResponseDto();
 
         UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
         int user_id = userInfoDto.getUser_id();
-
+        
         CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
         int circleMemberId = circleMemberDto.getCircle_member_id();
         circleVoteCompleteDto.setCircle_member_id(circleMemberId);
 
         circleService.circleVoteCompleteInfoInsert(circleVoteCompleteDto);
-        
+
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
+
     // 체크한 항목이 존재한가? true false로 하면 될거 같은데.
     // 투표글에는 항목이 여러개 존재 ==> 여러개 항목 중에서 하나라도 체크를 했으면 true가 나와야 함
     @RequestMapping("voteChecked")
-        public RestResponseDto voteChecked(@RequestParam("circle_id") int circle_id, @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session){
-        
+    public RestResponseDto voteChecked(@RequestParam("circle_id") int circle_id,
+            @RequestParam("circle_vote_id") int circle_vote_id, HttpSession session) {
+
         RestResponseDto responseDto = new RestResponseDto();
         UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
         int user_id = userInfoDto.getUser_id();
         // 일단 동아리 회원번호
         CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
         int circle_member_id = circleMemberDto.getCircle_member_id();
-        
+
         // 이 리스트안에 여러개 항목들존재하는데 항목번호, 동아리회원번호 넣고 찾아서 있는지만 체크
-        List<CircleVoteOptionDto> circleVoteOptionDto = circleService.circleVoteOptionInfoByCircleVoteId(circle_vote_id); //투표의 항목들
+        List<CircleVoteOptionDto> circleVoteOptionDto = circleService
+                .circleVoteOptionInfoByCircleVoteId(circle_vote_id); // 투표의 항목들
         int cntSwitch = 0;
-        for(CircleVoteOptionDto e : circleVoteOptionDto){
+        for (CircleVoteOptionDto e : circleVoteOptionDto) {
             int vote_option_id = e.getVote_option_id();
             Boolean check = circleService.voteChecked(vote_option_id, circle_member_id);
-            
-            if(check){
+
+            if (check) {
                 cntSwitch = 1;
                 break;
             }
-            
+
         }
-        if(cntSwitch == 0){
+        if (cntSwitch == 0) {
             responseDto.setData(true); // 없으니까 투표가능
-        }else{
+        } else {
             responseDto.setData(false); // 있으니까 투표불가
         }
 
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
+
     // scheduleApplyInsert
     @RequestMapping("scheduleApplyInsert")
-            public RestResponseDto scheduleApplyInsert(@RequestParam("circle_id") int circle_id, @RequestBody CircleScheduleDto circleScheduleDto, HttpSession session){
-            
-            RestResponseDto responseDto = new RestResponseDto();
-            
-            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-            int user_id = userInfoDto.getUser_id();
+    public RestResponseDto scheduleApplyInsert(@RequestParam("circle_id") int circle_id,
+            @RequestBody CircleScheduleDto circleScheduleDto, HttpSession session) {
 
-            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-            int circle_member_id = circleMemberDto.getCircle_member_id();
-            
-            circleScheduleDto.setCircle_member_id(circle_member_id);
-            circleService.circleScheduleInfoInsert(circleScheduleDto);
-            // insert 완료
-            
-            responseDto.setResult("success");
-            
-            return responseDto;
-        }
-    @RequestMapping("circleScheduleListAll")
-        public RestResponseDto circleScheduleListAll(@RequestParam("circle_id") int circle_id){
-        
         RestResponseDto responseDto = new RestResponseDto();
-        
-        responseDto.setData(circleService.circleScheduleListAll(circle_id));
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+
+        circleScheduleDto.setCircle_member_id(circle_member_id);
+        circleService.circleScheduleInfoInsert(circleScheduleDto);
+        // insert 완료
+
         responseDto.setResult("success");
-        
+
         return responseDto;
     }
-    //circleScheduleApplyInsert
+
+    @RequestMapping("circleScheduleListAll")
+    public RestResponseDto circleScheduleListAll(@RequestParam("circle_id") int circle_id) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.circleScheduleListAll(circle_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // circleScheduleApplyInsert
     @RequestMapping("circleScheduleApplyInsert")
-            public RestResponseDto circleScheduleApplyInsert(@RequestParam("circle_id") int circle_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
-            
-            RestResponseDto responseDto = new RestResponseDto();
-            
-            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-            int user_id = userInfoDto.getUser_id();
+    public RestResponseDto circleScheduleApplyInsert(@RequestParam("circle_id") int circle_id,
+            @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session) {
 
-            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-            int circle_member_id = circleMemberDto.getCircle_member_id();
+        RestResponseDto responseDto = new RestResponseDto();
 
-            CircleScheduleApplyDto circleScheduleApplyDto = new CircleScheduleApplyDto();
-            circleScheduleApplyDto.setCircle_member_id(circle_member_id);
-            circleScheduleApplyDto.setCircle_schedule_id(circle_schedule_id);
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
 
-            circleService.circleScheduleApplicationInfoInsert(circleScheduleApplyDto);
-            
-            responseDto.setResult("success");
-            
-            return responseDto;
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+
+        CircleScheduleApplyDto circleScheduleApplyDto = new CircleScheduleApplyDto();
+        circleScheduleApplyDto.setCircle_member_id(circle_member_id);
+        circleScheduleApplyDto.setCircle_schedule_id(circle_schedule_id);
+
+        circleService.circleScheduleApplicationInfoInsert(circleScheduleApplyDto);
+
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // circleScheduleAppleyCheck
+    @RequestMapping("circleScheduleAppleyCheck")
+    public RestResponseDto circleScheduleAppleyCheck(@RequestParam("circle_id") int circle_id,
+            @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session) {
+                
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        Boolean check = circleService.scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(circle_member_id,
+                circle_schedule_id);
+
+        responseDto.setData(check);
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // circleScheduleRegisterCheck
+    @RequestMapping("circleScheduleRegisterCheck")
+    public RestResponseDto circleScheduleRegisterCheck(@RequestParam("circle_id") int circle_id, HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+
+        Boolean RegisterCheck = circleService.scheduleApplyCheckPAndAByCircleMemberId(circle_member_id);
+
+        responseDto.setData(RegisterCheck);
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // circleListOnlyManager
+    @RequestMapping("circleListOnlyManager")
+    public RestResponseDto circleListOnlyManager(HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        // 여기서 user_id 넣었을때 동아리회원목록이 전부나오게해야함
+
+        responseDto.setData(circleService.circleListOnlyManager(user_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // ApprovalJoinAllList
+    @RequestMapping("ApprovalJoinAllList")
+    public RestResponseDto ApprovalJoinAllList(@RequestParam("circle_id") int circle_id) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.ApprovalJoinAllListByCircleIdAndSubmitN(circle_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // approvalJoin
+    @RequestMapping("approvalJoin")
+    public RestResponseDto approvalJoin(@RequestParam("circle_id") int circle_id,
+            @RequestParam("circle_join_apply_id") int circle_join_apply_id, HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        // 가입신청 Y로바꿔줌
+        circleService.circleJoinApplyCompleteUpdateByCircleJoinApplyId(circle_join_apply_id);
+        // 그리고 회원정보 넣어주기 M으로
+        CircleMemberDto circleMemberDto = new CircleMemberDto();
+        circleMemberDto.setCircle_id(circle_id);
+        circleMemberDto.setUser_id(user_id);
+        circleMemberDto.setCircle_position("M");
+
+        circleService.cirlceMemberinfoInsert(circleMemberDto);
+
+        responseDto.setData(null);
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    // verificationjoinApply
+    @RequestMapping("verificationjoinApply")
+    public RestResponseDto verificationjoinApply(@RequestParam("circle_id") int circle_id, HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        responseDto.setData(circleService.verificationjoinApplyByUserIdAndCircleId(circle_id, user_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
+
+    @RequestMapping("verificationUniversity")
+    public RestResponseDto verificationUniversity(@RequestParam("circle_id") int circle_id, HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        String user_university = userInfoDto.getUniversity();
+
+        CircleDto circleDto = circleService.circleInfo(circle_id);
+        String circle_university = circleDto.getCircle_university();
+
+        boolean check = false;
+        if (user_university.equals(circle_university)) {
+            check = true;
         }
-        //circleScheduleAppleyCheck
-        @RequestMapping("circleScheduleAppleyCheck")
-            public RestResponseDto circleScheduleAppleyCheck(@RequestParam("circle_id") int circle_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
-            
-            RestResponseDto responseDto = new RestResponseDto();
 
-            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-            int user_id = userInfoDto.getUser_id();
+        responseDto.setData(check);
+        responseDto.setResult("success");
 
-            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-            int circle_member_id = circleMemberDto.getCircle_member_id();
+        return responseDto;
+    }
 
-            Boolean check = circleService.scheduleApplyCheckByCircleScheduleIdAndCircleMemberId(circle_member_id, circle_schedule_id);
-            
-            responseDto.setData(check);
-            responseDto.setResult("success");
-            
-            return responseDto;
-        }
-        //circleScheduleRegisterCheck
-        @RequestMapping("circleScheduleRegisterCheck")
-            public RestResponseDto circleScheduleRegisterCheck(@RequestParam("circle_id") int circle_id, HttpSession session){
-            
-            RestResponseDto responseDto = new RestResponseDto();
+    // boardSubImageSelect
+    @RequestMapping("boardSubImageSelect")
+    public RestResponseDto boardSubImageSelect(@RequestParam("circle_board_id") int circle_board_id) {
 
-            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-            int user_id = userInfoDto.getUser_id();
+        RestResponseDto responseDto = new RestResponseDto();
 
-            CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
-            int circle_member_id = circleMemberDto.getCircle_member_id();
+        responseDto.setData(circleService.circleBoardImageInfoByCircleBoardId(circle_board_id));
+        responseDto.setResult("success");
 
-            Boolean RegisterCheck = circleService.scheduleApplyCheckPAndAByCircleMemberId(circle_member_id);
-
-            responseDto.setData(RegisterCheck);
-            responseDto.setResult("success");
-            
-            return responseDto;
-        }
-        //circleListOnlyManager
-        @RequestMapping("circleListOnlyManager")
-            public RestResponseDto circleListOnlyManager(HttpSession session){
-            
-            RestResponseDto responseDto = new RestResponseDto();
-
-            UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-            int user_id = userInfoDto.getUser_id();
-            // 여기서 user_id 넣었을때 동아리회원목록이 전부나오게해야함
-            
-            responseDto.setData(circleService.circleListOnlyManager(user_id));
-            responseDto.setResult("success");
-            
-            return responseDto;
-        }
-
-
-
+        return responseDto;
+    }
 
     // RESTAPI 양식
     /*
-        @RequestMapping("asdfasdfasdf")
-            public RestResponseDto asdfasdfasdfasdf(){
-            
-            RestResponseDto responseDto = new RestResponseDto();
-            
-            responseDto.setData(null);
-            responseDto.setResult("success");
-            
-            return responseDto;
-        }
+     * @RequestMapping("asdfasdfasdf")
+     * public RestResponseDto asdfasdfasdfasdf(){
+     * 
+     * RestResponseDto responseDto = new RestResponseDto();
+     * 
+     * responseDto.setData(null);
+     * responseDto.setResult("success");
+     * 
+     * return responseDto;
+     * }
      */
 
 }

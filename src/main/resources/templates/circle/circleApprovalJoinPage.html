@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+
+        const ApprovalJoinList = () => {
+
+            // 링크보낼때 동아리 번호 보내야됨
+            // 동아리 번호기준으로 가입승인이 'N' 인사람 끌어오기
+            const queryString = window.location.search;
+            const urlParam = new URLSearchParams(queryString);
+            const circle_id = urlParam.get("circle_id");
+
+
+            fetch("./ApprovalJoinAllList?circle_id=" + circle_id)
+            .then(response => response.json())
+            .then(response => {
+
+                // 가입신청 두번못하게 막아야함
+                for(e of response.data){
+                    const UserInfoOne = document.querySelector("#Wrapper .UserInfoOne").cloneNode(true);
+                    const name = UserInfoOne.querySelector(".name").innerText = e.userInfoDto.name;
+                    const university = UserInfoOne.querySelector(".university").innerText = e.userInfoDto.university;
+                    const address = UserInfoOne.querySelector(".address").innerText = e.userInfoDto.address;
+                    const changeGender = e.userInfoDto.gender;
+                    if(changeGender === "M"){
+                        const gender = UserInfoOne.querySelector(".gender").innerText = "남";
+                    }else if(changeGender === "F"){
+                        const gender = UserInfoOne.querySelector(".gender").innerText = "여";
+                    }
+                    const joinSubmit = UserInfoOne.querySelector(".joinSubmit");
+                    joinSubmit.setAttribute("onclick","joinSubmit(" + e.circleJoinApplyDto.circle_join_apply_id + ")");
+
+                    const listInsert = document.querySelector("#listInsert")
+                    listInsert.appendChild(UserInfoOne);
+                    
+                }
+
+            })
+        }
+        const joinSubmit = (circle_join_apply_id) => {
+
+            const queryString = window.location.search;
+            const urlParam = new URLSearchParams(queryString);
+            const circle_id = urlParam.get("circle_id");
+            
+            fetch("./approvalJoin?circle_id=" + circle_id + "&circle_join_apply_id=" + circle_join_apply_id)
+            .then(response => response.json())
+            .then(response => {
+
+                location.reload();
+
+            })
+            
+
+        }
+
+        function goBack() {
+            window.history.go(-1);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            ApprovalJoinList();
+        })
+
+     </script>
+
+     <style>
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="listInsert" class="col">
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper" class="d-none">
+        <div class="UserInfoOne row mt-2">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <span class="name">이름</span>&nbsp;·&nbsp;<span class="gender">성별</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span class="university">대학교</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="font-size: 0.7em;">
+                        <span class="address">주소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
+                <button class="joinSubmit btn fw-semibold" style="background-color: #fb7928;color: white;"> 가입승인</button>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

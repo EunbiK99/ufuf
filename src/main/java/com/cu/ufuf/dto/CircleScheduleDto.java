@@ -12,6 +12,7 @@ public class CircleScheduleDto {
     private int circle_member_id;
     private String schedule_title;
     private String schedule_content;
+    private String schedule_address;
     private int participation;
     private int schedule_fee;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

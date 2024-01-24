@@ -50,12 +50,13 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const circle_id = urlParams.get("circle_id");
+            let i = 0;
 
             fetch("./circleboardList?circle_id="+ circle_id)
             .then(response => response.json())
             .then(response => {
-                // 아직 글작성 안해서 글이없음 ^^.. ==> 글작성 먼저 만들자..
-                // 글리스트 가져온거임 ..
+                // 
+                // 
                 for(e of response.data){
 
                     const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
@@ -66,8 +67,21 @@
                     member_profile_img.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
                     const board_main_image = Wrapper.querySelector(".board_main_image");
                     board_main_image.setAttribute("src", "/uploadFiles/" + e.circleBoardDto.main_image);
+                    // board_main_image.setAttribute("onclick","boardArticleMove("+ e.circleBoardDto.circle_board_id +")")
                     const createdtime = Wrapper.querySelector(".createdtime")
                     const changetime = e.circleBoardDto.created_at;
+                    const boardtitle = Wrapper.querySelector(".boardtitle");
+                    boardtitle.innerText = e.circleBoardDto.board_title;
+                    
+                    const boardcontent = Wrapper.querySelector(".boardcontent");
+                    boardcontent.innerText = e.circleBoardDto.board_content;
+                    const haha = Wrapper.querySelector(".haha");
+                    if(i === 0){
+                        haha.setAttribute("data-bs-target","#carouselExampleIndicators");
+                    }else{
+                        haha.setAttribute("data-bs-target","#carouselExampleIndicators" + i);
+                    }
+                    
 
                     const currentDateTime = new Date();
                     const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4], changetime[5]);
@@ -95,14 +109,92 @@
                     }
                     createdtime.innerText = result;
 
-                    // 변수에 저장된 값을 사용
+                    // 상세이미지 반복문 돌리면서 가져와야함  
+                     
                     
-
+                    boardSubImageSelect(e.circleBoardDto.circle_board_id, Wrapper, i);
+                    
+                    i++;
+                    // console.log(aa);
+                    // console.log(aa.length); // ?
+                    // 캐러셀 이미지 추가 + 캐러셀 버튼 추가
+                    
+                    
+                    
+                    
                     const boardInsert = document.querySelector("#boardInsert");
                     boardInsert.appendChild(Wrapper);
                 }
 
             })
+        }
+        
+        const boardSubImageSelect = (circle_board_id, Wrapper, i) => {
+            
+             fetch("./boardSubImageSelect?circle_board_id=" + circle_board_id)
+                .then(response => response.json())
+                .then(response => {
+                    
+                    let cnt = 0;
+                    const ahah =  Wrapper.querySelector(".ahah");
+                    if(i === 0){
+                        ahah.setAttribute("id","carouselExampleIndicators");
+                    }else{
+                        ahah.setAttribute("id","carouselExampleIndicators"+i);
+                    }
+                    
+                    for(e of response.data){
+                        
+                        
+
+                        const carouselin = Wrapper.querySelector("#Wrapper .carouselin")
+                        const button = document.createElement("button");
+                        button.setAttribute("type","button");
+                        if(i === 0){
+                            button.setAttribute("data-bs-target", "#carouselExampleIndicators");
+                        }else{
+                            button.setAttribute("data-bs-target", "#carouselExampleIndicators"+ i);
+                        }
+                        
+                        button.setAttribute("data-bs-slide-to", `${1+cnt}` );
+                        button.setAttribute("aria-label", "Slide " + `${2+cnt}`);
+                        carouselin.appendChild(button);
+                        
+
+                        const carouselin2 = Wrapper.querySelector("#Wrapper .carouselin2")
+                        const div = document.createElement("div");
+                        div.classList.add("carousel-item");
+                        const img = document.createElement("img");
+                        img.setAttribute("src","/uploadFiles/" + e.sub_image);
+                        img.setAttribute("alt","...")
+                        img.classList.add("img-fluid","d-block","w-100",);
+                        img.style="height: 20em; width: 100%;"
+                        div.appendChild(img);
+                        carouselin2.appendChild(div);
+                        
+                        
+                        cnt++;
+                        
+                    }
+                    
+                    
+                    
+                    
+                })
+                
+        };
+            
+
+        
+
+        const boardArticleMove = (circle_board_id) => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            location.href = "./circleFeedArticlePage?circle_id=" + circle_id + "&circle_circle_board_id=" + circle_board_id;
+
         }
         
         // CircleService에서 circleInfoVarious가져오면 그 동아리 관련 정보들을 대부분 가져올 수 있음
@@ -410,8 +502,28 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col image-container2 px-0">
-                    <img class="relative-container2 board_main_image img-fluid">
+                <div class="col createCarousel image-container2 px-0">
+                    <!-- <img class="relative-container2 board_main_image img-fluid"> -->
+                    <div class="carousel slide ahah">
+                        <div class="carousel-indicators carouselin">
+                          <button type="button" data-bs-slide-to="0" class="active haha" aria-current="true" aria-label="Slide 1"></button>
+                        </div>
+                        <div class="carousel-inner carouselin2">
+                          <div class="carousel-item active">
+                            <img class="board_main_image img-fluid d-block w-100" alt="..." style="height: 20em; width: 100%;">
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col boardtitle fw-semibold" style="font-size: 0.8em;">
+                    
+                </div>
+            </div>
+            <div class="row mt">
+                <div class="col boardcontent" style="font-size: 0.8em;">
+                    
                 </div>
             </div>
             <div class="row mt-1">

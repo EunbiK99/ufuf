@@ -188,7 +188,7 @@ public class CircleController {
         // 세션 만료
         session.invalidate();
         // 로그아웃 후 리다이렉션할 홈페이지 경로 반환
-        return "redirect:../login/testloginPage";
+        return "redirect:../login/loginPage";
     }
     // 내가 가입한 동아리리스트 (무조건 세션이있어야 볼수있는 페이지)
     @RequestMapping("myCircleListPage")
@@ -309,6 +309,16 @@ public class CircleController {
     public String circleManagerOnlyPage(){
 
         return "circle/circleManagerOnlyPage";
+    }
+    @RequestMapping("circleApprovalJoinPage")
+    public String circleApprovalJoinPage(){
+
+        return "circle/circleApprovalJoinPage";
+    }
+    @RequestMapping("circleFeedArticlePage")
+    public String circleFeedArticlePage(){
+
+        return "circle/circleFeedArticlePage";
     }
     
     

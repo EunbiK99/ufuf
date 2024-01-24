@@ -12,6 +12,7 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     
      <script>
         function goBack() {
             window.history.go(-1);
@@ -30,18 +31,26 @@
             console.log(start_time);
             const end_time = document.querySelector("#end_time").value;
             console.log(end_time);
+            const searchword = document.querySelector("#searchword")
+            // 이게 장소값
+            const searchwordPlaceholder = searchword.getAttribute('placeholder');
+            
+            
+            
 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const circle_id = urlParams.get("circle_id");
-
+            // 장소값을 여기다 넣어서 출력 일정 장소를 추가
             const requestData = {
                 schedule_title: schedule_title,
                 schedule_content: schedule_content,
+                schedule_address: searchwordPlaceholder,
                 participation: participation,
                 schedule_fee: schedule_fee,
                 start_time: start_time,
-                end_time: end_time
+                end_time: end_time,
+                
             }
 
             fetch("./scheduleApplyInsert?circle_id=" + circle_id,{
@@ -59,8 +68,91 @@
             })            
 
         }
+        const modalShow = () => {
+            const subsearchword = document.querySelector("#subsearchword");
+            subsearchword.value = "";
+            
+            
+            const modal = bootstrap.Modal.getOrCreateInstance("#searchModal");
+            modal.show();
+
+            subsearchword.focus();
+
+            
+
+        }
+        // !!!!!!!!!! 이거 처음에 대학교 위치 좌표값 가져와서 기본 초기값 위치로 함 ==> 어떻게 받아오징?
+        const searchListPrint = () => {
+            const listInsert = document.querySelector("#listInsert");
+            listInsert.innerHTML = "";
+
+            const subsearchword = document.querySelector("#subsearchword").value;
+
+            const REST_API_KEY = '7d49f044eb156207e57267813a846364'; //내 rest키
+            const y = 37.514322572335935; // 1번좌표
+            const x = 127.06283102249932; // 2번좌표
+            const radius = 20000; // 범위
+            const query = subsearchword; // 컴색키워드
+            // 엔틱으로 값 넘김
+            const url = `https://dapi.kakao.com/v2/local/search/keyword.json?y=${y}&x=${x}&radius=${radius}&query=${query}`;
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `KakaoAK ${REST_API_KEY}`
+                },
+            })
+            .then(response => response.json())
+            .then(response => {
+                for (place of response.documents) {
+                    console.log(place);
+                    const searchListWrapper = document.querySelector("#searchListWrapper .searchList").cloneNode(true);
+                    const category_name = searchListWrapper.querySelector(".category_name")
+                    category_name.innerText = place.category_name;
+                    const place_name = searchListWrapper.querySelector(".place_name")
+                    place_name.innerText = place.place_name;
+                    const address_name = searchListWrapper.querySelector(".address_name")
+                    address_name.innerText = place.address_name;
+                    // 좌표를 가져가야함 ==> 좌표를 가져가서 지도에 출력(object를 보낼순없음)
+                    // 문자열처리를 해주어야함 place_name 같은 String값은
+                    const selectComplete = searchListWrapper.querySelector(".selectComplete")
+                    selectComplete.setAttribute("onclick","mapPrint("+ place.x + "," + place.y + ",'" + place.address_name + "')")
+                    
+                    listInsert.appendChild(searchListWrapper);
+                }
+            })
+
+        }
+        // 이거 검색완료되고 지도에 표시되어야 함
+        const mapPrint = (x,y,z) => {
+
+            const searchword = document.querySelector("#searchword")
+            searchword.removeAttribute("placeholder")
+            searchword.setAttribute("placeholder",z);
+
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                mapOption = {
+                    center: new kakao.maps.LatLng(y, x), // 지도의 중심좌표
+                    level: 3, // 지도의 확대 레벨
+                    mapTypeId: kakao.maps.MapTypeId.ROADMAP // 지도종류
+                };
+
+            // 지도를 생성한다 
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+            
+            // 지도에 마커를 생성하고 표시한다
+            var marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(y, x), // 마커의 좌표
+                map: map // 마커를 표시할 지도 객체
+            });
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#searchModal");
+            modal.hide();
+
+        }
+        
         
      </script>
+    
      <style>
         *{
         /* font-family: 'Dongle', sans-serif; */
@@ -145,16 +237,91 @@
                         <input id="end_time" class="form-control" type="datetime-local">
                     </div>
                 </div>
+                <div class="row mt-2">
+                    <div class="col d-flex align-items-center">
+                        장소<span class="text-danger">＊</span>
+                    </div>         
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <input id="searchword" placeholder="장소를 입력하세요" class="form-control" onclick="modalShow()">
+                    </div><!-- 2)리스트 선택하기 버튼 클릭시 모달창 hide시키고 장소 부분에 주소값이 나오고 지도에 표시가 되어야 함-->
+                    <div class="col-3 d-grid ps-0"><!-- 1)장소 검색할시 모달창으로 장소리스트가 나와야함 장소에대한 정보리스트가 나와야 함 -->
+                        <button class="btn fw-semibold" onclick="modalShow()" style="background-color: #fb7928;color: white;">검색</button>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col px-0">
+                        <div id="map" style="width:100%;height:23em;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    
     <div class="container-fluid">
         <div class="row mt-3 mx-0 fixed-bottom">
             <div class="col d-grid">
                 <button class="btn fw-semibold" onclick="scheduleApplyComplete()" style="background-color: #fb7928;color: white;">등록 완료</button>
             </div>
         </div>
-    </div>  
+    </div>
+    <div id="searchListWrapper" class="d-none">
+            <div class="searchList row mt-2">
+                <div class="col pe-0">
+                    <div class="row">
+                        <div class="col category_name" style="font-size: 0.6em;">
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col place_name fw-semibold" style="font-size: 0.9em;">
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col address_name" style="font-size: 0.7em; color: rgb(104, 104, 104);">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 d-grid">
+                    <button class="btn fw-semibold selectComplete" style="background-color: #fb7928;color: white;">선택</button>
+                </div>
+            </div>
+    </div>
+    <div id="Wrapper">
+        <div id="searchModal" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">장소 검색</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col d-grid pe-0">
+                            <input id="subsearchword" type="text" class="form-control" placeholder="장소를 입력하세요">
+                        </div>
+                        <div class="col-3 d-grid">
+                            <button onclick="searchListPrint()" class="btn fw-semibold" style="background-color: white;color: #fb7928;border: 0.02em solid #fb7928;">검색</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="listInsert" class="col">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>

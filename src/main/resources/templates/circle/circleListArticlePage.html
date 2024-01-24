@@ -35,6 +35,52 @@
                 showModal()
             }, 1000)
         }
+        
+        // 검증1 ==> 내가 가입 신청을 했는가?
+        const verificationjoinApply = () => {
+
+            const queryString = window.location.search;
+            const urlParam = new URLSearchParams(queryString);
+            const circle_id = urlParam.get("circle_id");
+
+            fetch("./verificationjoinApply?circle_id=" + circle_id)
+            .then(response => response.json())
+            .then(response => {
+                if(response.data === true){
+                    alert("이미 가입신청 완료했습니다.")
+                    return;
+                }
+                verificationUniversity();
+
+            })
+            
+
+        }
+
+        // 검증2 ==> 내 학교랑 같은 대학교 동아리인가?
+        const verificationUniversity = () => {
+
+            const queryString = window.location.search;
+            const urlParam = new URLSearchParams(queryString);
+            const circle_id = urlParam.get("circle_id");
+
+            fetch("./verificationUniversity?circle_id=" + circle_id)
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data === false){
+                    alert("대학교를 확인해주세요");
+                    return;
+
+                }
+
+                circleApplyComplete();
+
+            })
+
+        }
+
+
         // 가입이 완료 되었습니다 ? 
         function showModal(){
             console.log("실행될까?");
@@ -208,7 +254,7 @@
                 </div>
                 <div class="row mt-3 mx-0 fixed-bottom">
                     <div class="col d-grid">
-                        <button class="btn fw-semibold" onclick="circleApplyComplete()" style="background-color: #fb7928;color: white;">가입 신청</button>
+                        <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
                     </div>
                 </div>
             </div>

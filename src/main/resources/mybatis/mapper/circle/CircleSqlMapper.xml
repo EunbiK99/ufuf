@@ -133,8 +133,8 @@
         )
     </insert>
     <insert id="circleScheduleInfoInsert">
-        insert into circle_schedule(circle_member_id, schedule_title, schedule_content, participation, schedule_fee, start_time, end_time) values(
-            #{circle_member_id}, #{schedule_title}, #{schedule_content}, #{participation}, #{schedule_fee}, #{start_time}, #{end_time}
+        insert into circle_schedule(circle_member_id, schedule_title, schedule_content, schedule_address, participation, schedule_fee, start_time, end_time) values(
+            #{circle_member_id}, #{schedule_title}, #{schedule_content}, #{schedule_address}, #{participation}, #{schedule_fee}, #{start_time}, #{end_time}
         )
     </insert>
     <insert id="circleScheduleApplicationInfoInsert">
@@ -172,6 +172,18 @@
         SELECT count(*) from circle_board 
         where circle_member_id 
         IN (SELECT circle_member_id  from circle_member where circle_id = #{circle_id})
+    </select>
+    <select id="ApprovalJoinAllListByCircleIdAndSubmitN" resultType="com.cu.ufuf.dto.CircleJoinApplyDto">
+        select * from circle_join_apply where circle_id = #{circle_id} and join_submit = 'N'
+    </select>
+    <update id="circleJoinApplyCompleteUpdateByCircleJoinApplyId">
+        UPDATE circle_join_apply set join_submit = 'Y' where circle_join_apply_id = #{circle_join_apply_id}
+    </update>
+    <select id="verificationjoinApplyByUserIdAndCircleId" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT * from circle_member WHERE user_id = #{user_id} and circle_id = #{circle_id}) as A from dual
+    </select>
+    <select id="circleBoardImageInfoByCircleBoardId" resultType="com.cu.ufuf.dto.CircleBoardImageDto">
+        SELECT * from circle_board_image WHERE circle_board_id = #{circle_board_id}
     </select>
 
     
