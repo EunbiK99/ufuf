@@ -135,7 +135,7 @@ public class MissionMapServiceImpl {
                         %s님이 "%s" 미션을 수락하셨습니다.
                         """.formatted(userInfoDto.getName(), missionDto.getTitle());
 
-        insertNotification(missionDto.getUser_id(), mission_id, content);
+        insertNotification(1, missionDto.getUser_id(), mission_id, content);
 
     }
 
@@ -187,7 +187,7 @@ public class MissionMapServiceImpl {
                         %s님이 "%s" 미션 완료 인증을 등록하셨습니다.
                         """.formatted(userInfoDto.getName(), missionDto.getTitle());
 
-        insertNotification(missionDto.getUser_id(), mission_id, content);
+        insertNotification(2, missionDto.getUser_id(), mission_id, content);
     }
 
     // 유저가 등록한 미션 전부 가져오기
@@ -222,6 +222,29 @@ public class MissionMapServiceImpl {
         }else{
             return false;
         }
+    }
+
+    // 알림 읽음 업데이트
+    public void updateNotifReadStatus(int mission_notification_id){
+        missionMapsqlMapper.updateNotifReadStatus(mission_notification_id);
+    }
+
+    // 미션 아이디로 미션 진행 정보들 불러오기
+    public Map<String, Object> getMissionProcessInfo(int mission_id){
+
+        Map<String, Object> missionProcessInfo = new HashMap<>();
+
+        MissionInfoDto missionInfoDto = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionAcceptedDto missionAcceptedDto = missionMapsqlMapper.selectMissionAccInfoByMissionId(mission_id);
+
+        int accUser = missionAcceptedDto.getUser_id();
+        UserInfoDto accUserDto = missionMapsqlMapper.selectUserById(accUser);
+
+        missionProcessInfo.put("missionInfoDto", missionInfoDto);
+        missionProcessInfo.put("missionAcceptedDto", missionAcceptedDto);
+        missionProcessInfo.put("accUserDto", accUserDto);
+        
+        return missionProcessInfo;
     }
 
 
@@ -268,10 +291,11 @@ public class MissionMapServiceImpl {
     }
 
     // 미션 알림
-    public void insertNotification(int user_id, int mission_id, String content){
+    public void insertNotification(int mission_notification_category_id, int user_id, int mission_id, String content){
 
         MissionNotificationDto missionNotificationDto = new MissionNotificationDto();
         
+        missionNotificationDto.setMission_notification_category_id(mission_notification_category_id);
         missionNotificationDto.setUser_id(user_id);
         missionNotificationDto.setMission_id(mission_id);
         missionNotificationDto.setContent(content);

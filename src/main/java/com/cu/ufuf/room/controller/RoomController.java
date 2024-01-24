@@ -42,6 +42,7 @@ public class RoomController {
 
 		// Controller에서 Thymeleaf에 전달하기 전에 리스트를 처리
 		model.addAttribute("roomList", roomService.getRoomInfoList().subList(0, Math.min(roomService.getRoomInfoList().size(), 5)));
+		model.addAttribute("reviewList", roomService.getReviewList().subList(0, Math.min(roomService.getReviewList().size(), 9)));
 
 		//나중에 인기 숙소, 내근처 숙소, 리뷰목록 가져오기
 
@@ -400,7 +401,7 @@ public class RoomController {
 		roomService.updateRoomDetailImage(roomInfoDto, roomImageDtoList);
         
         
-        return "redirect:./roomDetailPage?room_info_id="+roomInfoDto.getRoom_info_id();
+        return "redirect:./myRoomListPage";
     }
 
 	//방 정보삭제

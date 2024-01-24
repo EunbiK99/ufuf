@@ -36,6 +36,21 @@ let userType = /*[[${session.userType}]]*/;
 let meetingProfileExist = /*[[${session.meetingProfileExist}]]*/;
 let meetingProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
 
+function moveMyApplyGroup(){
+    if(meetingProfileExist === "Y"){
+        window.location.href="./myApplyGroupPage?profileId=" + meetingProfileInfo.profileid;
+    }
+    else{
+        const result = confirm("해당 서비스는 미팅 프로필을 만들어야 이용할 수 있어요. 프로필 생성 페이지로 이동할까요?");
+        if(result){
+            window.location.href = "./registerProfile";            
+        }
+        else{
+            return;
+        }
+    }
+}
+
 function moveMyRecruitGroup(){
     if(meetingProfileExist === "Y"){
         window.location.href="./myRecruitGroupPage?profileId=" + meetingProfileInfo.profileid;
@@ -142,7 +157,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row">
                             <div class="col">
-                                <button class="btn fw-bold fs-3">내가 참여중인 미팅</button>
+                                <button class="btn fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여중인 미팅</button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +209,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                

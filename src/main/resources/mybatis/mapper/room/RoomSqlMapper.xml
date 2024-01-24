@@ -133,6 +133,11 @@
         where user_id=#{user_id}
     </select>
 
+    <select id="roomGuestSelectByGuestId" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest
+        where room_guest_id=#{room_guest_id}
+    </select>
+
     <!--몇박인지-->
     <select id="reservationDuration" resultType="int">
         SELECT DATEDIFF(end_reservation_schedule, start_reservation_schedule) AS duration_in_days
@@ -268,6 +273,16 @@
         DELETE FROM room_option WHERE room_info_id=#{room_info_id}
     </delete>
 
+    <delete id="deleteRoomGuest">
+        Delete from room_guest where room_info_id=#{room_info_id}
+    </delete>
+
+    <delete id="deleteRoomGuestReview">
+        Delete rgr from room_guest_review rgr
+        join room_guest rg on rg.room_guest_id =rgr.room_guest_id
+        where rg.room_info_id=#{room_info_id}
+    </delete>
+
     <!--방 상세글용 리뷰 리스트-->
     <select id="roomReviewListForRoomInfo" resultType="com.cu.ufuf.dto.RoomGuestReviewDto">
         SELECT rgr.* from room_guest_review rgr
@@ -297,6 +312,11 @@
         order by room_guest_review_id desc
     </select>
 
+    <!--이번 예약에 리뷰 썼나 여부-->
+    <select id="guestRoomReviewCount" resultType="int">
+        SELECT COUNT(*) from room_guest_review
+        where room_guest_id=#{room_guest_id}
+    </select>
     
     
 </mapper>

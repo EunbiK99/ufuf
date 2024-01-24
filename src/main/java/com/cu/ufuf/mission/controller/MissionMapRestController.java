@@ -46,7 +46,6 @@ public class MissionMapRestController {
     @Autowired
     private MissionMapServiceImpl missionMapService;
 
-    @ResponseBody
     @PostMapping("registerMissionProcess")
     public RestResponseDto registerMissionProcess(@RequestBody MissionInfoDto params){
 
@@ -71,7 +70,6 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("getMissionDetail")
     public RestResponseDto getMissionDetail(@RequestBody String mission_id){
 
@@ -104,7 +102,7 @@ public class MissionMapRestController {
     }
 
 
-    @ResponseBody
+
     @PostMapping("getItemAndOrderInfo")
     public RestResponseDto getItemAndOrderInfo(@RequestBody String mission_id){
 
@@ -138,7 +136,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("acceptingMission")
     public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
 
@@ -177,7 +175,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("uploadCompleteMission")
     public RestResponseDto uploadCompleteImg(@RequestParam(name="complete_img") MultipartFile complete_img,
             @RequestParam(name="mission_accepted_id") int mission_accepted_id)
@@ -251,6 +249,70 @@ public class MissionMapRestController {
 
         return restResponseDto;
     }
+
+
+    @PostMapping("updateNotifReadStatus")
+    public RestResponseDto updateNotifReadStatus(@RequestBody String mission_notification_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_notification_id != null && !mission_notification_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_notification_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_notification_id")) {
+                    int notifyId = jsonNode.get("notifyId").asInt();
+                    missionMapService.updateNotifReadStatus(notifyId);
+                } else {
+                    System.out.println("mission_notification_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+
+    @PostMapping("getMissionProcessInfo")
+    public RestResponseDto getMissionProcessInfo(@RequestBody String mission_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_id != null && !mission_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_id")) {
+                    // mission_id 필드 추출 및 정수로 변환
+                    int missionId = jsonNode.get("mission_id").asInt();
+                    restResponseDto.setData(missionMapService.getMissionProcessInfo(missionId));
+                    
+                } else {
+                    System.out.println("mission_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    
 
 
 

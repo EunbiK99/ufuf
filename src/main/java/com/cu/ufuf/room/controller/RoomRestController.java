@@ -72,11 +72,13 @@ public class RoomRestController {
 		return restResponseDto;
 	}
 
-    public RestResponseDto templete() {
+	@RequestMapping("getReviewList")
+    public RestResponseDto getReviewList() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
         restResponseDto.setResult("success");
-        //restResponseDto.setData(count);
+		
+		restResponseDto.setData(roomService.getReviewList());
         return restResponseDto;
 	}
 
@@ -95,5 +97,23 @@ public class RoomRestController {
 		}
 		
 		return restResponseDto;
+	}
+
+	@RequestMapping("getRoomList")
+    public RestResponseDto getRoomList() {
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setResult("success");
+		
+		restResponseDto.setData(roomService.getRoomInfoList());
+        return restResponseDto;
+	}
+
+	public RestResponseDto templete() {
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setResult("success");
+        //restResponseDto.setData(count);
+        return restResponseDto;
 	}
 }

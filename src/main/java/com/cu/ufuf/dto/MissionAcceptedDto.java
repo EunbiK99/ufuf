@@ -1,6 +1,6 @@
 package com.cu.ufuf.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -10,5 +10,5 @@ public class MissionAcceptedDto {
 	private int mission_id;
 	private int user_id;
 	private String accepted_location;
-	private LocalDateTime created_at;
+	private Date created_at;
 }

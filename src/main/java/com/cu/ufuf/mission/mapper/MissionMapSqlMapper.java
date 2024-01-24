@@ -9,6 +9,7 @@ import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.MissionAcceptedDto;
 import com.cu.ufuf.dto.MissionCompleteDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionNotificationCategoryDto;
 import com.cu.ufuf.dto.MissionNotificationDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -26,6 +27,7 @@ public interface MissionMapSqlMapper {
     public List<MissionInfoDto> selectAllMission();
     public MissionInfoDto selectMissionById(int mission_id);
     public MissionAcceptedDto selectAccMissionByAccId(int mission_accepted_id);
+    public MissionAcceptedDto selectMissionAccInfoByMissionId(int mission_id);
 
     public UserInfoDto selectUserById(int user_id);
 
@@ -44,9 +46,11 @@ public interface MissionMapSqlMapper {
     public void insertMissionComplete(MissionCompleteDto missionCompleteDto);
 
     public int getMissionIdByMissionAccId(int mission_accepted_id);
-
+    
     public void insertNotification(MissionNotificationDto missionNotificationDto);
     public List<MissionNotificationDto> selectNotifcationByUser(int user_id);
+    public MissionNotificationCategoryDto selectNotifcationCategory(int mission_notification_id);
     public int isExistNotification(int user_id);
+    public void updateNotifReadStatus(int mission_notification_id);
 
 }

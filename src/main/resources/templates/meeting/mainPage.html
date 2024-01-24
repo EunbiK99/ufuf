@@ -66,9 +66,9 @@ function moveSearchPage(){
     }
 }
 
-function moveCreateMeetingGroupPage(){
+function moveCreateNewGroupPage(){
     if(meetingProfileExist === "Y"){
-        window.location.href="./createMeetingGroupPage";
+        window.location.href="./createNewGroupPage";
     }
     else{
         let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto text-center" onclick="moveCreateMeetingGroupPage()">
+                                    <div class="col-auto text-center" onclick="moveCreateNewGroupPage()">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                

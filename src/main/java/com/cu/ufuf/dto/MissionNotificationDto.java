@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class MissionNotificationDto {
     private int mission_notification_id;
+	private int mission_notification_category_id;
 	private int user_id;
 	private int mission_id;
 	private String content;

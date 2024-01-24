@@ -8,6 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
+    <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+    </script>
 
     
 </head>
@@ -15,11 +20,11 @@
 <body>
     <div class="container" th:if="${session.sessionUserInfo !=null}">
          <!-- 페이지 네비-->
-         <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%;">
+         <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
            
             <!--뒤로가기-->
             <div class="col-1">
-                <a href="./roomMainPage"><i class="bi bi-x-lg text-secondary" style="color: black; text-decoration: none;"></i></a> 
+                <a onclick="goBack()"><i class="bi bi-x-lg text-secondary" style="color: black; text-decoration: none;"></i></a> 
             </div>
 
             <!--무슨페이지인지 알 수 있게-->
@@ -32,12 +37,12 @@
 
         <div class="row mt-3" th:each="reservation : ${roomReservationList}">
             <div class="col-1"></div>
-            <div class="col-md-5">
+            <div class="col-md-5" th:if="${reservation.roomInfoDto!=null}">
                 <div class="row mt-3 border border-secondary-subtle rounded mx-2 mt-2">
                     <div class="col">
                         <div class="row">
                             <a class="p-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">
-                                <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid" style="width: 22em; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
+                                <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
                             </a>
                         </div>
                         <div class="row mt-2">
@@ -49,7 +54,10 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col d-grid pe-0">
+                            <div class="col d-grid" th:if="${reservation.roomReviewCount!=0}">
+                                <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2">리뷰작성완료</button>
+                            </div>
+                            <div class="col d-grid" th:if="${reservation.roomReviewCount==0}">
                                 <a class="btn my-2 text-white fw-bold" th:href="@{./guestReviewPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" style="background-color: #FF8827;">리뷰쓰기</a>
                             </div>
                             <div class="col d-grid">

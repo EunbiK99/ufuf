@@ -66,9 +66,13 @@ public class MeetingController {
         }        
     }
 
-    @RequestMapping("createMeetingGroupPage")
-    public String createMeetingGroupPage(){
-        return "./meeting/createMeetingGroupPage";
+    @RequestMapping("createNewGroupPage")
+    public String createNewGroupPage(HttpSession session){
+
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        return "./meeting/createNewGroupPage";
     }
 
     @RequestMapping("myPage")
@@ -100,8 +104,36 @@ public class MeetingController {
     }
 
     @RequestMapping("myRecruitGroupPage")
-    public String myRecruitGroupPage(int profileId){
+    public String myRecruitGroupPage(HttpSession session, int profileId){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
         return "./meeting/myRecruitGroupPage";
+    }
+
+    @RequestMapping("myRecruidGroupDetailPage")
+    public String myRecruidGroupDetailPage(HttpSession session, Model model, int groupId){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+
+        return "./meeting/myRecruidGroupDetailPage";
+    }
+
+    @RequestMapping("myApplyGroupPage")
+    public String myApplyGroupPage(HttpSession session, int profileId){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        System.out.println("profileId : " + profileId);
+        System.out.println("profileNickname : " + meetingProfileDto.getProfileNickname());
+
+        return "./meeting/myApplyGroupPage";
     }
 
 }

@@ -22,7 +22,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=414094d89a80d31e7af956f1c114f3da&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
 
     <style>
     *{
@@ -48,10 +48,14 @@
 </head>
 
 <script th:inline="javascript">
+let meetingProfileDto = /*[[${session.meetingProfileDto}]]*/;
+console.log('meetingProfileDto: ', meetingProfileDto);
 
 function registerMeetingGroupProcess(){
 
-    let userMeetingId = /*[[${session.meetingProfileInfo.profileid}]]*/;
+    const userMeetingId = meetingProfileDto.profileid;
+    console.log('userMeetingId: ', userMeetingId);
+
     const groupTitle = document.getElementById('groupTitle').value;
     const groupContent = document.getElementById('groupContent').value;
     const groupHeadCount = document.getElementById('groupHeadCount').value;
@@ -597,7 +601,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createMeetingGroupPage'">
+                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
