@@ -25,15 +25,18 @@ public class MissionMapController {
     }
 
     @RequestMapping("map")
-    public String map(HttpSession session, Model model){
+    public String map(HttpSession session){
+        return "mission/map";
+    }
+
+    @RequestMapping("missionRegistration")
+    public String missionRegistration(HttpSession session, Model model){
 
         UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         model.addAttribute("sessionUserInfo", sessionUserInfo);
 
-        return "mission/map";
+        return "mission/missionRegistration";
     }
-
-
 
 
 

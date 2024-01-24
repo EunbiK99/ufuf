@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.19.0/font/bootstrap-icons.css">
+</head>
+
+<script>
+
+    var relativePath = window.location.origin;
+
+
+
+</script>
+
+<body>
+                
+    <div th:fragment="footer">
+        <div class="fixed-bottom">
+            <div class="footer bg-white">
+                <div class="row text-secondary text-center py-1 border-top" style="height: 3.4em;">
+                    <div class="col ps-3" >
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/map'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-map"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                미션맵
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="col px-0">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-envelope-paper"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                My미션
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col px-0">
+                        <div class="row">
+                            <div class="col px-0">
+                                <img src="/public/image/commons/logo_fill.png" class="img-fluid mt-1" style="height: 2.2em;" onclick="window.location.href='../commons/mainPage'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col px-0">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/chat'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-chat-dots"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                채팅
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="col pe-3">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/myP'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-person-bounding-box"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                My페이지
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
