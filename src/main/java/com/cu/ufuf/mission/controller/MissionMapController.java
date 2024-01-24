@@ -24,11 +24,6 @@ public class MissionMapController {
         return "mission/missionMap";
     }
 
-    @RequestMapping("testMap")
-    public String testMap(){
-        return "mission/testMap";
-    }
-
     @RequestMapping("paymentSuccessPage")
     public String paymentSuccessPage(@RequestParam(name="order_id") String order_id,
             @RequestParam(name="pg_token") String pg_token, Model model){
