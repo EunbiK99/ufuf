@@ -9,14 +9,145 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script type="text/javascript" src="7319aff03174c9825e5552818af66d19"></script>
+
 
     <script>
+
+    var relativePath = window.location.origin;
+
+    Kakao.init('7319aff03174c9825e5552818af66d19');
+    Kakao.isInitialized();
+
+    function loginWithKakao() {
+        Kakao.Auth.login({
+            success: function (authObj) {
+                Kakao.Auth.setAccessToken(authObj.access_token); //access 토큰 값 저장
+                getInfo();
+            },
+            fail: function (err) {
+                console.log(err);
+            },
+        });
+    }
+
+    function getInfo() {
+        Kakao.API.request({
+            url: "/v2/user/me",
+            success: function (res) {
+                isUserExistForKakaoLogin(res);
+            },
+            fail: function (error) {
+                alert("카카오 로그인 실패" + JSON.stringify(error));
+            },
+        });
+    }
+
+    function isUserExistForKakaoLogin(res){
+
+        const data = {
+            userid: res.id
+        };
+
+        fetch("./isUserExistForKakaoLogin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data.isUserExist == 0){
+                    // 유저 정보 없을 때
+                    insertKakaoLoginUser(res.kakao_account.profile.nickname, res.id, res.kakao_account.profile_image_url);
+                }else if(response.data.isUserExist == 1){
+                    // 유저 프로필 없을때
+                    saveSessionUserForRegister(res.id);
+                }else if(response.data.isUserExist == 2){
+                    // 유저 프로필 있을 때
+                    saveSessionUser(response.data.userInfo);
+                }else{
+                    console.log("로그인 에러");
+                }
+
+        });
+    }
+
+    function insertKakaoLoginUser(name, userid, profile_img){
+
+        const data = {
+            name: name,
+            userid: userid,
+            profile_img: profile_img
+        };
+
+        fetch("./insertKakaoLoginUser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                window.location.href = window.location.href = relativePath + `/login/addtionalResProfileForm`;
+        });
+
+    }
+
+    function saveSessionUser(userInfoDto){
+
+        fetch("./saveSessionUser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userInfoDto)
+        })
+            .then(response => response.json())
+            .then(response => {
+                window.location.href = relativePath + `/commons/mainPage`;
+        });
+
+    }
+
+    function saveSessionUserForRegister(userid){
+
+        const data = {
+            userid: userid
+        }
+
+        fetch("./saveSessionUserForRegister", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                window.location.href = relativePath + `/login/addtionalResProfileForm`;
+        });
+
+    }
+
+
 
 
     
 
-
     </script>
+
+    <style>
+        body { 
+            position: fixed;
+            width: 100%;
+        }
+    </style>
 
 </head>
 
@@ -28,7 +159,7 @@
 
                 <div class="row py-4">
                     <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
-                        <i class="bi bi-arrow-left"></i>
+                        <i class="bi bi-arrow-left" onclick="window.location.href='../commons/mainPage'"></i>
                     </div>
                     <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
                         로그인
@@ -50,13 +181,13 @@
                         <form action="./loginProcess" method="post">
                         <div class="row mt-5">
                             <div class="col">
-                                <input type="text" name ="userid" id="userid" 
+                                <input type="text" name ="userid"
                                     class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder=" 아이디" style="font-size:1.12em;">
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <input type="password" name="password" id="password" 
+                                <input type="password" name="password"
                                     class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder=" 비밀번호" style="font-size:1.12em;">
                             </div>
                         </div>
@@ -94,8 +225,8 @@
                             <div class="col border-top mt-2"></div>
                         </div>
                         <div class="row mt-3 mb-5">
-                            <div class="col mt-1 mb-1">
-                                <a id="kakaoLoginBtn" th:href="${reqKakaoLogin}">
+                            <div class="col mt-1 mb-1 d-flex justify-content-center">
+                                <a id="kakaoLoginBtn" onclick="loginWithKakao()">
                                     <img class="img-fluid" th:src="@{/public/image/commons/kakao_login_large_wide.png}">
                                 </a>
                             </div>

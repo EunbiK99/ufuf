@@ -1,12 +1,15 @@
 package com.cu.ufuf.login.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cu.ufuf.dto.KakaoLoginResDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.mapper.UserLoginMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class LoginServiceImpl {
@@ -28,6 +31,68 @@ public class LoginServiceImpl {
         return userLoginMapper.isUserExist(userInfoDto);
     }
 
+
+    // 카카오 로그인 시 insert
+    public void insertKakaoLoginUser(KakaoLoginResDto kakaoLoginResDto){
+
+        int userPk = userLoginMapper.createUserPk();
+        kakaoLoginResDto.setUser_id(userPk);
+        // 랜덤 비밀번호 생성
+        UUID uuid = UUID.randomUUID();
+        String ramdomUUID = uuid.toString();
+        String password = ramdomUUID.substring(0, 20);
+
+        kakaoLoginResDto.setPassword(password);
+
+        userLoginMapper.insertKakaoLoginUser(kakaoLoginResDto);
+        
+    }
+
+    public KakaoLoginResDto getKakaoUserInfo(String userid){
+       return userLoginMapper.selectKakaoUserInfo(userid);
+    }
+
+    public Map<String, Object> isUserExistForKakaoLogin(String userid){
+
+        /* 카카오 로그인 시
+            유저id 가 저장되어있지 않을 때 = 0
+            유저id 가 저장은 되어있지만 프로필이 작성되지 않았을 때 = 1
+            유저 프로필이 존재할 때 = 2
+        */
+
+        Map<String, Object> userCheck = new HashMap<>();
+
+        String userId = userid.substring(userid.indexOf(":") + 1, userid.lastIndexOf("}")).trim();
+
+        int userExist = userLoginMapper.isUserExistForKakaoLogin(userId);
+
+        if(userExist == 0){
+
+            userCheck.put("isUserExist", 0);
+            userCheck.put("userInfo", null);
+
+        }else if((userExist != 0) && userLoginMapper.isKakaoUserHasInfo(userId) == null){
+
+            userCheck.put("isUserExist", 1);
+            userCheck.put("userInfo", userLoginMapper.isKakaoUserHasInfo(userId));
+
+        }else if((userExist != 0) && userLoginMapper.isKakaoUserHasInfo(userId) != null){
+
+            userCheck.put("isUserExist", 2);
+            userCheck.put("userInfo", userLoginMapper.isKakaoUserHasInfo(userId));
+
+        }
+
+        return userCheck;
+    }
+
+    public void updateKakaoUser(UserInfoDto userInfoDto, String studentid_img){
+
+        int userPk = userInfoDto.getUser_id();
+
+        userLoginMapper.insertStudentIdImg(userPk, studentid_img);
+        userLoginMapper.updateKakaoUser(userInfoDto);
+    }
     
 
 
@@ -36,43 +101,8 @@ public class LoginServiceImpl {
 
 
 
-    public String reqKakaoLogin(){
-
-        return "https://kauth.kakao.com" + "/oauth/authorize"
-                + "?client_id=" + "2f4f6f75265cd70ebabfb64c519f9843"
-                + "&redirect_uri=" + "https://172.30.1.95:8888/login/getKakaoLogin"
-                + "&response_type=code"
-                + "&scope=profile_nickname profile_image";
-    }
-
-    public String returnCode(String code){
-        return code;
-    }
-
-    public void parseToJson(String response){
-
-         try {
-            // ObjectMapper를 생성
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            // 문자열을 JsonNode로 파싱
-            JsonNode jsonNode = objectMapper.readTree(response);
-
-            // JsonNode에서 필요한 값을 추출
-            String access_token = jsonNode.get("access_token").asText();
-            String token_type = jsonNode.get("token_type").asText();
-            String refresh_token = jsonNode.get("refresh_token").asText();
-            String expires_in = jsonNode.get("expires_in").asText();
-            String scope = jsonNode.get("scope").asText();
-            String refresh_token_expires_in = jsonNode.get("refresh_token_expires_in").asText();
-            
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
+    
+    
 
 
 }

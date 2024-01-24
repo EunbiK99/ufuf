@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cu.ufuf.dto.KakaoLoginResDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.service.LoginServiceImpl;
@@ -205,10 +206,7 @@ public class LoginController {
     }
 
     @RequestMapping("loginPage")
-    public String loginPage(Model model){
-
-        model.addAttribute("reqKakaoLogin", loginService.reqKakaoLogin());
-
+    public String loginPage(){
         return "login/loginPage";
     }
 
@@ -237,13 +235,116 @@ public class LoginController {
 
 
 
+    // 카카오 유저들을 위한 회원가입
+    @RequestMapping("addtionalResProfileForm")
+    public String addtionalResProfileForm(HttpSession session, Model model){
+
+        KakaoLoginResDto userDto = (KakaoLoginResDto)session.getAttribute("needResUser");
+
+        return "login/addtionalResProfileForm";
+    }
+
+    @RequestMapping("addtionalResProfileProcess")
+    public String addtionalResProfileProcess(HttpSession session, @RequestParam(name="gender") String gender, 
+            @RequestParam(name="birthYear") String birthYear, @RequestParam(name="birthMonth") String birthMonth, @RequestParam(name="birthDate") String birthDate,
+            @RequestParam(name="phone") String phone, @RequestParam(name="email") String email, 
+            @RequestParam(name="address") String address, @RequestParam(name="detailAddress") String detailAddress){
+
+                String birth = birthYear +"-"+ birthMonth +"-"+ birthDate;
+
+                session.setAttribute("gender", gender);
+                session.setAttribute("phone", phone);
+                session.setAttribute("birth", birth);
+                session.setAttribute("email", email);
+                session.setAttribute("address", address + detailAddress);
+        
+        return "redirect:./addtionalResUniForm";
+    }
+
+    @RequestMapping("addtionalResUniForm")
+    public String addtionalResUniForm(){
+        return "login/addtionalResUniForm";
+    }
+
+    @RequestMapping("addtionalResComplete")
+    public String addtionalResComplete(HttpSession session, 
+            @RequestParam(name = "university") String university, @RequestParam(name = "department") String department,
+            @RequestParam(name = "studentid_img") MultipartFile studentid_img){
+
+        KakaoLoginResDto kakaoLoginResDto = (KakaoLoginResDto)session.getAttribute("needResUser");
+        int user_id = kakaoLoginResDto.getUser_id();
+
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        String gender = (String)session.getAttribute("gender");
+        String birth = (String)session.getAttribute("birth");
+        String phone = (String)session.getAttribute("phone");
+        String email = (String)session.getAttribute("email");
+        String address = (String)session.getAttribute("address");
+
+        userInfoDto.setUser_id(user_id);
+        userInfoDto.setGender(gender);
+        userInfoDto.setPhone(phone);
+        userInfoDto.setEmail(email);
+        userInfoDto.setAddress(address);
+        userInfoDto.setUniversity(university);
+        userInfoDto.setDepartment(department);
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date parsedDate = dateFormat.parse(birth);
+            userInfoDto.setBirth(parsedDate);
+
+            // 이후에 필요한 작업 수행
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // 예외 처리를 수행하거나 적절한 방식으로 오류를 처리하세요.
+        }
+
+        if(studentid_img != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/userStudentIdImg";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = studentid_img.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				studentid_img.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            String studentid_imgUrl = todayPath + fileName;
+            loginService.updateKakaoUser(userInfoDto, studentid_imgUrl);
+		}
+
+        session.invalidate();
+
+        return "redirect:./welcomePage";
+    }
+
+
 
 
 
     @RequestMapping("aaa")
     public String aaa(HttpSession session, Model model){
-
-        
 
         return "login/aaa";
     }

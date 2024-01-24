@@ -46,7 +46,6 @@ public class MissionMapRestController {
     @Autowired
     private MissionMapServiceImpl missionMapService;
 
-    @ResponseBody
     @PostMapping("registerMissionProcess")
     public RestResponseDto registerMissionProcess(@RequestBody MissionInfoDto params){
 
@@ -71,7 +70,6 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("getMissionDetail")
     public RestResponseDto getMissionDetail(@RequestBody String mission_id){
 
@@ -104,7 +102,7 @@ public class MissionMapRestController {
     }
 
 
-    @ResponseBody
+
     @PostMapping("getItemAndOrderInfo")
     public RestResponseDto getItemAndOrderInfo(@RequestBody String mission_id){
 
@@ -138,7 +136,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("acceptingMission")
     public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
 
@@ -177,7 +175,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("uploadCompleteMission")
     public RestResponseDto uploadCompleteImg(@RequestParam(name="complete_img") MultipartFile complete_img,
             @RequestParam(name="mission_accepted_id") int mission_accepted_id)
@@ -252,7 +250,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("updateNotifReadStatus")
     public RestResponseDto updateNotifReadStatus(@RequestBody String mission_notification_id){
 
@@ -282,7 +280,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
+
     @PostMapping("getMissionProcessInfo")
     public RestResponseDto getMissionProcessInfo(@RequestBody String mission_id){
 

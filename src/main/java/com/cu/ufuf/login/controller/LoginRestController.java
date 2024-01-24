@@ -1,31 +1,21 @@
 package com.cu.ufuf.login.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-
-import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.KakaoLoginResDto;
 import com.cu.ufuf.dto.RestResponseDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.login.service.LoginServiceImpl;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/login/*")
@@ -34,55 +24,77 @@ public class LoginRestController {
     @Autowired
     private LoginServiceImpl loginService;
 
-    // @PostMapping("/saveIdToSession")
-    // public RestResponseDto saveIdToSession(HttpServletRequest request, String userid, String password) {
-
-    //     HttpSession session = request.getSession();
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     session.setAttribute("userid", userid);
-    //     session.setAttribute("password", password);
-
-    //     System.out.println("세션 이동");
-
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
-    
-    @ResponseBody
-    @RequestMapping(value = "getKakaoLogin", method = {RequestMethod.GET, RequestMethod.POST})
-    public RestResponseDto getKakaoLogin(@RequestParam(name="code") String code) {
+    @PostMapping("isUserExistForKakaoLogin")
+    public RestResponseDto isUserExistForKakaoLogin(@RequestBody String userid){
 
         RestResponseDto restResponseDto = new RestResponseDto();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // 폼 데이터 설정
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("grant_type", "authorization_code");
-        formData.add("client_id", "2f4f6f75265cd70ebabfb64c519f9843");
-        formData.add("redirect_uri", "https://172.30.1.95:8888/login/getKakaoLogin");
-        formData.add("code", code);
-
-        // HttpEntity를 사용하여 헤더와 폼 데이터를 설정
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(formData, headers);
-
-        // RestTemplate을 사용하여 서버로 HTTP 요청 전송
-        RestTemplate restTemplate = new RestTemplate();
-        // 서버로 POST 요청 전송
-        String response = restTemplate.postForObject("https://kauth.kakao.com/oauth/token", httpEntity, String.class);
-        
-        loginService.parseToJson(response);
-
-        restResponseDto.setData(response);
+        restResponseDto.setData(loginService.isUserExistForKakaoLogin(userid));
         restResponseDto.setResult("Success");
-
+        
         return restResponseDto;
     }
    
+    @PostMapping("insertKakaoLoginUser")
+    public RestResponseDto insertKakaoLoginUser(@RequestBody KakaoLoginResDto params, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        loginService.insertKakaoLoginUser(params);
+
+        System.out.println(params);
+
+        session.setAttribute("needResUser", loginService.getKakaoUserInfo(params.getUserid()));
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("saveSessionUser")
+    public RestResponseDto saveSessionUser(@RequestBody UserInfoDto userInfoDto, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        session.setAttribute("sessionUserInfo", userInfoDto);
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("saveSessionUserForRegister")
+    public RestResponseDto saveSessionUserForRegister(@RequestBody String userid, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (userid != null && !userid.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(userid);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("userid")) {
+                    // mission_id 필드 추출 및 정수로 변환
+                    String userId = jsonNode.get("userid").asText();
+
+                    KakaoLoginResDto kakaoLoginResDto = loginService.getKakaoUserInfo(userId);
+                    session.setAttribute("needResUser", kakaoLoginResDto);
+                    
+                } else {
+                    System.out.println("mission_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
 
 
 

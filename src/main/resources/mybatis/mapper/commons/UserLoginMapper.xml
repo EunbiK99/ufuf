@@ -9,7 +9,18 @@
 
     <insert id = "insertUser">
         insert into user_info(
-            user_id, name, userid, password, university, department, address, phone, birth, gender, email, profile_img)
+            user_id, 
+            name, 
+            userid, 
+            password, 
+            university, 
+            department, 
+            address, 
+            phone, 
+            birth, 
+            gender, 
+            email, 
+            profile_img)
         values(
             #{user_id},
             #{name},
@@ -23,12 +34,12 @@
             #{gender},
             #{email},
             #{profile_img}
-        );
+        )
     </insert>
 
     <insert id="insertStudentIdImg" parameterType="hashMap">
         insert into studentid_img(user_id, studentid_img)
-        values(#{param1}, #{param2});
+        values(#{param1}, #{param2})
     </insert>
 
     <select id="isUserExist" resultType="com.cu.ufuf.dto.UserInfoDto">
@@ -36,6 +47,50 @@
         where userid = #{userid}
         and password = #{password}
     </select>
+
+    <insert id="insertKakaoLoginUser">
+        insert into user_info(
+            user_id, name, userid, password, profile_img)
+        values(
+            #{user_id},
+            #{name},
+            #{userid},
+            #{password},
+            #{profile_img}
+        )
+    </insert>
+
+    <!-- 카카오 유저가 로그인 이력이 존재하는지 확인 -->
+    <select id="isUserExistForKakaoLogin" resultType="int">
+        select count(*) from user_info
+        where userid = #{userid}
+    </select>
+
+    <!-- 카카오 유저가 프로필을 작성했는지 확인 -->
+    <select id="isKakaoUserHasInfo" resultType="com.cu.ufuf.dto.UserInfoDto">
+        select * from user_info
+        where userid = #{userid}
+        and phone is not null
+    </select>
+
+    <!-- 카카오 유저 회원가입 업데이트 -->
+    <update id="updateKakaoUser">
+        update user_info
+        set university = #{university}, 
+            department = #{department},
+            address = #{address}, 
+            phone = #{phone}, 
+            birth = #{birth}, 
+            gender = #{gender}, 
+            email = #{email}
+        where user_id = #{user_id}
+    </update>
+
+    <select id="selectKakaoUserInfo" resultType="com.cu.ufuf.dto.KakaoLoginResDto">
+        select user_id, name, userid from user_info
+        where userid = #{userid}
+    </select>
+
 
 
 </mapper>
