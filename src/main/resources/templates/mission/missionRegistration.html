@@ -94,12 +94,12 @@
     // 주소 출력하기
     function displayNowLocation(data) {
 
-        const nowLocation = document.getElementById("nowLocation");
+        const location = document.getElementById("location");
 
         if (data[0].road_address === null) {
-            nowLocation.innerText = data[0].address.address_name;
+            location.innerText = data[0].address.address_name;
         } else {
-            nowLocation.innerText = data[0].road_address.address_name;
+            location.innerText = data[0].road_address.address_name;
         }
 
     }
@@ -112,6 +112,10 @@
 
 <style>
 
+    .form-control:focus {
+      border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
+      box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
 
 
 </style>
@@ -138,16 +142,16 @@
                 <div class="row">
                     <div class="col">
 
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col fw-semibold text-secondary" style="font-size:0.9em;">
+                                    <div class="col fw-semibold text-secondary" style="font-size:0.95em;">
                                         미션 제목
                                     </div>
                                 </div>
-                                <div class="row mt-2">
+                                <div class="row mt-1">
                                     <div class="col">
-                                        <input type="text" id="title" class="form-control border-top-0 border-start-0 border-end-0 border-secondary rounded-0" placeholder="미션명을 입력해주세요" style="font-size:0.9em;">
+                                        <input type="text" id="title" class="form-control py-2 rounded-0" placeholder="미션명을 입력해주세요" style="font-size:0.9em;">
                                     </div>
                                 </div>
                             </div>
@@ -155,27 +159,154 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col fw-semibold text-secondary" style="font-size:0.9em;">
+                                    <div class="col fw-semibold text-secondary" style="font-size:0.95em;">
                                         미션 내용
                                     </div>
                                 </div>
-                                <div class="row mt-2">
+                                <div class="row mt-1">
                                     <div class="col">
-                                        <div class="form-floating">
-                                            <textarea class="form-control rounded-0 py-2" id="detail" style="height: 5.5em; font-size:0.9em;"></textarea>
+                                        <textarea class="form-control rounded-0" id="detail" placeholder="미션 상세 내용을 입력해주세요" style="height: 7em; font-size:0.9em;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="cols">
+                                <div class="row">
+                                    <div class="col d-grid">
+                                        <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border">
+                                            <span class="flex-grow-1 text-start">코스1</span>
+                                            <i class="bi bi-caret-down text-secondary"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row px-1">
+                                    <div class="col border border-top-0 mx-2 py-3">
+                                        <div class="row">
+                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                코스명
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <input type="text" id="couseName" class="form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                                                완료 상금
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <input type="text" id="reward" class="form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;">
+                                            </div>
+                                        </div>
+                                        <div class="row py-2">
+                                            <div class="col d-grid">
+                                                <div class="gap-2 d-md-block">
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f8f8f8;">+1000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f8f8f8;">+3000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f8f8f8;">+5000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f8f8f8;">+10000</button>
+                                                  </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                미션 수행 지점
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <div id="map" style="height:10em; width: 100%;">
+                                                    <script>
+                                                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                                                            mapOption = { 
+                                                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                                                level: 3 // 지도의 확대 레벨
+                                                            };
+                
+                                                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                                                        
+                                                        getNowLocation(function(locPosition) {
+                                                            panTo(locPosition);
+                                                        });
+        
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row px-1 mt-2">
+                                            <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
+                                                <i class="bi bi-geo-alt me-2"></i><span id="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
+                                                <input type="hidden" id="lat">
+                                                <input type="hidden" id="lng">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col d-grid">
+                                        <button id="addMissionCourse" class="btn rounded-0 py-2 border-0 fw-semibold text-secondary" style="background-color: #f3f3f3;">
+                                            <i class="bi bi-plus-lg"></i>
+                                            미션 코스 추가
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                                        제한 시간
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col">
+                                        <div class="input-group border">
+                                            <span class="input-group-text border-0 bg-white ms-1"><i class="bi bi-stopwatch text-secondary"></i></span>
+                                            <input type="text" id="hour" class="form-control border-0 rounded-0 py-2 text-end">
+                                            <span class="input-group-text border-0 bg-white text-secondary fw-bold">:</span>
+                                            <input type="text" id="minute" class="form-control border-0 rounded-0 py-2 text-end">
+                                            <span class="input-group-text border-0 bg-white text-secondary fw-bold">:</span>
+                                            <input type="text" id="second" class="form-control border-0 rounded-0 py-2 text-end">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                미션 코스 추가
+                        <div class="row mt-3 px-2">
+                            <div class="col border-bottom mx-1 pb-1 mt-1">
+                                <div class="row">
+                                    <div class="col text-secondary fw-semibold mt-1 text-start">
+                                        총 금액
+                                    </div>
+                                    <div class="col text-end">
+                                        <span class="fw-bold" id="totalReward" style="color: #FF8827; font-size: 1.35em;">10000</span>
+                                        <span class="text-secondary ms-1">원</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-3">
+                            <div class="col d-grid">
+                                <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 text-white"
+                                    style="border: 0.1em solid #fa7e18; background-color: #FF8827; font-size: 1.08em;">
+                                    <i class="bi bi-envelope-plus me-1"></i>
+                                    <span class="px-1">미션 등록</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-5 mb-4">
                             <div class="col">
-                                제한시간 입력
+                                
                             </div>
                         </div>
 
