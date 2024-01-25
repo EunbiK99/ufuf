@@ -16,6 +16,7 @@ import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
 public interface MeetingSqlMapper {
@@ -96,6 +97,12 @@ public interface MeetingSqlMapper {
 
     // * 미팅 모집글PK 기준 신청멤버수 카운트
     public int countMeetingGroupApplyUserByGroupId(int groupId);
+
+    // * 프로필PK 기준 모집신청내역 리스팅
+    public List<MeetingApplyUserDto> selectApplyUserByProfileId(int profileId);
+
+    // * 유저PK 기준 유저정보 셀렉트
+    public UserInfoDto selectUserInfoByUserId(int user_id);
 
 
 }

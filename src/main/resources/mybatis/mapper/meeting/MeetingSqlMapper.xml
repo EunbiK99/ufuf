@@ -262,6 +262,18 @@ values (
     where groupId = #{groupId}
 </select>
 
+<!-- * 프로필PK 기준 참여신청내역 셀렉트-->
+<select id="selectApplyUserByProfileId" resultType="com.cu.ufuf.dto.MeetingApplyUserDto">
+    SELECT * from meeting_applyUser mau 
+    where profileId = #{profileId}
+</select>
+
+<!-- * 유저PK 기준 유저정보 셀렉트-->
+<select id="selectUserInfoByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
+    SELECT * from user_info ui 
+    where user_id = #{user_id}
+</select>
+
 
 
 

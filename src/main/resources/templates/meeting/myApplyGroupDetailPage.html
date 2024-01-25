@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>내가 참여중인 미팅</title>
+    <title>내가 참여중인 미팅그룹</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -28,120 +28,79 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <script th:inline="javascript">
-let meetingProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
-console.log('meetingProfileInfo: ', meetingProfileInfo, typeof meetingProfileInfo);
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/
 
-let memberedGroupCountValue = 0;
-let notMemberedGroupCountValue = 0;
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 
-// 현재 URL주소에 사용된 파라매터값 가져와서 사용하기 예제
-function test(){
-    const currentURL = new URL(window.location.href);
-    console.log('currentURL: ', currentURL);
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 
-    // URLSearchParams 객체 생성
-    const urlParams = currentURL.searchParams;
-    console.log('urlParams: ', urlParams);
-
-    // 특정 파라미터 값 가져오기
-    let parameterValue = urlParams.get('profileId');
-    console.log('parameterValue: ', parameterValue);
-
-    const testbutton = document.getElementById("testbutton");
-    testbutton.innerText = parameterValue;
-}
-
-function moveDetailPage(target){
-    const groupId = target.getAttribute("groupId");
-    console.log('groupId: ', groupId);
-
-    window.location.href="./myApplyGroupDetailPage?groupId=" + groupId;
-}
-
-function getMyApplyGroupData(){
-    const profileId = meetingProfileInfo.profileid;
-    console.log('profileId: ', profileId);    
+function makeDetailPage(){
     
-    return fetch("./api/getMyApplyGroupData?profileId=" + profileId)
-    .then(response => response.json())
-    .then(response => {
-        const resultData = response.data;
-        console.log('resultData: ', resultData);
-        return resultData;
-    });
-}
+    const groupData = groupDetailInfo;
+    console.log('groupData: ', groupData);
 
-function setApplyDataList(){    
-    getMyApplyGroupData()        
-    .then(response => {
-        const userApplyDataList = response;
-        console.log('userApplyDataList: ', userApplyDataList);
+    const groupTitle = document.getElementById("groupTitle");
+    groupTitle.innerText = groupData.meetingGroupDto.groupTitle;
 
-        const memberedGroupCount = document.getElementById("memberedGroupCount");
-        memberedGroupCount.innerText = memberedGroupCountValue;
+    const groupLeaderImage = document.getElementById("groupLeaderImage");
+    groupLeaderImage.setAttribute("src", `/public/image/meeting/profileImage/${groupData.meetingProfileDto.profileImg}`);
 
-        const notMemberedGroupCount = document.getElementById("notMemberedGroupCount");
-        notMemberedGroupCount.innerText = notMemberedGroupCountValue;
+    const groupLeaderNickname = document.getElementById("groupLeaderNickname");
+    groupLeaderNickname.innerText = groupData.meetingProfileDto.profileNickname;
 
-        const memberedGroupListWrapperCol = document.getElementById("memberedGroupListWrapperCol");
-        memberedGroupListWrapperCol.innerHTML = "";
+    const groupContent = document.getElementById("groupContent");
+    groupContent.innerText = groupData.meetingGroupDto.groupContent;
 
-        const notMemberedGroupListWrapperCol = document.getElementById("notMemberedGroupListWrapperCol");
-        notMemberedGroupListWrapperCol.innerHTML = "";
+    const applyUserListWrapperCol = document.getElementById("applyUserListWrapperCol");
+    applyUserListWrapperCol.innerHTML = "";
 
-        for(e of userApplyDataList){
-            if(e.applyUserDto.applyStatus === "Y"){
-                memberedGroupCountValue++;
-                console.log('memberedGroupCountValue: ', memberedGroupCountValue);
-                memberedGroupCount.innerText = memberedGroupCountValue;
-                
-                const memberedGroupListRow = document.querySelector("#templete #memberedGroupListRow").cloneNode(true);
-                memberedGroupListRow.setAttribute("groupId", e.applyGroupDto.groupId);
+    for(e of groupData.applyUserMapList){
+        const applyUserListRow = document.querySelector("#templete #applyUserListRow").cloneNode(true);
+        const applyUserNickname = applyUserListRow.querySelector("#applyUserNickname");
+        applyUserNickname.innerText = e.applyUserProfileDto.profileNickname;
 
-                const memberedGroupImage = memberedGroupListRow.querySelector("#memberedGroupImage");
-                memberedGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.applyGroupDto.groupImage}`);
+        // const applyUserAge = applyUserListRow.querySelector("#applyUserAge");
+        // applyUserAge.innerText = e.applyUserInfoDto.birth;
 
-                const memberedGroupTitle = memberedGroupListRow.querySelector("#memberedGroupTitle");
-                memberedGroupTitle.innerText = e.applyGroupDto.groupTitle;
-
-                memberedGroupListWrapperCol.appendChild(memberedGroupListRow);                                
-            }
-            else{
-                notMemberedGroupCountValue++
-                console.log('notMemberedGroupCountValue: ', notMemberedGroupCountValue);
-                notMemberedGroupCount.innerText = notMemberedGroupCountValue;
-
-                const notMemberedGroupListRow = document.querySelector("#templete #notMemberedGroupListRow").cloneNode(true);
-                notMemberedGroupListRow.setAttribute("groupId", e.applyGroupDto.groupId);
-            
-                const notMemberedGroupImage = notMemberedGroupListRow.querySelector("#notMemberedGroupImage");
-                notMemberedGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.applyGroupDto.groupImage}`);
-
-                const notMemberedGroupTitle = notMemberedGroupListRow.querySelector("#notMemberedGroupTitle");
-                notMemberedGroupTitle.innerText = e.applyGroupDto.groupTitle;                
-                
-                notMemberedGroupListWrapperCol.appendChild(notMemberedGroupListRow);
-            }
+        const applyUserGender = applyUserListRow.querySelector("#applyUserGender");
+        const userGender = e.applyUserInfoDto.gender;
+        if(userGender === "M"){
+            applyUserGender.innerText = "남";
         }
-        if(memberedGroupCountValue === 0){
-            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
-            memberedGroupListWrapperCol.appendChild(notExistGroupMessage);
+        else{
+            applyUserGender.innerText = "여";
         }
-        else if(notMemberedGroupCountValue === 0){
-            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
-            notMemberedGroupListWrapperCol.appendChild(notExistGroupMessage);
-        }
-    });
-}
 
-document.addEventListener("DOMContentLoaded", ()=>{    
+        applyUserListWrapperCol.appendChild(applyUserListRow);
+    }
+
     
-    setApplyDataList();
 
+}
 
+document.addEventListener("DOMContentLoaded", ()=>{
+    makeDetailPage();
 });
 
 </script>
@@ -180,58 +139,71 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <span><i class="bi bi-chevron-left"></i></span>                                
                             </div>
                             <div class="col">
-                                <span class="fw-bold">내가 참여중인 미팅 List</span>
+                                <span class="fw-bold">내가 참여중인 미팅</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <span class="fs-4">
-                                    선발멤버인 미팅그룹
-                                    <span id="memberedGroupCount"></span>
-                                </span>
+                <div class="row mt-2">
+                    <div class="col mx-1 border border-black rounded">
+                        
+                        <div class="row border-bottom border-black" style="background-color: #FF8827;">
+                            <div class="col my-1">
+                                <span id="groupTitle" class="fs-4 fw-bold"></span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col mx-1 border border-black rounded">
-                                <div class="row">
-                                    <div id="memberedGroupListWrapperCol" class="col">
 
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="userImageBox">
+                                            <img id="groupLeaderImage" class="userImage">                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-auto align-self-center px-0">
+                                        <span id="groupLeaderNickname" class="fs-5"></span>
+                                    </div>
+                                    <div class="col align-self-center">
+                                        <span>님이 방장이에요 :)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="row">
+                        <div class="row my-2">
                             <div class="col">
-                                <span class="fs-4">
-                                    선발대기중 미팅그룹
-                                    <span id="notMemberedGroupCount"></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col mx-1 border border-black rounded">
                                 <div class="row">
-                                    <div id="notMemberedGroupListWrapperCol" class="col">
-
+                                    <div class="col">
+                                        <span>방장 Comment</span>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col mx-1 shadowBox">
+                                        <span id="groupContent" class=""></span>
+                                    </div>
+                                </div>
+                            </div>                            
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <button class="btn btn-primary" id="testbutton" onclick="test()">여기입니다</button>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span>참가신청List</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="applyUserListWrapperCol" class="col mx-1 shadowBox">
+                                        
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+
+
+
                     </div>
                 </div>
 
@@ -309,56 +281,21 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="memberedGroupListRow" class="row mt-1" onclick="moveDetailPage(this)">
+    <div id="applyUserListRow" class="row">
         <div class="col">
             <div class="row">
-                <div class="col-auto">
-                    <img id="memberedGroupImage" style="width: 5em; height: 5em;">
+                <div class="col-3">
+                    <span id="applyUserNickname"></span>
                 </div>
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <span id="memberedGroupTitle" class="fw-bold"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <span id="memberedGroupRegdate"></span>
-                        </div>
-                    </div>
+                <!-- <div class="col">
+                    <span id="applyUserAge"></span>
+                </div> -->
+                <div class="col-auto">
+                    <span id="applyUserGender"></span>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="notMemberedGroupListRow" class="row my-1" onclick="moveDetailPage(this)">
-        <div class="col">
-            <div class="row">
-                <div class="col-auto">
-                    <img id="notMemberedGroupImage" style="width: 5em; height: 5em;">
-                </div>
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <span id="notMemberedGroupTitle" class="fw-bold"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <span id="notMemberedGroupRegdate"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row notExistGroupMessage my-2">
-        <div class="col text-center">
-            <span class="fs-4 fw-bold text-secondary">해당하는 미팅그룹이 없어요 T^T</span>
-        </div>
-    </div>
-
 
 
 </div>

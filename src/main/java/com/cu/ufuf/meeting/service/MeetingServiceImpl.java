@@ -14,6 +14,7 @@ import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
 
 import java.util.ArrayList;
@@ -145,10 +146,12 @@ public class MeetingServiceImpl {
             int applyUserProfileId = meetingApplyUserDto.getProfileId();
             
             MeetingProfileDto applyUserMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(applyUserProfileId);
-            
-            applyUserMap.put("applyUserProfileDto", applyUserMeetingProfileDto);
-            
+            int userId = applyUserMeetingProfileDto.getUser_id();
+            UserInfoDto applyUserInfoDto = meetingSqlMapper.selectUserInfoByUserId(userId);
+
+            applyUserMap.put("applyUserProfileDto", applyUserMeetingProfileDto);            
             applyUserMap.put("applyDto", meetingApplyUserDto);
+            applyUserMap.put("applyUserInfoDto", applyUserInfoDto);
 
             applyUserMapList.add(applyUserMap);
         }
@@ -201,6 +204,30 @@ public class MeetingServiceImpl {
     // * 미팅 모집글PK 기준 확정멤버수 카운트
     public int countMeetingGroupMember(int groupId){
         return meetingSqlMapper.countMeetingGroupMemberByGroupId(groupId);
+    }
+
+    // * 프로필 PK기준 참여 및 신청중인 미팅에 대한 종합정보
+    public List<Map<String, Object>> getApplyDataByProfileIdForAJAX(int profileId){
+
+        List<Map<String, Object>> applyDataMapList = new ArrayList<>();
+
+        List<MeetingApplyUserDto> list = meetingSqlMapper.selectApplyUserByProfileId(profileId);
+        
+        for(MeetingApplyUserDto e : list){
+            
+            Map<String, Object> map = new HashMap<>();
+            int groupId =  e.getGroupId();
+            MeetingGroupDto meetingGroupDto = meetingSqlMapper.selectGroupByGroupId(groupId);
+
+            map.put("applyUserDto", e);
+            map.put("applyGroupDto", meetingGroupDto);
+
+            applyDataMapList.add(map);
+
+        }
+
+        return applyDataMapList;    
+    
     }
 
 
