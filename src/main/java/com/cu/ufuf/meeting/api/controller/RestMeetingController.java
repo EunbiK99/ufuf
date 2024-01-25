@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
+import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingRestResponseDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
@@ -336,6 +338,20 @@ public class RestMeetingController {
         meetingRestResponseDto.setResult("success");
         meetingRestResponseDto.setData(meetingService.getApplyDataByProfileIdForAJAX(profileId));
         return meetingRestResponseDto;
+    }
+
+    @RequestMapping("kakaoPayReady")
+    public MeetingRestResponseDto kakaoPayReady(Model model){
+        MeetingKakaoReadyResponseDto meetingKakaoReadyResponseDto = meetingService.kakaoPayReady();
+        model.addAttribute("tid", meetingKakaoReadyResponseDto.getTid());
+		System.out.println("결재고유 번호: " + meetingKakaoReadyResponseDto.getTid());
+		// Order정보를 모델에 저장
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingKakaoReadyResponseDto);
+        return meetingRestResponseDto;		
     }
 
 
