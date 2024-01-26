@@ -200,10 +200,18 @@ public class RoomController {
 	
 	//숙소 리스트 페이지(기본)
 	@RequestMapping("roomListPage")
-	public String roomListPage(Model model){
-
+	public String roomListPage(Model model, String searchWord){
 		
-		model.addAttribute("roomList", roomService.getRoomInfoList());
+		model.addAttribute("roomList", roomService.getRoomInfoListForSearch(searchWord));
+		
+		String searchQueryString = "";
+
+		if(searchWord != null) {
+			searchQueryString += "?searchWord=" + searchWord;
+		}
+
+		model.addAttribute("searchQueryString", searchQueryString);
+		
 		return "room/roomListPage";
 	}
 
@@ -265,6 +273,7 @@ public class RoomController {
 	public String myRoomListPage(Model model){
 
 		model.addAttribute("roomList", roomService.getRoomInfoList());
+
 
 		return "room/myRoomListPage";
 	}
