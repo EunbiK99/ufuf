@@ -38,6 +38,11 @@ public class MissionMapController {
         return "mission/missionRegistration";
     }
 
+    @RequestMapping("test1")
+    public String test1(){
+        return "mission/test1";
+    }
+
 
 
 

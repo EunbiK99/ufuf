@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>로그인</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+
+<script>
+
+var count = 0;
+
+    function addForm(){
+
+        var addedFormDiv = document.getElementById("addedFormDiv");
+
+        var str = "";
+        str+="<br>제목"+count+" <input type='text' name='tb1_"+count+"'>";
+        str+="<br>내용"+count+" <input type='text' name='tb2_"+count+"'>";
+        str+="<br>가격"+count+" <input type='text' name='tb3_"+count+"'><BR>";
+
+        // 추가할 폼(에 들어갈 HTML)
+        var addedDiv = document.createElement("div"); // 폼 생성
+        addedDiv.id = "added_"+count; // 폼 Div에 ID 부여 (삭제를 위해)
+        addedDiv.innerHTML  = str; // 폼 Div안에 HTML삽입
+        addedFormDiv.appendChild(addedDiv); // 삽입할 DIV에 생성한 폼 삽입
+
+        count++;
+
+        document.baseForm.count.value=count;
+
+    }
+
+    function delForm(){
+
+        var addedFormDiv = document.getElementById("addedFormDiv");
+
+        if(count >1){ // 현재 폼이 두개 이상이면
+
+            var addedDiv = document.getElementById("added_"+(--count));
+
+            // 마지막으로 생성된 폼의 ID를 통해 Div객체를 가져옴
+            addedFormDiv.removeChild(addedDiv); // 폼 삭제 
+
+        }else{ // 마지막 폼만 남아있다면
+
+            document.baseForm.reset(); // 폼 내용 삭제
+
+        }
+
+    }
+
+
+</script>
+
+<body onload="addForm();">
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form name="baseForm" action="" method="post">
+                    <input type="hidden" name="count" value="0">
+                    <div id="addedFormDiv"></div><BR>
+                    <input type="Button" value="추가" onclick="addForm()">
+                    <input type="Button" value="삭제" onclick="delForm()">
+                    <input type="Submit" value="완료">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 코스 추가 템플릿 -->
+    <div class="inputCourseTemplate row mt-3 d-none" data-valu="1">
+        <div class="col">
+            <div class="row">
+                <div class="col d-grid">
+                    <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border" style="background-color: #f7f7f7;">
+                        <span class="flex-grow-1 text-start">코스<span class="courseIndex ps-2">1</span></span>
+                        <i class="bi bi-caret-down text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row px-1">
+                <div class="col border border-top-0 mx-2 py-3">
+                    <div class="row">
+                        <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                            코스명
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col">
+                            <input type="text" class="courseName form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                            완료 상금
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col">
+                            <input type="text" class="reward form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col d-grid">
+                            <div class="gap-2 d-md-block">
+                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+1000</button>
+                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+3000</button>
+                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+5000</button>
+                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+10000</button>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                            미션 수행 지점
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col">
+                            <div class="map" style="height:10em; width: 100%;">
+                                <script>
+
+                                    var mapContainer = document.querySelector(".map"), // 지도를 표시할 div
+                                        mapOption = { 
+                                            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                            level: 3 // 지도의 확대 레벨
+                                        };
+
+                                    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                                    map.setZoomable(true);
+                                    
+                                    getNowLocation(function(locPosition) {
+                                        panTo(locPosition);
+                                    });
+
+                                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+
+                                        // 클릭한 위도, 경도 정보를 가져옵니다 
+                                        var latlng = mouseEvent.latLng; 
+                                        
+                                        // 마커 위치를 클릭한 위치로 옮깁니다
+                                        nowMarker.setPosition(latlng);
+                                        
+                                    });
+
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row px-1 mt-2">
+                        <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
+                            <i class="bi bi-geo-alt me-2"></i><span id="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
+                            <input type="hidden" class="lat">
+                            <input type="hidden" class="lng">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
