@@ -68,6 +68,7 @@ function kakaoPayReady(){
     .then(response => {
         const result = response.data;
         console.log('result: ', result);
+        
         const reusltConfirm = confirm("통신성공, 이동하시겠습니까?");
         if(reusltConfirm){
             window.location.href = result.next_redirect_pc_url;
@@ -272,7 +273,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -307,9 +308,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
 
                 <div class="row mt-2">
-                    <div class="col mx-1 border border-black rounded">
+                    <div class="col mx-1 mb-3 border border-black rounded">
                         
-                        <div class="row border-black border-bottom" style="background-color: #FF8827;">
+                        <div class="row border-black border-bottom rounded-top" style="background-color: #FF8827;">
                             <div class="col my-1">
                                 <span id="groupTitle" class="fs-4 fw-bold text-white"></span>                                
                             </div>
@@ -454,12 +455,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -468,10 +469,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -480,17 +481,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -499,10 +500,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">

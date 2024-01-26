@@ -46,6 +46,12 @@
         border: 1px solid black;        
         box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
     }
+
+    .listBackground{
+        border: 0;
+        border-radius: 10%;
+        background-color: cornsilk;
+    }
     </style>
 </head>
 <script th:inline="javascript">
@@ -86,13 +92,56 @@ function makeDetailPage(){
         const applyUserGender = applyUserListRow.querySelector("#applyUserGender");
         const userGender = e.applyUserInfoDto.gender;
         if(userGender === "M"){
-            applyUserGender.innerText = "남";
+            const maleIcon = document.createElement("i");
+            maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+            applyUserGender.appendChild(maleIcon);
         }
         else{
-            applyUserGender.innerText = "여";
+            const femaleIcon = document.createElement("i");
+            femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");            
+            applyUserGender.appendChild(femaleIcon);
+        }
+
+        if(sessionUserMeetingProfileDto.profileid === e.applyUserProfileDto.profileid){
+            applyUserListRow.classList.add("fw-bold");
+            const meBadge = document.createElement("span");
+            meBadge.setAttribute("class", "badge text-bg-warning px-1 ms-1");
+            meBadge.innerText = "Me";
+            applyUserNickname.appendChild(meBadge);
         }
 
         applyUserListWrapperCol.appendChild(applyUserListRow);
+    }
+
+    const GroupMemberListWrapperCol = document.getElementById("GroupMemberListWrapperCol");
+    GroupMemberListWrapperCol.innerHTML = "";
+
+    for(e of groupData.groupMemberDataList){
+        const groupMemberListRow = document.querySelector("#templete #groupMemberListRow").cloneNode(true);
+        const groupMemberNickname = groupMemberListRow.querySelector("#groupMemberNickname");
+        groupMemberNickname.innerText = e.groupMemberProfileDto.profileNickname;
+
+        const groupMemberGender = groupMemberListRow.querySelector("#groupMemberGender");
+        const genderValue = e.groupMemberUserDto.gender;
+        if(genderValue === "M"){
+            const maleIcon = document.createElement("i");
+            maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+            groupMemberGender.appendChild(maleIcon);            
+        }
+        else{
+            const femaleIcon = document.createElement("i");
+            femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");            
+            groupMemberGender.appendChild(femaleIcon);            
+        }
+
+        if(sessionUserMeetingProfileDto.profileid === e.groupMemberProfileDto.profileid){
+            groupMemberListRow.classList.add("fw-bold");
+            const meBadge = document.createElement("span");
+            meBadge.setAttribute("class", "badge text-bg-warning");
+            meBadge.innerText = "Me";
+            groupMemberNickname.appendChild(meBadge);
+        }
+        GroupMemberListWrapperCol.appendChild(groupMemberListRow);
     }
 
     
@@ -111,7 +160,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -148,7 +197,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-2">
                     <div class="col mx-1 border border-black rounded">
                         
-                        <div class="row border-bottom border-black" style="background-color: #FF8827;">
+                        <div class="row border-bottom border-black rounded-top" style="background-color: #FF8827;">
                             <div class="col my-1">
                                 <span id="groupTitle" class="fs-4 fw-bold"></span>
                             </div>
@@ -172,16 +221,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
 
-                        <div class="row my-2">
+                        <div class="row my-2 mt-2">
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <span>방장 Comment</span>
+                                        <span class="fw-bold fs-5">방장 Comment</span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col mx-1 shadowBox">
-                                        <span id="groupContent" class=""></span>
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row my-1">
+                                            <div class="col">
+                                                <span id="groupContent" class=""></span>
+                                            </div>
+                                        </div>                                        
                                     </div>
                                 </div>
                             </div>                            
@@ -191,11 +244,36 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <span>참가신청List</span>
+                                        <span class="fw-bold fs-5">참가신청List</span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div id="applyUserListWrapperCol" class="col mx-1 shadowBox">
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row overflow-y-scroll my-2">
+                                            <div id="applyUserListWrapperCol" class="col" style="height: 9em;">
+                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold fs-5">확정멤버List</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row overflow-y-scroll my-2">
+                                            <div id="GroupMemberListWrapperCol" class="col" style="height: 9em;">
+
+                                            </div>
+                                        </div>
                                         
                                     </div>
                                 </div>
@@ -214,12 +292,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -228,10 +306,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -240,17 +318,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -259,10 +337,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -281,10 +359,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="applyUserListRow" class="row">
+    <div id="applyUserListRow" class="row my-2 py-1">
         <div class="col">
-            <div class="row">
-                <div class="col-3">
+            <div class="row shadowBox mx-2 py-1 listBackground">
+                <div class="col-5 align-self-center">
                     <span id="applyUserNickname"></span>
                 </div>
                 <!-- <div class="col">
@@ -292,6 +370,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div> -->
                 <div class="col-auto">
                     <span id="applyUserGender"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="groupMemberListRow" class="row my-2 py-1">
+        <div class="col">
+            <div class="row shadowBox mx-2 py-1 listBackground">
+                <div class="col-5">
+                    <span id="groupMemberNickname"></span>
+                </div>
+                <!-- <div class="col">
+                    <span id="applyUserAge"></span>
+                </div> -->
+                <div class="col-auto">
+                    <span id="groupMemberGender"></span>
                 </div>
             </div>
         </div>

@@ -163,16 +163,33 @@ public class MeetingServiceImpl {
 
             applyUserMapList.add(applyUserMap);
         }
-
-        List<MeetingGroupMemberDto> groupMemberDtoList = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
         int groupMemberCountValue = meetingSqlMapper.countMeetingGroupMemberByGroupId(group_pk);
         int groupApplyUserCountValue = meetingSqlMapper.countMeetingGroupApplyUserByGroupId(group_pk);
+
+        List<Map<String, Object>> groupMemberDataList = new ArrayList<>();
+
+        List<MeetingGroupMemberDto> list = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
+        for(MeetingGroupMemberDto e : list){
+            
+            Map<String, Object> groupMemberMap = new HashMap<>();
+            
+            int groupMemberProfileId =  e.getProfileId();
+            MeetingProfileDto groupMemberProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(groupMemberProfileId);
+            int groupMemberUserId = groupMemberProfileDto.getUser_id();
+            UserInfoDto groupMemberUserDto =  meetingSqlMapper.selectUserInfoByUserId(groupMemberUserId);
+            
+            groupMemberMap.put("groupMemberProfileDto", groupMemberProfileDto);
+            groupMemberMap.put("groupMemberUserDto", groupMemberUserDto);
+            
+            groupMemberDataList.add(groupMemberMap);
+        }
+        
         
         map.put("meetingGroupDto", meetingGroupDto);
         map.put("meetingProfileDto", meetingProfileDto);
         map.put("tagDtoList", tagDtoList);
         map.put("applyUserMapList", applyUserMapList);
-        map.put("groupMemberDtoList", groupMemberDtoList);
+        map.put("groupMemberDataList", groupMemberDataList);
         map.put("groupMemberCountValue", groupMemberCountValue);
         map.put("groupApplyUserCountValue", groupApplyUserCountValue);
         
@@ -248,9 +265,9 @@ public class MeetingServiceImpl {
 		parameters.add("quantity", "1");
 		parameters.add("total_amount", "20000");
 		parameters.add("tax_free_amount", "18000");
-		parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval"); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
+		parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval"); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
 
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
@@ -258,6 +275,7 @@ public class MeetingServiceImpl {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://kapi.kakao.com/v1/payment/ready";
         MeetingKakaoReadyResponseDto meetingKakaoReadyResponseDto = restTemplate.postForObject(url, requestEntity, MeetingKakaoReadyResponseDto.class);
+        meetingKakaoReadyResponseDto.setPartner_order_id("1");
         
         return meetingKakaoReadyResponseDto;
     }
