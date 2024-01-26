@@ -28,6 +28,11 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <script th:inline="javascript">
@@ -65,6 +70,7 @@ function getMyApplyGroupData(){
     const profileId = meetingProfileInfo.profileid;
     console.log('profileId: ', profileId);    
     
+    // 함수의 리턴값으로 AJAX의 response.data를 리턴한 구조. 해당 함수를 
     return fetch("./api/getMyApplyGroupData?profileId=" + profileId)
     .then(response => response.json())
     .then(response => {
@@ -107,6 +113,17 @@ function setApplyDataList(){
                 const memberedGroupTitle = memberedGroupListRow.querySelector("#memberedGroupTitle");
                 memberedGroupTitle.innerText = e.applyGroupDto.groupTitle;
 
+                const memberedGroupMeetingStatus = memberedGroupListRow.querySelector("#memberedGroupMeetingStatus");
+                const statusValue = e.applyGroupDto.groupApplyStatus;
+                if(statusValue === "Y"){
+                    memberedGroupMeetingStatus.classList.add("text-bg-danger");
+                    memberedGroupMeetingStatus.innerText = "모집종료";
+                }
+                else{
+                    memberedGroupMeetingStatus.classList.add("text-bg-success");
+                    memberedGroupMeetingStatus.innerText = "모집중";
+                }
+
                 memberedGroupListWrapperCol.appendChild(memberedGroupListRow);                                
             }
             else{
@@ -121,7 +138,25 @@ function setApplyDataList(){
                 notMemberedGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.applyGroupDto.groupImage}`);
 
                 const notMemberedGroupTitle = notMemberedGroupListRow.querySelector("#notMemberedGroupTitle");
-                notMemberedGroupTitle.innerText = e.applyGroupDto.groupTitle;                
+                notMemberedGroupTitle.innerText = e.applyGroupDto.groupTitle;
+
+                const notMemberedGroupMeetingDate = notMemberedGroupListRow.querySelector("#notMemberedGroupMeetingDate");
+                const meetingDateValue = e.applyGroupDto.groupMeetingDate;
+                notMemberedGroupMeetingDate.innerText = meetingDateValue[0]+"년 "+meetingDateValue[1]+"월 "+meetingDateValue[2]+"일 "+meetingDateValue[3]+"시";
+
+                const notMemberedGroupMeetingPlace = notMemberedGroupListRow.querySelector("#notMemberedGroupMeetingPlace");
+                notMemberedGroupMeetingPlace.innerText = e.applyGroupDto.groupMeetingPlace;
+
+                const notMemberedGroupMeetingStatus = notMemberedGroupListRow.querySelector("#notMemberedGroupMeetingStatus");
+                const statusValue = e.applyGroupDto.groupApplyStatus;
+                if(statusValue === "Y"){
+                    notMemberedGroupMeetingStatus.classList.add("text-bg-danger");
+                    notMemberedGroupMeetingStatus.innerText = "모집종료";
+                }
+                else{
+                    notMemberedGroupMeetingStatus.classList.add("text-bg-success");
+                    notMemberedGroupMeetingStatus.innerText = "모집중";
+                }
                 
                 notMemberedGroupListWrapperCol.appendChild(notMemberedGroupListRow);
             }
@@ -130,7 +165,8 @@ function setApplyDataList(){
             const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
             memberedGroupListWrapperCol.appendChild(notExistGroupMessage);
         }
-        else if(notMemberedGroupCountValue === 0){
+        
+        if(notMemberedGroupCountValue === 0){
             const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
             notMemberedGroupListWrapperCol.appendChild(notExistGroupMessage);
         }
@@ -152,7 +188,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -190,14 +226,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row">
                             <div class="col">
-                                <span class="fs-4">
+                                <span class="fs-5 fw-bold">
                                     선발멤버인 미팅그룹
                                     <span id="memberedGroupCount"></span>
                                 </span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col mx-1 border border-black rounded">
+                            <div class="col mx-1">
                                 <div class="row">
                                     <div id="memberedGroupListWrapperCol" class="col">
 
@@ -212,14 +248,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row">
                             <div class="col">
-                                <span class="fs-4">
+                                <span class="fs-5 fw-bold">
                                     선발대기중 미팅그룹
                                     <span id="notMemberedGroupCount"></span>
                                 </span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col mx-1 border border-black rounded">
+                            <div class="col mx-1">
                                 <div class="row">
                                     <div id="notMemberedGroupListWrapperCol" class="col">
 
@@ -242,12 +278,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -256,10 +292,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -268,17 +304,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -287,10 +323,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -309,21 +345,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="memberedGroupListRow" class="row mt-1" onclick="moveDetailPage(this)">
-        <div class="col">
+    <div id="memberedGroupListRow" class="row my-2 border border-black rounded shadowBox" onclick="moveDetailPage(this)">
+        <div class="col my-1">
             <div class="row">
-                <div class="col-auto">
-                    <img id="memberedGroupImage" style="width: 5em; height: 5em;">
+                <div class="col-auto border border-0 rounded">
+                    <img id="memberedGroupImage" style="width: 5em; height: 5em; border-radius: 10%;">
                 </div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col">
+                    <div class="row justify-content-between">
+                        <div class="col-auto align-self-center">
                             <span id="memberedGroupTitle" class="fw-bold"></span>
                         </div>
+                        <div class="col-auto align-self-center">
+                            <span id="memberedGroupMeetingStatus" class="fw-bold badge">모집중</span>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <span id="memberedGroupRegdate"></span>
+                            <span id="memberedGroupMeetingdate"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span id="memberedGroupMeetingPlace"></span>
                         </div>
                     </div>
                 </div>
@@ -331,29 +375,37 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="notMemberedGroupListRow" class="row my-1" onclick="moveDetailPage(this)">
-        <div class="col">
+    <div id="notMemberedGroupListRow" class="row my-2 border border-black rounded shadowBox" onclick="moveDetailPage(this)">
+        <div class="col my-1">
             <div class="row">
-                <div class="col-auto">
-                    <img id="notMemberedGroupImage" style="width: 5em; height: 5em;">
+                <div class="col-auto border border-0 rounded">
+                    <img id="notMemberedGroupImage" style="width: 5em; height: 5em; border-radius: 10%;" >
                 </div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col">
+                    <div class="row justify-content-between">
+                        <div class="col-auto align-self-center">
                             <span id="notMemberedGroupTitle" class="fw-bold"></span>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <span id="notMemberedGroupMeetingStatus" class="fw-bold badge">모집중</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <span id="notMemberedGroupRegdate"></span>
+                            <span id="notMemberedGroupMeetingDate"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span id="notMemberedGroupMeetingPlace"></span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>        
     </div>
 
-    <div class="row notExistGroupMessage my-2">
+    <div class="row notExistGroupMessage my-2 border border-black rounded shadowBox">
         <div class="col text-center">
             <span class="fs-4 fw-bold text-secondary">해당하는 미팅그룹이 없어요 T^T</span>
         </div>

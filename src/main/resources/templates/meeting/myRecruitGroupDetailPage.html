@@ -41,13 +41,56 @@
         height: 100%;
         object-fit: cover;
     }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <script th:inline="javascript">
+// "Authorization" : "KakaoAK 326a50751a1bfac7c3ce3006c0ad9581",
+
 let groupDetailInfo = /*[[${groupDetailInfo}]]*/;
 let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
+
+
+
+
+function kakaoPayReady(){
+    const requestData = {
+        
+    }
+    fetch("./api/kakaoPayReady")
+    .then(response => response.json())
+    .then(response => {
+        const result = response.data;
+        console.log('result: ', result);
+        
+        const reusltConfirm = confirm("통신성공, 이동하시겠습니까?");
+        if(reusltConfirm){
+            window.location.href = result.next_redirect_pc_url;
+        }else{
+            return;
+        }
+
+    });
+}
+    
+
+
+function getTotalApplyCharge(){
+    const groupTotalApplyCharge = document.getElementById("groupTotalApplyCharge");
+
+    const groupApplyChargeValue = Number(document.getElementById("groupApplyCharge").innerText);
+    console.log('groupApplyChargeValue: ', groupApplyChargeValue);
+    const curruntGroupMemberCountValue = Number(document.querySelector(".curruntGroupMemberCount").innerText);
+    console.log('curruntGroupMemberCountValue: ', curruntGroupMemberCountValue);
+
+    groupTotalApplyCharge.innerText = groupApplyChargeValue * curruntGroupMemberCountValue;
+}
 
 function countMeetingGroupMember(){
     const groupId = groupDetailInfo.meetingGroupDto.groupId;
@@ -56,8 +99,11 @@ function countMeetingGroupMember(){
     .then(response =>{        
         const countValue = response.data;
 
-        const curruntApplyUserCount = document.getElementById("curruntApplyUserCount");
-        curruntApplyUserCount.innerText = countValue;
+        const curruntGroupMemberCountList = document.querySelectorAll(".curruntGroupMemberCount");
+        curruntGroupMemberCountList.forEach(e => {
+            e.innerText = countValue;
+        });
+        getTotalApplyCharge();
     });
 }
 
@@ -71,6 +117,9 @@ function getMeetingGroupMemberList(){
 
         const groupMemberListWrapperRow = document.getElementById("groupMemberListWrapperRow");
         groupMemberListWrapperRow.innerHTML = "";
+
+        const groupMemberPaymentCheckWrapperCol = document.getElementById("groupMemberPaymentCheckWrapperCol");
+        groupMemberPaymentCheckWrapperCol.innerHTML = "";
 
         for(e of groupMemberList){
             const groupMemberListCol = document.querySelector("#templete #groupMemberListCol").cloneNode(true);
@@ -87,6 +136,32 @@ function getMeetingGroupMemberList(){
             }
 
             groupMemberListWrapperRow.appendChild(groupMemberListCol);
+
+            const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);
+            const checkUserNickname = userPaymentCheckListRow.querySelector("#checkUserNickname");
+            checkUserNickname.innerText = e.profileNickname;
+
+            const checkUserPaymentStatus = userPaymentCheckListRow.querySelector("#checkUserPaymentStatus");
+            const paymentStatusValue = e.groupMemberPaymentStatus;
+            
+            if(paymentStatusValue === "Y"){
+                const checkIcon = document.createElement("i");
+                checkIcon.setAttribute("class", "bi bi-check-circle text-success")
+                checkUserPaymentStatus.appendChild(checkIcon);
+            }
+            else{
+                const unCheckIcon = document.createElement("i");
+                unCheckIcon.setAttribute("class", "bi bi-x-circle text-danger")
+                checkUserPaymentStatus.appendChild(unCheckIcon);
+                
+                const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
+                if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
+                    kakaoPayButton.classList.toggle("d-none");
+                }
+            }
+
+            groupMemberPaymentCheckWrapperCol.appendChild(userPaymentCheckListRow);
+
         }
 
     });
@@ -140,6 +215,9 @@ function makeGroupDetailPage(){
     const recruitMemberCount = document.getElementById("recruitMemberCount");
     recruitMemberCount.innerText = groupDetailInfo.meetingGroupDto.groupHeadCount;
 
+    const groupApplyCharge = document.getElementById("groupApplyCharge");
+    groupApplyCharge.innerText = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+
     const applyProfileListWrapperCol = document.getElementById("applyProfileListWrapperCol");
     applyProfileListWrapperCol.innerHTML = "";    
     
@@ -165,6 +243,8 @@ function makeGroupDetailPage(){
             const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
             applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
             applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
+
+            watingUserCount.innerText = watingUserCountValue;
             
             applyProfileListWrapperCol.appendChild(applyProfileListRow);
         }
@@ -193,7 +273,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -214,75 +294,160 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row">
             <div class="col">
 
-                <div class="row">
-                    <div class="col border border-0 rounded">
-                        <div class="row">
-                            <div class="col text-center" style="background-color: #FF8827;">
-                                <span id="groupTitle" class="fs-4 fw-bold text-white"></span>
-                                <span class="fs-4 fw-bold text-white">미팅방</span>
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <span class="fw-bold">내가 모집중인 미팅</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col-auto align-self-center">
-                                <span class="fs-5 fw-bold">방장 : </span>
-                            </div>
-                            <div class="col-auto align-self-center">
-                                <div class="userImageBox">
-                                    <img id="groupCreateUserImage" class="userImage">
-                                </div>                                
-                            </div>
-                            <div class="col-auto align-self-center">
-                                <span id="groupCreateUserNickname" class="fs-5 fw-bold"></span>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="fs-5 fw-bold">
-                                            선발대기 신청자 List
-                                            <span>[ </span>
-                                            <span id="watingUserCount"></span>
-                                            <span> ]</span>
-                                        </span>                                        
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll" style="height: 20em; max-height: 20em;">                                        
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col-auto">
-                                        <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="fs-5 fw-bold">[</span>
-                                        <span id="curruntApplyUserCount" class="fs-5 fw-bold"></span>
-                                        <span class="fs-5 fw-bold">/</span>
-                                        <span id="recruitMemberCount" class="fs-5 fw-bold"></span>
-                                        <span class="fs-5 fw-bold">]</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col border border-black rounded mx-1 overflow-x-scroll" style="width: 200%; max-width: 100%;">
-                                        <div id="groupMemberListWrapperRow" class="row mt-2 mb-2">
 
+                <div class="row mt-2">
+                    <div class="col mx-1 mb-3 border border-black rounded">
+                        
+                        <div class="row border-black border-bottom rounded-top" style="background-color: #FF8827;">
+                            <div class="col my-1">
+                                <span id="groupTitle" class="fs-4 fw-bold text-white"></span>                                
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="row">                                    
+                                    <div class="col-auto align-self-center">
+                                        <div class="userImageBox">
+                                            <img id="groupCreateUserImage" class="userImage">
+                                        </div>                                
+                                    </div>
+                                    <div class="col-auto align-self-center">
+                                        <span id="groupCreateUserNickname" class="fs-5 fw-bold"></span>
+                                    </div>
+                                    <div class="col align-self-center">
+                                        <span>님이 방장이에요 :)</span>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span class="fs-5 fw-bold">
+                                                    선발대기 신청자 List
+                                                    <span>[ </span>
+                                                    <span id="watingUserCount"></span>
+                                                    <span> ]</span>
+                                                </span>                                        
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll shadowBox" style="height: 20em; max-height: 20em;">                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="fs-5 fw-bold">[</span>
+                                                <span class="fs-5 fw-bold curruntGroupMemberCount"></span>
+                                                <span class="fs-5 fw-bold">/</span>
+                                                <span id="recruitMemberCount" class="fs-5 fw-bold"></span>
+                                                <span class="fs-5 fw-bold">]</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col border border-black rounded mx-1 overflow-x-scroll shadowBox" style="width: 200%; max-width: 100%;">
+                                                <div id="groupMemberListWrapperRow" class="row mt-2 mb-2">
+        
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <span class="fs-5 fw-bold">미팅회비 현황</span>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col mx-1 border border-black rounded shadowBox">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    1인당 회비 : 
+                                                                    <span id="groupApplyCharge"></span>
+                                                                    원
+                                                                </span>                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    확정인원 : 
+                                                                    <span class="curruntGroupMemberCount"></span>
+                                                                    명
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    모금 목표액 : 
+                                                                    <span id="groupTotalApplyCharge"></span>
+                                                                    원
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row my-2">
+                                                            <div class="col">
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <span>멤버별 납부현황</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mt-1">
+                                                                    <div class="col border border-black rounded mx-1">
+                                                                        <div class="row border-bottom">
+                                                                            <div class="col-3 text-center">
+                                                                                <span class="fw-bold">Nickname</span>
+                                                                            </div>
+                                                                            <div class="col-3 text-center">
+                                                                                <span class="fw-bold">check</span>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <span class="fw-bold">Payment</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div id="groupMemberPaymentCheckWrapperCol" class="col">
+                                                                                
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
-
             </div>
         </div>
 
@@ -290,12 +455,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -304,10 +469,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -316,17 +481,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -335,10 +500,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -356,6 +521,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
+
+    <div id="userPaymentCheckListRow" class="row my-1">
+        <div class="col">
+            <div class="row">
+                <div class="col-3 text-center align-self-center">
+                    <span id="checkUserNickname"></span>
+                </div>
+                <div class="col-3 text-center align-self-center">
+                    <span id="checkUserPaymentStatus"></span>
+                </div>
+                <div id="kakaoPayButton" class="col d-none text-center btn" onclick="kakaoPayReady()">
+                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 40%; height: 90%;">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="applyProfileListRow" class="row mt-2 mb-2">
         <div class="col">
