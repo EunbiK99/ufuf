@@ -83,11 +83,10 @@
 	</select>
 
     <!-- 게시글 목록 보는거 서치 되는용도-->
-	<select id="roomSelectAllForSearch" resultType="com.cu.ufuf.dto.RoomInfoDto">
+	<select id="roomSelectAllForSearchLocation" resultType="com.cu.ufuf.dto.RoomInfoDto">
 		SELECT * 
         FROM room_info
-        WHERE 1=1
-        AND title LIKE CONCAT('%', #{searchWord}, '%')
+        WHERE (title LIKE CONCAT('%', #{searchWord}, '%') or location LIKE CONCAT('%', #{searchWord}, '%'))
         ORDER BY room_info_id DESC
 	</select>
 

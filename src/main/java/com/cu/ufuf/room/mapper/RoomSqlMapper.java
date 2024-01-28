@@ -33,7 +33,7 @@ public interface RoomSqlMapper {
 
     //방 리스트뽑게 
     public List<RoomInfoDto> roomSelectAll();
-    public List<RoomInfoDto> roomSelectAllForSearch(@Param("searchWord") String searchWord);
+    public List<RoomInfoDto> roomSelectAllForSearchLocation(@Param("searchWord") String searchWord);
 
     public List<RoomInfoDto> roomSelectFilter(@Param("searchWord") String searchWord,
                                               @Param("peopleCount") int peopleCount, 
