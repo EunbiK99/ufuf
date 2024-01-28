@@ -274,6 +274,76 @@ values (
     where user_id = #{user_id}
 </select>
 
+<!-- * 상품 테이블(item_info) 인서트 쿼리(모집글 생성시 동시에 인서트, 미팅은 아이템카테고리3, 머챈아이디는 그룹아이디)-->
+<insert id="insertItemInfo">
+    insert into item_info(item_category_id ,merchan_id) values(
+        3,
+        #{groupId}	
+    )
+</insert>
+
+<!-- * 그룹PK기준 모집달성현황 업데이트 쿼리-->
+<update id="updateGroupApplyStatusByGroupId">
+    update meeting_group
+    set groupApplyStatus = "Y"
+    where groupid = #{groupId}
+</update>
+
+<!-- * 모집글PK 기준 공통-상품테이블에서 모집글에 해당하는 상품(미팅회비) 셀렉트-->
+<select id="selectItemInfoDtoByGroupId" resultType="com.cu.ufuf.dto.ItemInfoDto">
+    SELECT * from item_info ii 
+    where 1=1
+    and item_category_id = 3
+    and merchan_id = #{groupId}
+</select>
+
+<!-- * 주문번호테이블에 인서트(미팅방에서 본인 회비 결제 진행시 생성됨)-->
+<insert id="insertOrderInfo">
+    INSERT INTO order_info(order_id, item_id, user_id) values(
+        #{order_id},
+        #{item_id},
+        #{user_id}
+    )
+</insert>
+
+<!-- * 주문PK(order_id)로 주문번호DTO 조회-->
+<select id="selectOrderInfoByOrderId" resultType="com.cu.ufuf.dto.OrderInfoDto">
+    SELECT * from order_info oi 
+    where order_id = #{order_id}
+</select>
+
+<!-- * 카카오페이 결제요청 인서트-->
+<insert id="insertKakaoPaymentReq">
+    INSERT into kakao_payment_req(
+        cid,
+        partner_user_id,
+        partner_order_id,
+        item_code,
+        item_name,
+        quantity,
+        total_amount,
+        tax_free_amount)
+    values(
+        #{cid},
+        #{partner_user_id},
+        #{partner_order_id},
+        #{item_code},
+        #{item_name},
+        #{quantity},
+        #{total_amount},
+        #{tax_free_amount}	
+    )
+</insert>
+
+<!-- * 카카오페이 결제준비응답 테이블 인서트-->
+<insert id="insertKakaoPaymentRes">
+    INSERT INTO kakao_payment_res(tid, next_redirect_mobile_url, created_at) values(
+        #{tid},
+        #{next_redirect_mobile_url},
+        #{created_at}
+    )
+</insert>
+
 
 
 

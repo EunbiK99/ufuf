@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
@@ -16,6 +19,7 @@ import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
@@ -103,6 +107,27 @@ public interface MeetingSqlMapper {
 
     // * 유저PK 기준 유저정보 셀렉트
     public UserInfoDto selectUserInfoByUserId(int user_id);
+
+    // * 상품 테이블에 merchan_id = 그룹PK 로 인서트(모집글 인서트와 동시에 작동)
+    public void insertItemInfo(int groupId);
+
+    // * 그룹PK 기준 모집달성현황 업데이트
+    public void updateGroupApplyStatusByGroupId(int groupId);
+
+    // * 모집글PK 기준 상품테이블에서 모집글에 해당하는 상품 셀렉트
+    public ItemInfoDto selectItemInfoDtoByGroupId(int groupId);
+
+    // * 주문번호 테이블 인서트(미팅방에서 유저 자신의 회비 결제시 인서트)
+    public void insertOrderInfo(OrderInfoDto orderInfoDto);
+
+    // * 주문번호PK로 주문번호 Dto셀렉트
+    public OrderInfoDto selectOrderInfoByOrderId(String order_id);
+
+    // * 카카오 결제요청 테이블 인서트
+    public void insertKakaoPaymentReq(KakaoPaymentReqDto kakaoPaymentReqDto);
+
+    // * 카카오 결제준비응답 테이블 인서트
+    public void insertKakaoPaymentRes(KakaoPaymentResDto kakaoPaymentResDto);
 
 
 }

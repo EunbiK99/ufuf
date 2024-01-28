@@ -150,11 +150,11 @@ function setApplyDataList(){
                 const notMemberedGroupMeetingStatus = notMemberedGroupListRow.querySelector("#notMemberedGroupMeetingStatus");
                 const statusValue = e.applyGroupDto.groupApplyStatus;
                 if(statusValue === "Y"){
-                    notMemberedGroupMeetingStatus.classList.add("text-bg-danger");
+                    notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-danger");
                     notMemberedGroupMeetingStatus.innerText = "모집종료";
                 }
                 else{
-                    notMemberedGroupMeetingStatus.classList.add("text-bg-success");
+                    notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-success");                    
                     notMemberedGroupMeetingStatus.innerText = "모집중";
                 }
                 
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto" onclick="window.history.back()">
                                 <span><i class="bi bi-chevron-left"></i></span>                                
                             </div>
-                            <div class="col">
+                            <div class="col ps-0">
                                 <span class="fw-bold">내가 참여중인 미팅 List</span>
                             </div>
                         </div>
@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <span id="notMemberedGroupTitle" class="fw-bold"></span>
                         </div>
                         <div class="col-auto align-self-center">
-                            <span id="notMemberedGroupMeetingStatus" class="fw-bold badge">모집중</span>
+                            <span id="notMemberedGroupMeetingStatus">모집중</span>
                         </div>
                     </div>
                     <div class="row">

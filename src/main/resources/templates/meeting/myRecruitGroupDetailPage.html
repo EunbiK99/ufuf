@@ -56,14 +56,57 @@ let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
 
+function registerOrderProcess(){
+    const userNickname = sessionUserMeetingProfileDto.profileNickname;
+    console.log('userNickname: ', userNickname);
+    const groupTitle = groupDetailInfo.meetingGroupDto.groupTitle;
+    console.log('groupTitle: ', groupTitle);
+    const Amount = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    console.log('Amount: ', Amount);
+
+    const profileId = sessionUserMeetingProfileDto.profileid;
+    console.log('profileId: ', profileId);
+
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    console.log('groupId: ', groupId);
 
 
-
-function kakaoPayReady(){
-    const requestData = {
-        
+    const confirmValue = confirm(`미팅그룹 : ${groupTitle}\n결제유저 : ${userNickname}\n결제금액 : ${Amount}\n\n위 내용대로 결제를 진행하시겠습니까?`);
+    if(confirmValue){
+        fetch("./api/registerOrderProcess?profileId=" + profileId + "&groupId=" + groupId)
+        .then(response => response.json())
+        .then(response => {
+            const orderInfoDto = response.data;
+            console.log('orderInfoDto: ', orderInfoDto);
+            kakaoPayReady(orderInfoDto);
+        });
     }
-    fetch("./api/kakaoPayReady")
+}
+
+
+
+
+function kakaoPayReady(orderInfoDto){
+
+    const groupApplyCharge = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    
+    const kakaoPaymentReqDto = {
+        cid : "TC0ONETIME",
+        partner_user_id : orderInfoDto.user_id,
+        partner_order_id : orderInfoDto.order_id,
+        item_code : orderInfoDto.item_id,
+        item_name : "MeetingGroup" + groupDetailInfo.meetingGroupDto.groupId,
+        quantity : 1,
+        total_amount : groupApplyCharge,
+        tax_free_amount : groupApplyCharge - (groupApplyCharge/1.1)
+    }
+    fetch("./api/kakaoPayReady", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(kakaoPaymentReqDto)
+    })
     .then(response => response.json())
     .then(response => {
         const result = response.data;
@@ -123,19 +166,22 @@ function getMeetingGroupMemberList(){
 
         for(e of groupMemberList){
             const groupMemberListCol = document.querySelector("#templete #groupMemberListCol").cloneNode(true);
-            const groupMemberProfileImage = groupMemberListCol.querySelector("#groupMemberProfileImage");
-            groupMemberProfileImage.setAttribute("src", `/public/image/meeting/profileImage/${e.profileImg}`);
+            groupMemberListCol.setAttribute("member", e.profileId);           
 
-            const groupMemberNickname = groupMemberListCol.querySelector("#groupMemberNickname");
-            groupMemberNickname.innerText = e.profileNickname;
-
-            if(groupDetailInfo.meetingGroupDto.profileId === e.profileId){
-                const groupMemberProfileImageCol = groupMemberListCol.querySelector("#groupMemberProfileImageCol");
+            if(e.profileId === groupDetailInfo.meetingGroupDto.profileId){
                 const crownBadge = document.querySelector("#templete #crownBadge");
+                const groupMemberProfileImageCol = groupMemberListCol.querySelector("#groupMemberProfileImageCol");
                 groupMemberProfileImageCol.appendChild(crownBadge);
             }
 
+            const groupMemberProfileImage = groupMemberListCol.querySelector("#groupMemberProfileImage");
+            groupMemberProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.profileImg}`);
+            
+            const groupMemberNickname = groupMemberListCol.querySelector("#groupMemberNickname");
+            groupMemberNickname.innerText = e.profileNickname;            
+
             groupMemberListWrapperRow.appendChild(groupMemberListCol);
+
 
             const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);
             const checkUserNickname = userPaymentCheckListRow.querySelector("#checkUserNickname");
@@ -191,10 +237,9 @@ function addGroupMember(target){
         })
         .then(response => response.json())
         .then(response =>{
-            alert("[" + applyUserNickname + "]" + " 님이 미팅멤버로 선발되었습니다.");
-            makeGroupDetailPage();
-            getMeetingGroupMemberList();
+            alert("[" + applyUserNickname + "]" + " 님이 미팅멤버로 선발되었습니다.");            
             countMeetingGroupMember();
+            window.location.reload();
         });
     }
     else{
@@ -227,40 +272,48 @@ function makeGroupDetailPage(){
     const watingUserCount = document.getElementById("watingUserCount");
     watingUserCount.innerText = watingUserCountValue;
 
-    for(e of applyUserMapList){
-        if(e.applyDto.applyStatus === "N"){
-            watingUserCountValue++;
-            const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
-            const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
-            applyProfileImage.setAttribute("src", `/public/image/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
-
-            const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
-            applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
-
-            const applyText = applyProfileListRow.querySelector("#applyText");
-            applyText.innerText = e.applyDto.applyComment;
-
-            const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
-            applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
-            applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
-
-            watingUserCount.innerText = watingUserCountValue;
-            
-            applyProfileListWrapperCol.appendChild(applyProfileListRow);
-        }
-    }
-    if(watingUserCountValue === 0){
+    if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
         const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
         const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
-        noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+        noApplyProfileInfoText.innerText = " 멤버모집이 완료되었습니다 :) ";
         applyProfileListWrapperCol.appendChild(noApplyProfileRow);
     }
+    else{
+        for(e of applyUserMapList){
+            if(e.applyDto.applyStatus === "N"){
+                watingUserCountValue++;
+                const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
+                const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
+                applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
+
+                const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
+                applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
+
+                const applyText = applyProfileListRow.querySelector("#applyText");
+                applyText.innerText = e.applyDto.applyComment;
+
+                const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
+                applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
+                applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
+
+                watingUserCount.innerText = watingUserCountValue;
+                
+                applyProfileListWrapperCol.appendChild(applyProfileListRow);
+            }
+        }
+        if(watingUserCountValue === 0){
+            const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+            const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+            noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+            applyProfileListWrapperCol.appendChild(noApplyProfileRow);
+        }
+    }
+    getMeetingGroupMemberList();        
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    makeGroupDetailPage();
-    getMeetingGroupMemberList();
+    makeGroupDetailPage();    
     countMeetingGroupMember();
 
 });
@@ -336,7 +389,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         <div class="row">
                                             <div class="col">
                                                 <span class="fs-5 fw-bold">
-                                                    선발대기 신청자 List
+                                                    참여 신청자 List
                                                     <span>[ </span>
                                                     <span id="watingUserCount"></span>
                                                     <span> ]</span>
@@ -364,8 +417,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col border border-black rounded mx-1 overflow-x-scroll shadowBox" style="width: 200%; max-width: 100%;">
-                                                <div id="groupMemberListWrapperRow" class="row mt-2 mb-2">
+                                            <div class="col border border-black rounded mx-1 overflow-x-scroll shadowBox" >
+                                                <div id="groupMemberListWrapperRow" class="row mt-2 mb-2" style="width: 200%;">
         
                                                 </div>
                                             </div>
@@ -531,7 +584,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col-3 text-center align-self-center">
                     <span id="checkUserPaymentStatus"></span>
                 </div>
-                <div id="kakaoPayButton" class="col d-none text-center btn" onclick="kakaoPayReady()">
+                <div id="kakaoPayButton" class="col d-none text-center btn" onclick="registerOrderProcess()">
                     <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 40%; height: 90%;">
                 </div>
             </div>
