@@ -126,6 +126,21 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
+	@RequestMapping("getRoomInfoListForSearchLocation")
+	public RestResponseDto getRoomInfoListForSearchLocation(@RequestParam(required = false) String searchWord) {
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setResult("success");
+
+        if(searchWord !=null){
+			restResponseDto.setData(roomService.getRoomInfoListForSearchLocation(searchWord));
+		}else{
+			restResponseDto.setData(roomService.getRoomInfoList());
+		}
+
+        return restResponseDto;
+	}
+
 	public RestResponseDto templete() {
         RestResponseDto restResponseDto = new RestResponseDto();
         

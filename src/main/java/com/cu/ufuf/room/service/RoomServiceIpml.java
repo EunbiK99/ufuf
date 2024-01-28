@@ -90,10 +90,10 @@ public class RoomServiceIpml {
 	}
 
     //서치용 방 목록
-    public List<Map<String, Object>> getRoomInfoListForSearch(String searchWord) {
+    public List<Map<String, Object>> getRoomInfoListForSearchLocation(String searchWord) {
 		List<Map<String, Object>> roomList=new ArrayList<>();
 		
-		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectAllForSearch(searchWord);
+		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectAllForSearchLocation(searchWord);
 		
 		for(RoomInfoDto roomInfoDto:roomInfoDtoList) {
 			int UserPK=roomInfoDto.getUser_id();
