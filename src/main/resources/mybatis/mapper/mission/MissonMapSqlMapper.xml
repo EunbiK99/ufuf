@@ -14,8 +14,9 @@
         title, 
         detail, 
         status, 
-        limit_time)
-    VALUES (
+        limit_time
+        )
+    VALUES(
         #{user_id}, 
         #{title}, 
         #{detail}, 
@@ -24,8 +25,55 @@
     )
 </insert>
 
+<insert id="insertMissionCourse">
+    INSERT INTO mission_course(
+        mission_id,
+        content,
+        reward,
+        lat,
+        lng
+        )
+    VALUES(
+        #{mission_id},
+        #{content},
+        #{reward},
+        #{lat},
+        #{lng}
+    )
+</insert>
 
+<select id="selectMissionById" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    SELECT * FROM mission_info
+    where mission_id = ${mission_id}
+</select>
 
+<select id="selectMissionByOrderId" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    select mi.* from order_info oi 
+    inner join item_info ii on oi.item_id = ii.item_id
+    inner join mission_info mi on ii.merchan_id = mi.mission_id 
+    where oi.order_id = #{order_id}
+</select>
+
+<select id="selectAllMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    select * from mission_info
+    WHERE status = '모집중'
+</select>
+
+<select id="selectCourseByMission" resultType="com.cu.ufuf.dto.MissionCourseDto">
+    select * from mission_course
+    where mission_id = #{mission_id}
+</select>
+
+<update id="updateStatus">
+    update mission_info
+    set status = #{param2}
+    where mission_id = #{param1}
+</update>
+
+<select id="selectUserById" resultType="com.cu.ufuf.dto.UserInfoDto">
+    select * from user_info
+    where user_id = #{user_id}
+</select>
 
 
 

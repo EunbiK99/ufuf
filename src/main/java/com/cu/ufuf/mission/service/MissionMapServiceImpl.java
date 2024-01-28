@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionRegRequestDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
 import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
@@ -22,13 +25,27 @@ public class MissionMapServiceImpl {
     private MissionMapSqlMapper missionMapsqlMapper;
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
+    @Autowired
+    private MissionPaymentServiceImpl missionPaymentService;
 
     // 미션 등록
-    public void registerMissionProcess(MissionInfoDto missionInfoDto){
+    public KakaoPaymentReqDto registerMissionProcess(MissionRegRequestDto missionRegRequestDto){
 
-        missionMapsqlMapper.insertMission(missionInfoDto);
+        missionMapsqlMapper.insertMission(missionRegRequestDto.getMissionInfoDto());
+        MissionInfoDto missionInfoDto = missionRegRequestDto.getMissionInfoDto();
         int missionId = missionInfoDto.getMission_id();
         int userId = missionInfoDto.getUser_id();
+
+        int totalReward = 0;
+
+        List<MissionCourseDto> courseList = missionRegRequestDto.getMissionCourseDto();
+        
+        for(MissionCourseDto missionCourseDto : courseList){
+            missionCourseDto.setMission_id(missionId);
+            missionMapsqlMapper.insertMissionCourse(missionCourseDto);
+            int reward = missionCourseDto.getReward();
+            totalReward = totalReward + reward;
+        }
 
         ItemInfoDto itemInfoDto = new ItemInfoDto();
         itemInfoDto.setItem_category_id(1);
@@ -36,7 +53,7 @@ public class MissionMapServiceImpl {
 
         merchanSqlMapper.insertItemInfo(itemInfoDto);
         int itemId = itemInfoDto.getItem_id();
-        
+
         OrderInfoDto orderInfoDto = new OrderInfoDto();
         String order_id = "MI";
 
@@ -56,6 +73,35 @@ public class MissionMapServiceImpl {
         orderInfoDto.setStatus("주문완료");
 
         merchanSqlMapper.insertOrderInfo(orderInfoDto);
+
+        return missionPaymentService.kakaoPayReq(orderInfoDto, itemId, totalReward);
+
+    }
+
+    public MissionInfoDto selectMissionByOrderId(String Order_id){
+        return missionMapsqlMapper.selectMissionByOrderId(Order_id);
+    }
+
+    // 미션 전체 리스트 출력
+    public List<Map<String, Object>> loadMissionList(){
+        
+        List<Map<String, Object>> missionInfoList = new ArrayList<>();
+
+        List<MissionInfoDto> missionDtoList = missionMapsqlMapper.selectAllMission();
+        for(MissionInfoDto missionInfoDto : missionDtoList){
+            int mission_id = missionInfoDto.getMission_id();
+            int user_id = missionInfoDto.getUser_id();
+
+            Map<String, Object> missionInfo = new HashMap();
+
+            missionInfo.put("missionInfoDto", missionInfoDto);
+            missionInfo.put("missionCourseList", missionMapsqlMapper.selectCourseByMission(mission_id));
+            missionInfo.put("userInfoDto", missionMapsqlMapper.selectUserById(user_id));
+
+            missionInfoList.add(missionInfo);
+        }
+
+        return missionInfoList;
     }
 
 
@@ -71,52 +117,12 @@ public class MissionMapServiceImpl {
 
 
 
-    // // 미션 등록
-    // public void registerMissionProcess(MissionInfoDto missionInfoDto){
 
-    //     int mission_id = missionMapsqlMapper.createMissionPk();
-    //     int user_id = missionInfoDto.getUser_id();
-    //     missionInfoDto.setMission_id(mission_id);
- 
-    //     missionMapsqlMapper.insertMission(missionInfoDto);
 
-    //     ItemInfoDto itemInfoDto = new ItemInfoDto();
-    //     int item_id = merchanSqlMapper.createItemPk();
 
-    //     itemInfoDto.setItem_id(item_id);
-    //     itemInfoDto.setItem_category_id(1);
-    //     itemInfoDto.setMerchan_id(mission_id);
+    
 
-    //     merchanSqlMapper.insertItemInfo(itemInfoDto);
-
-    //     OrderInfoDto orderInfoDto = new OrderInfoDto();
-
-    //     String order_id = "MI";
-
-    //     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	// 	String today = sdf.format(new Date());
-
-    //     UUID uuid = UUID.randomUUID();
-    //     String ramdomUUID = uuid.toString().replace("-", "");
-    //     ramdomUUID = ramdomUUID.substring(0, 10);
-    //     ramdomUUID = ramdomUUID.toUpperCase();
-
-    //     order_id = order_id + item_id + today + ramdomUUID;
-
-    //     orderInfoDto.setOrder_id(order_id);
-    //     orderInfoDto.setItem_id(item_id);
-    //     orderInfoDto.setUser_id(user_id);
-    //     orderInfoDto.setStatus("주문완료");
-
-    //     merchanSqlMapper.insertOrderInfo(orderInfoDto);
-    // }
-
-    // // 미션 전체 리스트 출력
-    // public List<MissionInfoDto> loadMissionList(){
-    //     return missionMapsqlMapper.selectAllMission();
-    // }
-
-    // // 미션 상세 출력
+    // 미션 상세 출력
     // public Map<String, Object> getMissionDetail(int mission_id){
 
     //     Map<String, Object> missionDetail = new HashMap<>();
@@ -292,42 +298,12 @@ public class MissionMapServiceImpl {
 
 
 
-    // // 카카오페이
-    // public void insertKakaoPayReqInfo(KakaoPaymentReqDto kakaoPaymentReqDto){
-    //     merchanSqlMapper.insertKakaoPayReqInfo(kakaoPaymentReqDto);
-    // }
 
-    // public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto){
-    //     merchanSqlMapper.insertKakaoPayResInfo(kakaoPaymentResDto);
-    // }
 
-    // public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
-    //     merchanSqlMapper.insertKakaoPayAccReqInfo(kakaoPaymentAcceptReqDto);
-    // }
 
-    // public void insertKakaoPayAccResInfo(GetKakaoPaymentAcceptResDto params){
+    
 
-    //     AmountDto amountDto = params.getAmount();
-    //     int amount_id = merchanSqlMapper.createAmountPk();
-    //     amountDto.setAmount_id(amount_id);
-
-    //     CardInfoDto cardDto = params.getCard_info();
-    //     int card_id = merchanSqlMapper.createCardInfoPk();
-    //     cardDto.setCard_id(card_id);
-
-    //     KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto = new KakaoPaymentAcceptResDto();
-
-    //     kakaoPaymentAcceptResDto.setTid(params.getTid());
-    //     kakaoPaymentAcceptResDto.setAid(params.getAid());
-    //     kakaoPaymentAcceptResDto.setAmount(amount_id);
-    //     kakaoPaymentAcceptResDto.setCard_info(card_id);
-    //     kakaoPaymentAcceptResDto.setPartner_order_id(params.getPartner_order_id());
-    //     kakaoPaymentAcceptResDto.setPartner_user_id(params.getPartner_user_id());
-    //     kakaoPaymentAcceptResDto.setApproved_at(params.getApproved_at());
-
-    //     merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
-
-    // }
+    
 
     // // 미션 알림
     // public void insertNotification(int mission_notification_category_id, int user_id, int mission_id, String content){

@@ -43,6 +43,8 @@
     where order_id = #{order_id}
 </update>
 
+
+
 <insert id="insertKakaoPayReqInfo">
     insert into kakao_payment_req(
         cid, 
@@ -58,6 +60,29 @@
         'TC0ONETIME', 
         #{partner_user_id},
         #{partner_user_id},
+        #{item_code},
+        #{item_name},
+        #{quantity},
+        #{total_amount},
+        #{tax_free_amount}
+    )
+</insert>
+
+<insert id="insertKakaoPayReqInfoWithCid">
+    insert into kakao_payment_req(
+        cid, 
+        partner_user_id,  
+        partner_order_id, 
+        item_code,
+        item_name, 
+        quantity, 
+        total_amount, 
+        tax_free_amount
+        )
+    values(
+        #{cid},
+        #{partner_user_id},
+        #{partner_order_id},
         #{item_code},
         #{item_name},
         #{quantity},
@@ -97,7 +122,7 @@
 </insert>
 
 <insert id="insertKakaoPayAccResInfo">
-	insert into kakaoPaymentAcceptRes(
+	insert into kakao_payment_accept_res(
     	tid,
         amount_id,
         card_id,
@@ -121,36 +146,31 @@
     )
 </insert>
 
-<!-- create amountPk -->
-<select id="createAmountPk" resultType="int">
-    select ifnull(MAX(amount_id)+1, 1) amount_id from amount
-</select>
-
 <insert id="insertAmountInfo">
-	insert into amount(amount_id, total, point)
-    values(#{amount_id}, #{total},#{point})
+    <selectKey keyProperty="amount_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID() AS amount_id
+    </selectKey>
+	insert into amount(total, point)
+    values(#{total},#{point})
 </insert>
-
-<!-- create amountPk -->
-<select id="createCardInfoPk" resultType="int">
-    select ifnull(MAX(card_id)+1, 1) card_id from card_info
-</select>
 
 <insert id="insertCardInfo">
 	inert into card_info(
-        card_id,
+        <selectKey keyProperty="card_id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS card_id
+        </selectKey>
     	bin_,
         card_type,
         install_month,
         approved_id
     	)
 	values(
-        #{card_id}
     	#{bin},
         #{card_type},
         #{install_month},
         #{approved_id},
     )
 </insert>
+
 
 </mapper>
