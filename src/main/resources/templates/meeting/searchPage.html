@@ -111,6 +111,18 @@
         height: 100%;
         object-fit: cover;
     }
+
+    .applyEndBadge{
+        position : sticky;
+        left : 100%;
+        top : 5%
+    }
+
+    .meetingEndBadge{
+        position : sticky;
+        left : 100%;
+        top : 5%
+    }
     
     </style>
 </head>
@@ -289,8 +301,17 @@ function getGroupDetailInfo(groupId){
         if(applyUserMapList.length === 0){
             const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
             applyUserProfieImageListRow.appendChild(applyUserNotExist);
+            const parentCol = applyUserProfieImageListRow.closest(".col");
+            console.log('parentCol: ', parentCol);
+            parentCol.classList.remove("overflow-x-scroll");
+            applyUserProfieImageListRow.removeAttribute("style");
         }
         else{
+            const parentCol = applyUserProfieImageListRow.closest(".col");
+            console.log('parentCol: ', parentCol);
+            parentCol.classList.add("overflow-x-scroll");
+            applyUserProfieImageListRow.setAttribute("style","width:200%;");
+
             for(e of applyUserMapList){
                 const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
                 const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
@@ -314,11 +335,21 @@ function getGroupDetailInfo(groupId){
         
         if(groupDetailInfo.meetingGroupDto.profileId === sessionUserMeetingProfileId){            
             groupApplyButtonText.innerText = "모집관리";
-            groupApplyButton.setAttribute("onclick", `window.location.href='./myRecruidGroupDetailPage?groupId=${groupId}'`);
+            groupApplyButton.setAttribute("onclick", `window.location.href='./myRecruitGroupDetailPage?groupId=${groupId}'`);            
+            groupApplyButtonText.setAttribute("class", "text-primary fw-bold");
         }
         else{
-            groupApplyButtonText.innerText = "참가신청";
-            groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);
+            if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
+                groupApplyButton.removeAttribute("onclick");                                
+                groupApplyButtonText.innerText = "모집종료";
+                groupApplyButtonText.setAttribute("class", "text-danger fw-bold")
+            }
+            else{
+                groupApplyButtonText.innerText = "참가신청";
+                groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);                
+                groupApplyButtonText.setAttribute("class", "fw-bold");
+            }
+            
         }
     });
 }
@@ -386,6 +417,22 @@ function getGroupList(){
             let placeText = e.groupMeetingPlace.split(" ");
             groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
 
+            if(e.groupApplyStatus === "Y"){
+                const applyEndBadge = document.createElement("span");
+                applyEndBadge.innerText = "모집종료";
+                applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
+                const backgroundInnerCol = groupListWrapper.querySelector(".col");
+                backgroundInnerCol.appendChild(applyEndBadge);
+            }
+            
+            if(e.groupMeetingStatus === "Y"){
+                const meetingEndBadge = document.createElement("span");
+                meetingEndBadge.innerText = "미팅종료";
+                meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
+                const backgroundInnerCol = groupListWrapper.querySelector(".col");
+                backgroundInnerCol.appendChild(meetingEndBadge);
+            }
+
             groupListCol.appendChild(groupListWrapper);
         }
     });
@@ -403,7 +450,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -423,6 +470,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         <div class="row">
             <div class="col">
+                <div class="row my-2">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col border-1 border-bottom rounded">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input type="text" class="form-control border-0">                                        
+                                            </div>
+                                            <div class="col">
+                                                <i class="bi bi-search-heart"></i>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row overflow-y-scroll">
                     <div id="groupListCol" class="col">                        
                     </div>
@@ -434,12 +504,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -448,10 +518,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -460,17 +530,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -479,10 +549,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -671,8 +741,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="row mt-2 mb-3">
                                 <div class="col">
                                     <div class="row">
-                                        <div class="col">
-                                            <div id="applyUserProfieImageListRow" class="row overflow-x-auto" style="width: 200%; max-width: 100%;">
+                                        <div class="col overflow-x-scroll">
+                                            <div id="applyUserProfieImageListRow" class="row" style="width: 200%;">
 
                                             </div>
                                         </div>
@@ -685,7 +755,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             </div>
 
             <div class="row modal-footer border-top">                
-                <div id="groupApplyButton" class="col border-end btn" type="button">
+                <div id="groupApplyButton" class="col border-end" type="button">
                     <div class="row mt-2 mb-2">
                         <div class="col text-center">
                             <span id="groupApplyButtonText"></span>

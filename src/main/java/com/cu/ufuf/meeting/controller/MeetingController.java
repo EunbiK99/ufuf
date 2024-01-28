@@ -161,6 +161,21 @@ public class MeetingController {
         return "./meeting/myApplyGroupDetailPage";
     }
 
+    @RequestMapping("kakaoPayCancel")
+    public String kakaoPayCancel(){
+        return "./meeting/kakaoPayCancel";
+    }
+
+    @RequestMapping("kakaoPayApproval")
+    public String kakaoPayApproval(){
+        return "./meeting/kakaoPayApproval";
+    }
+
+    @RequestMapping("kakaoPayFail")
+    public String kakaoPayFail(){
+        return "./meeting/kakaoPayFail";
+    }
+
     
     
 
