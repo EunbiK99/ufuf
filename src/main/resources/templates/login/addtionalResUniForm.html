@@ -17,7 +17,6 @@
         const searchword = document.querySelector("#searchword").value;
         const region = document.querySelector("#region").value;
         const sch1 = document.querySelector("#sch1").value;
-        console.log(searchword);
 
         $.ajax({
             url:'//www.career.go.kr/cnet/openapi/getOpenApi?apiKey=421ec27f43f706389803746e6eb59dba&svcType=api&svcCode=SCHOOL&contentType=json&gubun=univ_list',
@@ -28,7 +27,6 @@
                 'searchSchulNm' : searchword
             },
             success:(res)=>{
-                console.log(res);
                 handleResponse(res);
             },
             error:()=>{

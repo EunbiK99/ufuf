@@ -1,5 +1,7 @@
 package com.cu.ufuf.room.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -106,6 +108,36 @@ public class RoomRestController {
         restResponseDto.setResult("success");
 		
 		restResponseDto.setData(roomService.getRoomInfoList());
+        return restResponseDto;
+	}
+
+	@RequestMapping("getRoomListForSearch")
+    public RestResponseDto getRoomListForSearch(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setResult("success");
+
+		if(searchWord !=null || peopleCount!=null || (startSchedule!=null && endSchedule!=null)){
+			restResponseDto.setData(roomService.getRoomInfoListForFilter(searchWord,peopleCount, startSchedule, endSchedule));
+		}else{
+			restResponseDto.setData(roomService.getRoomInfoList());
+		}
+		
+        return restResponseDto;
+	}
+
+	@RequestMapping("getRoomInfoListForSearchLocation")
+	public RestResponseDto getRoomInfoListForSearchLocation(@RequestParam(required = false) String searchWord) {
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        restResponseDto.setResult("success");
+
+        if(searchWord !=null){
+			restResponseDto.setData(roomService.getRoomInfoListForSearchLocation(searchWord));
+		}else{
+			restResponseDto.setData(roomService.getRoomInfoList());
+		}
+
         return restResponseDto;
 	}
 

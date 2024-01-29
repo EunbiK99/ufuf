@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>내가 참여중인 미팅그룹</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+    *{
+        /* font-family: 'Dongle', sans-serif; */
+        /* font-family: 'Gowun Dodum', sans-serif; */
+        /* font-family: 'Quicksand', sans-serif; */
+        font-family: 'Noto Sans KR', sans-serif;        
+    }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+
+    .listBackground{
+        border: 0;
+        border-radius: 10%;
+        background-color: cornsilk;
+    }
+    </style>
+</head>
+<script th:inline="javascript">
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/
+
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
+
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+
+function makeDetailPage(){
+    
+    const groupData = groupDetailInfo;
+    console.log('groupData: ', groupData);
+
+    const groupTitle = document.getElementById("groupTitle");
+    groupTitle.innerText = groupData.meetingGroupDto.groupTitle;
+
+    const groupLeaderImage = document.getElementById("groupLeaderImage");
+    groupLeaderImage.setAttribute("src", `/public/image/meeting/profileImage/${groupData.meetingProfileDto.profileImg}`);
+
+    const groupLeaderNickname = document.getElementById("groupLeaderNickname");
+    groupLeaderNickname.innerText = groupData.meetingProfileDto.profileNickname;
+
+    const groupContent = document.getElementById("groupContent");
+    groupContent.innerText = groupData.meetingGroupDto.groupContent;
+
+    const applyUserListCount = document.getElementById("applyUserListCount");
+    applyUserListCount.innerText = groupData.groupApplyUserCountValue;
+
+    const applyUserListWrapperCol = document.getElementById("applyUserListWrapperCol");
+    applyUserListWrapperCol.innerHTML = "";
+
+    for(e of groupData.applyUserMapList){
+        const applyUserListRow = document.querySelector("#templete #applyUserListRow").cloneNode(true);
+        const applyUserNickname = applyUserListRow.querySelector("#applyUserNickname");
+        applyUserNickname.innerText = e.applyUserProfileDto.profileNickname;
+
+        // const applyUserAge = applyUserListRow.querySelector("#applyUserAge");
+        // applyUserAge.innerText = e.applyUserInfoDto.birth;
+
+        const applyUserGender = applyUserListRow.querySelector("#applyUserGender");
+        const userGender = e.applyUserInfoDto.gender;
+        if(userGender === "M"){
+            const maleIcon = document.createElement("i");
+            maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+            applyUserGender.appendChild(maleIcon);
+        }
+        else{
+            const femaleIcon = document.createElement("i");
+            femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");            
+            applyUserGender.appendChild(femaleIcon);
+        }
+
+        if(sessionUserMeetingProfileDto.profileid === e.applyUserProfileDto.profileid){
+            applyUserListRow.classList.add("fw-bold");
+            const meBadge = document.createElement("span");
+            meBadge.setAttribute("class", "badge text-bg-warning px-1 ms-1");
+            meBadge.innerText = "Me";
+            applyUserNickname.appendChild(meBadge);
+        }
+
+        applyUserListWrapperCol.appendChild(applyUserListRow);
+    }
+
+    const GroupMemberListWrapperCol = document.getElementById("GroupMemberListWrapperCol");
+    GroupMemberListWrapperCol.innerHTML = "";
+
+    const curruntGroupMemberCount = document.getElementById("curruntGroupMemberCount");
+    curruntGroupMemberCount.innerText = groupData.groupMemberCountValue;
+
+    const maxGroupMemberCount = document.getElementById("maxGroupMemberCount");
+    maxGroupMemberCount.innerText = groupData.meetingGroupDto.groupHeadCount;
+
+    for(e of groupData.groupMemberDataList){
+        const groupMemberListRow = document.querySelector("#templete #groupMemberListRow").cloneNode(true);
+        const groupMemberNickname = groupMemberListRow.querySelector("#groupMemberNickname");
+        groupMemberNickname.innerText = e.groupMemberProfileDto.profileNickname;
+
+        const groupMemberGender = groupMemberListRow.querySelector("#groupMemberGender");
+        const genderValue = e.groupMemberUserDto.gender;
+        if(genderValue === "M"){
+            const maleIcon = document.createElement("i");
+            maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+            groupMemberGender.appendChild(maleIcon);            
+        }
+        else{
+            const femaleIcon = document.createElement("i");
+            femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");            
+            groupMemberGender.appendChild(femaleIcon);            
+        }
+
+        if(sessionUserMeetingProfileDto.profileid === e.groupMemberProfileDto.profileid){
+            groupMemberListRow.classList.add("fw-bold");
+            const meBadge = document.createElement("span");
+            meBadge.setAttribute("class", "badge text-bg-warning");
+            meBadge.innerText = "Me";
+            groupMemberNickname.appendChild(meBadge);
+        }
+        GroupMemberListWrapperCol.appendChild(groupMemberListRow);
+    }
+
+    
+
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    makeDetailPage();
+});
+
+</script>
+
+<body class="pt-5 pb-5">
+    <div class="container-fluid">
+        
+        <!--/* 임시 탑 에어리어 */-->
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 mx-1 justify-content-between">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <span class="fw-bold">내가 참여중인 미팅</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col mx-1 border border-black rounded">
+                        
+                        <div class="row border-bottom border-black rounded-top" style="background-color: #FF8827;">
+                            <div class="col my-1">
+                                <span id="groupTitle" class="fs-4 fw-bold"></span>
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="userImageBox">
+                                            <img id="groupLeaderImage" class="userImage">                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-auto align-self-center px-0">
+                                        <span id="groupLeaderNickname" class="fs-5"></span>
+                                    </div>
+                                    <div class="col align-self-center">
+                                        <span>님이 방장이에요 :)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row my-2 mt-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold fs-5">방장 Comment</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row my-1">
+                                            <div class="col">
+                                                <span id="groupContent" class=""></span>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold fs-5">참가신청List</span>
+                                        <span class="fs-6">
+                                            (<span id="applyUserListCount"></span>명)
+                                        </span>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row overflow-y-scroll my-2">
+                                            <div id="applyUserListWrapperCol" class="col" style="height: 9em;">
+                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold fs-5">확정멤버List</span>
+                                        <span>
+                                            (
+                                            <span id="curruntGroupMemberCount" class="text-danger fw-bold"></span>
+                                            /
+                                            <span id="maxGroupMemberCount" class="fw-bold"></span>
+                                            )
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col mx-1 shadowBox border border-black rounded">
+                                        <div class="row overflow-y-scroll my-2">
+                                            <div id="GroupMemberListWrapperCol" class="col" style="height: 9em;">
+
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1 mt-1">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="applyUserListRow" class="row my-2 py-1">
+        <div class="col">
+            <div class="row shadowBox mx-2 py-1 listBackground">
+                <div class="col-5 align-self-center">
+                    <span id="applyUserNickname"></span>
+                </div>
+                <!-- <div class="col">
+                    <span id="applyUserAge"></span>
+                </div> -->
+                <div class="col-auto">
+                    <span id="applyUserGender"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="groupMemberListRow" class="row my-2 py-1">
+        <div class="col">
+            <div class="row shadowBox mx-2 py-1 listBackground">
+                <div class="col-5">
+                    <span id="groupMemberNickname"></span>
+                </div>
+                <!-- <div class="col">
+                    <span id="applyUserAge"></span>
+                </div> -->
+                <div class="col-auto">
+                    <span id="groupMemberGender"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

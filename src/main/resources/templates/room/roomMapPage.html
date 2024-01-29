@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>지도로 보기</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c1a3fb01af622d05a21a2037b7b02bc&libraries=services"></script>
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var relativePath = window.location.origin;
+        var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+        var nowMarker;
+        var map;
+
+        var personImg = relativePath + "/public/image/mission/free-icon-person-8226827.png",
+        personImgSize = new kakao.maps.Size(42, 41),
+        personImgOption = {offset: new kakao.maps.Point(24, 20)};
+
+
+        // 지금 현재 위치 가져오기
+        function getNowLocation(callback){
+
+            if (navigator.geolocation) {
+
+                function getLocation() {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        
+                        var lat = position.coords.latitude; // 위도
+                        var lon = position.coords.longitude; // 경도
+
+                        var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+                        getNowAddress(lat, lon);
+
+
+                        if (nowMarker) {
+                            nowMarker.setMap(null);
+                        }
+
+                        nowMarker = new kakao.maps.Marker({
+                            map: map,
+                            position: locPosition,
+                            image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
+                        });
+
+                        nowMarker.setZIndex(2);
+                        callback(locPosition);
+
+                    });
+                }
+                getLocation();
+
+            } else { // HTML5의 GeoLocation을 사용할 수 없을때
+                console.log("GeoLocation 사용불가");
+                var locPosition = new kakao.maps.LatLng(37.49962779517117, 127.03048032853766);
+
+                if (nowMarker) {
+                    nowMarker.setMap(null);
+                }
+
+                nowMarker = new kakao.maps.Marker({
+                    map: map,
+                    position: locPosition,
+                    image: new kakao.maps.MarkerImage(personImg, personImgSize, personImgOption)
+                });
+
+                nowMarker.setZIndex(2);
+                callback(locPosition);
+            }
+        }
+
+        // 지도 중심으로 이동시키기
+        function panTo(moveLatLon) {
+            map.panTo(moveLatLon);
+        }
+
+
+        function roomList() {
+            // 처음에 초기화
+            document.querySelector("#roomListBox").innerHTML = "";
+
+            const searchWord = document.querySelector("#searchWord").value;
+            const url = "./getRoomInfoListForSearchLocation?searchWord="+searchWord;
+            const markers = [];
+
+            fetch(url)
+                .then(response => response.json())
+                .then(response => {
+                    response.data.forEach(e => {
+                        // 방 리스트 생성
+                        const roomList = document.querySelector("#roomList").cloneNode(true);
+                        roomList.classList.remove("d-none");
+                        const roomMainImage = roomList.querySelector(".roomMainImage");
+                        roomMainImage.removeAttribute("src");
+                        roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        const roomTitle = roomList.querySelector(".roomTitle");
+                        roomTitle.innerHTML = "";
+                        roomTitle.innerText = e.roomInfoDto.title;
+                        const roomLocation = roomList.querySelector(".roomLocation");
+                        roomLocation.innerHTML = "";
+                        roomLocation.innerText = e.roomInfoDto.location;
+                        const roomCharge = roomList.querySelector(".roomCharge");
+                        roomCharge.innerHTML = "";
+                        roomCharge.innerText = Number(e.roomInfoDto.room_charge).toLocaleString();
+                        const location = e.roomInfoDto.location;
+
+                        var locationValues = location.split(',');
+                        var address = locationValues[1];
+
+                        // 링크태그 여기서 하나씩 잡아주어야함
+                        const a = document.createElement("a");
+                        a.setAttribute("style", "text-decoration: none; color: black; width: 13em;");
+                        a.appendChild(roomList);
+
+                        // 주소-좌표 변환 객체를 생성합니다
+                        var geocoder = new kakao.maps.services.Geocoder();
+                        // 주소로 좌표를 검색합니다
+                        geocoder.addressSearch(address, function (result, status) {
+                            // 정상적으로 검색이 완료됐으면 
+                            if (status === kakao.maps.services.Status.OK) {
+                                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                                // 결과값으로 받은 위치를 마커로 표시합니다
+                                var marker = new kakao.maps.Marker({
+                                    map: map,
+                                    title: e.roomInfoDto.title,
+                                    position: coords
+                                });
+                                // 마커를 지도에 표시
+                                marker.setMap(map);
+
+                                // 마커를 배열에 추가
+                                markers.push(marker);
+
+                                // 리스트 아이템 클릭 이벤트 등록
+                                a.addEventListener("click", function () {
+                                    // 마커를 클릭하면 해당 아이템의 주소로 지도 중심 이동
+                                    map.setCenter(marker.getPosition());
+                                    panTo(marker.getPosition());
+                                });
+                            }
+                        });
+
+                        // 본문에 붙이는 코드(리스트들)
+                        const roomListBox = document.querySelector("#roomListBox");
+                        roomListBox.appendChild(a);
+                    });
+                });
+        }
+        
+
+        // 주소 가져오기
+        function getNowAddress(lat, lng) {
+
+            let geocoder = new kakao.maps.services.Geocoder();
+
+            let coord = new kakao.maps.LatLng(lat, lng);
+            let callback = function (result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    displayNowLocation(result);
+                }
+            }
+            geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+        }
+
+        // 주소 출력하기
+        function displayNowLocation(data) {
+
+            const nowLocation = document.getElementById("nowLocation");
+
+            if (data[0].road_address === null) {
+                nowLocation.innerText = data[0].address.address_name;
+            } else {
+                nowLocation.innerText = data[0].road_address.address_name;
+            }
+
+        }
+
+
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            roomList();
+
+        })
+    </script>
+
+    <style>
+        
+
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 모달 내용 스타일 */
+        .modal-content {
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 1em;
+        }
+
+        /* 닫기 버튼 스타일 */
+        .close {
+            cursor: pointer;
+            position: absolute;
+            top: 1em;
+            right: 1em;
+            font-size: 2em;
+        }
+        .modal-dialog-bottom {
+            
+            margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
+            transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
+        }
+        .image-container {
+            width: 10em;
+            height: 10em; /* 높이를 조절하세요 */
+            overflow: hidden;
+        }
+
+        .responsive-img {
+            width: 10em;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+        min-height: 100em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+        height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
+        overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
+        }
+
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+
+        #roomListBox {
+            display: flex;
+            flex-direction: column;
+            gap: 6.5em; /* 각 아이템 사이의 간격 조절 */
+            max-height: 10em; /* 원하는 높이로 설정 */
+            overflow-y: auto; /* 세로 스크롤바를 표시 */
+            overflow-y: hidden; /* 내용이 넘치면 스크롤바를 표시 */
+            overflow-x: auto;
+        }
+
+    </style>
+    
+</head>
+
+<body>
+    <div class="container" th:if="${session.sessionUserInfo !=null}">
+            <!-- 페이지 네비-->
+            <div class="row pt-4 pb-3 ms-1" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
+            
+                <!--뒤로가기-->
+                <div class="col-2 mt-1">
+                    <a class="btn shadow bg-white rounded-circle border-secondery" href="./roomMainPage"><i class="bi bi-arrow-left text-secondary" style="color: black; text-decoration: none;"></i></a> 
+                </div>
+
+                <div class="col-9 shadow py-1 border bg-white border-secondery rounded-5 text-center fw-bold text-secondary fs-5">
+                    <div class="row">
+                        <div class="col-9">
+                            <input id="searchWord" name="searchWord" type="text" class="border-0 ps-2 pt-1" placeholder="검색어를 입력해주세요." style="font-size: 0.9em;">
+                        </div>
+                        <div class="col-1">
+                            <button onclick="roomList()" id="searchButton" class="btn text-secondary pb-2 ms-2" style="border: 0; text-decoration: none;">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+        <div class="row" style="position: fixed; top: 5.5em;">
+            <div class="col-1 text-secondery"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="col" id="nowLocation"></div>
+        </div>
+
+        <div class="row">
+            <div class="col px-0">
+                <div id="map" style="height:60em; width: 100%;">
+                    <script>
+
+                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                            mapOption = { 
+                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                level: 3 // 지도의 확대 레벨
+                            };
+
+                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                        map.setMinLevel(1);
+                        map.setMaxLevel(4);
+
+                        function updateNowLocation() {
+
+                        getNowLocation(function(locPosition) {
+                            panTo(locPosition);
+                        });
+
+                        setInterval(function() {
+                            getNowLocation(function(locPosition) {
+                                //panTo(locPosition);
+                            });
+                        }, 15000);
+                        }
+
+                        updateNowLocation();
+
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div id="global-navi" class="fixed-bottom shadow border bg-white mt-1 overflow-x-auto mx-3 rounded-3" style="bottom: 2.5em ; z-index: 1000;">
+            
+            <div class="row p-3" id="roomListBox">
+            </div>
+        </div>
+
+        <!--숙소 나오는거-->
+        <div class="col ms-1 me-3 mx-1 d-none" id="roomList" style="width: 20em;">
+            <div class="row">
+                <div class="col" style="width: 7em;">
+                    <a>
+                        <img src="/public/image/room/bedroom_2.jpg" class="img-fluid roomMainImage rounded" style="width: 7em; height: 5em; overflow: hidden; position: relative;">
+                    </a>
+                </div>
+                <div class="col-7 ms-0 ps-0" style="max-height: 10em;">
+                    <div class="row ps-1" style="max-width: 13em;">
+                        <a class="fw-bold text-start py-0 ms-0 roomTitle text-truncate" style="color: black; text-decoration: none; max-width: 11em;"></a>
+                    </div>
+
+                    <div class="row ms-1" style="max-width: 10em;">
+                        <div class="col text-secondary ps-0 text-truncate" style="max-width: 10em;"><a class="text-secondary text-start py-0 roomLocation" style="font-size: 0.7em; color: black; text-decoration: none; max-width: 7em;"></a></div>
+                        
+                    </div>
+
+                    <div class="row mb-2 mt-1 ps-1" style="max-width: 10em;">
+                        <div class="col-2"> <a class="text-start ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a></div>
+                        <div class="col ms-3 text-start text-secondary">&nbsp;/1박</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

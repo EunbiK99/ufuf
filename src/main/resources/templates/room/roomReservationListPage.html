@@ -137,7 +137,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col d-grid pe-0">
+                                <div class="col d-grid" th:if="${reservation.roomReviewCount!=0}">
+                                    <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2">리뷰작성완료</button>
+                                </div>
+                                <div class="col d-grid pe-0" th:if="${reservation.roomReviewCount==0}">
                                     <a class="btn my-2 text-white fw-bold" th:href="@{./guestReviewPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" style="background-color: #FF8827;">리뷰쓰기</a>
                                 </div>
                                 <div class="col d-grid">

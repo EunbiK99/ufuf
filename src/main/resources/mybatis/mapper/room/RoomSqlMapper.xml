@@ -82,6 +82,37 @@
 		SELECT * FROM room_info ORDER BY room_info_id DESC
 	</select>
 
+    <!-- 게시글 목록 보는거 서치 되는용도-->
+	<select id="roomSelectAllForSearchLocation" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT * 
+        FROM room_info
+        WHERE (title LIKE CONCAT('%', #{searchWord}, '%') or location LIKE CONCAT('%', #{searchWord}, '%'))
+        ORDER BY room_info_id DESC
+	</select>
+
+    <!--게시글 목록 필터 걸러 오는거-->
+    <select id="roomSelectFilter" resultType="com.cu.ufuf.dto.RoomInfoDto">
+        SELECT * 
+        FROM room_info
+        WHERE 1=1
+        <if test="searchWord != null">
+            AND title LIKE CONCAT('%', #{searchWord}, '%')
+        </if>
+        <if test="peopleCount != null">
+            AND
+            <![CDATA[
+                people_count_limit >= #{peopleCount}
+            ]]>
+        </if>
+        <if test="startSchedule != null and endSchedule != null">
+            AND 
+            <![CDATA[
+                (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
+            ]]>
+        </if>
+        ORDER BY room_info_id DESC
+    </select>
+
 	<select id="selectByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">
 		SELECT * from user_info  WHERE user_id=#{user_id}
 	</select>

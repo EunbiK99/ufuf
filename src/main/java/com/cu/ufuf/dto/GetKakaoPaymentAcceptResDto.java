@@ -1,6 +1,6 @@
 package com.cu.ufuf.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -14,5 +14,5 @@ private int pay_accres_id;
 	private String partner_user_id;
 	private String aid;
 	private String payment_method_type;
-	private LocalDateTime approved_at;
+	private Date approved_at;
 }

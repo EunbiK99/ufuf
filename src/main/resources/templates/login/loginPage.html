@@ -37,6 +37,7 @@
             url: "/v2/user/me",
             success: function (res) {
                 isUserExistForKakaoLogin(res);
+                console.log(res);
             },
             fail: function (error) {
                 alert("카카오 로그인 실패" + JSON.stringify(error));
@@ -62,7 +63,7 @@
 
                 if(response.data.isUserExist == 0){
                     // 유저 정보 없을 때
-                    insertKakaoLoginUser(res.kakao_account.profile.nickname, res.id, res.kakao_account.profile_image_url);
+                    insertKakaoLoginUser(res.kakao_account.profile.nickname, res.id, res.kakao_account.profile.profile_image_url);
                 }else if(response.data.isUserExist == 1){
                     // 유저 프로필 없을때
                     saveSessionUserForRegister(res.id);
@@ -129,7 +130,6 @@
         })
             .then(response => response.json())
             .then(response => {
-
                 window.location.href = relativePath + `/login/addtionalResProfileForm`;
         });
 

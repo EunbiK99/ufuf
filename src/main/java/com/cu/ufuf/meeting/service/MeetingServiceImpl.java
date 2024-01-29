@@ -1,8 +1,17 @@
 package com.cu.ufuf.meeting.service;
 
+import org.apache.catalina.manager.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.ItemInfoDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
@@ -10,16 +19,24 @@ import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
+import com.cu.ufuf.dto.MeetingKakaoApproveResponseDto;
+import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.OrderInfoDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class MeetingServiceImpl {
@@ -67,6 +84,8 @@ public class MeetingServiceImpl {
     // * 미팅 모집글 인서트
     public void registerNewGroup(MeetingGroupDto meetingGroupDto){        
         meetingSqlMapper.insertNewGroup(meetingGroupDto);
+        int groupPk = meetingGroupDto.getGroupId();
+        meetingSqlMapper.insertItemInfo(groupPk);
     }
 
     // * 지역(대분류, 중분류) 카테고리 인서트
@@ -145,23 +164,42 @@ public class MeetingServiceImpl {
             int applyUserProfileId = meetingApplyUserDto.getProfileId();
             
             MeetingProfileDto applyUserMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(applyUserProfileId);
-            
-            applyUserMap.put("applyUserProfileDto", applyUserMeetingProfileDto);
-            
+            int userId = applyUserMeetingProfileDto.getUser_id();
+            UserInfoDto applyUserInfoDto = meetingSqlMapper.selectUserInfoByUserId(userId);
+
+            applyUserMap.put("applyUserProfileDto", applyUserMeetingProfileDto);            
             applyUserMap.put("applyDto", meetingApplyUserDto);
+            applyUserMap.put("applyUserInfoDto", applyUserInfoDto);
 
             applyUserMapList.add(applyUserMap);
         }
-
-        List<MeetingGroupMemberDto> groupMemberDtoList = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
         int groupMemberCountValue = meetingSqlMapper.countMeetingGroupMemberByGroupId(group_pk);
         int groupApplyUserCountValue = meetingSqlMapper.countMeetingGroupApplyUserByGroupId(group_pk);
+
+        List<Map<String, Object>> groupMemberDataList = new ArrayList<>();
+
+        List<MeetingGroupMemberDto> list = meetingSqlMapper.selectMeetingGroupMemberListByGroupPk(group_pk);
+        for(MeetingGroupMemberDto e : list){
+            
+            Map<String, Object> groupMemberMap = new HashMap<>();
+            
+            int groupMemberProfileId =  e.getProfileId();
+            MeetingProfileDto groupMemberProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(groupMemberProfileId);
+            int groupMemberUserId = groupMemberProfileDto.getUser_id();
+            UserInfoDto groupMemberUserDto =  meetingSqlMapper.selectUserInfoByUserId(groupMemberUserId);
+            
+            groupMemberMap.put("groupMemberProfileDto", groupMemberProfileDto);
+            groupMemberMap.put("groupMemberUserDto", groupMemberUserDto);
+            
+            groupMemberDataList.add(groupMemberMap);
+        }
+        
         
         map.put("meetingGroupDto", meetingGroupDto);
         map.put("meetingProfileDto", meetingProfileDto);
         map.put("tagDtoList", tagDtoList);
         map.put("applyUserMapList", applyUserMapList);
-        map.put("groupMemberDtoList", groupMemberDtoList);
+        map.put("groupMemberDataList", groupMemberDataList);
         map.put("groupMemberCountValue", groupMemberCountValue);
         map.put("groupApplyUserCountValue", groupApplyUserCountValue);
         
@@ -185,7 +223,24 @@ public class MeetingServiceImpl {
 
     // * 미팅 확정멤버 인서트
     public void registerGroupMember(MeetingGroupMemberDto meetingGroupMemberDto){
-        meetingSqlMapper.insertMeetingGroupMember(meetingGroupMemberDto);
+        
+        int groupId = meetingGroupMemberDto.getGroupId();        
+        int curruntMemberCount = countMeetingGroupMember(groupId);
+        
+        MeetingGroupDto meetingGroupDto = meetingSqlMapper.selectGroupByGroupId(groupId);        
+        if(curruntMemberCount < meetingGroupDto.getGroupHeadCount()){
+            
+            meetingSqlMapper.insertMeetingGroupMember(meetingGroupMemberDto);
+
+            int afterMemberCount = countMeetingGroupMember(groupId);
+            if(afterMemberCount == meetingGroupDto.getGroupHeadCount()){
+                meetingSqlMapper.updateGroupApplyStatusByGroupId(groupId);                
+                System.out.println(groupId + " 번 미팅그룹 이번 등록으로 모집정원 달성 N => Y");
+            }
+        }
+        else{
+            System.out.println(groupId + " 번 미팅그룹 이미 모집달성된 상태임");
+        }        
     }
 
     // * 모집글PK기준 확정 멤버 셀렉트(AJAX)
@@ -201,6 +256,135 @@ public class MeetingServiceImpl {
     // * 미팅 모집글PK 기준 확정멤버수 카운트
     public int countMeetingGroupMember(int groupId){
         return meetingSqlMapper.countMeetingGroupMemberByGroupId(groupId);
+    }
+
+    // * 프로필 PK기준 참여 및 신청중인 미팅에 대한 종합정보
+    public List<Map<String, Object>> getApplyDataByProfileIdForAJAX(int profileId){
+
+        List<Map<String, Object>> applyDataMapList = new ArrayList<>();
+
+        List<MeetingApplyUserDto> list = meetingSqlMapper.selectApplyUserByProfileId(profileId);
+        
+        for(MeetingApplyUserDto e : list){
+            
+            Map<String, Object> map = new HashMap<>();
+            int groupId =  e.getGroupId();
+            MeetingGroupDto meetingGroupDto = meetingSqlMapper.selectGroupByGroupId(groupId);
+
+            map.put("applyUserDto", e);
+            map.put("applyGroupDto", meetingGroupDto);
+
+            applyDataMapList.add(map);
+
+        }
+
+        return applyDataMapList;    
+    
+    }
+
+    public KakaoPaymentResDto kakaoPayReady(KakaoPaymentReqDto kakaoPaymentReqDto){
+
+        meetingSqlMapper.insertKakaoPaymentReq(kakaoPaymentReqDto);
+
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("cid", kakaoPaymentReqDto.getCid());
+		parameters.add("partner_order_id", kakaoPaymentReqDto.getPartner_order_id());
+		parameters.add("partner_user_id", kakaoPaymentReqDto.getPartner_user_id());
+		parameters.add("item_name", kakaoPaymentReqDto.getItem_name());
+		parameters.add("quantity", Integer.toString(kakaoPaymentReqDto.getQuantity()));
+		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
+		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
+		// 집 IP
+        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval"); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval"); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
+        
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+        
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://kapi.kakao.com/v1/payment/ready";
+        KakaoPaymentResDto kakaoPaymentResDto = restTemplate.postForObject(url, requestEntity, KakaoPaymentResDto.class);
+        kakaoPaymentResDto.setCreated_at(LocalDateTime.now());
+
+        meetingSqlMapper.insertKakaoPaymentRes(kakaoPaymentResDto);
+        
+        
+        return kakaoPaymentResDto;
+    }
+
+    // // 결제 승인요청 메서드
+	// public MeetingKakaoApproveResponseDto kakaoPayApprove(String tid, String pgToken) {
+				
+	// 	// request값 담기.
+	// 	MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+	// 	parameters.add("cid", "TC0ONETIME");
+	// 	parameters.add("tid", tid);
+	// 	parameters.add("partner_order_id", order_id); // 주문명
+	// 	parameters.add("partner_user_id", "회사명");
+	// 	parameters.add("pg_token", pgToken);
+		
+    //     // 하나의 map안에 header와 parameter값을 담아줌.
+	// 	HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+		
+    //     // 외부url 통신
+	// 	RestTemplate template = new RestTemplate();
+	// 	String url = "https://kapi.kakao.com/v1/payment/approve";
+    //     // 보낼 외부 url, 요청 메시지(header,parameter), 처리후 값을 받아올 클래스. 
+	// 	ApproveResponse approveResponse = template.postForObject(url, requestEntity, ApproveResponse.class);
+	// 	log.info("결재승인 응답객체: " + approveResponse);
+		
+	// 	return approveResponse;
+	// }
+	
+    
+    // header() 셋팅
+	private HttpHeaders getHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "KakaoAK 326a50751a1bfac7c3ce3006c0ad9581");
+		headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		
+		return headers;
+	}
+
+    public OrderInfoDto registerOrderInfoProcess(int profileId, int groupId){
+
+        System.out.println("registerOrderInfoProcess 실행됨");
+
+        String order_id = "";
+
+        ItemInfoDto itemInfoDto = meetingSqlMapper.selectItemInfoDtoByGroupId(groupId);
+        int item_id = itemInfoDto.getItem_id();
+
+        String itemId = Integer.toString(item_id);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String orderDate = sdf.format(new Date());
+
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,10);
+
+        String meetingProductCode = "MT";
+
+        order_id = meetingProductCode + itemId + orderDate + uuid;
+
+        System.out.println("order_id : " + order_id);
+
+        int user_id = meetingSqlMapper.selectMeetingProfileByProfileId(profileId).getUser_id();
+
+        OrderInfoDto reqOrderInfoDto = new OrderInfoDto();
+        reqOrderInfoDto.setOrder_id(order_id);
+        reqOrderInfoDto.setItem_id(item_id);
+        reqOrderInfoDto.setUser_id(user_id);
+
+        meetingSqlMapper.insertOrderInfo(reqOrderInfoDto);
+
+        OrderInfoDto resOrderInfoDto = meetingSqlMapper.selectOrderInfoByOrderId(order_id);        
+
+        return resOrderInfoDto;
+
     }
 
 

@@ -1,10 +1,18 @@
 package com.cu.ufuf.meeting.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
@@ -112,16 +120,21 @@ public class MeetingController {
         return "./meeting/myRecruitGroupPage";
     }
 
-    @RequestMapping("myRecruidGroupDetailPage")
-    public String myRecruidGroupDetailPage(HttpSession session, Model model, int groupId){
+    @RequestMapping("myRecruitGroupDetailPage")
+    public String myRecruitGroupDetailPage(HttpSession session, Model model, int groupId){
         
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         
         session.setAttribute("meetingProfileDto", meetingProfileDto);
 
         model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+        
+        System.out.println("groupId : " + groupId);
+        System.out.println("profileNickname : " + meetingProfileDto.getProfileNickname());
+        System.out.println("profileid : " + meetingProfileDto.getProfileid());
+        
 
-        return "./meeting/myRecruidGroupDetailPage";
+        return "./meeting/myRecruitGroupDetailPage";
     }
 
     @RequestMapping("myApplyGroupPage")
@@ -135,5 +148,35 @@ public class MeetingController {
 
         return "./meeting/myApplyGroupPage";
     }
+
+    @RequestMapping("myApplyGroupDetailPage")
+    public String myApplyGroupDetailPage(HttpSession session, Model model, int groupId){
+
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+
+        return "./meeting/myApplyGroupDetailPage";
+    }
+
+    @RequestMapping("kakaoPayCancel")
+    public String kakaoPayCancel(){
+        return "./meeting/kakaoPayCancel";
+    }
+
+    @RequestMapping("kakaoPayApproval")
+    public String kakaoPayApproval(){
+        return "./meeting/kakaoPayApproval";
+    }
+
+    @RequestMapping("kakaoPayFail")
+    public String kakaoPayFail(){
+        return "./meeting/kakaoPayFail";
+    }
+
+    
+    
 
 }

@@ -1,18 +1,18 @@
 package com.cu.ufuf.room.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.RoomGuestDto;
 import com.cu.ufuf.dto.RoomGuestReviewDto;
-import com.cu.ufuf.dto.RoomGuestReviewImageDto;
 import com.cu.ufuf.dto.RoomImageDto;
 import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionCategoryDto;
@@ -64,6 +64,55 @@ public class RoomServiceIpml {
         roomSqlMapper.insertRoomGuestInfo(roomGuestDto);
     }
 
+    //방 목록 필터용
+    public List<Map<String, Object>> getRoomInfoListForFilter(String searchWord,int peopleCount, LocalDate startSchedule, LocalDate endSchedule) {
+
+
+		List<Map<String, Object>> roomList=new ArrayList<>();
+		
+		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectFilter(searchWord, peopleCount,startSchedule,endSchedule);
+		
+		for(RoomInfoDto roomInfoDto:roomInfoDtoList) {
+			int UserPK=roomInfoDto.getUser_id();
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			
+			roomList.add(map);
+
+			
+		}
+		
+		return roomList;
+		
+	}
+
+    //서치용 방 목록
+    public List<Map<String, Object>> getRoomInfoListForSearchLocation(String searchWord) {
+		List<Map<String, Object>> roomList=new ArrayList<>();
+		
+		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectAllForSearchLocation(searchWord);
+		
+		for(RoomInfoDto roomInfoDto:roomInfoDtoList) {
+			int UserPK=roomInfoDto.getUser_id();
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			
+			roomList.add(map);
+
+			
+		}
+		
+		return roomList;
+		
+	}
+
+    //방 목록 기본
     public List<Map<String, Object>> getRoomInfoList() {
 		
 		List<Map<String, Object>> roomList=new ArrayList<>();
@@ -86,6 +135,8 @@ public class RoomServiceIpml {
 		return roomList;
 		
 	}
+
+    
 
     public List<Map<String, Object>> getReviewList() {
 		

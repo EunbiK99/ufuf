@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>미션등록</title>
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+
+<script>
+
+    var relativePath = window.location.origin;
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+    var nowMarkers = [];
+    var map;
+    var mapArray = [];
+    var markerArray = [];
+
+    var markerImg = relativePath + "/public/image/mission/free-icon-location-pin-2776000.png",
+    markerImgSize = new kakao.maps.Size(30, 30),
+    markerImgOption = {offset: new kakao.maps.Point(14, 25)};
+
+    var courseCounter = 1;
+
+    // 지금 현재 위치 가져오기
+    function getNowLocation(callback){
+
+        if (navigator.geolocation) {
+
+            function getLocation() {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    
+                    var lat = position.coords.latitude; // 위도
+                    var lon = position.coords.longitude; // 경도
+
+                    var locPosition = new kakao.maps.LatLng(lat, lon);
+
+                    callback(locPosition);
+
+                });
+            }
+            getLocation();
+
+        } else { // HTML5의 GeoLocation을 사용할 수 없을때
+            console.log("GeoLocation 사용불가");
+            var locPosition = new kakao.maps.LatLng(37.49962779517117, 127.03048032853766);
+
+            callback(locPosition);
+        }
+    }
+
+    // 지도 중심 이동
+    function panTo(moveLatLon) {
+        map.panTo(moveLatLon);
+    }
+
+    // 주소 가져오기
+    function getNowAddress(lat, lng, courseCounter) {
+
+        let geocoder = new kakao.maps.services.Geocoder();
+
+        let coord = new kakao.maps.LatLng(lat, lng);
+        let callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                displayNowLocation(result, courseCounter);
+            }
+        }
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+    }
+
+    // 주소 출력하기
+    function displayNowLocation(data, courseCounter) {
+
+        var locationSelector = `#course${courseCounter} .location`;
+        const location = document.querySelector(locationSelector);
+
+        if (data[0].road_address === null) {
+            location.innerText = data[0].address.address_name;
+        } else {
+            location.innerText = data[0].road_address.address_name;
+        }
+
+    }
+
+    // 코스 입력 폼
+    function addCourseForm(){
+
+        var inputCourseBox = document.getElementById("inputCourseBox");
+        var inputForm = `<div id="course${courseCounter}" class="row mt-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col d-grid">
+                                        <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border" style="background-color: #f7f7f7;">
+                                            <span class="flex-grow-1 text-start">코스<span class="courseIndex ps-2">${courseCounter}</span></span>
+                                            <i class="bi bi-caret-down text-secondary"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row px-1">
+                                    <div class="col border border-top-0 mx-2 py-3">
+                                        <div class="row">
+                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                코스명
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <input type="text" class="courseContent form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                                                완료 상금
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <input type="text" class="reward form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;" onInput="checkReward(this, ${courseCounter})">
+                                                <span class="MinWarning text-body-tertiary ps-1" style="font-size:0.78em;">
+                                                    ※ 미션 최소 금액은 1000원 입니다.
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row py-2">
+                                            <div class="col d-grid">
+                                                <div class="gap-2 d-md-block">
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(1000, ${courseCounter})">+1000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(3000, ${courseCounter})">+3000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(5000, ${courseCounter})">+5000</button>
+                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(10000, ${courseCounter})">+10000</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                미션 수행 지점
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col">
+                                                <div class="map" style="height:10em; width: 100%;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row px-1 mt-2">
+                                            <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
+                                                <i class="bi bi-geo-alt me-2"></i><span class="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
+                                                <input type="hidden" class="lat">
+                                                <input type="hidden" class="lng">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+
+        var addedDiv = document.createElement("div");
+        addedDiv.id = "inputForm" + courseCounter;
+        addedDiv.innerHTML  = inputForm;
+        inputCourseBox.appendChild(addedDiv);
+
+        createMap(courseCounter);
+
+        courseCounter++;
+
+    }
+
+    // 입력폼에 매번 새로운 맵 생성..
+    function createMap(courseCounter) {
+
+        const mapSelector = `#course${courseCounter} .map`;
+        const latSelector = `#course${courseCounter} .lat`;
+        const lngSelector = `#course${courseCounter} .lng`;
+
+        var map = new kakao.maps.Map(document.querySelector(mapSelector), {
+            center: new kakao.maps.LatLng(33.450701, 126.570667),
+            level: 3
+        });
+
+        map.setZoomable(true);
+
+        var nowMarker = null;
+
+        getNowLocation(function(locPosition) {
+
+            map.panTo(locPosition);
+
+            if (nowMarker) {
+                nowMarker.setMap(null);
+            }
+
+            nowMarker = new kakao.maps.Marker({
+                map: map,
+                position: locPosition,
+                image: new kakao.maps.MarkerImage(markerImg, markerImgSize, markerImgOption)
+            });
+
+            document.querySelector(latSelector).setAttribute("value", locPosition.Ma);
+            document.querySelector(lngSelector).setAttribute("value", locPosition.La);
+            getNowAddress(locPosition.Ma, locPosition.La, courseCounter);
+
+        });
+
+        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+
+            var latlng = mouseEvent.latLng;
+
+            if (nowMarker) {
+                nowMarker.setMap(null);
+            }
+
+            nowMarker = new kakao.maps.Marker({
+                map: map,
+                position: latlng,
+                image: new kakao.maps.MarkerImage(markerImg, markerImgSize, markerImgOption)
+            });
+
+            document.querySelector(latSelector).setAttribute("value", latlng.Ma);
+            document.querySelector(lngSelector).setAttribute("value", latlng.La);
+            getNowAddress(latlng.Ma, latlng.La, courseCounter);
+
+        });
+
+        mapArray.push(map);
+        markerArray.push(nowMarker);  // 각 지도의 마커를 배열에 추가
+    }
+
+    // 시간 입력시 59 리밋 (분)
+    function limitInputTo59(inputElement) {
+        
+        let inputValue = inputElement.value;
+
+        if (!isNaN(inputValue)) {
+            
+            let inputNumber = parseInt(inputValue, 10);
+
+            if (inputNumber < 10) {
+                inputElement.value = '0' + inputNumber;
+            }
+
+            if (inputNumber > 59) {
+                inputElement.value = '59';
+            }
+
+            if (inputElement.value.length > 2) {
+                inputElement.value = parseInt(inputElement.value, 10).toString();
+            }
+
+        } else {
+            inputElement.value = '';
+        }
+    }
+
+    // 시간 입력시 99 리밋 (시)
+    function limitInputTo99(inputElement) {
+        
+        let inputValue = inputElement.value;
+
+        if (!isNaN(inputValue)) {
+            
+            let inputNumber = parseInt(inputValue, 10);
+
+            if (inputNumber < 10) {
+                inputElement.value = '0' + inputNumber;
+            }
+
+            if (inputNumber > 99) {
+                inputElement.value = '99';
+            }
+
+            if (inputElement.value.length > 2) {
+                inputElement.value = parseInt(inputElement.value, 10).toString();
+            }
+
+        } else {
+            inputElement.value = '';
+        }
+    }
+
+    // 가격 입력 시, 1000원 이상 입력 필요
+    function checkReward(input, courseCounter){
+
+        var MinWarning = `#course${courseCounter} .MinWarning`;
+        var MinWarningDiv = document.querySelector(MinWarning);
+        const totalReward = document.getElementById("totalReward");
+
+        var inputValue = input.value;
+
+        if(!isNaN(inputValue)){
+
+            let inputNumber = parseInt(inputValue, 10);
+
+            if (inputNumber >= 1000) {
+                MinWarningDiv.classList.add("d-none");
+            } else {
+                MinWarningDiv.classList.remove("d-none");
+            }
+
+            let sum = 0;
+
+            for (var i = 1; i <= courseCounter; i++) {
+                var currentInput = document.getElementById(`course${i}`).value;
+                sum += inputNumber;
+                totalReward.innerText = sum;
+
+                if (totalReward.innerText === "NaN"){
+                    totalReward.innerText = 0;
+                }
+            }
+
+        }else{
+            input.value = '';
+        }
+
+    }
+
+    // 상금 버튼
+    function addReward(input, courseCounter){
+
+        var reward = `#course${courseCounter} .reward`;
+        var rewardInput = document.querySelector(reward);
+
+        var currentValue = isNaN(parseFloat(rewardInput.value)) ? 0 : parseFloat(rewardInput.value);
+
+        rewardInput.value = (currentValue + input).toFixed(0);
+
+        checkReward(rewardInput, courseCounter);
+    }
+
+    // 미션 등록 로직
+    function submitMission(){
+
+        var courseList = [];
+
+        const title = document.getElementById("title").value;
+        const detail = document.getElementById("detail").value;
+        const hour = document.getElementById("hour").value;
+        const minute = document.getElementById("minute").value;
+
+        var total_minutes = hour * 60;
+        total_minutes = total_minutes + minute;
+
+        for(i = 1; i < courseCounter; i++){
+
+            var courseContentSelector = `#course${i} .courseContent`;
+            var rewardSelector = `#course${i} .reward`;
+            var latSelector = `#course${i} .lat`;
+            var lngSelector = `#course${i} .lng`;
+            var content = document.querySelector(courseContentSelector);
+            var reward = document.querySelector(rewardSelector);
+            var lat = document.querySelector(latSelector);
+            var lng = document.querySelector(lngSelector);
+
+            const course = {
+                content: content.value,
+                reward: reward.value,
+                lat: lat.value,
+                lng: lng.value
+            };
+
+            courseList.push(course);
+        }
+
+        const mission = {
+            user_id: sessionUser,
+            title: title,
+            detail: detail,
+            status: '결제미완료',
+            limit_time: total_minutes,
+        };
+
+        const data = {
+            missionInfoDto: mission,
+            missionCourseDto: courseList,
+        }
+
+        fetch("./registerMissionProcess", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                sendKakaoPayReq(response.data);
+        });
+    }
+
+    // 카카오페이 토큰 요청
+    function sendKakaoPayReq(res) {
+
+        const approval_url = relativePath + `/mission/paymentSuccessPage`;
+        const cancel_url = relativePath + `/mission/paymentCancelPage`;
+        const fail_url = relativePath + `/mission/paymentFailPage`;
+
+        const data = new URLSearchParams();
+        data.append("cid", res.cid);
+        data.append("partner_user_id", res.partner_user_id);
+        data.append("partner_order_id", res.partner_order_id);
+        data.append("item_code", res.item_code);
+        data.append("item_name", res.item_name);
+        data.append("quantity", res.quantity);
+        data.append("total_amount", res.total_amount);
+        data.append("tax_free_amount", res.tax_free_amount);
+        data.append("approval_url", approval_url);
+        data.append("cancel_url", cancel_url);
+        data.append("fail_url", fail_url);
+
+        fetch("https://kapi.kakao.com/v1/payment/ready", {
+            method: "POST",
+            headers: {
+                "Authorization": "KakaoAK fe6556cbcccecbec99f52226077803d7",
+                "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+            },
+            body: data
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                window.location.href = response.next_redirect_pc_url;
+
+                insertKakaoPayRes(response);
+                saveKakaoPayAccReqInfoToSession(res, response);
+        });
+
+    }
+
+    // 카카오페이 결제 정보 불러오기 위한요소들 세션에 저장
+    function saveKakaoPayAccReqInfoToSession(req, res) {
+
+        const data = {
+            cid: req.cid,
+            tid: res.tid,
+            partner_order_id: req.partner_order_id,
+            partner_user_id:  req.partner_user_id
+        }
+
+        console.log(data);
+
+        fetch("./saveKakaoPayAccReqInfoToSession", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
+    }
+
+    // 카카오페이 요청, 응답 값 인서트
+    function insertKakaoPayRes(res) {
+
+        const data = {
+            tid: res.tid,
+            next_redirect_mobile_url: res.next_redirect_mobile_url,
+            created_at: res.created_at
+        };
+
+        fetch("./insertKakaoPayResInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        addCourseForm();
+    });
+
+</script>
+
+<style>
+
+    .form-control:focus {
+      border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
+      box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col mx-2">
+                
+                <div class="fixed-top">
+                <div class="row mt-1 py-2 bg-white border-bottom border-secondary-subtle px-3">
+                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
+                        <i class="bi bi-arrow-left"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
+                        미션 등록
+                    </div>
+                    <div class="col-1" style="font-size:1.1em">
+                    </div>
+                </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col mt-3">
+
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col fw-semibold text-secondary" style="font-size:0.95em;">
+                                        미션 제목
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col">
+                                        <input type="text" id="title" class="form-control py-2 rounded-0" placeholder="미션명을 입력해주세요" style="font-size:0.9em;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col fw-semibold text-secondary" style="font-size:0.95em;">
+                                        미션 내용
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col">
+                                        <textarea class="form-control rounded-0" id="detail" placeholder="미션 상세 내용을 입력해주세요" style="height: 7em; font-size:0.9em;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="inputCourseBox">
+                        
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col d-grid">
+                                        <button id="addMissionCourse" class="btn rounded-0 py-2 border-0 fw-semibold" 
+                                            style="background-color: #f3f3f3; color: #575757;" onclick="addCourseForm()">
+                                            <i class="bi bi-plus-lg"></i>
+                                            미션 코스 추가
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                                        제한 시간
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col">
+                                        <div class="input-group border px-1">
+                                            <span class="input-group-text border-0 bg-white"><i class="bi bi-stopwatch text-secondary"></i></span>
+                                            <input type="text" id="hour" class="form-control border-0 rounded-0 py-2 text-end" oninput="limitInputTo99(this)">
+                                            <span class="input-group-text border-0 bg-white text-secondary fw-bold">시간</span>
+                                            <input type="text" id="minute" class="form-control border-0 rounded-0 py-2 text-end" oninput="limitInputTo59(this)">
+                                            <span class="input-group-text border-0 bg-white text-secondary fw-bold">분</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-2">
+                            <div class="col border-bottom mx-1 pb-1 mt-1">
+                                <div class="row">
+                                    <div class="col text-secondary fw-semibold mt-1 text-start">
+                                        총 금액
+                                    </div>
+                                    <div class="col text-end">
+                                        <span class="fw-bold" id="totalReward" style="color: #FF8827; font-size: 1.35em;">0</span>
+                                        <span class="text-secondary ms-1">원</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col d-grid">
+                                <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 text-white"
+                                    style="border: 0.1em solid #fa7e18; background-color: #FF8827; font-size: 1.08em;" onclick="submitMission()">
+                                    <i class="bi bi-envelope-plus me-1"></i>
+                                    <span class="px-1">미션 등록</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-5 mb-4">
+                            <div class="col">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+    </div>
+
+
+
+
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

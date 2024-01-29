@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${groupDetailInfo.meetingGroupDto.groupTitle} 상세페이지|"></title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+    *{
+        /* font-family: 'Dongle', sans-serif; */
+        /* font-family: 'Gowun Dodum', sans-serif; */
+        /* font-family: 'Quicksand', sans-serif; */
+        font-family: 'Noto Sans KR', sans-serif;        
+    }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+    </style>
+</head>
+<script th:inline="javascript">
+// "Authorization" : "KakaoAK 326a50751a1bfac7c3ce3006c0ad9581",
+
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/;
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+console.log('groupDetailInfo: ', groupDetailInfo);
+
+function registerOrderProcess(){
+    const userNickname = sessionUserMeetingProfileDto.profileNickname;
+    console.log('userNickname: ', userNickname);
+    const groupTitle = groupDetailInfo.meetingGroupDto.groupTitle;
+    console.log('groupTitle: ', groupTitle);
+    const Amount = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    console.log('Amount: ', Amount);
+
+    const profileId = sessionUserMeetingProfileDto.profileid;
+    console.log('profileId: ', profileId);
+
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    console.log('groupId: ', groupId);
+
+
+    const confirmValue = confirm(`미팅그룹 : ${groupTitle}\n결제유저 : ${userNickname}\n결제금액 : ${Amount}\n\n위 내용대로 결제를 진행하시겠습니까?`);
+    if(confirmValue){
+        fetch("./api/registerOrderProcess?profileId=" + profileId + "&groupId=" + groupId)
+        .then(response => response.json())
+        .then(response => {
+            const orderInfoDto = response.data;
+            console.log('orderInfoDto: ', orderInfoDto);
+            kakaoPayReady(orderInfoDto);
+        });
+    }
+}
+
+
+
+
+function kakaoPayReady(orderInfoDto){
+
+    const groupApplyCharge = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    
+    const kakaoPaymentReqDto = {
+        cid : "TC0ONETIME",
+        partner_user_id : orderInfoDto.user_id,
+        partner_order_id : orderInfoDto.order_id,
+        item_code : orderInfoDto.item_id,
+        item_name : "MeetingGroup" + groupDetailInfo.meetingGroupDto.groupId,
+        quantity : 1,
+        total_amount : groupApplyCharge,
+        tax_free_amount : groupApplyCharge - (groupApplyCharge/1.1)
+    }
+    fetch("./api/kakaoPayReady", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(kakaoPaymentReqDto)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const result = response.data;
+        console.log('result: ', result);
+        
+        const reusltConfirm = confirm("통신성공, 이동하시겠습니까?");
+        if(reusltConfirm){
+            window.location.href = result.next_redirect_pc_url;
+        }else{
+            return;
+        }
+
+    });
+}
+    
+
+
+function getTotalApplyCharge(){
+    const groupTotalApplyCharge = document.getElementById("groupTotalApplyCharge");
+
+    const groupApplyChargeValue = Number(document.getElementById("groupApplyCharge").innerText);
+    console.log('groupApplyChargeValue: ', groupApplyChargeValue);
+    const curruntGroupMemberCountValue = Number(document.querySelector(".curruntGroupMemberCount").innerText);
+    console.log('curruntGroupMemberCountValue: ', curruntGroupMemberCountValue);
+
+    groupTotalApplyCharge.innerText = groupApplyChargeValue * curruntGroupMemberCountValue;
+}
+
+function countMeetingGroupMember(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    fetch("./api/countMeetingGroupMember?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response =>{        
+        const countValue = response.data;
+
+        const curruntGroupMemberCountList = document.querySelectorAll(".curruntGroupMemberCount");
+        curruntGroupMemberCountList.forEach(e => {
+            e.innerText = countValue;
+        });
+        getTotalApplyCharge();
+    });
+}
+
+function getMeetingGroupMemberList(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    fetch("./api/getMeetingGroupMemberList?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response =>{
+        const groupMemberList = response.data;
+        console.log('groupMemberList: ', groupMemberList);
+
+        const groupMemberListWrapperRow = document.getElementById("groupMemberListWrapperRow");
+        groupMemberListWrapperRow.innerHTML = "";
+
+        const groupMemberPaymentCheckWrapperCol = document.getElementById("groupMemberPaymentCheckWrapperCol");
+        groupMemberPaymentCheckWrapperCol.innerHTML = "";
+
+        for(e of groupMemberList){
+            const groupMemberListCol = document.querySelector("#templete #groupMemberListCol").cloneNode(true);
+            groupMemberListCol.setAttribute("member", e.profileId);           
+
+            if(e.profileId === groupDetailInfo.meetingGroupDto.profileId){
+                const crownBadge = document.querySelector("#templete #crownBadge");
+                const groupMemberProfileImageCol = groupMemberListCol.querySelector("#groupMemberProfileImageCol");
+                groupMemberProfileImageCol.appendChild(crownBadge);
+            }
+
+            const groupMemberProfileImage = groupMemberListCol.querySelector("#groupMemberProfileImage");
+            groupMemberProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.profileImg}`);
+            
+            const groupMemberNickname = groupMemberListCol.querySelector("#groupMemberNickname");
+            groupMemberNickname.innerText = e.profileNickname;            
+
+            groupMemberListWrapperRow.appendChild(groupMemberListCol);
+
+
+            const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);
+            const checkUserNickname = userPaymentCheckListRow.querySelector("#checkUserNickname");
+            checkUserNickname.innerText = e.profileNickname;
+
+            const checkUserPaymentStatus = userPaymentCheckListRow.querySelector("#checkUserPaymentStatus");
+            const paymentStatusValue = e.groupMemberPaymentStatus;
+            
+            if(paymentStatusValue === "Y"){
+                const checkIcon = document.createElement("i");
+                checkIcon.setAttribute("class", "bi bi-check-circle text-success")
+                checkUserPaymentStatus.appendChild(checkIcon);
+            }
+            else{
+                const unCheckIcon = document.createElement("i");
+                unCheckIcon.setAttribute("class", "bi bi-x-circle text-danger")
+                checkUserPaymentStatus.appendChild(unCheckIcon);
+                
+                const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
+                if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
+                    kakaoPayButton.classList.toggle("d-none");
+                }
+            }
+
+            groupMemberPaymentCheckWrapperCol.appendChild(userPaymentCheckListRow);
+
+        }
+
+    });
+}
+
+function addGroupMember(target){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    console.log('groupId: ', groupId);
+    const applyUserProfileId = target.getAttribute("profileid");
+    console.log('applyUserProfileId: ', applyUserProfileId);
+    const applyProfileListRow = target.closest('[id^="applyProfileListRow"]');
+    const applyUserNickname = applyProfileListRow.querySelector("#applyProfileNickname").innerText;
+    console.log('applyProfileNickname: ', applyUserNickname);
+
+    const confirmValue = confirm("[" + applyUserNickname + "]" + " 님을 선발하시겠습니까?");
+    if(confirmValue){
+        fetch("./api/addGroupMember", {
+            method : "POST",
+            body : new URLSearchParams({
+                groupId : groupId,
+                profileId : applyUserProfileId
+            }),
+            header : {
+                "Content-Type" : "application/x-www-form-urlencoded"
+            }
+            
+        })
+        .then(response => response.json())
+        .then(response =>{
+            alert("[" + applyUserNickname + "]" + " 님이 미팅멤버로 선발되었습니다.");            
+            countMeetingGroupMember();
+            window.location.reload();
+        });
+    }
+    else{
+        return;
+    }
+}
+
+function makeGroupDetailPage(){
+    const groupTitle = document.getElementById("groupTitle");
+    groupTitle.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
+
+    const groupCreateUserImage = document.getElementById("groupCreateUserImage");
+    groupCreateUserImage.setAttribute("src", `/public/image/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
+
+    const groupCreateUserNickname = document.getElementById("groupCreateUserNickname");
+    groupCreateUserNickname.innerText = groupDetailInfo.meetingProfileDto.profileNickname;
+
+    const recruitMemberCount = document.getElementById("recruitMemberCount");
+    recruitMemberCount.innerText = groupDetailInfo.meetingGroupDto.groupHeadCount;
+
+    const groupApplyCharge = document.getElementById("groupApplyCharge");
+    groupApplyCharge.innerText = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+
+    const applyProfileListWrapperCol = document.getElementById("applyProfileListWrapperCol");
+    applyProfileListWrapperCol.innerHTML = "";    
+    
+    const applyUserMapList = groupDetailInfo.applyUserMapList;
+    
+    let watingUserCountValue = 0;
+    const watingUserCount = document.getElementById("watingUserCount");
+    watingUserCount.innerText = watingUserCountValue;
+
+    if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
+        const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+        const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+        noApplyProfileInfoText.innerText = " 멤버모집이 완료되었습니다 :) ";
+        applyProfileListWrapperCol.appendChild(noApplyProfileRow);
+    }
+    else{
+        for(e of applyUserMapList){
+            if(e.applyDto.applyStatus === "N"){
+                watingUserCountValue++;
+                const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
+                const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
+                applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
+
+                const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
+                applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
+
+                const applyText = applyProfileListRow.querySelector("#applyText");
+                applyText.innerText = e.applyDto.applyComment;
+
+                const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
+                applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
+                applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
+
+                watingUserCount.innerText = watingUserCountValue;
+                
+                applyProfileListWrapperCol.appendChild(applyProfileListRow);
+            }
+        }
+        if(watingUserCountValue === 0){
+            const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+            const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+            noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+            applyProfileListWrapperCol.appendChild(noApplyProfileRow);
+        }
+    }
+    getMeetingGroupMemberList();        
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+    makeGroupDetailPage();    
+    countMeetingGroupMember();
+
+});
+
+</script>
+
+<body class="pt-5 pb-5">
+    <div class="container-fluid">
+        
+        <!--/* 임시 탑 에어리어 */-->
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 mx-1 justify-content-between">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <span class="fw-bold">내가 모집중인 미팅</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col mx-1 mb-3 border border-black rounded">
+                        
+                        <div class="row border-black border-bottom rounded-top" style="background-color: #FF8827;">
+                            <div class="col my-1">
+                                <span id="groupTitle" class="fs-4 fw-bold text-white"></span>                                
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="row">                                    
+                                    <div class="col-auto align-self-center">
+                                        <div class="userImageBox">
+                                            <img id="groupCreateUserImage" class="userImage">
+                                        </div>                                
+                                    </div>
+                                    <div class="col-auto align-self-center">
+                                        <span id="groupCreateUserNickname" class="fs-5 fw-bold"></span>
+                                    </div>
+                                    <div class="col align-self-center">
+                                        <span>님이 방장이에요 :)</span>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span class="fs-5 fw-bold">
+                                                    참여 신청자 List
+                                                    <span>[ </span>
+                                                    <span id="watingUserCount"></span>
+                                                    <span> ]</span>
+                                                </span>                                        
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="applyProfileListWrapperCol" class="col border border-black rounded mx-1 overflow-y-scroll shadowBox" style="height: 20em; max-height: 20em;">                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="fs-5 fw-bold">[</span>
+                                                <span class="fs-5 fw-bold curruntGroupMemberCount"></span>
+                                                <span class="fs-5 fw-bold">/</span>
+                                                <span id="recruitMemberCount" class="fs-5 fw-bold"></span>
+                                                <span class="fs-5 fw-bold">]</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col border border-black rounded mx-1 overflow-x-scroll shadowBox" >
+                                                <div id="groupMemberListWrapperRow" class="row mt-2 mb-2" style="width: 200%;">
+        
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <span class="fs-5 fw-bold">미팅회비 현황</span>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col mx-1 border border-black rounded shadowBox">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    1인당 회비 : 
+                                                                    <span id="groupApplyCharge"></span>
+                                                                    원
+                                                                </span>                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    확정인원 : 
+                                                                    <span class="curruntGroupMemberCount"></span>
+                                                                    명
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>
+                                                                    모금 목표액 : 
+                                                                    <span id="groupTotalApplyCharge"></span>
+                                                                    원
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row my-2">
+                                                            <div class="col">
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <span>멤버별 납부현황</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mt-1">
+                                                                    <div class="col border border-black rounded mx-1">
+                                                                        <div class="row border-bottom">
+                                                                            <div class="col-3 text-center">
+                                                                                <span class="fw-bold">Nickname</span>
+                                                                            </div>
+                                                                            <div class="col-3 text-center">
+                                                                                <span class="fw-bold">check</span>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <span class="fw-bold">Payment</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div id="groupMemberPaymentCheckWrapperCol" class="col">
+                                                                                
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1 mt-1">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="userPaymentCheckListRow" class="row my-1">
+        <div class="col">
+            <div class="row">
+                <div class="col-3 text-center align-self-center">
+                    <span id="checkUserNickname"></span>
+                </div>
+                <div class="col-3 text-center align-self-center">
+                    <span id="checkUserPaymentStatus"></span>
+                </div>
+                <div id="kakaoPayButton" class="col d-none text-center btn" onclick="registerOrderProcess()">
+                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 40%; height: 90%;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="applyProfileListRow" class="row mt-2 mb-2">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="userImageBox">
+                                        <img id="applyProfileImage" class="userImage">                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span id="applyProfileNickname" style="font-size: 0.8em;"></span>
+                                </div>
+                            </div>                    
+                        </div>
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="fw-bold">Comment</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span id="applyText" class="fs-6"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto align-self-center">
+                    <div class="row">
+                        <div class="col px-1 mx-1 text-center btn btn-success" role="button">
+                            <span class="align-middle" style="font-size: 0.8em;">프로필보기</span>    
+                        </div>                        
+                    </div>
+                    <div class="row mt-2">
+                        <div id="applyProfilePickButton" class="col px-1 mx-1 text-center btn btn-primary" role="button">
+                            <span style="font-size: 0.8em;">선발하기</span>    
+                        </div>
+                    </div>
+                </div>
+                
+            </div>                        
+        </div>
+    </div>
+
+    <div id="noApplyProfileRow" class="row">
+        <div class="col text-center align-self-center">
+            <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-secondary"></span>
+        </div>
+    </div>
+    
+
+    <div id="groupMemberListCol" class="col-auto">
+        <div class="row">
+            <div id="groupMemberProfileImageCol" class="col position-relative">
+                <div class="userImageBox">
+                    <img id="groupMemberProfileImage" class="userImage">
+                </div>                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span id="groupMemberNickname" style="font-size: 0.8em;"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="crownBadge" class="badge position-absolute" style="top: -17%; left: 0%;">
+        <img src="/public/image/meeting/crown.png" style="width: 2em; height: 2em;">
+    </div>
+
+</div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -3,6 +3,7 @@ package com.cu.ufuf.room.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.RoomGuestDto;
@@ -13,6 +14,8 @@ import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionCategoryDto;
 import com.cu.ufuf.dto.RoomOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
+
+import java.time.LocalDate;
 
 @Mapper
 public interface RoomSqlMapper {
@@ -29,7 +32,13 @@ public interface RoomSqlMapper {
     public void insertRoomGuestInfo(RoomGuestDto roomGuestDto);
 
     //방 리스트뽑게 
-     public List<RoomInfoDto> roomSelectAll();
+    public List<RoomInfoDto> roomSelectAll();
+    public List<RoomInfoDto> roomSelectAllForSearchLocation(@Param("searchWord") String searchWord);
+
+    public List<RoomInfoDto> roomSelectFilter(@Param("searchWord") String searchWord,
+                                              @Param("peopleCount") int peopleCount, 
+                                              @Param("startSchedule") LocalDate startSchedule,
+                                              @Param("endSchedule") LocalDate endSchedule);
 
      public UserInfoDto selectByUserId(int user_id);
 
