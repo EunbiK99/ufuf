@@ -124,14 +124,14 @@ function checkDuplicateSNSUrl(textValue){
             const goodCheck = document.createElement('div');
             goodCheck.setAttribute('class', 'col-auto fs-4');
             goodCheck.innerHTML = '<i class="bi bi-check2 text-success fw-bold"></i>'
-            
+            SNSUrlRow.innerHTML = "";
             SNSUrlRow.appendChild(goodCheck);
         }
         else{
             const badCheck = document.createElement('div');
             badCheck.setAttribute('class', 'col-auto fs-4');
             badCheck.innerHTML = '<i class="bi bi-x text-danger fw-bold"></i>'
-            
+            SNSUrlRow.innerHTML = "";
             SNSUrlRow.appendChild(badCheck);
         }
     });
@@ -147,7 +147,7 @@ function checkDuplicateSNSUrl(textValue){
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -291,12 +291,12 @@ function checkDuplicateSNSUrl(textValue){
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -305,10 +305,10 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -317,17 +317,17 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-1 mt-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -336,10 +336,10 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">

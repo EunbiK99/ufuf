@@ -151,17 +151,35 @@
             fetch(url)
             .then(response => response.json())
             .then(response => {
-                
+
+                const hereCarousel = document.querySelector("#Wrapper .hereCarousel").cloneNode(true);
+                let = 0;
                 for(e of response.data){
+                    //<div class="carousel-item active">
+                    //     <img src="..." class="d-block w-100" alt="...">
+                    // </div>
+                    const innerCarousel = hereCarousel.querySelector(".hereInner");
+                    const div = document.createElement("div")
+                    if(let === 0){
+                        div.classList.add("carousel-item","active")
+                        let++
+                    }
+                    div.classList.add("carousel-item")
+                    
+                    
                     const img = document.createElement("img");
                     img.setAttribute("src","/uploadFiles/" + e.circle_notice_image);
                     img.classList.add("img-fluid")
                     img.classList.add("responsive-img")
-                    
-                    const a = document.querySelector("#a");
-                    a.classList.add("d-grid")
-                    a.appendChild(img);
+                    img.classList.add("d-block", "w-100")
+                    img.style = "height: 17em; width: 100%;"
+                    div.appendChild(img)
+                    innerCarousel.appendChild(div)
                 }
+                
+                const a = document.querySelector("#a");
+                a.appendChild(hereCarousel)
+                
 
             })
         }
@@ -214,7 +232,7 @@
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid" style="background-color: rgb(251,251,251);">
+    <div class="container-fluid" style="background-color: rgb(251,251,251); padding-bottom: 60%;">
         <div id="Wrapper" class="row pt-1">
             <div class="col"><!-- 동아리명, 학교명, 동아리 상세설명, 동아리대표이미지, 등급명, 중분류카테고리명, 소분류카테고리명 정도? -->
                 <div class="row">
@@ -222,7 +240,12 @@
                         
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-3"><!-- 상세이미지 맨 아래로 가야햠 캐러셀로하자 --> 
+                    <div id="a" class="col px-0 image-container" style="object-fit: cover; width: 100%; height: 100%;">
+                        
+                    </div>
+                </div>
+                <div class="row mt-2">
                     <div class="col fw-semibold"><!-- 액티비티 -->
                         <span class="category_name2 rounded-pill px-2 py-1" style="background-color: rgb(0, 0, 0); color: white; font-size: 0.7em;"></span> <span class="category_name1 rounded-pill px-2 py-1" style="background-color: #FB8C33; color: white; font-size: 0.7em;"></span>
                     </div>
@@ -247,11 +270,6 @@
                         <span class="circle_content lh-base"></span>
                     </div>
                 </div>
-                <div class="row mt-3"><!-- 상세이미지 맨 아래로 가야햠 -->
-                    <div id="a" class="col px-0 image-container" style="object-fit: cover; width: 100%; height: 100%;">
-                        
-                    </div>
-                </div>
                 <div class="row mt-3 mx-0 fixed-bottom">
                     <div class="col d-grid">
                         <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
@@ -259,6 +277,21 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="Wrapper" class="d-none">
+        <div id="carouselExampleIndicators" class="carousel slide hereCarousel">
+            <div class="carousel-inner hereInner">
+              
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>

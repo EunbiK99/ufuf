@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        const backHome = () => {
+            location.href = "./circleMainPage"
+        }
+
+        const sessionKakaoAcceptReqValue = () => {
+
+            const url = "./sessionKakaoAcceptReqValue";
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                kakaoApprovalReq(response.data)
+                
+            })
+
+        }
+        
+        
+        // 카카오 승인 요청
+        const kakaoApprovalReq = (reqValue) => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const pg_token = urlParams.get("pg_token");
+            
+            const sendData = {
+                cid: reqValue.cid,
+                tid: reqValue.tid,
+                partner_order_id: reqValue.partner_order_id,
+                partner_user_id: reqValue.partner_user_id,
+                pg_token: pg_token
+            }
+            console.log(sendData); // 이게 insert할 값
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';
+            const url = "https://kapi.kakao.com/v1/payment/approve";
+
+            const dataValue = new URLSearchParams(sendData) // 응답받을값
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': `KakaoAK ${ADMIN_KEY}`
+                },
+                body: dataValue
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                kakaoPaymentAcceptReqInsert(sendData)
+                kakaoPaymentAcceptResInsert(response)
+                
+                
+
+                // 결제 승인 요청, 응답
+                // kakaoPaymentAcceptReqInsert(eventData, data.tid)
+                // kakaoPaymentAcceptResInsert(response.data) //결제수단이 money일때랑 card일때 나눠짐 조심
+                
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        }
+        // 페이 요청dto insert
+        const kakaoPaymentAcceptReqInsert = (sendData) => {
+            
+            const url = "kakaoPaymentAcceptReqInsert";
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: sendData 
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+        // 페이 응답dto insert ==> 
+        const kakaoPaymentAcceptResInsert = (response) => {
+            console.log(response);
+            const url = "./kakaoPaymentAcceptResInsert";
+            const resData = {
+                tid: response.tid,
+                partner_order_id: response.partner_order_id,
+                partner_user_id: response.partner_user_id,
+                aid: response.aid,
+                payment_method_type: response.payment_method_type,
+                approved_at: response.approved_at
+            }
+            
+            const amountInfo = response.amount
+            const cardInfo = response.card_info
+            console.log(resData);
+            console.log(amountInfo);
+            console.log(cardInfo);
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(resData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            sessionKakaoAcceptReqValue();
+        })
+     </script>
+     <style>
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col">
+                <div class="row mt-5">
+                    <div class="col">
+                        <img class="img-fluid" src="/public/image/circle/success.png">
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col" style="font-size: 1.3em;">
+                        결제를 성공하였습니다.
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                        결제가 정상적으로 완료되었습니다.
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                        결제내역을 확인해 주세요!
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col d-grid">
+                        <button onclick="backHome()" class="btn" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col d-grid"><!-- 여기는 마이페이지에 있는 내 일정내역 결제한거 확인하는 페이지로 이동시켜야함,-->
+                        <button onclick="" class="btn" style="background-color: #fb7928; color: white;">일정내역 확인하러가기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

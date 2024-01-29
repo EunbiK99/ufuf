@@ -200,7 +200,6 @@
                     var eventData = info.event.extendedProps;
                     var title = eventData['schedule_title'];
                     var start_time = eventData.start_time;
-                    console.log(eventData);
                     modalScheduleShow(eventData);
                 },
                 
@@ -232,6 +231,7 @@
 
         // 해당 동아리의 일정 리스트
         // !!!!이건 캘린더 밑에 조금 편하게 쓸려고 그냥 임시로 만들어놈!!!!
+        // 나중에 일정 밑에는 출석부 같은거 만들거라서 이건 빼는게 맞는듯^^...
         const circleScheduleListAll = () => {
 
             const queryString = window.location.search;
@@ -273,7 +273,7 @@
         // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
         // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
 
-        // 맨마지막 - 순서 %% 결제 순번 ==> 검증이 다 끝나고 난뒤에야 결제를 하면됨 // 
+        // 맨마지막 - 순서 %% 검증(이미신청함,일정시작일이후,인원이 꽉 찼을시) ==> 결제완료 ==> 일정신청 테이블 INSERT  
         const circleScheduleApply = (circle_schedule_id) => {
 
             const queryString = window.location.search;
@@ -292,11 +292,7 @@
 
         }
 
-        
-
-
-
-        // 검증1
+        // 검증1 ==> 일정신청을 했는가?
         const circleScheduleApplyCheck = (circle_schedule_id) => {
 
             const queryString = window.location.search;
@@ -360,12 +356,13 @@
             end_time.innerText = formattedDate2;
             const sinchung = ScheduleModal.querySelector(".sinchung");
             //sinchung.setAttribute("onclick","circleScheduleApplyCheck("+ eventData.circle_schedule_id +")");
-            sinchung.setAttribute("onclick","kakaoPayment("+ eventData.circle_schedule_id +")");
+            const eventDataString = JSON.stringify(eventData);
+            sinchung.setAttribute("onclick", `itemPkget(${eventDataString})`);
             // 여기가 &일정신청버튼
             const mapboot = document.querySelector("#map");
             mapboot.innerHTML = "";
 
-            // 여기서 맵을 만들어야할듯?
+            // 여기서 맵을 만들어야할듯?    
             // 주소-좌표 변환 객체를 생성합니다
             const geocoder = new kakao.maps.services.Geocoder();
 
@@ -400,46 +397,291 @@
             modal.show();
 
         }
-        // 결제시스템 -> 총회비 / 인원수 => 결제해야되는 금액 // 넘겨야되는값
-        const kakaoPayment = (circle_schedule_id) => {
+        // itemPk를 얻기위한 코드 ==> 이 itemPk를 이용해서 order정보 insert
+        const itemPkget = (eventData) => {
+            
+            const circle_schedule_id = eventData.circle_schedule_id;
+            console.log(circle_schedule_id);
+            // 일정과 상품은 1:1 구조로 되어있으니까 int값으로 받으면될듯?
+            const url = "./itemPkget?circle_schedule_id=" + circle_schedule_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
 
-            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';  // 개발자 센터에서 발급받은 Secret Key
+                const itemid = response.data;
+                eventData.itemid = itemid; //event객체에 itemid를 넣음
+                orderInfoInsert(eventData);
+                console.log(eventData);
+
+            })
+
+        }
+        // 여기선 이제 주문정보 insert & scheduleid를 보내서 동아리 맴버정보찾고 유저정보 찾아오자
+        
+        const orderInfoInsert = (eventData) => {
+        
+
+            const url = "./orderInfoInsert?item_id=" + eventData.itemid + "&circle_schedule_id=" + eventData.circle_schedule_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                // response.data로 주문정보pk + 판매자userpk 받아와서 eventData에 넣으면 됨
+                const responseData = response.data
+                const schedule_user_id = responseData.schedule_user_id
+                const order_id = responseData.order_id
+                eventData.schedule_user_id = schedule_user_id;
+                eventData.order_id = order_id;
+                console.log(response.data);
+                kakaoPayment(eventData);
+                
+                
+            })
+            
+        } 
+
+
+        // 결제 요청 페이지 들어갈때 테이블 insert를 해주어야함
+        // circle_schedule_id 넘겨준이유 ==> 일정정보 담으려면 필요함
+        const kakaoPayment = (eventData) => {
+            
+            // !! 이값이용해서 상품
+            const circle_schedule_id = eventData.circle_schedule_id;
+            
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';  
             const API_URL = 'https://kapi.kakao.com/v1/payment/ready'; // 결제 준비 url
+            // const API_URL = './kakaoPaymentInfoInsert'
+            // 여기있는 값들을 eventdata를 이용해서 수정시킨다음에 insert시켜야함
+
+            eventData.cid = "TC0ONETIME";
+            eventData.item_name = "ufuf일정회비";
+            eventData.total_amount = Math.floor(eventData.schedule_fee/eventData.participation);
+            eventData.approval_url = `https://localhost:8888/circle/circlePaymentSuccess?partner_order_id=${eventData.order_id}`;
+            eventData.fail_url = `https://localhost:8888/circle/circlePaymentFail?partner_order_id=${eventData.order_id}`;
+            eventData.cancel_url = `https://localhost:8888/circle/circlePaymentCancel?partner_order_id=${eventData.order_id}`;
+            console.log(eventData);
 
             const requestData = new URLSearchParams({
-                "cid": "TC0ONETIME",
-                "partner_order_id": "partner_order_id",
-                "partner_user_id": "partner_user_id",
-                "item_name": "초코파이",
-                "quantity": "1",
-                "total_amount": "2200",
-                "vat_amount": "200",
-                "tax_free_amount": "0",
-                "approval_url": "https://developers.kakao.com/success",
-                "fail_url": "https://developers.kakao.com/fail",
-                "cancel_url": "https://developers.kakao.com/cancel"
-            });
+                "cid": eventData.cid,
+                "partner_order_id": eventData.order_id, 
+                "partner_user_id": eventData.schedule_user_id, 
+                "item_name": eventData.item_name,
+                "quantity": 1, 
+                "total_amount": eventData.total_amount, //이거 소숫점자리 다짜름(생각해야됨!!!);
+                "vat_amount": 200, 
+                "tax_free_amount": 0, 
+                "approval_url": eventData.approval_url,
+                "fail_url": eventData.fail_url,
+                "cancel_url": eventData.cancel_url
+            });  
 
-
+            // cid 빼고 다때려넣네 ;; 
+            // 이건 걍 응답시 받는값이고
             fetch(API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Content-type': 'application/x-www-form-urlencoded', //json으로 안되?
                     'Authorization': `KakaoAK ${ADMIN_KEY}`
                 },
-                body: requestData.toString()
+                body: requestData 
             })
                 .then(response => response.json())
                 .then(data => {
-                    // 모바일 결제페이지 url로 이동시켜야함 여기서 값
-                    location.href = data.next_redirect_mobile_url
+                    
+                    location.href = data.next_redirect_pc_url //이동
+                    kakaoPaymentReqInsert(eventData); // 요청된거 insert
+                    kakaoPaymentResInsert(data); //응답된거 insert
+
+                    // 승인요청 들어가야함
+                    kakaoPaymentAccept(eventData,data);
+
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+            
+        }
+
+        // 카카오페이 결제요청정보 insert
+        const kakaoPaymentReqInsert = (eventData) => {
+
+            const url = "./kakaoPaymentReqInsert";
+            const sendData = {
+                "cid": eventData.cid,
+                "partner_order_id": eventData.order_id, 
+                "partner_user_id": eventData.schedule_user_id, 
+                "item_name": eventData.item_name,
+                "item_code": eventData.itemid,
+                "quantity": 1, 
+                "total_amount": eventData.total_amount, //이거 소숫점자리 다짜름(생각해야됨!!!);
+                "vat_amount": 200, 
+                "tax_free_amount": 0, 
+                // "approval_url": eventData.approval_url,
+                // "fail_url": eventData.fail_url,
+                // "cancel_url": eventData.cancel_url
+            }
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+
+
+            })
+
+            
 
         }
-                    // 일정등록할수있는지 여부를 판단 아닐경우 disabled
+        // 카카오페이 결제준비응답 insert
+        const kakaoPaymentResInsert = (data) => {
+
+            const url = "./kakaoPaymentResInsert";
+
+            const sendData = {
+                tid: data.tid,
+                next_redirect_mobile_url: data.next_redirect_mobile_url
+            }
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+
+
+            })
+
+        }
+        // 카카오페이 승인요청을 받아야함
+        // 여기가 문제...... 승인요청하면 결제시스템이라 서버측에서 하는게 맞고.. 토큰값은 approval_url 리다이렉트 되면서 생기니까 여기서 값저장 안되는듯?
+        const kakaoPaymentAccept = (eventData, data) => {
+
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';
+            const restoreData = {
+                cid: eventData.cid,
+                tid: data.tid,
+                partner_order_id: eventData.order_id,
+                partner_user_id: eventData.schedule_user_id,
+            }
+            // 세션값에 담아서 보낸다음에 결제승인요청후에 그값을 저장시키자
+            // pg_token을 그럼 null값으로 넣고 해야하는거? 그리고 성공했을때 redirect해서 받아야되는거?
+
+            // 수정코드 ^^..
+            const url = "./sessionPaymentInfoRestore";
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(restoreData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+            
+            // const sendData = new URLSearchParams(restoreData);
+            // const url = "https://kapi.kakao.com/v1/payment/approve";
+
+            // fetch(url,{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-type': 'application/x-www-form-urlencoded',
+            //         'Authorization': `KakaoAK ${ADMIN_KEY}`
+
+            //     },
+            //     body: sendData
+            // })
+            // .then(response => response.json())
+            // .then(response => {
+
+            //     // 일단 여기다 한번 넣어봄 이거 쿼리스트링에 들어가는 값임
+
+            //     //결제 승인 요청, 응답
+            //     kakaoPaymentAcceptReqInsert(eventData, data.tid)
+            //     kakaoPaymentAcceptResInsert(response.data) //결제수단이 money일때랑 card일때 나눠짐 조심
+                
+
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            // });
+
+        }
+
+        // 카카오페이 승인 요청 테이블 insert ==> 토큰값,,,
+        // 1. 결제버튼을 누름 2.(???) 리다이렉트 페이지 전에 결제승인요청과 결제승인응답값을 데이터베이스에 넘겨주어야함(토큰이 필요)  3. 결제완료된 창으로 리다이렉트페이지가 나옴
+        const kakaoPaymentAcceptReqInsert = (eventData, tid) => {
+
+            // const queryString = new URLSearchParams(window.location.search);
+            // const pg_token = queryString.get('pg_token');
+            // console.log(pg_token); 
+            // 이거는 결제 완료페이지에서 가져와야하는 token값
+
+            const url = "./kakaoPaymentAcceptReqInsert";
+            const sendData = {
+                cid: eventData.cid,
+                tid: tid,
+                partner_order_id: eventData.order_id,
+                partner_user_id: eventData.schedule_user_id,
+                pg_token: pg_token // ???
+            }
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+
+
+            })
+
+        }
+        // 카카오페이 승인 응답 테이블 insert ==> 여기는 CardInfo and AmountInfo 둘다 들어가야함
+        const kakaoPaymentAcceptResInsert = () => {
+
+            const sendData = {
+
+            }
+            
+            const url = "./kakaoPaymentAcceptResInsert";
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => response.json())
+            .then(response => {
+                
+
+
+            })
+
+        }
+        
+
+
+        // 일정등록할수있는지 여부를 판단 아닐경우 disabled
         const circleScheduleRegister = () =>{
 
             const queryString = window.location.search;
@@ -465,8 +707,22 @@
 
     </script>
     <style>
-        
-        
+        /* +1 more 링크색글자사이즈 조정 */
+        .fc-more-link{
+            
+            color: #fb7928;
+            font-weight: bolder;
+            
+            font-size: 1.3em;
+        }
+        /* z-index 1로조정 자꾸 모달창 위로 올라옴 */
+        .fc .fc-popover{ 
+            z-index: 1;
+        }
+        .custom-z-index {
+            z-index: 10000; /* 필요한 만큼의 높은 z-index 값으로 설정 */
+            
+        }
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -557,7 +813,7 @@
     </div>
     <div id="Wrapper d-none">
     <div id="ScheduleModal" class="modal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog custom-z-index">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">일정 상세설명</h5>

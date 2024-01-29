@@ -5,26 +5,46 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.UserInfoDto;
 
 
 @Mapper
 public interface MissionMapSqlMapper {
 
+    // 인서트 
     public void insertMission(MissionInfoDto missionInfoDto);
+    public void insertMissionCourse(MissionCourseDto missionCourseDto);
+
+    // 미션 아이디로 미션 셀렉트
+    public MissionInfoDto selectMissionById(int mission_id);
+
+    // 주문 아이디로 미션 셀렉트
+    public MissionInfoDto selectMissionByOrderId(String Order_id);
+
+    // 미션 리스트 출력
+    public List<MissionInfoDto> selectAllMission();
+    // 미션 코스 리스트
+    public List<MissionCourseDto> selectCourseByMission(int mission_id);
+
+    // 미션 상태 업데이트
+    public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
+
+
+
+
+
+    // 유저 셀렉트
+    public UserInfoDto selectUserById(int user_id);
 
 
 
 
 
 
-
-
-//     public void insertMission(MissionInfoDto missionInfoDto);
-//     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
-
-//     public List<MissionInfoDto> selectAllMission();
-//     public MissionInfoDto selectMissionById(int mission_id);
+    
+//     
 //     public MissionAcceptedDto selectAccMissionByAccId(int mission_accepted_id);
 //     public MissionAcceptedDto selectMissionAccInfoByMissionId(int mission_id);
 

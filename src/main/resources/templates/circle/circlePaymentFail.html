@@ -12,6 +12,11 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        const backHome = () => {
+            location.href = "./circleMainPage"
+        }
+    </script>
      <style>
         *{
         /* font-family: 'Dongle', sans-serif; */
@@ -20,12 +25,37 @@
         /* font-family: 'Noto Sans KR', sans-serif; */
         }
     </style>
+    
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row">
+        <div class="row text-center">
             <div class="col">
-
+                <div class="row mt-5">
+                    <div class="col">
+                        <img class="img-fluid" src="/public/image/circle/warning.png">
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col" style="font-size: 1.3em;">
+                        결제를 실패하였습니다.
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                        불편을 드려 죄송합니다.
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                        다시 한번 시도해 주세요.
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col d-grid">
+                        <button onclick="backHome()" class="btn btn-primary" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

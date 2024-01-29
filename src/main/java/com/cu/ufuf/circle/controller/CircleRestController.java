@@ -1,9 +1,13 @@
 package com.cu.ufuf.circle.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +29,11 @@ import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
@@ -495,11 +504,11 @@ public class CircleRestController {
         return responseDto;
     }
 
-    // scheduleApplyInsert
+    // scheduleApplyInsert ==> 일정등록하는곳
     @RequestMapping("scheduleApplyInsert")
     public RestResponseDto scheduleApplyInsert(@RequestParam("circle_id") int circle_id,
             @RequestBody CircleScheduleDto circleScheduleDto, HttpSession session) {
-
+        
         RestResponseDto responseDto = new RestResponseDto();
 
         UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
@@ -511,6 +520,12 @@ public class CircleRestController {
         circleScheduleDto.setCircle_member_id(circle_member_id);
         circleService.circleScheduleInfoInsert(circleScheduleDto);
         // insert 완료
+        
+        // 카카오페이 결제 상품 insert
+        int circle_schedule_id = circleService.circleScheduleIdMaxValue();
+
+        circleService.itemInfoInsert(circle_schedule_id);  // circle_schedule_id들어가야함 selectMax값
+        
 
         responseDto.setResult("success");
 
@@ -695,19 +710,165 @@ public class CircleRestController {
 
         return responseDto;
     }
+    //kakaoPaymentInfoInsert 결제요청
+    @RequestMapping("kakaoPaymentReqInsert")
+      public RestResponseDto kakaoPaymentReqInsert(@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
+      
+      circleService.kakaoPaymentReqInsert(kakaoPaymentReqDto);
+
+      RestResponseDto responseDto = new RestResponseDto();
+
+      
+      
+      responseDto.setResult("success");
+      
+      return responseDto;
+    }
+    //kakaoPaymentResInsert 결제준비응답
+    @RequestMapping("kakaoPaymentResInsert")
+      public RestResponseDto kakaoPaymentResInsert(@RequestBody KakaoPaymentResDto kakaoPaymentResDto){
+      
+      RestResponseDto responseDto = new RestResponseDto();
+
+      circleService.kakaoPaymentResInsert(kakaoPaymentResDto);
+      
+      responseDto.setResult("success");
+      
+      return responseDto;
+    }
+
+    //itemPkget
+    @RequestMapping("itemPkget")
+      public RestResponseDto itemPkget(@RequestParam("circle_schedule_id") int circle_schedule_id){
+      
+      RestResponseDto responseDto = new RestResponseDto();
+    
+      responseDto.setData(circleService.itemPkGetByCircleScheduleId(circle_schedule_id));
+      responseDto.setResult("success");
+      
+      return responseDto;
+      }
+      // orderInfoInsert
+    @RequestMapping("orderInfoInsert")
+        public RestResponseDto orderInfoInsert(@RequestParam("item_id") int item_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        // 하. 이거왜함? 구매자 정보가 들어가야함
+        int scheduleUserId = circleService.userPkByCircleScheduleId(circle_schedule_id);
+        String scheduleUserIdString = String.valueOf(scheduleUserId); // string값으로 변환시켜줘야됨
+        
+
+        // 여긴 insert를 위한 코드 
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        // 주문번호 생성
+        // MI + 상품코드 + 주문이 발생한 연도 + 주문이 발생한 월 + 주문이 발생한 날짜 + UUID(substring(0, 10))
+        String orderNumber = "CC" + item_id;
+
+        // 현재 날짜 정보 가져오기
+        
+        Date currentDate = new Date();
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+
+        // 주문이 발생한 연도, 월, 날짜 추가
+        orderNumber += yearFormat.format(currentDate);
+        orderNumber += monthFormat.format(currentDate);
+        orderNumber += dayFormat.format(currentDate);
+        
+        // UUID 생성 및 substring(0, 10)으로 처리
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
+        orderNumber += uuid;
+        
+        // 대입
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+        orderInfoDto.setItem_id(item_id);
+        orderInfoDto.setUser_id(user_id);
+        orderInfoDto.setStatus("READY");
+        orderInfoDto.setOrder_id(orderNumber);
+
+        // insert
+        circleService.orderInfoInsert(orderInfoDto);
+        
+        // 데이터 보낼거 ==> 주문정보pk + 판매자userpk
+        Map<String, Object> map = new HashMap<>();
+        map.put("schedule_user_id", scheduleUserIdString);
+        map.put("order_id", circleService.orderIdMax());
+        map.put("item_id", item_id); // 그냥한번넣어봄 test 지워도 무관
+        
+        responseDto.setData(map);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // kakaoPaymentAcceptReqInsert  요청값 insert
+    @RequestMapping("kakaoPaymentAcceptReqInsert")
+        public RestResponseDto kakaoPaymentAcceptReqInsert(@RequestBody KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        circleService.kakaoPaymentAcceptReqInsert(kakaoPaymentAcceptReqDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 승인응답테이블 ==> 여기서 amount는 서버에서 dto로 응답받음 insert시키고 max값 받아서 insert시켜야됨 (amount먼저)
+    @RequestMapping("kakaoPaymentAcceptResInsert")
+        public RestResponseDto kakaoPaymentAcceptResInsert(@RequestBody KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        circleService.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
+        
+        responseDto.setData(null);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 세션값에 cid tid partner user_id, order_id 저장
+    @RequestMapping("sessionPaymentInfoRestore")
+        public RestResponseDto sessionPaymentInfoRestore(HttpSession session, @RequestBody KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        session.setAttribute("kakaoPaymentAcceptReqValue", kakaoPaymentAcceptReqDto); // 세션값에 value를 집어넣은다음에 성공페이지에서 값을 insert해줌
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // sessionKakaoAcceptReqValue
+    @RequestMapping("sessionKakaoAcceptReqValue")
+        public RestResponseDto sessionKakaoAcceptReqValue(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto =(KakaoPaymentAcceptReqDto)session.getAttribute("kakaoPaymentAcceptReqValue");
+        
+        responseDto.setData(kakaoPaymentAcceptReqDto);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
+    
+
 
     // RESTAPI 양식
     /*
-     * @RequestMapping("asdfasdfasdf")
-     * public RestResponseDto asdfasdfasdfasdf(){
-     * 
-     * RestResponseDto responseDto = new RestResponseDto();
-     * 
-     * responseDto.setData(null);
-     * responseDto.setResult("success");
-     * 
-     * return responseDto;
-     * }
+    @RequestMapping("asdfasdfasdf")
+        public RestResponseDto asdfasdfasdfasdf(){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(null);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
      */
 
 }

@@ -58,32 +58,19 @@ public class MissionMapController {
 
 
     @RequestMapping("paymentSuccessPage")
-    public String paymentSuccessPage(@RequestParam(name="order_id") String order_id,
-            @RequestParam(name="pg_token") String pg_token, Model model){
-
-        System.out.println(order_id);
-
-        model.addAttribute("order_id", order_id);
-        model.addAttribute("pg_token", pg_token);
+    public String paymentSuccessPage(){
 
         return "mission/paymentSuccessPage";
     }
 
     @RequestMapping("paymentCancelPage")
-    public String paymentCancelPage(@RequestParam(name="order_id") String order_id,
-            @RequestParam(name="pg_token") String pg_token, Model model){
-
-        model.addAttribute("order_id", order_id);
-        model.addAttribute("pg_token", pg_token);
+    public String paymentCancelPage(){
 
         return "mission/paymentCancelPage";
     }
 
     @RequestMapping("paymentFailPage")
-    public String paymentFailPage(@RequestParam(name="order_id") String order_id,
-            @RequestParam(name="pg_token") String pg_token, Model model){
-        model.addAttribute("order_id", order_id);
-        model.addAttribute("pg_token", pg_token);
+    public String paymentFailPage(){
 
         return "mission/paymentFailPage";
     }

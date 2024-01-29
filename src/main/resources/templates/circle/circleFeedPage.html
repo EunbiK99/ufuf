@@ -82,6 +82,9 @@
                         haha.setAttribute("data-bs-target","#carouselExampleIndicators" + i);
                     }
                     
+                    // dot버튼
+                    const dotbutton = Wrapper.querySelector(".dotbutton");
+                    dotbutton.setAttribute("onclick", "boardDeleteModal("+ e.circleBoardDto.circle_board_id +")")
 
                     const currentDateTime = new Date();
                     const postDateTime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4], changetime[5]);
@@ -127,6 +130,30 @@
                 }
 
             })
+        }
+        // 3dot 눌러서 게시물 삭제창이 나오게끔하는 모달?
+        const boardDeleteModal = (circle_board_id) => {
+
+            const boardDeleteModal = document.querySelector("#boardDeleteModal");
+            const boardDeleteComplete = boardDeleteModal.querySelector(".boardDeleteComplete");
+            boardDeleteComplete.setAttribute("onclick","boardDeleteComplete(" + circle_board_id + ")")
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#boardDeleteModal");
+            modal.show();
+
+        }
+
+        const boardDeleteComplete = (circle_board_id) => {
+
+            const url = "./feedboardDeleteProcess?circle_board_id=" + circle_board_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                location.reload();
+
+            })
+
         }
         
         const boardSubImageSelect = (circle_board_id, Wrapper, i) => {
@@ -387,7 +414,11 @@
         height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
         overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
-
+        .modal-dialog-bottom {
+            
+            margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
+            transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
+        }
     </style>
 </head>
 <body>
@@ -495,8 +526,8 @@
                         <div class="col">
                             <span class="user_name"></span>
                         </div>
-                        <div class="col text-end" style="font-size: 1.3em;">
-                            <i class="bi bi-three-dots-vertical"></i>
+                        <div class="col text-end dotbutton" style="font-size: 1.3em;"><!-- 여기에 클릭버튼이들어가야함 -->
+                            <span class="bi bi-three-dots-vertical"></span>
                         </div>
                     </div>                       
                 </div>
@@ -533,6 +564,29 @@
             </div> 
         </div>  
     </div>
+    <div id="Wrapper d-none">
+        <div id="boardDeleteModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">게시물 삭제</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            게시물을 정말로 삭제하시겠습니까?
+                        </div>
+                    </div>
+                </div>    
+                <div class="modal-footer" style="text-decoration-line: none;">
+                    <button type="button" class="btn fw-semibold boardDeleteComplete" style="background-color: #fb7928;color: white;">게시물 삭제</button>
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     
     
     

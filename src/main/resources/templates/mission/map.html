@@ -16,6 +16,11 @@
 
     var nowMarker;
     var map;
+    var missionMarker = [];
+
+    var imageSrc = relativePath + "/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
+    imageOption = {offset: new kakao.maps.Point(24, 30)};
 
     var personImg = relativePath + "/public/image/mission/free-icon-person-8226827.png",
     personImgSize = new kakao.maps.Size(42, 41),
@@ -115,22 +120,186 @@
         });
     }
 
+    // 미션마커 설정
+    function setMissionMarkers(lat,lng){
+
+        var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+        var markerPosition = new kakao.maps.LatLng(lat, lng);
+        var marker = new kakao.maps.Marker({
+            position: markerPosition,
+            image: markerImg,
+            clickable: true
+        });
+
+        marker.setMap(map);
+
+        missionMarker.push(marker);
+    }
+
     // 미션 리스트 출력하기
     function loadMissionList(){
 
         const startBtn = document.getElementById("startBtn");
         startBtn.classList.add("d-none");
 
+        const showMissionList = document.getElementById("showMissionList");
+        showMissionList.classList.remove("d-none");
+
         const mapContainer = document.getElementById("map");
         mapContainer.style.height = "22em";
 
         const findMyLocation = document.getElementById("findMyLocation");
-        findMyLocation.style.bottom = "16.5em"
+        findMyLocation.style.bottom = "14.2em";
 
         getNowLocation(function(locPosition) {
             map.relayout();
             map.panTo(locPosition);
         });
+
+        fetch("./loadMissionList")
+            .then(response => response.json())
+            .then(response => {
+
+                const missionListBox = document.getElementById("missionListBox");
+                missionListBox.innerHTML = "";
+
+                for(mission of response.data){
+                    
+                    const missionWrapper = document.querySelector("#missionListTemplete .missionWrapper").cloneNode(true);
+
+                    const title = missionWrapper.querySelector(".title");
+                    const firstLocation = missionWrapper.querySelector(".firstLocation");
+                    const reward = missionWrapper.querySelector(".reward");
+
+                    title.innerText = mission.missionInfoDto.title;
+
+                    var totalReward = 0;
+
+                    for(course of mission.missionCourseList){
+
+                        var courseReward = course.reward;
+                        totalReward += courseReward;
+                    }
+
+                    reward.innerText = totalReward;
+
+                    var lat = mission.missionCourseList[0].lat;
+                    var lng = mission.missionCourseList[0].lng;
+
+                    (function (currentLat, currentLng) {
+                        var geocoder = new kakao.maps.services.Geocoder();
+                        geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+                            if (status === kakao.maps.services.Status.OK) {
+                                if (result[0].road_address === null) {
+                                    firstLocation.innerText = result[0].address.address_name;
+                                } else {
+                                    firstLocation.innerText = result[0].road_address.address_name;
+                                }
+                            } else {
+                                console.log('주소를 가져오지 못했습니다.');
+                            }
+                        });
+                    })(lat, lng);
+
+                    (function (currentMissionWrapper, currentMissionId) {
+                        missionWrapper.onclick = function () {
+                            loadMisisonDetail(currentMissionId);
+                        };
+                    })(missionWrapper, mission.mission_id);
+
+                    setMissionMarkers(lat,lng);
+
+                    missionListBox.appendChild(missionWrapper);
+                }
+
+            });
+
+    }
+
+    // 미션 상세보기
+    function loadMisisonDetail(mission_id){
+
+        const showMissionList = document.getElementById("showMissionList");
+        showMissionList.classList.add("d-none");
+
+        const missionDetailBox = document.getElementById("missionDetailBox");
+        missionDetailBox.classList.remove("d-none");
+
+        hideMarkers();
+
+        // const dtTitle = missionDetailBox.querySelector(".dtTitle");
+        // const dtResLocation = missionDetailBox.querySelector(".dtResLocation");
+        // const dtDetail = missionDetailBox.querySelector(".dtDetail");
+        // const dtReward = missionDetailBox.querySelector(".dtReward");
+        // const dtUserProfileImg = missionDetailBox.querySelector(".dtUserProfileImg");
+        // const dtUserName = missionDetailBox.querySelector(".dtUserName");
+        // const missionAccModalBtn = document.getElementById("missionAccModalBtn");
+        // const ifMyMission = document.getElementById("ifMyMission");
+
+        // const data = {
+        //     mission_id: mission_id
+        // };
+
+        // fetch("./getMissionDetail", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify(data)
+        // })
+        //     .then(response => response.json())
+        //     .then(response => {
+
+        //         const info = response.data;
+
+        //         dtTitle.innerText = info.missionDto.title;
+        //         dtDetail.innerText = info.missionDto.detail;
+        //         dtReward.innerText = info.missionDto.reward;
+        //         dtUserName.innerText = info.userDto.name;
+                
+        //         dtUserProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + info.userDto.profile_img);
+
+        //         var missionLocation = info.missionDto.registered_location;
+        //         const cutIndex = missionLocation.indexOf(",");
+        //         const lat = missionLocation.substring(0, cutIndex);
+        //         const lng = missionLocation.substring(cutIndex + 1);
+
+        //         setMissionMarkers(lat,lng);
+
+        //         (function (currentLat, currentLng) {
+        //             var geocoder = new kakao.maps.services.Geocoder();
+        //             geocoder.coord2Address(currentLng, currentLat, function (result, status) {
+        //                 if (status === kakao.maps.services.Status.OK) {
+        //                     if (result[0].road_address === null) {
+        //                         dtResLocation.innerText = result[0].address.address_name;
+        //                     } else {
+        //                         dtResLocation.innerText = result[0].road_address.address_name;
+        //                     }
+
+        //                     var locPosition = new kakao.maps.LatLng(lat, lng);
+        //                     panTo(locPosition);
+
+        //                 } else {
+        //                     console.log('주소를 가져오지 못했습니다.');
+        //                 }
+        //             });
+        //         })(lat, lng);  
+
+        //         // 세션 유저와 미션등록자가 같으면 삭제/수정버튼 생성
+        //         if(sessionUser === info.missionDto.user_id){
+
+        //             ifMyMission.innerHTML = `<div class="gap-2 d-md-block">
+        //                                     <button class="btn rounded-1" type="button" onclick="modifyMission()" style="color:#FF8827; border: 0.12em solid #FF8827;">수정</button>
+        //                                     <button class="btn rounded-1 text-white" type="button" onclick="deleteMission()" style="background-color: #FF8827;">삭제</button>
+        //                                     </div>`;
+        //         }else{
+
+        //             missionAccModalBtn.onclick = function(){
+        //                 openMissionAccModal(mission_id);
+        //             }
+
+        //         }             
+        // });
 
     }
 
@@ -155,10 +324,15 @@
 
 <style>
 
+    body { 
+        position: fixed;
+        width: 100%;
+    }
+
     #startBtn{
         z-index: 2;
         position: absolute;
-        bottom: 5.6em;
+        bottom: 2.6em;
         margin: 0 auto;
         left: 0;
         right: 0;
@@ -167,7 +341,7 @@
     #findMyLocation{
         z-index: 2;
         position: absolute;
-        bottom: 7.4em;
+        bottom: 5.2em;
         /* margin: auto;
         left: 0; */
         right: 0.8em;
@@ -236,9 +410,8 @@
 
                                                     if(isSameLocation){
                                                         panTo(locPosition);
-                                                        console.log("이동이동");
                                                     }else{
-                                                        console.log("안돼");
+
                                                     }
 
                                                 });
@@ -250,6 +423,146 @@
 
                                     </script>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 미션 리스트 -->
+                        <div id="showMissionList" class="row border-top d-none" style="height:16.5em; box-shadow: inset 0 -1.8em 1.5em -2.5em #cacaca;">
+                            <div class="col">
+                                <div class="row py-2 border-bottom">
+                                    <div class="col text-end align-self-center text-secondary" style="font-size: 0.95em;">
+                                        <span>반경</span>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center ms-2" style="font-size: 0.85em;">100m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center active" style="font-size: 0.85em;">300m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.85em;">500m</button>
+                                    </div>
+                                </div>
+                                <div class="overflow-y-scroll overflow-x-hidden" style="height:13.3em;">
+                                    <div class="row px-2">
+                                        <div id="missionListBox" class="col">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 미션 상세 -->
+                        <div id="missionDetailBox" class="shut row border-top d-none" style="height:16.5em;">
+                            <div class="col px-0">
+                                    <div class="row d-flex py-2 border-bottom">
+                                        <div class="col">
+                                            <div class="row mx-2">
+                                                <div class="title col fw-semibold pe-0 align-self-center" style="font-size: 1.15em;">
+                                                    같이 데이트할 은비 구함
+                                                </div>
+                                                <div class="col-3 d-flex justify-content-end">
+                                                    <span><i class="fi fi-rr-track align-self-center" style="font-size: 1.2em; color: #ffb375;"></i></span>
+                                                    <span class="ms-2 align-self-center text-end" style="font-size: 0.9em; color: #b1b1b1;">3코스</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mx-2">
+                                                <div class="col pe-0 text-start text-body-tertiary align-self-center">
+                                                    <span class="align-self-center">총</span>
+                                                    <span class="fw-bold ms-1 align-self-center" style="color: #FF8827; font-size: 1.05em;">17000</span>
+                                                    <span class="align-self-center">원</span>
+                                                </div>
+                                                <div class="col text-end align-self-center justify-content-end" style="overflow: hidden;">
+                                                    <img class="userProfileImg img-fluid rounded-circle me-1 align-text-bottom" 
+                                                        style="height: 1.3em; width: 1.3em; object-fit: cover; border-radius: 50%;">
+                                                    <span class="userName fw-semibold ms-1 text-body-secondary align-text-bottom" 
+                                                        style="letter-spacing: 0.06em; font-size: 0.97em;">배진우</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="overflow-y-auto overflow-x-hidden" style="height: 12em;"> 
+                                    <div class="row mt-3 mx-2">
+                                        <div class="detail col text-dark-emphasis" style="font-size: 1em;">
+                                            같이 데이트할 은비 구해요~~<br>
+                                            은비 제외 다 거절할거니까 신청하지 마세요<br>
+                                            은비만 신청해주세요!!!!!!!!
+                                        </div>    
+                                    </div>
+
+                                    <div class="row mt-4 mx-1 pt-1">
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-center">
+                                                    <span class="text-white rounded-circle d-grid text-center border border-white" 
+                                                    style="background-color: #FF8827; width: 1.6em; height: 1.6em; box-shadow: 0em 0em 0.3em 0.3em #FF8827;">
+                                                        1
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-center">
+                                                    <span class="text-white rounded-circle d-grid text-center" style="background-color: #FF8827; width: 1.6em; height: 1.6em;">2</span>  
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-center">
+                                                    <span class="text-white rounded-circle d-grid text-center" style="background-color: #FF8827; width: 1.6em; height: 1.6em;">3</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-center">
+                                                    <span class="text-white rounded-circle d-grid text-center" style="background-color: #FF8827; width: 1.6em; height: 1.6em;">4</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="courseInfo" class="row mx-3 mt-3 px-1">
+                                        <div class="col border py-2">
+                                            <div class="row">
+                                                <div class="col fw-semibold text-secondary" style="font-size: 1.05em;">
+                                                    코스 1
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col fw-semibold">
+                                                    같이 양꼬치 먹기
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-body-tertiary" style="font-size: 0.9em;">
+                                                    서울특별시 광진구 군자로4길 34로
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row py-3 mx-2">
+                                        <div id="ifMyMission" class="col fw-semibold align-self-center px-2 d-flex justify-content-end">
+                                            <button id="missionAccModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
+                                                style="font-size: 1.0em; background-color: #FF8827; height: 2.2em;">
+                                                <i class="bi bi-plus-lg me-1"></i><span class="me-1">수락</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="backToList" class="fixed-bottom">
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <button class="btn border rounded-5 bg-white text-secondary shadow-sm mx-auto" style="font-size: 0.9em;" onclick="loadMissionList()">
+                                            <i class="bi bi-list"></i>
+                                            목록으로
+                                        </button>
+                                    </div>
+                                </div>
+                                </div>
+
+                                
                             </div>
                         </div>
 
@@ -287,6 +600,30 @@
     </div>
 
 
+
+
+
+<!-- 미션 리스트 출력 -->
+<div id="missionListTemplete" class="d-none">
+    <div class="missionWrapper row py-2 border-bottom">
+        <div class="col pe-0">
+            <div class="row">
+                <div class="col pe-0">
+                    <span class="title fw-semibold" style="font-size: 1.08em;"></span>
+                    <!-- <span><i class="bi bi-heart ms-1" style="color: #FF8827;"></i></span> -->
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="firstLocation col text-body-tertiary" style="font-size: 0.83em;">
+                </div>
+            </div>
+        </div>
+        <div class="col-4 text-end align-self-center">
+            <span class="reward fw-bold" style="font-size: 1.16em; color: #fa7e18;"></span>
+            <span style="font-size: 0.95em;"> 원</span>
+        </div>
+    </div> 
+</div>
     
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

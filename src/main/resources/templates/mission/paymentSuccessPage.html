@@ -7,78 +7,168 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
 
 <script>
 
-    var order_id = "[[${order_id}]]"
-    var pg_token = "[[${pg_token}]]"
+    function getKakaoPayAccReqInfoFromSession(){
+
+        fetch("./getKakaoPayAccReqInfoFromSession")
+        .then(response => response.json())
+        .then(response => {
+
+            sendKakaoPayAccReq(response.data);
+
+        });
+    }
+    
+    // 카카페이 승인 요청
+    function sendKakaoPayAccReq(KakaoPayAccReqInfo) {
+
+        var queryString = window.location.search;
+        var params = new URLSearchParams(queryString);
+
+        const pg_token = params.get('pg_token');
+
+        const data = new URLSearchParams();
+        data.append("cid", "TC0ONETIME");
+        data.append("tid", KakaoPayAccReqInfo.tid);
+        data.append("partner_order_id", KakaoPayAccReqInfo.partner_order_id);
+        data.append("partner_user_id", KakaoPayAccReqInfo.partner_user_id);
+        data.append("pg_token", pg_token);
+
+        fetch("https://kapi.kakao.com/v1/payment/approve", {
+            method: "POST",
+            headers: {
+                "Authorization": "KakaoAK fe6556cbcccecbec99f52226077803d7",
+                "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+            },
+            body: data
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                insertkakaoPayAccReq(KakaoPayAccReqInfo, pg_token);
+                removeSession();
+                console.log(response);
+                loadPaymentInfo(res)
+        });
+    }
+
+    function insertkakaoPayAccReq(KakaoPayAccReqInfo, pg_token){
+        
+        const data = {
+            tid: KakaoPayAccReqInfo.tid,
+            partner_order_id: KakaoPayAccReqInfo.partner_order_id,
+            partner_user_id: KakaoPayAccReqInfo.partner_user_id,
+            pg_token: pg_token
+        };
+
+        fetch("./insertkakaoPayAccReq", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                
+        });
+    }
+
+    function removeSession(){
+
+        fetch("./removeSession")
+        .then(response => response.json())
+        .then(response => {
+
+        });
+    }
+
+    function insertKakaoPayAccRes(res){
+        const data = {
+            tid: res.tid,
+            amount: res.amount,
+            card_info: res.card_info,
+            partner_order_id: res.partner_order_id,
+            partner_user_id: res.partner_user_id,
+            item_id: res.item_id,
+            aid: res.aid,
+            payment_method_type: res.payment_method_type,
+            approved_at: res.approved_at
+        };
+        fetch("./insertkakaoPaymentAccReq", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
+    }
+
+    function loadPaymentInfo(res){
+
+        const data = {
+            order_id: res.partner_order_id
+        }
+
+        fetch("./getOrderMissionInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const order_id = document.getElementById("orderId");
+                const total_amount = document.getElementById("total_amount");
+                const approved_at = document.getElementById("approved_at");
+                const title = document.getElementById("title");
+                const detail = document.getElementById("detail");
+
+                order_id.innerText = res.partner_order_id;
+                total_amount.innerText = res.amount.total + "원";
+                
+                let appDate = new Date(res.approved_at);
+                let appYear = appDate.getFullYear();
+                let appMonth = appDate.getMonth() + 1;
+                let appDay = appDate.getDate();
+                let appHour = appDate.getHours();
+                let appMinute = appDate.getMinutes();
+
+                approved_at.innerText = "승인일시: " + appYear + "-" + appMonth + "-" + appDay + " " + appHour + "시 " + appMinute + "분";
+                title.innerText = response.data.title;
+                detail.innerText = response.data.detail;
+        });
+
+    }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        getKakaoPayAccReqInfoFromSession();
+    });
 
     
 
-    function getOrderInfo(){
-
-        
-
-        fetch("./getOrderInfo?", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                
-                
-
-        });
-    }
-
-    function getPaymentInfo(){
-
-        fetch("./getOrderInfo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                
-                
-
-        });
-    }
-
-    function upDateOrderstatus(){
-        const data = {
-            order_id: order_id,
-            status: "결제완료"
-        };
-        fetch("./upDateOrderstatus", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                console.log(response);
-                
-        });
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-        upDateOrderstatus();
-    });
-
 </script>
+<style>
+    .word {
+        width: 1em;
+        font-size: 1em;
+        font-weight: regular !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+</head>
 
 <body>
     <div class="container-fluid">
@@ -114,22 +204,19 @@
 
                         <div class="row mt-4 pt-3" style="font-size:0.95em">
                             <div class="col-3 text-secondary">주문번호</div>
-                            <div id="orderId" class="col text-body-secondary fw-semibold">Mi29384702938</div>
+                            <div id="order_id" class="col text-body-secondary fw-semibold"></div>
                         </div>
                         <div class="row mt-2" style="font-size:0.95em">
                             <div class="col-3 text-secondary">결제정보</div>
                             <div class="col">
                                 <div class="row">
-                                    <div id="" class="col fw-semibold text-body-secondary">10000원</div>
+                                    <div id="total_amount" class="col fw-semibold text-body-secondary"></div>
                                 </div>
                                 <div class="row">
                                     <div class="col text-body">카카오페이</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col text-body">일시불</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col text-body">승인일시 : 2023-01-01 00시 00분</div>
+                                    <div id="approved_at" class="col text-body"></div>
                                 </div>
                             </div>
                         </div>
@@ -137,13 +224,11 @@
                             <div class="col-3 text-secondary">상품정보</div>
                             <div class="col">
                                 <div class="row">
-                                    <div class="col fw-semibold text-body-secondary">
-                                        올때 메로나
+                                    <div id="title" class="col fw-semibold text-body-secondary">
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col text-body-secondary" style="font-size:0.95em">
-                                        메로나가 너무 먹고싶은데 누가 좀 사다주세요
+                                    <div id="detail" class="col word text-body-secondary" style="font-size:0.95em">
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +245,7 @@
                             </a>
                         </div>
                         <div class="col d-grid ps-1 py-3">
-                            <a href="./missionMap" class="btn py-2 fw-semibold rounded-1" style="border: 0.1em solid #FF8827; color:#FF8827;">
+                            <a href="./map" class="btn py-2 fw-semibold rounded-1" style="border: 0.1em solid #FF8827; color:#FF8827;">
                                 맵으로
                             </a>
                         </div>

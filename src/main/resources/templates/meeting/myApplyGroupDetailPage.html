@@ -78,6 +78,9 @@ function makeDetailPage(){
     const groupContent = document.getElementById("groupContent");
     groupContent.innerText = groupData.meetingGroupDto.groupContent;
 
+    const applyUserListCount = document.getElementById("applyUserListCount");
+    applyUserListCount.innerText = groupData.groupApplyUserCountValue;
+
     const applyUserListWrapperCol = document.getElementById("applyUserListWrapperCol");
     applyUserListWrapperCol.innerHTML = "";
 
@@ -115,6 +118,12 @@ function makeDetailPage(){
 
     const GroupMemberListWrapperCol = document.getElementById("GroupMemberListWrapperCol");
     GroupMemberListWrapperCol.innerHTML = "";
+
+    const curruntGroupMemberCount = document.getElementById("curruntGroupMemberCount");
+    curruntGroupMemberCount.innerText = groupData.groupMemberCountValue;
+
+    const maxGroupMemberCount = document.getElementById("maxGroupMemberCount");
+    maxGroupMemberCount.innerText = groupData.meetingGroupDto.groupHeadCount;
 
     for(e of groupData.groupMemberDataList){
         const groupMemberListRow = document.querySelector("#templete #groupMemberListRow").cloneNode(true);
@@ -245,6 +254,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row">
                                     <div class="col">
                                         <span class="fw-bold fs-5">참가신청List</span>
+                                        <span class="fs-6">
+                                            (<span id="applyUserListCount"></span>명)
+                                        </span>
+                                        
                                     </div>
                                 </div>
                                 <div class="row">
@@ -265,6 +278,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row">
                                     <div class="col">
                                         <span class="fw-bold fs-5">확정멤버List</span>
+                                        <span>
+                                            (
+                                            <span id="curruntGroupMemberCount" class="text-danger fw-bold"></span>
+                                            /
+                                            <span id="maxGroupMemberCount" class="fw-bold"></span>
+                                            )
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="row">
