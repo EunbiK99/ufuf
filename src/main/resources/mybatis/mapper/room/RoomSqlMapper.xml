@@ -162,6 +162,7 @@
     <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
         SELECT * from room_guest
         where user_id=#{user_id}
+        ORDER BY room_guest_id DESC
     </select>
 
     <select id="roomGuestSelectByGuestId" resultType="com.cu.ufuf.dto.RoomGuestDto">

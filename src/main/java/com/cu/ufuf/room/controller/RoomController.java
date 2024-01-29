@@ -420,4 +420,13 @@ public class RoomController {
 		return "room/roomMapPage";
 	}
 
+	//테스트용
+	@RequestMapping("roomTestPage")
+	public String roomTestPage(){
+
+
+		return "room/roomTestPage";
+	}
+
+
 }
