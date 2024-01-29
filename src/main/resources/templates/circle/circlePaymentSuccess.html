@@ -16,6 +16,126 @@
         const backHome = () => {
             location.href = "./circleMainPage"
         }
+
+        const sessionKakaoAcceptReqValue = () => {
+
+            const url = "./sessionKakaoAcceptReqValue";
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                kakaoApprovalReq(response.data)
+                
+            })
+
+        }
+        
+        
+        // 카카오 승인 요청
+        const kakaoApprovalReq = (reqValue) => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const pg_token = urlParams.get("pg_token");
+            
+            const sendData = {
+                cid: reqValue.cid,
+                tid: reqValue.tid,
+                partner_order_id: reqValue.partner_order_id,
+                partner_user_id: reqValue.partner_user_id,
+                pg_token: pg_token
+            }
+            console.log(sendData); // 이게 insert할 값
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';
+            const url = "https://kapi.kakao.com/v1/payment/approve";
+
+            const dataValue = new URLSearchParams(sendData) // 응답받을값
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': `KakaoAK ${ADMIN_KEY}`
+                },
+                body: dataValue
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                kakaoPaymentAcceptReqInsert(sendData)
+                kakaoPaymentAcceptResInsert(response)
+                
+                
+
+                // 결제 승인 요청, 응답
+                // kakaoPaymentAcceptReqInsert(eventData, data.tid)
+                // kakaoPaymentAcceptResInsert(response.data) //결제수단이 money일때랑 card일때 나눠짐 조심
+                
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        }
+        // 페이 요청dto insert
+        const kakaoPaymentAcceptReqInsert = (sendData) => {
+            
+            const url = "kakaoPaymentAcceptReqInsert";
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: sendData 
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+        // 페이 응답dto insert ==> 
+        const kakaoPaymentAcceptResInsert = (response) => {
+            console.log(response);
+            const url = "./kakaoPaymentAcceptResInsert";
+            const resData = {
+                tid: response.tid,
+                partner_order_id: response.partner_order_id,
+                partner_user_id: response.partner_user_id,
+                aid: response.aid,
+                payment_method_type: response.payment_method_type,
+                approved_at: response.approved_at
+            }
+            
+            const amountInfo = response.amount
+            const cardInfo = response.card_info
+            console.log(resData);
+            console.log(amountInfo);
+            console.log(cardInfo);
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(resData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            sessionKakaoAcceptReqValue();
+        })
      </script>
      <style>
         *{

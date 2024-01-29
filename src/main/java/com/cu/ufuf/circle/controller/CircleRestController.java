@@ -803,7 +803,7 @@ public class CircleRestController {
         
         return responseDto;
     }
-    // kakaoPaymentAcceptReqInsert  
+    // kakaoPaymentAcceptReqInsert  요청값 insert
     @RequestMapping("kakaoPaymentAcceptReqInsert")
         public RestResponseDto kakaoPaymentAcceptReqInsert(@RequestBody KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
         
@@ -811,12 +811,11 @@ public class CircleRestController {
 
         circleService.kakaoPaymentAcceptReqInsert(kakaoPaymentAcceptReqDto);
         
-        responseDto.setData(null);
         responseDto.setResult("success");
         
         return responseDto;
     }
-    // 승인응답테이블
+    // 승인응답테이블 ==> 여기서 amount는 서버에서 dto로 응답받음 insert시키고 max값 받아서 insert시켜야됨 (amount먼저)
     @RequestMapping("kakaoPaymentAcceptResInsert")
         public RestResponseDto kakaoPaymentAcceptResInsert(@RequestBody KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
         
@@ -829,6 +828,33 @@ public class CircleRestController {
         
         return responseDto;
     }
+    // 세션값에 cid tid partner user_id, order_id 저장
+    @RequestMapping("sessionPaymentInfoRestore")
+        public RestResponseDto sessionPaymentInfoRestore(HttpSession session, @RequestBody KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        session.setAttribute("kakaoPaymentAcceptReqValue", kakaoPaymentAcceptReqDto); // 세션값에 value를 집어넣은다음에 성공페이지에서 값을 insert해줌
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // sessionKakaoAcceptReqValue
+    @RequestMapping("sessionKakaoAcceptReqValue")
+        public RestResponseDto sessionKakaoAcceptReqValue(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto =(KakaoPaymentAcceptReqDto)session.getAttribute("kakaoPaymentAcceptReqValue");
+        
+        responseDto.setData(kakaoPaymentAcceptReqDto);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
+    
 
 
     // RESTAPI 양식
