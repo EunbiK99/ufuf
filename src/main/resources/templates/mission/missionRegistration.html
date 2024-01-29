@@ -340,8 +340,7 @@
         const hour = document.getElementById("hour").value;
         const minute = document.getElementById("minute").value;
 
-        var total_minutes = hour * 60;
-        total_minutes = total_minutes + minute;
+        var total_minutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
 
         for(i = 1; i < courseCounter; i++){
 

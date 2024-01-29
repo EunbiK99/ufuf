@@ -60,7 +60,21 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("doesUserLogin")
+    public RestResponseDto doesUserLogin(HttpSession session){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        if(sessionUserInfo != null){
+            restResponseDto.setData(sessionUserInfo.getUser_id());
+        }else{
+            restResponseDto.setData(0);
+        }
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 

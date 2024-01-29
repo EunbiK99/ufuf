@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -31,6 +32,8 @@ public interface MissionMapSqlMapper {
     // 미션 상태 업데이트
     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
 
+    // 미션 채팅룸 인서트
+    public void insertMissionChatRoom(MissionChatRoomDto missionChatRoomDto);
 
 
 
