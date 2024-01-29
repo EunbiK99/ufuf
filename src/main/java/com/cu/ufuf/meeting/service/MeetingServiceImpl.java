@@ -13,19 +13,23 @@ import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
+import com.cu.ufuf.dto.MeetingBothLikeDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
+import com.cu.ufuf.dto.MeetingGroupReviewDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
 import com.cu.ufuf.dto.MeetingKakaoApproveReqDto;
 import com.cu.ufuf.dto.MeetingKakaoApproveResponseDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
+import com.cu.ufuf.dto.MeetingMemberReviewDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.MeetingVoteBestMemberDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.mapper.MeetingSqlMapper;
@@ -305,14 +309,15 @@ public class MeetingServiceImpl {
 		parameters.add("quantity", Integer.toString(kakaoPaymentReqDto.getQuantity()));
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
-		// // 집 IP
-        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval"); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
-        // 학원 IP
-        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel"); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail"); // 결제 실패시 넘어갈 url
+		// 집 IP
+        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -397,11 +402,83 @@ public class MeetingServiceImpl {
     }
 
     // * 결제 완료 후 미팅-선발멤버 테이블에서 결제내역 업데이트
-public void updateGroupMemberPaymentStatus(int groupId, int userId){
-    MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByUserId(userId);
-    int profileId = meetingProfileDto.getProfileid();
-    meetingSqlMapper.updateGroupMemberPaymentStatusByGroupIdAndProfileId(groupId, profileId);
-}
+    public void updateGroupMemberPaymentStatus(int groupId, int userId){
+        MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByUserId(userId);
+        int profileId = meetingProfileDto.getProfileid();
+        meetingSqlMapper.updateGroupMemberPaymentStatusByGroupIdAndProfileId(groupId, profileId);
+    }
+
+    // * 미팅그룹 후기 작성
+    public void registerGroupReview(MeetingGroupReviewDto meetingGroupReviewDto){
+        meetingSqlMapper.insertGroupReviewDto(meetingGroupReviewDto);
+    }
+
+    // * 선발멤버PK 기준 미팅그룹 리뷰 존재 확인
+    public String checkExistGroupReviewByGroupMemberId(int groupMemberId){
+        int result = meetingSqlMapper.countIsExistGroupReviewByGroupMemberId(groupMemberId);
+        if(result > 0){
+            return "Y";
+        }
+        else{
+            return "N";
+        }
+        
+    }
+
+    // * 모집글PK 기준 해당 미팅 선발멤버가 남긴 리뷰데이터 조회
+    public List<Map<String, Object>> getGroupMemberReviewList(int groupId){
+        
+        List<Map<String, Object>> groupMemberReviewDataList = new ArrayList<>();
+        
+        List<Map<String, Object>> list =  meetingSqlMapper.selectGroupMemberListByGroupIdForAJAX(groupId);
+        for(Map<String, Object> map : list){            
+            Map<String, Object> groupMemberReviewMap = new HashMap<>();            
+            int groupMemberId = (int)map.get("groupMemberId");            
+            MeetingGroupReviewDto meetingGroupReviewDto = meetingSqlMapper.selectGroupReviewByGroupMemberId(groupMemberId);
+            groupMemberReviewMap.put("groupMemberDto", map);
+            groupMemberReviewMap.put("groupMemberReviewDto", meetingGroupReviewDto);
+            
+            groupMemberReviewDataList.add(groupMemberReviewMap);
+        }        
+        return groupMemberReviewDataList;
+    }
+
+    // * 그룹멤버 누가/누구에게PK 기준 리뷰존재여부 확인
+    public String checkExistGroupMemberReviewByFromIdAndToId(int groupMemberIdFrom, int groupMemberIdTo){
+        
+        int result = meetingSqlMapper.countIsExistGroupMemberReviewByFromIdAndToId(groupMemberIdFrom, groupMemberIdTo);
+        if(result > 0){
+            return "Y";
+        }
+        else{
+            return "N";
+        }
+    }
+
+    // * 그룹멤버 테이블 인서트
+    public void registerGroupMemberReview(MeetingMemberReviewDto meetingMemberReviewDto){
+        meetingSqlMapper.insertGroupMemberReviewDto(meetingMemberReviewDto);
+    }
+
+    // * 그룹멤버PK 기준 모집글리뷰,내가 선발한 (멤버리뷰,킹퀸선발내역,쌍방호감도) 내역 조회
+    public Map<String, Object> getUserReviewDataAll(int groupMemberId){
+        
+        Map<String, Object> userReviewDataMap = new HashMap<>();
+        
+        MeetingGroupReviewDto meetingGroupReviewDto = meetingSqlMapper.selectGroupReviewByGroupMemberId(groupMemberId);
+        List<MeetingMemberReviewDto> meetingMemberReviewDtoList = meetingSqlMapper.selectgGroupMemberReviewFromByGroupMemberId(groupMemberId);
+        List<MeetingVoteBestMemberDto> meetingVoteBestMemberDtoList = meetingSqlMapper.selectVoteBestMemberFromByGroupMemberId(groupMemberId);
+        List<MeetingBothLikeDto> meetingBothLikeDtoList = meetingSqlMapper.selectBothLikeFromByGroupMemberId(groupMemberId);
+
+        userReviewDataMap.put("meetingGroupReviewDto", meetingGroupReviewDto);
+        userReviewDataMap.put("meetingMemberReviewDtoList", meetingMemberReviewDtoList);
+        userReviewDataMap.put("meetingVoteBestMemberDtoList", meetingVoteBestMemberDtoList);
+        userReviewDataMap.put("meetingBothLikeDtoList", meetingBothLikeDtoList);
+        
+        return userReviewDataMap;
+    }
+
+
 
 
 

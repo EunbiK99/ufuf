@@ -26,11 +26,13 @@ import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
+import com.cu.ufuf.dto.MeetingGroupReviewDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
 import com.cu.ufuf.dto.MeetingKakaoApproveReqDto;
 import com.cu.ufuf.dto.MeetingKakaoApproveResponseDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
+import com.cu.ufuf.dto.MeetingMemberReviewDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingRestResponseDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
@@ -420,7 +422,80 @@ public class RestMeetingController {
         meetingRestResponseDto.setResult("success");        
         return meetingRestResponseDto;
     }
-    
+
+    @GetMapping("isGroupReviewExist")
+    public MeetingRestResponseDto isGroupReviewExist(int groupMemberId){
+
+        String resultValue = meetingService.checkExistGroupReviewByGroupMemberId(groupMemberId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(resultValue);
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerGroupReviewProcess")
+    public MeetingRestResponseDto registerGroupReviewProcess(MeetingGroupReviewDto meetingGroupReviewDto){
+        int groupMemberId = meetingGroupReviewDto.getGroupMemberId();
+        String checkedValue = meetingService.checkExistGroupReviewByGroupMemberId(groupMemberId);
+        if(checkedValue == "Y"){
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+            meetingRestResponseDto.setResult("fail");
+            return meetingRestResponseDto;
+        }
+        else{
+            meetingService.registerGroupReview(meetingGroupReviewDto);            
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+            meetingRestResponseDto.setResult("success");            
+            return meetingRestResponseDto;
+        }
+    }
+
+    @GetMapping("getGroupMemberReview")
+    public MeetingRestResponseDto getGroupMemberReview(int groupId){
+
+        List<Map<String, Object>> groupMemberReviewList = meetingService.getGroupMemberReviewList(groupId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(groupMemberReviewList);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("isMemberReviewExist")
+    public MeetingRestResponseDto isMemberReviewExist(int groupMemberIdFrom, int groupMemberIdTo){
+        String reseult = meetingService.checkExistGroupMemberReviewByFromIdAndToId(groupMemberIdFrom, groupMemberIdTo);
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(reseult);
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerGroupMemberReview")
+    public MeetingRestResponseDto registerGroupMemberReview(@RequestBody MeetingMemberReviewDto meetingMemberReviewDto){
+
+        meetingService.registerGroupMemberReview(meetingMemberReviewDto);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getSessionUserReviewDataAll")
+    public MeetingRestResponseDto getSessionUserReviewDataAll(int groupMemberId){
+
+        Map<String, Object> map = meetingService.getUserReviewDataAll(groupMemberId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(map);
+        return meetingRestResponseDto;
+    }
 
 
 

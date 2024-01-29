@@ -18,4 +18,5 @@ public class MeetingKakaoApproveResponseDto {
 	private String approved_at;
 	private String payload;
 	private AmountDto amount;
+	private CardInfoDto card_info;
 }

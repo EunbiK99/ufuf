@@ -180,8 +180,10 @@ public class MeetingController {
     public String groupReviewPage(HttpSession session, Model model, int groupId){
         
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
         session.setAttribute("meetingProfileDto", meetingProfileDto);
+        session.setAttribute("userInfoDto", userInfoDto);
 
         model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
 

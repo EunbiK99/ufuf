@@ -368,6 +368,69 @@ values (
     and groupMemberPaymentStatus = "N"
 </select>
 
+<!-- * 그룹리뷰 테이블 인서트 쿼리-->
+<insert id="insertGroupReviewDto">
+    insert into meeting_groupReview(groupMemberId, groupReviewComment, groupReviewScore) values(
+        #{groupMemberId},
+        #{groupReviewComment},
+        #{groupReviewScore}
+    )
+</insert>
+
+<!-- * 선발멤버PK 기준 미팅리뷰 존재 확인 쿼리-->
+<select id="countIsExistGroupReviewByGroupMemberId" resultType="int">
+    SELECT count(*) from meeting_groupReview
+    where groupMemberId = #{groupMemberId}
+</select>
+
+<!-- * 그룹멤버 누가/누구에게PK 기준 리뷰 존재여부 확인 카운트-->
+<select id="countIsExistGroupMemberReviewByFromIdAndToId" resultType="int">
+    select count(*) from meeting_memberReview
+    where 1=1
+    and groupMemberIdFrom = #{groupMemberIdFrom}
+    and groupMemberIdTo = #{groupMemberIdTo}
+</select>
+
+<!-- * 멤버리뷰 테이블 인서트-->
+<insert id="insertGroupMemberReviewDto">
+    INSERT into meeting_memberReview(
+        groupMemberIdFrom,
+        groupMemberIdTo,
+        memberReviewComment,
+        memberReviewScore
+    )
+    values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo},
+        #{memberReviewComment},
+        #{memberReviewScore}
+    )
+</insert>
+
+<!-- * 그룹멤버PK 기준 그룹리뷰 DTO 셀렉트-->
+<select id="selectGroupReviewByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingGroupReviewDto">
+    SELECT * from meeting_groupReview
+    where groupMemberId = #{groupMemberId}
+</select>
+
+<!-- * 그룹멤버PK 기준 내가 작성한 멤버 후기 셀렉트-->
+<select id="selectgGroupMemberReviewFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingMemberReviewDto">
+    SELECT * from meeting_memberReview
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 내가 선발한 킹/퀸선발내역 셀렉트-->
+<select id="selectVoteBestMemberFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingVoteBestMemberDto">
+    SELECT * from meeting_voteBestMember
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 내가 선택한 쌍방호감도 셀렉트-->
+<select id="selectBothLikeFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingBothLikeDto">
+    SELECT * from meeting_bothLike 
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
 
 
 
