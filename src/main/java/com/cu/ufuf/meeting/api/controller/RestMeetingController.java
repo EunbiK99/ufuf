@@ -28,6 +28,8 @@ import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
+import com.cu.ufuf.dto.MeetingKakaoApproveReqDto;
+import com.cu.ufuf.dto.MeetingKakaoApproveResponseDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingRestResponseDto;
@@ -344,7 +346,7 @@ public class RestMeetingController {
     }
 
     @PostMapping("kakaoPayReady")
-    public MeetingRestResponseDto kakaoPayReady(Model model,@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
+    public MeetingRestResponseDto kakaoPayReady(HttpSession session,@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
         System.out.println("kakaoPayReady 실행됨");
         
         System.out.println("Cid : " + kakaoPaymentReqDto.getCid());
@@ -356,15 +358,22 @@ public class RestMeetingController {
         System.out.println("Total_amount : " + kakaoPaymentReqDto.getTotal_amount());
         System.out.println("Tax_free_amount : " + kakaoPaymentReqDto.getTax_free_amount());        
         
-        KakaoPaymentResDto kakaoPaymentResDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
-        model.addAttribute("tid", kakaoPaymentResDto.getTid());
-		System.out.println("결재고유 번호: " + kakaoPaymentResDto.getTid());
-		// Order정보를 모델에 저장
+        // PC 테스트용 코드
+        MeetingKakaoReadyResponseDto meetingKakaoReadyResponseDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
+        session.setAttribute("tid", meetingKakaoReadyResponseDto.getTid());
+		System.out.println("결재고유 번호: " + meetingKakaoReadyResponseDto.getTid());
+        
+        // 모바일용 코드        
+        // KakaoPaymentResDto kakaoPaymentResDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
+        // model.addAttribute("tid", kakaoPaymentResDto.getTid());
+		// System.out.println("결재고유 번호: " + kakaoPaymentResDto.getTid());
+		// // Order정보를 모델에 저장
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
-        meetingRestResponseDto.setData(kakaoPaymentResDto);
+        // meetingRestResponseDto.setData(kakaoPaymentResDto);
+        meetingRestResponseDto.setData(meetingKakaoReadyResponseDto);
         return meetingRestResponseDto;		
     }
 
@@ -381,6 +390,37 @@ public class RestMeetingController {
         meetingRestResponseDto.setData(resOrderInfoDto);
         return meetingRestResponseDto;
     }
+
+    @PostMapping("kakaoPaymentAcceptRequestProcess")
+    public MeetingRestResponseDto kakaoPaymentAcceptRequestProcess(@RequestBody MeetingKakaoApproveReqDto meetingKakaoApproveReqDto){
+
+        System.out.println("kakaoPaymentAcceptRequestProcess 실행됨");
+
+        System.out.println("tid : " + meetingKakaoApproveReqDto.getTid());
+        System.out.println("pg_token : " + meetingKakaoApproveReqDto.getPg_token());
+        System.out.println("Partner_order_id : " + meetingKakaoApproveReqDto.getPartner_order_id());
+        System.out.println("Partner_user_id : " + meetingKakaoApproveReqDto.getPartner_user_id());
+
+        MeetingKakaoApproveResponseDto meetingKakaoApproveResponseDto = meetingService.kakaoPayApprove(meetingKakaoApproveReqDto);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingKakaoApproveResponseDto);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("changePaymentStatus")
+    public MeetingRestResponseDto changePaymentStatus(int groupId, int userId){
+
+        meetingService.updateGroupMemberPaymentStatus(groupId, userId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+    
 
 
 

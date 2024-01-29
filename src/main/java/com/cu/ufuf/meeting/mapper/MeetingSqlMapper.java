@@ -129,5 +129,14 @@ public interface MeetingSqlMapper {
     // * 카카오 결제준비응답 테이블 인서트
     public void insertKakaoPaymentRes(KakaoPaymentResDto kakaoPaymentResDto);
 
+    // * 결제 완료 후 미팅-선발멤버 테이블에서 결제내역 업데이트
+    public void updateGroupMemberPaymentStatusByGroupIdAndProfileId(int groupId, int profileId);
+
+    // * 모집글PK, 프로필PK 기준 모집글 확정멤버 Dto 셀렉트
+    public MeetingGroupMemberDto selectGroupMemberDtoByGroupIdAndProfileId(int groupId, int profileId);
+
+    // * 모집글PK기준 확정멤버 회비 미납인원 카운트
+    public int countNotPaidGroupMemberCount(int groupId);
+
 
 }

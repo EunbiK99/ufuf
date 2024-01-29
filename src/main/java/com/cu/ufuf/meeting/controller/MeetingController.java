@@ -176,6 +176,18 @@ public class MeetingController {
         return "./meeting/kakaoPayFail";
     }
 
+    @RequestMapping("groupReviewPage")
+    public String groupReviewPage(HttpSession session, Model model, int groupId){
+        
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        
+        session.setAttribute("meetingProfileDto", meetingProfileDto);
+
+        model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+
+        return "./meeting/groupReviewPage";
+    }
+
     
     
 

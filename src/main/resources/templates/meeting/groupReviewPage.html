@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>타이틀</title>
+    <title th:text="|${groupDetailInfo.meetingGroupDto.groupTitle} 리뷰페이지|"></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -30,9 +30,65 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .userImageBox{
+        width: 4em;
+        height: 4em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+
+    .listBackground{
+        border: 0;
+        border-radius: 10%;
+        background-color: cornsilk;
+    }
     </style>
 </head>
+<script th:inline="javascript">
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 
+console.log('groupDetailInfo: ', groupDetailInfo);
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+
+function makeSessionUserInfo(){
+    const sessionUserImageBox = document.getElementById("sessionUserImageBox");
+    sessionUserImageBox.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${sessionUserMeetingProfileDto.profileImg}`);
+
+    const sessionUserNickname = document.getElementById("sessionUserNickname");
+    sessionUserNickname.innerText = sessionUserMeetingProfileDto.profileNickname;
+}
+
+function changeStarFill(value){
+    const starList = document.querySelectorAll("#sessionUserReviewStarScore .bi");
+    console.log('starList: ', starList);
+
+    for(let i = 0 ; i < value ; i++){
+        starList[i].setAttribute("class", "bi bi-star-fill");
+    }
+
+}
+
+
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    
+    makeSessionUserInfo();    
+})
+
+</script>
 <body class="pt-5 pb-5">
     <div class="container-fluid">
         
@@ -59,6 +115,75 @@
         
         <div class="row">
             <div class="col">
+                
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <span class="fw-bold">리뷰 작성</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col mx-1 border border-black rounded">
+
+                        <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
+                            <div class="col-auto my-1">
+                                <span id="" class="fs-4 fw-bold">Review for Meeting</span>
+                            </div>                            
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div id="groupReviewWrapperCol" class="col">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="userImageBox">
+                                            <img id="sessionUserImageBox" class="userImage">                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-auto align-self-center px-0">
+                                        <span id="sessionUserNickname" class="fs-5 fw-bold"></span>
+                                    </div>
+                                    <div id="sessionUserReviewStarScore" class="col align-self-center">
+                                        <span class="text-warning" style="font-size: 0.9em;">
+                                            <i class="bi bi-star" value="1" onclick="changeStarFill(this.getAttribute('value'))"></i>
+                                            <i class="bi bi-star" value="2"></i>
+                                            <i class="bi bi-star" value="3"></i>
+                                            <i class="bi bi-star" value="4"></i>
+                                            <i class="bi bi-star" value="5"></i>                                            
+                                        </span>                                        
+                                    </div>
+                                </div>
+                                <div class="row my-2">
+                                    <div class="col">
+                                        <textarea id="sessionUserComment" rows="3" class="form-control" placeholder="리뷰를 입력해주세요"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 justify-content-center">
+                                    <div class="col-4 btn" role="button" style="background-color: #FF8827;">
+                                        <span class="fw-bold">작성완료</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -131,8 +256,40 @@
         </div>
     </div>
 
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="groupReviewListRow" class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="userImageBox">
+                        <img id="groupMemberImage" class="userImage">                                            
+                    </div>
+                </div>
+                <div class="col-auto align-self-center px-0">
+                    <span id="groupMemberNickname" class="fs-5"></span>
+                </div>
+                <div class="col">
+                    <span>
+                        <i class="bi bi-star-fill"></i>
+                        <span> X </span>
+                        <span id="groupReviewScore"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p id="groupReviewComment"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
+
+
+</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 

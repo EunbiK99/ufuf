@@ -56,6 +56,8 @@ let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
 
+
+/* 카카오 결제요청 전 OrderInfoDto 생성 */
 function registerOrderProcess(){
     const userNickname = sessionUserMeetingProfileDto.profileNickname;
     console.log('userNickname: ', userNickname);
@@ -202,7 +204,7 @@ function getMeetingGroupMemberList(){
                 
                 const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
                 if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
-                    kakaoPayButton.classList.toggle("d-none");
+                    kakaoPayButton.classList.remove("d-none");
                 }
             }
 
