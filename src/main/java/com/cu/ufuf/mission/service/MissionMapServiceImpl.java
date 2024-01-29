@@ -9,6 +9,7 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
+
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
 import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
@@ -104,38 +105,38 @@ public class MissionMapServiceImpl {
         return missionInfoList;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     // 미션 상세 출력
-    // public Map<String, Object> getMissionDetail(int mission_id){
+    public Map<String, Object> getMissionDetail(int mission_id){
 
-    //     Map<String, Object> missionDetail = new HashMap<>();
+        Map<String, Object> missionDetail = new HashMap<>();
 
-    //     MissionInfoDto missionDto = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionInfoDto missionInfoDto = missionMapsqlMapper.selectMissionById(mission_id);
 
-    //     int user_id = missionDto.getUser_id();
+        int user_id = missionInfoDto.getUser_id();
 
-    //     missionDetail.put("missionDto", missionDto);
-    //     missionDetail.put("userDto", missionMapsqlMapper.selectUserById(user_id));
+        missionDetail.put("missionInfoDto", missionInfoDto);
+        missionDetail.put("missionCourseList", missionMapsqlMapper.selectCourseByMission(mission_id));
+        missionDetail.put("userInfoDto", missionMapsqlMapper.selectUserById(user_id));
 
-    //     return missionDetail;
-    // }
+        return missionDetail;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // // 주문상태 업데이트
     // public void updateOrderStatus(OrderInfoDto orderInfoDto){
