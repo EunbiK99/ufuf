@@ -42,10 +42,10 @@
                    
 
                     const year = aa.getFullYear();
-                    const month = aa.getMonth();
-                    const day = aa.getDate();
-                    const hour = aa.getHours();
-                    const min = aa.getMinutes();
+                    const month = (aa.getMonth() + 1).toString().padStart(2, '0');
+                    const day = aa.getDate().toString().padStart(2, '0');
+                    const hour = aa.getHours().toString().padStart(2, '0');
+                    const min = aa.getMinutes().toString().padStart(2, '0');
 
 
                     const formattedDate = year + '-' + month + '-' + day + ' ' + hour + "시" + min + "분";

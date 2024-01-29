@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
 import com.cu.ufuf.dto.CircleBoardDto;
@@ -24,6 +23,11 @@ import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Service
@@ -450,5 +454,47 @@ public class CircleService {
 
         return circleSqlMapper.circleBoardImageInfoByCircleBoardId(circle_board_id);
     }
+
+    public void itemInfoInsert(int circle_schedule_id){
+        
+        circleSqlMapper.itemInfoInsert(circle_schedule_id);
+    }
+    public int circleScheduleIdMaxValue(){
+        
+        return circleSqlMapper.circleScheduleIdMaxValue();
+    }
     
+    public void kakaoPaymentReqInsert(KakaoPaymentReqDto kakaoPaymentReqDto){
+        
+        circleSqlMapper.kakaoPaymentReqInsert(kakaoPaymentReqDto);
+    }
+    public void orderInfoInsert(OrderInfoDto orderInfoDto){
+
+        circleSqlMapper.orderInfoInsert(orderInfoDto);
+    }
+    public int itemPkGetByCircleScheduleId(int circle_schedule_id){
+
+        return circleSqlMapper.itemPkGetByCircleScheduleId(circle_schedule_id);
+    }
+    public int userPkByCircleScheduleId(int circle_schedule_id){
+
+        return circleSqlMapper.userPkByCircleScheduleId(circle_schedule_id);
+    }
+    public String orderIdMax(){
+        
+        return circleSqlMapper.orderIdMax();
+    }
+
+    public void kakaoPaymentResInsert(KakaoPaymentResDto kakaoPaymentResDto){
+        
+        circleSqlMapper.kakaoPaymentResInsert(kakaoPaymentResDto);
+    }
+    public void kakaoPaymentAcceptReqInsert(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+
+        circleSqlMapper.kakaoPaymentAcceptReqInsert(kakaoPaymentAcceptReqDto);
+    }
+    public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+
+        circleSqlMapper.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
+    }
 }

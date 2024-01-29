@@ -22,6 +22,11 @@ import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 @Mapper
@@ -137,5 +142,29 @@ public interface CircleSqlMapper {
     
     // 동아리 게시글 이미지 리스트 가져오기
     public List<CircleBoardImageDto> circleBoardImageInfoByCircleBoardId(int circle_board_id);
+
+    // circleScheduleIdMax
+    public int circleScheduleIdMaxValue();
+
+    // 카카오페이 상품테이블 insert
+    public void itemInfoInsert(int circle_schedule_id);
+
+    // 카카오결제요청 테이블 insert && 결제응답테이블 insert && 주문번호테이블 insert
+    public void kakaoPaymentReqInsert(KakaoPaymentReqDto kakaoPaymentReqDto);
+    public void kakaoPaymentResInsert(KakaoPaymentResDto kakaoPaymentResDto);
+    public void orderInfoInsert(OrderInfoDto orderInfoDto);
+
+    //itemPk값 가져오기 & userPk가져오기(스케줄등록한사람)
+    public int itemPkGetByCircleScheduleId(int circle_schedule_id);
+    public int userPkByCircleScheduleId(int circle_schedule_id);
+
+    //orderId 가져오기
+    public String orderIdMax();
+
+    // 카카오결제승인요청 테이블 insert && 결제승인응답 테이블 insert
+    public void kakaoPaymentAcceptReqInsert(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
+    public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
+
+
     
 }

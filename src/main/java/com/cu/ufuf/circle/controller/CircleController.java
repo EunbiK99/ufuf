@@ -320,6 +320,21 @@ public class CircleController {
 
         return "circle/circleFeedArticlePage";
     }
+    @RequestMapping("circlePaymentFail")
+    public String circlePaymentFail(){
+
+        return "circle/circlePaymentFail";
+    }
+    @RequestMapping("circlePaymentSuccess")
+    public String circlePaymentSuccess(){
+
+        return "circle/circlePaymentSuccess";
+    }
+    @RequestMapping("circlePaymentCancel")
+    public String circlePaymentCancel(){
+
+        return "circle/circlePaymentCancel";
+    }
     
     
     

@@ -185,7 +185,48 @@
     <select id="circleBoardImageInfoByCircleBoardId" resultType="com.cu.ufuf.dto.CircleBoardImageDto">
         SELECT * from circle_board_image WHERE circle_board_id = #{circle_board_id}
     </select>
-
+    <select id="circleScheduleIdMaxValue" resultType="int">
+        SELECT MAX(circle_schedule_id) from circle_schedule
+    </select>
+    <insert id="itemInfoInsert">
+        INSERT into item_info(item_category_id, merchan_id) values(
+            2, #{merchan_id}
+        )
+    </insert>
+    <insert id="kakaoPaymentReqInsert">
+        INSERT into kakao_payment_req(cid, partner_user_id, partner_order_id, item_code, item_name, quantity, total_amount, tax_free_amount) values(
+                'TC0ONETIME', #{partner_user_id}, #{partner_order_id}, #{item_code}, #{item_name}, #{quantity}, #{total_amount}, #{tax_free_amount}
+        )
+    </insert>
+    <insert id="orderInfoInsert">
+        INSERT into order_info(order_id, item_id, user_id, status) values(
+            #{order_id}, #{item_id}, #{user_id}, #{status}
+        )
+    </insert>
+    <select id="itemPkGetByCircleScheduleId" resultType="int">
+        select item_id from item_info where merchan_id = #{circle_schedule_id} and item_category_id = 2
+    </select>
+    <select id="userPkByCircleScheduleId" resultType="int">
+        SELECT user_id from circle_member where circle_member_id = (SELECT circle_member_id  from circle_schedule WHERE circle_schedule_id = #{circle_schedule_id})
+    </select>
+    <select id="orderIdMax" resultType="java.lang.String">
+        SELECT MAX(order_id) from order_info
+    </select>
+    <insert id="kakaoPaymentResInsert">
+        INSERT into kakao_payment_res(tid, next_redirect_mobile_url) values(
+            #{tid}, #{next_redirect_mobile_url}
+        )
+    </insert>
+    <insert id="kakaoPaymentAcceptReqInsert">
+        INSERT into kakao_payment_accept_req(cid, tid, partner_order_id, partner_user_id, pg_token) values(
+            #{cid}, #{tid}, #{partner_order_id}, #{partner_user_id}, #{pg_token}
+        )
+    </insert>
+    <insert id="kakaoPaymentAcceptResInsert">
+        insert into kakao_payment_accept_res(tid, amount, card_info, partner_order_id, partner_user_id, aid, payment_method_type, approved_at) values(
+            #{tid}, #{amount}, #{card_info}, #{partner_order_id}, #{partner_user_id}, #{aid}, #{payment_method_type}, #{approved_at}
+        )
+    </insert>
     
     
 </mapper>
