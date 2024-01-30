@@ -24,11 +24,13 @@ import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.mission.service.MissionChatServiceImpl;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.cu.ufuf.mission.service.MissionPaymentServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,6 +48,8 @@ public class MissionMapRestController {
     private MissionMapServiceImpl missionMapService;
     @Autowired
     private MissionPaymentServiceImpl missionPaymentService;
+    @Autowired
+    private MissionChatServiceImpl MissionChatService;
 
     @PostMapping("registerMissionProcess")
     public RestResponseDto registerMissionProcess(@RequestBody MissionRegRequestDto params){
@@ -236,6 +240,18 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @PostMapping("applyMission")
+    public RestResponseDto applyMission(@RequestBody MissionChatRoomDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        MissionChatService.applyMission(params);
+        
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
 
 
     // @PostMapping("getItemAndOrderInfo")
@@ -272,17 +288,7 @@ public class MissionMapRestController {
     // }
 
 
-    // @PostMapping("acceptingMission")
-    // public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-        
-    //     missionMapService.acceptingMission(params);
-        
-    //     restResponseDto.setResult("Success");
-        
-    //     return restResponseDto;
-    // }
+    
 
     // @GetMapping("loadMyAccMission")
     // public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){

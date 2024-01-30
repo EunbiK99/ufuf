@@ -75,16 +75,7 @@
     where user_id = #{user_id}
 </select>
 
-<insert id="insertMissionChatRoom">
-    insert into mission_chat_room(
-        mission_id,
-        user_id
-        )
-    VALUES(
-        #{mission_id},
-        #{user_id}
-    )
-</insert>
+
 
 
 
