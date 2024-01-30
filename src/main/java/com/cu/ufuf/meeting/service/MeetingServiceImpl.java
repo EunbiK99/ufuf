@@ -309,15 +309,16 @@ public class MeetingServiceImpl {
 		parameters.add("quantity", Integer.toString(kakaoPaymentReqDto.getQuantity()));
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
-		// 집 IP
-        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+		
+        // // 집 IP
+        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // // 학원 IP
-        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // 학원 IP
+        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -476,6 +477,11 @@ public class MeetingServiceImpl {
         userReviewDataMap.put("meetingBothLikeDtoList", meetingBothLikeDtoList);
         
         return userReviewDataMap;
+    }
+
+    // * 모집글PK, 미팅프로필PK 기준 미팅확정멤버Dto 셀렉트
+    public MeetingGroupMemberDto getGroupMemberDtoByGroupIdAndProfileId(int groupId, int profileId){
+        return meetingSqlMapper.selectGroupMemberDtoByGroupIdAndProfileId(groupId, profileId);
     }
 
 

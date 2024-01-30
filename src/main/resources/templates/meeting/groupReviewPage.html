@@ -70,28 +70,30 @@
 let groupDetailInfo = /*[[${groupDetailInfo}]]*/
 let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 let sessionUserInfo = /*[[${session.userInfoDto}]]*/
+let sessionUserReviewData = /*[[${userReviewData}]]*/
 
 console.log('sessionUserInfo: ', sessionUserInfo);
 console.log('groupDetailInfo: ', groupDetailInfo);
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+console.log('sessionUserReviewData: ', sessionUserReviewData);
 
-function getSessionUserReviewDataAll(){
-    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
-    let groupMemberId;
-    for(e of groupMemberDataList){
-        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
-            groupMemberId = e.groupMemberDto.groupMemberId;
-        }
-    }
+// function getSessionUserReviewDataAll(){
+//     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+//     let groupMemberId;
+//     for(e of groupMemberDataList){
+//         if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+//             groupMemberId = e.groupMemberDto.groupMemberId;
+//         }
+//     }
 
-    fetch("./api/getSessionUserReviewDataAll?groupMemberId=" + groupMemberId)
-    .then(response => response.json())
-    .then(response => {
-        const sessionUserReviewData = response.data;
-        console.log('sessionUserReviewData: ', sessionUserReviewData);
-
-    });
-}
+//     fetch("./api/getSessionUserReviewDataAll?groupMemberId=" + groupMemberId)
+//     .then(response => response.json())
+//     .then(response => {
+//         const responseData = response.data;
+//         sessionUserReviewData = responseData
+//         console.log('sessionUserReviewData: ', sessionUserReviewData);
+//     });
+// }
 
 const isMemberReviewExist = async(targetMemberIdTo)=>{
     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
@@ -184,44 +186,105 @@ async function registerGroupMemberReview(targetGroupMemberId){
 
 function makeGroupMemberListRow(){
     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+        let groupMemberId;
+        for(e of groupMemberDataList){
+            if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+                groupMemberId = e.groupMemberDto.groupMemberId;
+            }
+        }
+
     const groupMemberListWrapperCol = document.getElementById("groupMemberListWrapperCol");
     groupMemberListWrapperCol.innerHTML = "";
 
+
     for(e of groupMemberDataList){
-        const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
-        groupMemberListRow.setAttribute("id", `groupMemberId${e.groupMemberDto.groupMemberId}`);
-        const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
-        groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
-
-        const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
-        groupMemberListNickname.innerText = e.groupMemberProfileDto.profileNickname;
-
-        if(sessionUserInfo.gender !== e.groupMemberUserDto.gender){
-            const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
-            groupMemberLikeIcon.classList.remove("d-none");
+        
+        if(groupMemberId === e.groupMemberDto.groupMemberId){
+            continue;
         }
+        if(sessionUserReviewData.meetingMemberReviewDtoList.length === 0){
+            const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
+            groupMemberListRow.setAttribute("id", `groupMemberId${e.groupMemberDto.groupMemberId}`);
+            const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
+            groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
 
-        const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
-        groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${e.groupMemberDto.groupMemberId}`;
-        groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
+            const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
+            groupMemberListNickname.innerText = e.groupMemberProfileDto.profileNickname;
 
-        const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
-        accordionCollapse.setAttribute("id", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
-        accordionCollapse.dataset.bsParent = `#groupMemberId${e.groupMemberDto.groupMemberId}`;
+            const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
+            groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${e.groupMemberDto.groupMemberId}`;
+            groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
 
-        const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
-        // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
-        groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
+            const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
+            accordionCollapse.setAttribute("id", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
+            accordionCollapse.dataset.bsParent = `#groupMemberId${e.groupMemberDto.groupMemberId}`;
 
-        const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
-        starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
+            const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
+            // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
+            groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
 
-        const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
-        groupMemberReviewSubmitButton.setAttribute("onclick", `registerGroupMemberReview(${e.groupMemberDto.groupMemberId})`);
+            const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
+            starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
 
-        groupMemberListWrapperCol.appendChild(groupMemberListRow);
+            const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
+            groupMemberReviewSubmitButton.setAttribute("onclick", `registerGroupMemberReview(${e.groupMemberDto.groupMemberId})`);
+
+            if(sessionUserInfo.gender !== e.groupMemberUserDto.gender){
+                const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
+                groupMemberLikeIcon.classList.remove("d-none");
+            }
+
+            groupMemberListWrapperCol.appendChild(groupMemberListRow);
+        }
+        else if(e.groupMemberDto.groupMemberId !== sessionUserReviewData.meetingMemberReviewDtoList.groupMemberIdTo){
+            const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
+            groupMemberListRow.setAttribute("id", `groupMemberId${e.groupMemberDto.groupMemberId}`);
+            const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
+            groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
+
+            const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
+            groupMemberListNickname.innerText = e.groupMemberProfileDto.profileNickname;
+
+            const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
+            groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${e.groupMemberDto.groupMemberId}`;
+            groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
+            groupMemberAccordionButton.setAttribute("style", "background-color : green;");
+            const buttonText = groupMemberAccordionButton.children[0];
+            buttonText.setAttribute("class", "fw-bold text-white")
+            buttonText.innerText = "작성완료!";
+
+            const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
+            accordionCollapse.setAttribute("id", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
+            accordionCollapse.dataset.bsParent = `#groupMemberId${e.groupMemberDto.groupMemberId}`;
+
+            const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
+            // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
+            groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
+            groupMemberListComment[0].setAttribute("readonly","");
+            groupMemberListComment[0].value = i.memberReviewComment;
+
+            const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
+            starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
+            const starFillList = starScoreWrapper.querySelectorAll(".bi");
+            for(stars of starFillList){
+                stars.removeAttribute("onclick");
+                stars.setAttribute("class", "bi bi-star");
+            }
+            for(let x = 0 ; x < i.memberReviewScore ; x++){
+                starFillList[x].setAttribute("class", "bi bi-star-fill");
+            }
+
+            const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
+            const submitButtonText = groupMemberReviewSubmitButton.children[0];
+            submitButtonText.innerText = "리뷰감사!";
+
+            if(sessionUserInfo.gender !== e.groupMemberUserDto.gender){
+                const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
+                groupMemberLikeIcon.classList.remove("d-none");
+            }
+            groupMemberListWrapperCol.appendChild(groupMemberListRow);
+        }               
     }
-
 }
 
 async function isGroupReviewExist(){
@@ -365,7 +428,7 @@ function changeStarFill(target){
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    getSessionUserReviewDataAll();    
+    // getSessionUserReviewDataAll();    
     makeSessionUserReviewInputRow();
     makeGroupMemberReviewListRow();
     makeGroupMemberListRow();
@@ -425,14 +488,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         <div class="row my-2">
                             <div class="col">
                                 <div class="row">
-                                    <div id="groupReviewWrapperCol" class="col overflow-y-scroll" style="height: 20em;">
+                                    <div id="groupReviewWrapperCol" class="col overflow-y-scroll" style="height: 13em;">
                                         
                                     </div>
                                 </div>
                             </div>
                         </div>                        
 
-                        <div id="sessionUserReviewInputRow" class="row my-2">
+                        <div id="sessionUserReviewInputRow" class="row mt-4 mb-2">
                             <div class="col">
                                 <div class="row">
                                     <div class="col-auto">
@@ -445,17 +508,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                     <div id="sessionUserReviewStarScore" class="col align-self-center">
                                         <span class="text-warning" style="font-size: 0.9em;">
-                                            <i class="bi bi-star" value="1" onclick="changeStarFill(this.getAttribute('value'))"></i>
-                                            <i class="bi bi-star" value="2" onclick="changeStarFill(this.getAttribute('value'))"></i>
-                                            <i class="bi bi-star" value="3" onclick="changeStarFill(this.getAttribute('value'))"></i>
-                                            <i class="bi bi-star" value="4" onclick="changeStarFill(this.getAttribute('value'))"></i>
-                                            <i class="bi bi-star" value="5" onclick="changeStarFill(this.getAttribute('value'))"></i>                                            
+                                            <i class="bi bi-star" value="1" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="2" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="3" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="4" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="5" onclick="changeStarFill(this)"></i>                                            
                                         </span>                                        
                                     </div>
                                 </div>
                                 <div class="row my-2">
                                     <div class="col">
-                                        <textarea id="sessionUserComment" rows="3" class="form-control" placeholder="리뷰를 입력해주세요"></textarea>
+                                        <textarea id="sessionUserComment" rows="2" class="form-control" placeholder="리뷰를 입력해주세요"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mt-4 justify-content-center">
@@ -469,7 +532,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     </div>
                 </div>
 
-                <div class="row mt-2">
+                <div class="row mt-2 mb-5">
                     <div class="col mx-1 border border-black rounded">
 
                         <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
@@ -482,11 +545,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col">
                                 <div class="row">
                                     <div class="col-auto">
-                                        <span class="fw-bold fs-5">Member List</span>
+                                        <span class="fw-bold fs-5">멤버들에게 리뷰와 하트를 보내봐요 :)</span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div id="groupMemberListWrapperCol" class="col overflow-y-scroll" style="height: 20em;">
+                                    <div id="groupMemberListWrapperCol" class="col overflow-y-scroll" style="height: 13em;">
                                         
                                     </div>
                                 </div>

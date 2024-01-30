@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/meeting/*")
@@ -181,11 +183,19 @@ public class MeetingController {
         
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int profileId = meetingProfileDto.getProfileid();
+
+        MeetingGroupMemberDto meetingGroupMemberDto = meetingService.getGroupMemberDtoByGroupIdAndProfileId(groupId, profileId);
+        int groupMemberId = meetingGroupMemberDto.getGroupMemberId();
+
+        Map<String, Object> userReviewData = meetingService.getUserReviewDataAll(groupMemberId);
         
         session.setAttribute("meetingProfileDto", meetingProfileDto);
         session.setAttribute("userInfoDto", userInfoDto);
 
         model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+        model.addAttribute("meetingGroupMemberDto", meetingGroupMemberDto);
+        model.addAttribute("userReviewData", userReviewData);
 
         return "./meeting/groupReviewPage";
     }
