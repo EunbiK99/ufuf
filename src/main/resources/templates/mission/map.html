@@ -25,7 +25,7 @@
     imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
     imageOption = {offset: new kakao.maps.Point(24, 30)};
 
-    var goalImg = relativePath + "/public/image/mission/free-icon-goal-2817800.png", // 마커이미지의 주소입니다    
+    var goalImg = relativePath + "/public/image/mission/free-icon-finish-line-1894481.png", // 마커이미지의 주소입니다    
     goalImgSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
     goalImgOption = {offset: new kakao.maps.Point(24, 30)};
 
@@ -191,7 +191,7 @@
         showMissionList.classList.remove("d-none");     
 
         const mapContainer = document.getElementById("map");
-        mapContainer.style.height = "21.5em";
+        mapContainer.style.height = "21em";
 
         const findMyLocation = document.getElementById("findMyLocation");
         findMyLocation.classList.add("button-slide-up");
@@ -278,6 +278,7 @@
         const totalReward = missionDetailBox.querySelector(".totalReward");
         const limitHour = missionDetailBox.querySelector(".limitHour");
         const limitMinute = missionDetailBox.querySelector(".limitMinute");
+        const createdAt = missionDetailBox.querySelector(".createdAt");
         const userProfileImg = missionDetailBox.querySelector(".userProfileImg");
         const userName = missionDetailBox.querySelector(".userName");
         const missionApplyModalBtn = document.getElementById("missionApplyModalBtn");
@@ -373,10 +374,12 @@
                                 console.log('주소를 가져오지 못했습니다.');
                             }
                         });
-                    })(lat, lng); 
+                    })(lat, lng);
 
-                    setMissionMarkers(lat,lng);
-                        
+                    if(i < (mission.missionCourseList.length - 1)){
+                        setMissionMarkers(lat,lng);
+                    }
+
                     courseListBox.appendChild(courseWrapper);
                 }
 
@@ -398,6 +401,16 @@
                 }else{
                     limitMinute.innerText = minutes;
                 }
+
+                var regDate = new Date(mission.missionInfoDto.created_at);
+                var regYear = regDate.getFullYear();
+                var regMonth = regDate.getMonth() + 1;
+                var regDay = regDate.getDate();
+                var regHour = regDate.getHours();
+                var regMinute = regDate.getMinutes();
+
+                regDate = regYear + "." + regMonth + "." + regDay + " " + regHour + ":" + regMinute;
+                createdAt.innerText = regDate;
 
                 doesUserLogin()
                     .then(sessionUserPk => {
@@ -457,9 +470,13 @@
 
         const missionApplyBtn = document.getElementById("missionApplyBtn");
 
-        const data = {
-            
-        };
+        doesUserLogin()
+        .then(sessionUserPk => {
+            const data = {
+                mission_id: mission_id,
+                user_id : sessionUserPk
+            }
+        });
 
         fetch("./acceptingMission", {
             method: "POST",
@@ -540,22 +557,22 @@
     }
 
     .button-slide-up {
-        top: 14.9em; /* 이동할 거리 설정 */
-    }
-
-    #backToList{
-        z-index: 2;
-        position: absolute;
-        bottom: 17.6em;
-        /* margin: 0; */
-        left: 0;
-        right: 0;
+        top: 14.4em; /* 이동할 거리 설정 */
     }
 
     #missionApplyModal {
         width: 90%;
         top: 23.5%;
         left: 5%;
+    }
+
+    #detailBottomBtn{
+        position: sticky;
+        z-index: 2;
+        bottom: 3.45em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
     }
 
 
@@ -575,10 +592,11 @@
                         <!-- 현재 위치 출력 -->
                         <div class="row">
                             <div class="fixed-top z-2">
-                                <div class="col bg-white justify-content-center mt-3 shadow-sm rounded-5 border border-secondary-subtle d-flex align-text-center">
+                                <div class="col bg-white justify-content-center shadow-sm rounded-5 border border-secondary-subtle d-flex align-text-center mx-4"
+                                    style="margin-top: 0.55em;">
                                     <span><i class="bi bi-geo-alt me-2" style="margin-bottom: 0.05em;"></i></span>
                                     <span id="nowLocation" class="text-secondary"
-                                        style="font-size: 0.9em; margin-top: 0.1em;"></span>
+                                        style="font-size: 0.85em; margin-top: 0.1em;"></span>
                                 </div>
                             </div>
                         </div>
@@ -659,83 +677,81 @@
                         </div>
 
                         <!-- 미션 상세 -->
-                        <div id="missionDetailBox" class="shut row border-top d-none" style="height:17em;">
+                        <div id="missionDetailBox" class="shut row border-top d-none">
                             <div class="col px-0">
-                                    <div class="row border-bottom" style="padding-top: 0.5em; padding-bottom: 0.43em;">
+                                <div class="overflow-y-scroll overflow-x-hidden" style="height: 15em;"> 
+                                    <div class="row" style="padding-top: 0.55em; padding-bottom: 0.1em;">
                                         <div class="col">
                                             <div class="row mx-2">
-                                                <div class="title col fw-semibold align-self-center" style="font-size: 1.11em;">
+                                                <div class="col d-flex align-self-center ps-1">
+                                                    <span class="text-body-tertiary d-flex align-self-center" onclick="loadMissionList()">
+                                                        <i class="bi bi-chevron-left align-self-center" style="font-size: 0.9em;"></i>
+                                                    </span>
+                                                    <span class="title align-self-center fw-semibold ms-2" style="font-size: 1.1em;"></span>
                                                 </div>
-                                            </div>
-                                            <div class="row mx-2" style="margin-top: 0.1em;">
-                                                <div class="col d-flex align-self-center" style="font-weight: 500;">
-                                                    <span class="me-3 d-flex align-self-center" style="color: #8b8b8b;">제한 시간</span>
-                                                    <span class="limitHour fw-semibold d-flex align-self-center" style="color: #FF8827;"></span>
-                                                    <span class="mx-1 d-flex align-self-center" style="color: #6d6d6d;">:</span>
-                                                    <span class="limitMinute fw-semibold d-flex align-self-center " style="color: #FF8827;"></span>
-                                                </div>
-                                                <div class="col text-start d-flex align-self-center justify-content-end" style="overflow: hidden;">
-                                                    <img class="userProfileImg img-fluid rounded-circle me-2  d-flex align-self-center" 
-                                                        style="height: 1.13em; width: 1.13em; object-fit: cover; border-radius: 50%; letter-spacing: 0.06em;">
-                                                    <span class="userName d-flex align-self-center"
-                                                        style="color: #818181; font-weight: 500; font-size: 0.95m;"></span>
-                                                </div>
-                                            </div>
+                                            </div>   
                                         </div>
                                     </div>
-
-                                <div class="overflow-y-auto overflow-x-hidden" style="height: 12.5em;"> 
+                                    <div class="row mx-2" style="margin-top: 0.07em;">
+                                        <div class="col text-start d-flex align-self-center justify-content-start" style="overflow: hidden;">
+                                            <img class="userProfileImg img-fluid rounded-circle me-2  d-flex align-self-center" 
+                                                style="height: 1.13em; width: 1.13em; object-fit: cover; border-radius: 50%; letter-spacing: 0.06em;">
+                                            <span class="userName d-flex align-self-center"
+                                                style="color: #818181; font-weight: 500; font-size: 0.90em;"></span>
+                                        </div>
+                                        <div class="createdAt col text-end" style="color: #818181; font-size: 0.90em;">
+                                        </div>
+                                    </div>
                                     <div class="row">
-                                        <div id="courseListBox" class="col">
-
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3 mx-2">
-                                        <div class="col mt-2">
-                                            <div class="row">
-                                                <div class="col fw-semibold text-dark-emphasis">
-                                                    미션상세
-                                                </div>
-                                            </div>
+                                        <div class="col">
                                             <div class="row mt-1">
-                                                <div class="col">
-                                                    <span class="detail text-secondary align-self-center" style="font-size: 0.95em;"></span>
+                                                <div id="courseListBox" class="col">
+
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mx-2 mb-5">
+                                                <div class="col mt-1 mb-2">
+                                                    <div class="row">
+                                                        <div class="col-3 fw-semibold text-dark-emphasis">
+                                                            미션상세
+                                                        </div>
+                                                        <div class="col border-bottom mb-2 me-2"></div>
+                                                    </div>
+                                                    <div class="row mt-1">
+                                                        <div class="col">
+                                                            <span class="detail text-secondary align-self-center" style="font-size: 0.95em;"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-3 pb-2 mx-2 border-bottom">
-                                        <div class="col text-start d-flex align-self-center fw-semibold text-dark-emphasis mt-2" style=" font-weight: 500; font-size: 1.04em;">
-                                            전체 미션 성공시
-                                        </div>
-                                        <div class="col text-end align-self-center" style="color: #ff943c; font-weight: 500; font-size: 1.04em;">
-                                            <span class="totalReward ms-1 align-self-center fw-semibold" style="color: #FF8827; font-size: 1.1em;"></span>
-                                            <span class="align-self-center ms-1 text-secondary">원</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row py-3 mb-1 mx-2">
-                                        <div class="col fw-semibold align-self-center px-2 d-grid">
-                                            <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                                style="font-size: 1.0em; background-color: #FF8827; height: 2.5em;">
-                                                <i class="bi bi-plus-lg me-1" style="font-size: 1.03em;"></i><span class="me-1" style="font-size: 1.03em;">미션 수락신청</span>
-                                            </button>
-                                        </div>
-                                    </div>
-
                                 </div>
-
-                                <div id="backToList" class="fixed-bottom">
-                                <div class="row text-center">
+                                <div class="row bg-white border-top px-2" id="detailBottomBtn" style="padding-top: 0.3em; padding-bottom: 0.33em; height: 3.6em;">
                                     <div class="col">
-                                        <button class="btn border rounded-5 bg-white text-secondary shadow-sm mx-auto" style="font-size: 0.9em;" onclick="loadMissionList()">
-                                            <i class="bi bi-list"></i>
-                                            목록으로
+                                        <div class="row align-items-center" style="margin-top: -0.1em;">
+                                            <div class="col align-items-center">
+                                                <span class="align-self-center fw-semibold" style="color: #8b8b8b; font-size: 0.83em;">전체 미션성공시</span>
+                                                <span class="totalReward ms-1 align-self-center fw-semibold" style="color: #b1b1b1; font-size: 0.83em;"></span>
+                                                <span class="align-self-center" style="color: #8b8b8b; font-size: 0.83em;">원</span>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center">
+                                            <div class="col d-flex align-items-center">
+                                                <span class="align-self-center fw-semibold text-dark-emphasis me-2" style="font-size: 1em;">제한시간</span>
+                                                <span class="limitHour fw-semibold align-self-center" style="color: #FF8827; font-size: 1em;"></span>
+                                                <span class="align-self-center" style="color: #6d6d6d; font-size: 1em;">:</span>
+                                                <span class="limitMinute fw-semibold align-self-center " style="color: #FF8827; font-size: 1em;"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 fw-semibold align-self-center d-grid justify-content-end pe-1 ps-0">
+                                        <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
+                                            style="font-size: 1.0em; background-color: #FF8827;">
+                                            <i class="bi bi-plus-lg me-1" style="font-size: 0.8em;"></i><span class="" style="font-size: 0.85em;">미션신청</span>
                                         </button>
                                     </div>
                                 </div>
-                                </div>
-
                                 
                             </div>
                         </div>
@@ -803,7 +819,7 @@
 
 <!-- 미션 코스 리스트 출력 -->
 <div id="courseListTemplete" class="d-none">
-    <div class="courseWrapper row mt-3 mx-1">
+    <div class="courseWrapper row py-2 mx-1">
         <div class="col">
             <div class="row">
                 <div class="col-2 d-flex justify-content-center align-items-center">
@@ -817,7 +833,7 @@
                 </div>
                 <div class="col px-0 align-self-center">
                     <div class="row">
-                        <div class="courseName col fw-semibold text-dark-emphasis pe-1" style="font-size: 0.93em;">
+                        <div class="courseName col fw-semibold text-dark-emphasis pe-1" style="font-size: 0.95em;">
                         </div>
                     </div>
                     <div class="row">
@@ -826,7 +842,7 @@
                     </div>
                 </div>
                 <div class="col-3 text-end align-self-center">
-                    <span class="courseReward align-self-center" style="color: #777777; font-size: 0.85em;"></span>
+                    <span class="courseReward align-self-center fw-semibold" style="color: #b1b1b1; font-size: 0.85em;"></span>
                     <span class="align-self-center text-secondary" style="font-size: 0.78em;">원</span>
                 </div>
             </div>

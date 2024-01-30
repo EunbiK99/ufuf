@@ -3,5 +3,42 @@
 
 <mapper namespace="com.cu.ufuf.mission.mapper.MissionChatSqlMapper">
 
+    <insert id="createMissionRoom">
+        <selectKey keyProperty="chat_room_id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS chat_room_id
+        </selectKey>
+        insert into mission_chat_room(
+            mission_id,
+            user_id
+            )
+        VALUES(
+            #{mission_id},
+            #{user_id}
+        )
+    </insert>
+
+    <insert id="insertChat">
+        <selectKey keyProperty="chat_id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS chat_id
+        </selectKey>
+        insert into mission_chat(
+            chat_room_id,
+            chat_category_id,
+            user_id,
+            message,
+            is_read
+            )
+        values(
+            #{chat_room_id},
+            #{chat_category_id},
+            #{user_id},
+            #{message},
+            #{is_read}
+        );
+    </insert>
+
+
+
+    
 
 </mapper>

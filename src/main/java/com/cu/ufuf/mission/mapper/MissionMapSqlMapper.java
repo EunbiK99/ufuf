@@ -32,8 +32,7 @@ public interface MissionMapSqlMapper {
     // 미션 상태 업데이트
     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
 
-    // 미션 채팅룸 인서트
-    public void insertMissionChatRoom(MissionChatRoomDto missionChatRoomDto);
+    
 
 
 
