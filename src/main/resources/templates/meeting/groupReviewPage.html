@@ -261,7 +261,7 @@ function makeGroupMemberListRow(){
             // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
             groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
             groupMemberListComment[0].setAttribute("readonly","");
-            groupMemberListComment[0].value = i.memberReviewComment;
+            groupMemberListComment[0].value = sessionUserReviewData.meetingMemberReviewDtoList.memberReviewComment;
 
             const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
             starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
@@ -270,7 +270,7 @@ function makeGroupMemberListRow(){
                 stars.removeAttribute("onclick");
                 stars.setAttribute("class", "bi bi-star");
             }
-            for(let x = 0 ; x < i.memberReviewScore ; x++){
+            for(let x = 0 ; x < sessionUserReviewData.meetingMemberReviewDtoList.memberReviewScore ; x++){
                 starFillList[x].setAttribute("class", "bi bi-star-fill");
             }
 
