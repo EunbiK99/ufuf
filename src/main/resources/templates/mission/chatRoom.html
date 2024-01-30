@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>미션등록</title>
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+<script>
+
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+    window.addEventListener("DOMContentLoaded", () => {
+
+        var spanElements = document.querySelectorAll("span");
+        spanElements.forEach(function(span) {
+            span.classList.add("align-middle");
+        });
+
+    });
+
+</script>
+
+<style>
+
+    *{font-family: -apple-system, 
+        BlinkMacSystemFont, 
+        "Apple SD Gothic Neo", 
+        "Pretendard Variable", 
+        Pretendard, Roboto, 
+        "Noto Sans KR", 
+        "Segoe UI",
+        "Malgun Gothic", 
+        "Apple Color Emoji", 
+        "Segoe UI Emoji", 
+        "Segoe UI Symbol", 
+        sans-serif;
+        letter-spacing: 0.03em;
+    }
+
+    .form-control:focus {
+      border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
+      box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
+
+    body { 
+        position: fixed;
+        width: 100%;
+    }
+
+    .word {
+        width: 1rem;
+        font-size: 1rem;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #missionInfo{
+        position: sticky;
+        z-index: 2;
+        top: 3.3em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+    }
+
+    #inputChat{
+        position: fixed;
+        z-index: 2;
+        bottom: 3.4em;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+    }
+
+
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col px-0">
+
+                <div class="row py-2 border-bottom border-dark-subtle px-2" style="height: 3.3em;">
+                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1em">
+                        <i class="bi bi-arrow-left ms-2"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15em; letter-spacing: 0.08em;">
+                        김은비
+                    </div>
+                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1em">
+                        <i class="bi bi-three-dots-vertical me-1"></i>
+                    </div>
+                </div>
+
+                <div id="missionInfo" class="row py-2 border-bottom px-2">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col fw-bold" style="font-size:1.12em">
+                                <span class="">올때 메로나</span>
+                                <span class="px-2 rounded-5 text-center ms-1" style="border: 0.1em solid #FF8827; color:#FF8827; font-size: 0.75em;">
+                                    미션 수락 대기중
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col word" style="font-size:0.82em; color: #b1b1b1;">저희 집에 메로나를 배달하는것이 최종 목표입니다! 얼마나 험난한 여정이 될지는 모르겠지만ㅋㅋㅋㅋ</div>
+                        </div>
+                        <div class="row" style="margin-top: 0.08em;">
+                            <div class="col justify-content-start">
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.96em;">전체 미션성공시</span>
+                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.96em;">17000</span>
+                                <span class="" style="color: #818181; font-size: 0.96em;">원</span>
+                            </div>
+                            <div class="col-5 justify-content-end text-end">
+                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.96em;">08</span>
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.95em;">시간</span>
+                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.96em;">00</span>
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.95em;">분</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="chatHistory" class="row mx-3">
+                    <div id="chatHistoryBox" class="col">
+                        <div class="row mt-3 justify-content-start">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07em solid #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
+                                sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
+                            </div>
+                        </div>
+                        <div class="row mt-3 justify-content-end">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
+                                sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
+                            </div>
+                        </div>
+                        <div class="row mt-3 justify-content-start">
+                            <div class="col-7 rounded-2 lh-sm shadow-sm" style="border: 0.07em solid #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
+                                <!-- 정적이미지지도 -->
+                                <div class="row">
+                                    <div class="col px-0">
+                                        <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 16.3em; height: 8em;">
+                                            <script>
+                                                // 이미지 지도에서 마커가 표시될 위치입니다 
+                                                var markerPosition  = new kakao.maps.LatLng(33.450701, 126.570667); 
+                                                
+                                                // 이미지 지도에 표시할 마커입니다
+                                                // 이미지 지도에 표시할 마커는 Object 형태입니다
+                                                var marker = {
+                                                    position: markerPosition
+                                                };
+                                                
+                                                var staticMapContainer  = document.getElementById('staticMap'), // 이미지 지도를 표시할 div  
+                                                    staticMapOption = { 
+                                                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 이미지 지도의 중심좌표
+                                                        level: 4, // 이미지 지도의 확대 레벨
+                                                        marker: marker // 이미지 지도에 표시할 마커 
+                                                    };
+                                                
+                                                // 이미지 지도를 생성합니다
+                                                var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row py-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col" style="word-wrap: break-word;">
+                                                배진우님께서 "올때 메로나" 미션 수락을 신청하셨습니다
+                                                아래 버튼을 클릭하셔서 미션을 수락해주세요!
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col d-grid">
+                                                <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
+                                                    style="font-size: 1.0em; background-color: #FF8827;">
+                                                    <span class="" style="font-size: 0.85em;">미션수락</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="inputChat" class="row border-top" style="height: 3.4em;">
+                    <div class="col"></div>
+                </div>
+
+
+
+
+                
+
+            </div>
+        </div>
+        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+    </div>
+
+
+
+
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
