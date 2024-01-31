@@ -497,6 +497,18 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @GetMapping("registerBothLike")
+    public MeetingRestResponseDto registerBothLike(int groupMemberIdTo, int groupMemberIdFrom){
+
+        meetingService.registerBothLike(groupMemberIdTo, groupMemberIdFrom);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+
 
 
     

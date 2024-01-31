@@ -77,23 +77,41 @@ console.log('groupDetailInfo: ', groupDetailInfo);
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('sessionUserReviewData: ', sessionUserReviewData);
 
-// function getSessionUserReviewDataAll(){
-//     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
-//     let groupMemberId;
-//     for(e of groupMemberDataList){
-//         if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
-//             groupMemberId = e.groupMemberDto.groupMemberId;
-//         }
-//     }
+function registerBothLike(targetGroupMemberId){
+    
+    const groupMemberIdTo = targetGroupMemberId;
+    console.log('groupMemberIdTo: ', groupMemberIdTo);
 
-//     fetch("./api/getSessionUserReviewDataAll?groupMemberId=" + groupMemberId)
-//     .then(response => response.json())
-//     .then(response => {
-//         const responseData = response.data;
-//         sessionUserReviewData = responseData
-//         console.log('sessionUserReviewData: ', sessionUserReviewData);
-//     });
-// }
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+    let groupMemberId;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+            groupMemberId = e.groupMemberDto.groupMemberId;
+        }
+    }
+
+    const groupMemberIdFrom = groupMemberId;
+    console.log('groupMemberIdFrom: ', groupMemberIdFrom);
+
+    let groupMemberNicknameTo;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.groupMemberId === groupMemberIdTo){
+            groupMemberNicknameTo = e.groupMemberProfileDto.profileNickname;
+        }
+    }
+
+    const confirmValue = confirm(`${groupMemberNicknameTo} 님에게 Signal을 보내시겠습니까?`);
+    if(confirmValue){
+        fetch("api/registerBothLike?groupMemberIdTo=" + groupMemberIdTo + "&groupMemberIdFrom=" + groupMemberIdFrom)
+        .then(response => response.json())
+        .then(response =>{
+            alert("Signal 보내기 완료!");
+        });
+    }
+    else{
+        return;
+    }
+}
 
 const isMemberReviewExist = async(targetMemberIdTo)=>{
     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
@@ -184,6 +202,7 @@ async function registerGroupMemberReview(targetGroupMemberId){
     }    
 }
 
+
 function makeGroupMemberListRow(){
     const groupMemberDataList = groupDetailInfo.groupMemberDataList;
         let groupMemberId;
@@ -195,95 +214,106 @@ function makeGroupMemberListRow(){
 
     const groupMemberListWrapperCol = document.getElementById("groupMemberListWrapperCol");
     groupMemberListWrapperCol.innerHTML = "";
-
-
-    for(e of groupMemberDataList){
         
-        if(groupMemberId === e.groupMemberDto.groupMemberId){
+    for(groupMemberdata of groupMemberDataList){
+        
+        if(groupMemberId === groupMemberdata.groupMemberDto.groupMemberId){
             continue;
         }
-        if(sessionUserReviewData.meetingMemberReviewDtoList.length === 0){
-            const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
-            groupMemberListRow.setAttribute("id", `groupMemberId${e.groupMemberDto.groupMemberId}`);
-            const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
-            groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
 
-            const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
-            groupMemberListNickname.innerText = e.groupMemberProfileDto.profileNickname;
+        const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
+        groupMemberListRow.setAttribute("id", `groupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
+        const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
+        groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupMemberdata.groupMemberProfileDto.profileImg}`);
 
-            const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
-            groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${e.groupMemberDto.groupMemberId}`;
-            groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
+        const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
+        groupMemberListNickname.innerText = groupMemberdata.groupMemberProfileDto.profileNickname;
 
-            const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
-            accordionCollapse.setAttribute("id", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
-            accordionCollapse.dataset.bsParent = `#groupMemberId${e.groupMemberDto.groupMemberId}`;
+        const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
+        groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`;
+        groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`);
 
-            const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
-            // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
-            groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
+        const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
+        accordionCollapse.setAttribute("id", `accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`);
+        accordionCollapse.dataset.bsParent = `#groupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`;
 
-            const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
-            starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
+        const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
+        // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
+        groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
 
-            const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
-            groupMemberReviewSubmitButton.setAttribute("onclick", `registerGroupMemberReview(${e.groupMemberDto.groupMemberId})`);
+        const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
+        starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
 
-            if(sessionUserInfo.gender !== e.groupMemberUserDto.gender){
-                const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
-                groupMemberLikeIcon.classList.remove("d-none");
-            }
+        const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
+        groupMemberReviewSubmitButton.setAttribute("onclick", `registerGroupMemberReview(${groupMemberdata.groupMemberDto.groupMemberId})`);
 
-            groupMemberListWrapperCol.appendChild(groupMemberListRow);
+        if(sessionUserInfo.gender !== groupMemberdata.groupMemberUserDto.gender){
+            const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
+            groupMemberLikeIcon.setAttribute("onclick", `registerBothLike(${groupMemberdata.groupMemberDto.groupMemberId})`);
+            groupMemberLikeIcon.classList.remove("d-none");
         }
-        else if(e.groupMemberDto.groupMemberId !== sessionUserReviewData.meetingMemberReviewDtoList.groupMemberIdTo){
-            const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
-            groupMemberListRow.setAttribute("id", `groupMemberId${e.groupMemberDto.groupMemberId}`);
-            const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
-            groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
 
-            const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
-            groupMemberListNickname.innerText = e.groupMemberProfileDto.profileNickname;
+        groupMemberListWrapperCol.appendChild(groupMemberListRow);        
+    }
+    checkExistMemberReview();
+    checkExistBothLike();
+}
 
-            const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
-            groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${e.groupMemberDto.groupMemberId}`;
-            groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
-            groupMemberAccordionButton.setAttribute("style", "background-color : green;");
-            const buttonText = groupMemberAccordionButton.children[0];
+function checkExistBothLike(){
+    const meetingBothLikeDtoList = sessionUserReviewData.meetingBothLikeDtoList;
+    console.log('meetingBothLikeDtoList: ', meetingBothLikeDtoList);
+
+    if(meetingBothLikeDtoList.length > 0){
+        for(meetingBothLikeDto of meetingBothLikeDtoList){
+            
+            const targetRow = document.getElementById(`groupMemberId${meetingBothLikeDto.groupMemberIdTo}`);
+            
+            const groupMemberLikeIconCol = targetRow.querySelector("#groupMemberLikeIcon");
+            groupMemberLikeIconCol.setAttribute("onclick", "alert('이미 Signal을 보낸 멤버입니다.')");
+            
+            const signalIcon = groupMemberLikeIconCol.querySelector(".bi");
+            signalIcon.setAttribute("class", "bi bi-heart-pulse-fill");
+        }
+    }
+}
+
+
+function checkExistMemberReview(){
+    
+    const memberReviewDtoList = sessionUserReviewData.meetingMemberReviewDtoList;
+    console.log('memberReviewDtoList: ', memberReviewDtoList);    
+
+    if(memberReviewDtoList.length > 0){
+        
+        for(memberReviewDto of memberReviewDtoList){
+
+            const targetRow = document.getElementById(`groupMemberId${memberReviewDto.groupMemberIdTo}`);
+
+            const targetAccordionButton = targetRow.querySelector("#groupMemberAccordionButton");
+            targetAccordionButton.setAttribute("style", "background-color : green;");
+            
+            const buttonText = targetAccordionButton.children[0];
             buttonText.setAttribute("class", "fw-bold text-white")
             buttonText.innerText = "작성완료!";
 
-            const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
-            accordionCollapse.setAttribute("id", `accordionCollapse${e.groupMemberDto.groupMemberId}`);
-            accordionCollapse.dataset.bsParent = `#groupMemberId${e.groupMemberDto.groupMemberId}`;
+            const targetReviewComment = targetRow.querySelector(`#commentToGroupMemberId${memberReviewDto.groupMemberIdTo}`);
+            targetReviewComment.setAttribute("readonly","");
+            targetReviewComment.value = memberReviewDto.memberReviewComment;
 
-            const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
-            // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
-            groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${e.groupMemberDto.groupMemberId}`);
-            groupMemberListComment[0].setAttribute("readonly","");
-            groupMemberListComment[0].value = sessionUserReviewData.meetingMemberReviewDtoList.memberReviewComment;
-
-            const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
-            starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${e.groupMemberDto.groupMemberId}`);
-            const starFillList = starScoreWrapper.querySelectorAll(".bi");
+            const starFillList = targetRow.querySelectorAll(".starScoreWrapper .bi");
             for(stars of starFillList){
                 stars.removeAttribute("onclick");
                 stars.setAttribute("class", "bi bi-star");
             }
-            for(let x = 0 ; x < sessionUserReviewData.meetingMemberReviewDtoList.memberReviewScore ; x++){
+            for(let x = 0 ; x < memberReviewDto.memberReviewScore ; x++){                
                 starFillList[x].setAttribute("class", "bi bi-star-fill");
             }
 
-            const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
+            const groupMemberReviewSubmitButton = targetRow.querySelector("#groupMemberReviewSubmitButton");
             const submitButtonText = groupMemberReviewSubmitButton.children[0];
-            submitButtonText.innerText = "리뷰감사!";
-
-            if(sessionUserInfo.gender !== e.groupMemberUserDto.gender){
-                const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
-                groupMemberLikeIcon.classList.remove("d-none");
-            }
-            groupMemberListWrapperCol.appendChild(groupMemberListRow);
-        }               
+            groupMemberReviewSubmitButton.removeAttribute("onclick");
+            submitButtonText.innerText = "Thanks for Review :)";            
+        }
     }
 }
 
@@ -545,7 +575,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col">
                                 <div class="row">
                                     <div class="col-auto">
-                                        <span class="fw-bold fs-5">멤버들에게 리뷰와 하트를 보내봐요 :)</span>
+                                        <span class="fw-bold fs-5">리뷰와 Signal을 보내세요 :)</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -674,21 +704,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <!-- <div id="groupMemberListRow" class="row my-2">        
-        <div class="col mx-1 border rounded shdowBox">
-            <div class="row">
-                <div class="col-auto">
-                    <div class="userImageBox">
-                        <img id="groupMemberListImage" class="userImage">                                            
-                    </div>
-                </div>
-                <div class="col-auto align-self-center px-0">
-                    <span id="groupMemberListNickname" class="fs-5"></span>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
     <div class="groupMemberListRow accordion accordion-flush row my-2">
         <div class="col mx-1 border rounded shadowBox">
             <div class="accordion-item">
@@ -704,8 +719,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="col-auto align-self-center px-0">
                                     <span id="groupMemberListNickname" class="fs-5"></span>
                                 </div>
-                                <div id="groupMemberLikeIcon" class="col-auto align-self-center d-none">
-                                    <span class="fs-5 text-danger"><i class="bi bi-heart-pulse"></i></span>
+                                <div id="groupMemberLikeIcon" class="col-auto align-self-center d-none btn py-0" role="button">
+                                    <span class="fs-3 text-danger"><i class="bi bi-heart-pulse"></i></span>
                                 </div>
                             </div>
                         </div>

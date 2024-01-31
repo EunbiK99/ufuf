@@ -166,6 +166,12 @@ public interface MeetingSqlMapper {
     // * 그룹멤버PK 기준 내가 선택한 쌍방호감도 셀렉트
     public List<MeetingBothLikeDto> selectBothLikeFromByGroupMemberId(int groupMemberIdFrom);
 
+    // * 쌍방호감도 테이블 인서트
+    public void insertBothLikeDto(int groupMemberIdTo, int groupMemberIdFrom);
+
+    // * 접속유저PK기준 SNS Dto 셀렉트
+    public MeetingSNSDto selectSNSDtoByProfileId(int profileId);
+
 
 
 }

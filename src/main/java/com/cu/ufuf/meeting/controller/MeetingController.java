@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
+import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
@@ -101,9 +102,14 @@ public class MeetingController {
             int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
             System.out.println(profileCheckValue);            
 
-            if(profileCheckValue > 0){                
+            if(profileCheckValue > 0){
+                MeetingProfileDto meetingProfileDto = meetingService.getMeetingProfileByUserId(user_id);
+                int profileId = meetingProfileDto.getProfileid();
+                MeetingSNSDto userSNSDto = meetingService.getSNSDtoByProfileId(profileId);
+
                 session.setAttribute("meetingProfileExist", "Y");
-                session.setAttribute("meetingProfileInfo", meetingService.getMeetingProfileByUserId(user_id));
+                session.setAttribute("meetingProfileInfo", meetingProfileDto);
+                session.setAttribute("userSNSDto", userSNSDto);
                 return "./meeting/myPage";
             }
             else{

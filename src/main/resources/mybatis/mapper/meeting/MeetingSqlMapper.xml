@@ -431,6 +431,20 @@ values (
     where groupMemberIdFrom = #{groupMemberIdFrom}
 </select>
 
+<!-- * 쌍방호감도 테이블 인서트-->
+<insert id="insertBothLikeDto">
+    insert into meeting_bothLike(groupMemberIdFrom, groupMemberIdTo) values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo}
+    )
+</insert>
+
+<!-- * 접속유저 프로필PK기준 SNS Dto셀렉트-->
+<select id="selectSNSDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingSNSDto">
+    SELECT * from meeting_sns
+    where profileid = #{profileId}
+</select>
+
 
 
 

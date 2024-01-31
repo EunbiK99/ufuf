@@ -28,6 +28,15 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .menuMouseOver{
+        transition: background-color 0.4s, color 0.4s;
+        background-color : inherit !important;        
+    }
+
+    .menuMouseOver:hover{
+        background-color: #FF8827 !important;        
+    }
     </style>
 </head>
 <script th:inline="javascript">
@@ -35,6 +44,52 @@ let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
 let userType = /*[[${session.userType}]]*/;
 let meetingProfileExist = /*[[${session.meetingProfileExist}]]*/;
 let meetingProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
+let userSNSDto = /*[[${session.userSNSDto}]]*/;
+
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('userType: ', userType);
+console.log('meetingProfileExist: ', meetingProfileExist);
+console.log('meetingProfileInfo: ', meetingProfileInfo);
+console.log('userSNSDto: ', userSNSDto);
+
+function changeMenuColor(target){
+    console.log('changeMenuColor 실행됨');    
+    target.classList.add("menuMouseOver");
+}
+
+function restoreMenuColor(target){
+    console.log('restoreMenuColor 실행됨');
+    target.classList.remove("menuMouseOver");
+}
+
+function userProfileCSR(){
+    const userSNSUrl = document.getElementById("userSNSUrl");
+    userSNSUrl.innerText = userSNSDto.snsURL;
+
+    const userProfileImage = document.getElementById("userProfileImage");
+    userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
+
+    const userNickname = document.getElementById("userNickname")
+    userNickname.innerText = meetingProfileInfo.profileNickname;
+
+    const userGender = document.getElementById("userGender");
+    if(sessionUserInfo.gender === "M"){
+        userGender.innerText = "남";
+    }
+    else{
+        userGender.innerText = "여";
+    }
+
+    const userUniversity = document.getElementById("userUniversity")
+    userUniversity.innerText = sessionUserInfo.university;
+    
+    const userUniversityDepartment = document.getElementById("userUniversityDepartment")
+    userUniversityDepartment.innerText = sessionUserInfo.department;
+
+    const userProfileComment = document.getElementById("userProfileComment")
+    userProfileComment.innerText = meetingProfileInfo.profileComment;
+}
+
 
 function moveMyApplyGroup(){
     if(meetingProfileExist === "Y"){
@@ -84,8 +139,8 @@ function checkUserType(){
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    checkUserType()
-    
+    checkUserType();
+    userProfileCSR();
 });
 </script>
 <body class="pt-5 pb-5">
@@ -133,17 +188,115 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
         <div id="loginUserRow" class="row d-none">
             <div class="col">
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3">미팅프로필</button>
+
+                <div class="row">
+                    <div class="col mx-1 border border-black rounded">
+                        
+                        <div class="row border-bottom border-black justify-content-between" style="background-color: #FF8827;">
+                            <div class="col-auto align-self-center">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">My Meeting Profile</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="row">
+                                    <div class="col-auto btn">
+                                        <span class="fw-bold">
+                                            <i class="bi bi-gear"></i>
+                                            수정
+                                        </span>                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div id="profileInnerBody" class="row">
+                            <div class="col">
 
-                <div class="row mt-3">
+                                <div class="row my-3 mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-auto ps-0 pe-1 align-self-center">
+                                                <span class="fs-5 fw-bold">
+                                                    <i class="bi bi-house-heart"></i>
+                                                </span>
+                                            </div>
+                                            <div class="col-auto px-0 align-self-center">                                                
+                                                <span class="fw-bold">ufuf.com/</span>
+                                            </div>
+                                            <div class="col-auto px-0 border-bottom border-2 align-self-center" style="border-color: #FF8827 !important;">
+                                                <span id="userSNSUrl" class="fw-bold">유저SNS주소</span>                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-6 me-1 border border-black rounded">
+                                                <div class="row my-2">
+                                                    <div class="col">
+                                                        <img id="userProfileImage" class="img-fluid">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span id="userNickname" class="fw-bold"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <span id="userGender"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <span id="userUniversity"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <span id="userUniversityDepartment"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row my-3 mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col ps-0">
+                                                <span class="fw-bold">Comment</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col border border-2 rounded" style="border-color: #FF8827 !important;">
+                                                <div class="row mt-2">
+                                                    <div class="col">
+                                                        <p id="userProfileComment" style="height: 5em;"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>                
+
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -158,6 +311,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         <div class="row">
                             <div class="col">
                                 <button class="btn fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn fw-bold fs-3">My Signal</button>
                             </div>
                         </div>
                     </div>
