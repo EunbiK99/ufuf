@@ -203,12 +203,12 @@
 
         hideMarkers();
 
+        const missionListBox = document.getElementById("missionListBox");
+        missionListBox.innerHTML = "";
+
         fetch("./loadMissionList")
             .then(response => response.json())
             .then(response => {
-
-                const missionListBox = document.getElementById("missionListBox");
-                missionListBox.innerHTML = "";
 
                 for(mission of response.data){
                     
@@ -415,17 +415,24 @@
                 doesUserLogin()
                     .then(sessionUserPk => {
 
-                        if(sessionUserPk === mission.userInfoDto.user_id){
-                            missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2"></i>미션 삭제`;
-                        }else if(sessionUserPk == 0){
-                            missionApplyModalBtn.onclick = function(){
-                                alert("로그인 후 이용 가능합니다."); 
-                            };
+                        if(mission.isUserApplied == 0){
+                            if(sessionUserPk === mission.userInfoDto.user_id){
+                                missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.8em;"></i><span style="font-size: 0.85em;">미션 삭제</span>`;
+                            }else if(sessionUserPk == 0){
+                                missionApplyModalBtn.onclick = function(){
+                                    alert("로그인 후 이용 가능합니다."); 
+                                };
+                            }else{
+                                missionApplyModalBtn.onclick = function(){
+                                    missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.8em;"></i><span class="" style="font-size: 0.85em;">미션신청</span>`;
+                                    openMissionApplyModal(mission.missionInfoDto.mission_id);  
+                                };
+                            }
                         }else{
-                            missionApplyModalBtn.onclick = function(){
-                                openMissionApplyModal(mission.missionInfoDto.mission_id);  
-                            };
+                            missionApplyModalBtn.classList.add("disabled");
+                            missionApplyModalBtn.innerText = "미션신청완료";
                         }
+
                     });
 
                 missionApplyModalBtn.addEventListener('touchstart', function() {
@@ -452,7 +459,7 @@
         modalMissionTitle.innerText = title.innerText;
 
         missionApplyBtn.onclick = function(){
-            
+            applyMission(mission_id);
         }
 
     	modal.show();
@@ -466,19 +473,15 @@
 	}
 
     // 미션 수락하기
-    function acceptingMission(mission_id){
+    function applyMission(mission_id){
 
         const missionApplyBtn = document.getElementById("missionApplyBtn");
 
-        doesUserLogin()
-        .then(sessionUserPk => {
-            const data = {
-                mission_id: mission_id,
-                user_id : sessionUserPk
-            }
-        });
+        const data = {
+            mission_id: mission_id
+        }
 
-        fetch("./acceptingMission", {
+        fetch("./applyMission", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -489,11 +492,12 @@
             .then(response => {
 
                 missionApplyModalBtn.classList.add("disabled");
-                missionApplyModalBtn.innerText = "미션 신청완료";
+                missionApplyModalBtn.innerText = "미션신청완료";
 
-                closeMissionAccModal();
+                closeMissionApplyModal();
 
         });
+
     }
 
     function test() {
@@ -656,7 +660,7 @@
                         </div>
 
                         <!-- 미션 리스트 -->
-                        <div id="showMissionList" class="row border-top d-none" style="height:17em; box-shadow: inset 0 -1.8em 1.5em -2.5em #cacaca;">
+                        <div id="showMissionList" class="row border-top d-none" style="height:17.3em; box-shadow: inset 0 -2em 1.5em -2.5em #cacaca;">
                             <div class="col">
                                 <div class="row py-2 border-bottom">
                                     <div class="col text-end align-self-center text-secondary" style="font-size: 0.95em;">
@@ -679,7 +683,7 @@
                         <!-- 미션 상세 -->
                         <div id="missionDetailBox" class="shut row border-top d-none">
                             <div class="col px-0">
-                                <div class="overflow-y-scroll overflow-x-hidden" style="height: 15em;"> 
+                                <div class="oveflow-y-rscroll overflow-x-hidden" style="height: 15em;"> 
                                     <div class="row" style="padding-top: 0.6em; padding-bottom: 0.1em;">
                                         <div class="col">
                                             <div class="row mx-2">
@@ -747,7 +751,7 @@
                                     </div>
                                     <div class="col-4 fw-semibold align-self-center d-grid justify-content-end pe-1 ps-0">
                                         <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                            style="font-size: 1.0em; background-color: #FF8827;">
+                                            style="font-size: 0.9em; background-color: #FF8827;">
                                             <i class="bi bi-plus-lg me-1" style="font-size: 0.8em;"></i><span class="" style="font-size: 0.85em;">미션신청</span>
                                         </button>
                                     </div>
@@ -876,7 +880,7 @@
                             <button class="btn px-4 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionApplyModal()">
                                 취소
                             </button>
-                            <button id="missionApplyBtn" class="btn text-white px-4 rounded-1 py-1" type="button" style="background-color: #FF8827;">수락</button>
+                            <button id="missionApplyBtn" class="btn text-white px-4 rounded-1 py-1" type="button" style="background-color: #FF8827;">신청</button>
                         </div>
                     </div>
                 </div>

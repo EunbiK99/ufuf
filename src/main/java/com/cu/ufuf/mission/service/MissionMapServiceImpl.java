@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
@@ -106,17 +107,22 @@ public class MissionMapServiceImpl {
     }
 
     // 미션 상세 출력
-    public Map<String, Object> getMissionDetail(int mission_id){
+    public Map<String, Object> getMissionDetail(int mission_id, int user_id){
 
         Map<String, Object> missionDetail = new HashMap<>();
 
         MissionInfoDto missionInfoDto = missionMapsqlMapper.selectMissionById(mission_id);
 
-        int user_id = missionInfoDto.getUser_id();
+        int missionUser_id = missionInfoDto.getUser_id();
+
+        MissionChatRoomDto missionChatRoomDto = new MissionChatRoomDto();
+        missionChatRoomDto.setMission_id(mission_id);
+        missionChatRoomDto.setUser_id(user_id);
 
         missionDetail.put("missionInfoDto", missionInfoDto);
         missionDetail.put("missionCourseList", missionMapsqlMapper.selectCourseByMission(mission_id));
-        missionDetail.put("userInfoDto", missionMapsqlMapper.selectUserById(user_id));
+        missionDetail.put("userInfoDto", missionMapsqlMapper.selectUserById(missionUser_id));
+        missionDetail.put("isUserApplied", missionMapsqlMapper.isUserApplied(missionChatRoomDto));
 
         return missionDetail;
     }

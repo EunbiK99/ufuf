@@ -32,7 +32,8 @@ public interface MissionMapSqlMapper {
     // 미션 상태 업데이트
     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
 
-    
+    // 유저가 이미 이 미션에 등록했는지 확인
+    public int isUserApplied(MissionChatRoomDto missionChatRoomDto);
 
 
 

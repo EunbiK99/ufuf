@@ -34,9 +34,38 @@
             #{user_id},
             #{message},
             #{is_read}
-        );
+        )
     </insert>
 
+    <select id="selectChatRoomList" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        SELECT mcr.* from mission_chat_room mcr
+        inner join mission_info mi on mcr.mission_id = mi.mission_id
+        where mi.user_id = #{user_id} or mcr.user_id = #{user_id}
+        order by created_at desc
+    </select>
+
+    <select id="selectLatestChat" resultType="com.cu.ufuf.dto.MissionChatDto">
+        SELECT * from mission_chat
+        where chat_room_id = #{chat_room_id}
+        order by created_at desc
+        limit 1
+    </select>
+
+    <select id="countUnreadChat" resultType="int">
+        select count(*) from  mission_chat
+        where chat_room_id = #{chat_room_id}
+        and is_read = "N"
+    </select>   
+
+    <select id="countChatRoomByMission" resultType="int">
+        select count(*) from mission_chat_room
+        where mission_id = #{mission_id}
+    </select>
+
+    <select id="selectChatRoomListByMission" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        select * from mission_chat_room
+        where mission_id = #{mission_id}
+    </select>
 
 
     

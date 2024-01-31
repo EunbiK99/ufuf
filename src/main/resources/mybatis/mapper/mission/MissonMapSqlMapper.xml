@@ -75,6 +75,11 @@
     where user_id = #{user_id}
 </select>
 
+<select id="isUserApplied" resultType="int">
+    select count(*) from mission_chat_room
+    where mission_id = #{mission_id} 
+    and user_id = #{user_id}
+</select>
 
 
 

@@ -5,16 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>미션등록</title>
         
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    
 <script>
 
+    var relativePath = window.location.origin;
+
     var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+    
+
+    var imageSrc = relativePath + "/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+    imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
+    imageOption = {offset: new kakao.maps.Point(24, 30)};
+
+    // 채팅 로딩
+    function loadChat(){
+        
+    }
+
+    // 채팅 보낼때 마다 스크롤 제일 밑으로 내리기
+    function moveScroll(id) {
+
+        var el = document.getElementById(id);
+
+        if (el.scrollHeight > 0) {
+            el.scrollTop = el.scrollHeight;
+        }
+    }
+
+    // 미션 수락 신청 버튼 누르면...
+    function acceptMissionPlayer(mission_id){
+
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
 
@@ -22,6 +47,9 @@
         spanElements.forEach(function(span) {
             span.classList.add("align-middle");
         });
+
+        const chatDialogue = document.getElementById("chatDialogue");
+        chatDialogue.scrollTop = chatDialogue.scrollHeight;
 
     });
 
@@ -66,7 +94,7 @@
     #missionInfo{
         position: sticky;
         z-index: 2;
-        top: 3.3em;
+        top: 3.3rem;
         margin: 0 auto;
         left: 0;
         right: 0;
@@ -74,13 +102,16 @@
 
     #inputChat{
         position: fixed;
-        z-index: 2;
-        bottom: 3.4em;
+        bottom: 0;
         margin: 0 auto;
         left: 0;
         right: 0;
     }
 
+    input, textarea {
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+    }
 
 
 </style>
@@ -93,83 +124,92 @@
         <div class="row">
             <div class="col px-0">
 
-                <div class="row py-2 border-bottom border-dark-subtle px-2" style="height: 3.3em;">
-                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1em">
+                <div class="row py-2 px-2 border-bottom border-dark-subtle" style="height: 3.3em;">
+                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./chatList'">
                         <i class="bi bi-arrow-left ms-2"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15em; letter-spacing: 0.08em;">
+                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
                         김은비
                     </div>
-                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1em">
+                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
                         <i class="bi bi-three-dots-vertical me-1"></i>
                     </div>
                 </div>
 
-                <div id="missionInfo" class="row py-2 border-bottom px-2">
+                <div id="missionInfo" class="row py-2 border-bottom px-2" style="background-color: #fffbf7; box-shadow: 0em 0.5em 0.6em #ffffff;">
                     <div class="col">
                         <div class="row">
-                            <div class="col fw-bold" style="font-size:1.12em">
+                            <div class="col fw-bold" style="font-size:1.05rem">
                                 <span class="">올때 메로나</span>
-                                <span class="px-2 rounded-5 text-center ms-1" style="border: 0.1em solid #FF8827; color:#FF8827; font-size: 0.75em;">
-                                    미션 수락 대기중
+                                <span class="px-2 rounded-5 text-center ms-1 bg-white" style="border: 0.08rem solid #FF8827; color:#FF8827; font-size: 0.77rem;">
+                                    미션 수락대기중
                                 </span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col word" style="font-size:0.82em; color: #b1b1b1;">저희 집에 메로나를 배달하는것이 최종 목표입니다! 얼마나 험난한 여정이 될지는 모르겠지만ㅋㅋㅋㅋ</div>
+                            <div class="col word" style="font-size:0.8rem; color: #b1b1b1;">저희 집에 메로나를 배달하는것이 최종 목표입니다! 얼마나 험난한 여정이 될지는 모르겠지만ㅋㅋㅋㅋ</div>
                         </div>
-                        <div class="row" style="margin-top: 0.08em;">
+                        <div class="row" style="margin-top: -0.05rem;">
                             <div class="col justify-content-start">
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.96em;">전체 미션성공시</span>
-                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.96em;">17000</span>
-                                <span class="" style="color: #818181; font-size: 0.96em;">원</span>
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">전체 미션성공시</span>
+                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.93rem;">17000</span>
+                                <span class="" style="color: #818181; font-size: 0.88rem;">원</span>
                             </div>
                             <div class="col-5 justify-content-end text-end">
-                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.96em;">08</span>
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.95em;">시간</span>
-                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.96em;">00</span>
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.95em;">분</span>
+                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.93rem;">08</span>
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">시간</span>
+                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.93rem;">00</span>
+                                <span class="fw-semibold" style="color: #818181; font-size: 0.88   rem;">분</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="chatHistory" class="row mx-3">
-                    <div id="chatHistoryBox" class="col">
-                        <div class="row mt-3 justify-content-start">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07em solid #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
+                <div id="chatDialogue" class="row oveflow-y-rscroll overflow-x-hidden" style="height: 29.5rem;">
+                    <div id="chatDialogueBox" class="col">
+
+                        <div class="row my-3 justify-content-start mx-3">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
                                 sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
                             </div>
                         </div>
-                        <div class="row mt-3 justify-content-end">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
+
+                        <div class="row my-3 justify-content-end mx-3">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
+                                sdfdssdfa,skdjf
+                            </div>
+                        </div>
+
+                        <div class="row my-3 justify-content-end mx-3">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
+                                sdfdssdfa,skdalskfjl;aseijfidjf
+                            </div>
+                        </div>
+
+                        <div class="row my-3 justify-content-start mx-3">
+                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
                                 sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
                             </div>
                         </div>
-                        <div class="row mt-3 justify-content-start">
-                            <div class="col-7 rounded-2 lh-sm shadow-sm" style="border: 0.07em solid #FF8827; font-size: 0.9em; width: auto; max-width: 16.5em; overflow-wrap: break-word;">
-                                <!-- 정적이미지지도 -->
+
+                        <div class="row my-3 justify-content-start mx-3">
+                            <div class="col-7 rounded-2 lh-sm shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
                                 <div class="row">
                                     <div class="col px-0">
-                                        <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 16.3em; height: 8em;">
+                                        <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 15.86rem; height: 8rem;">
                                             <script>
-                                                // 이미지 지도에서 마커가 표시될 위치입니다 
-                                                var markerPosition  = new kakao.maps.LatLng(33.450701, 126.570667); 
-                                                
-                                                // 이미지 지도에 표시할 마커입니다
-                                                // 이미지 지도에 표시할 마커는 Object 형태입니다
-                                                var marker = {
-                                                    position: markerPosition
-                                                };
-                                                
-                                                var staticMapContainer  = document.getElementById('staticMap'), // 이미지 지도를 표시할 div  
+                                                var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+                                                var markerPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+                                                var marker = new kakao.maps.Marker({
+                                                    position: markerPosition,
+                                                    image: markerImg
+                                                });
+                                                var staticMapContainer  = document.getElementById('staticMap'),
                                                     staticMapOption = { 
-                                                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 이미지 지도의 중심좌표
-                                                        level: 4, // 이미지 지도의 확대 레벨
-                                                        marker: marker // 이미지 지도에 표시할 마커 
+                                                        center: new kakao.maps.LatLng(33.450701, 126.570667),
+                                                        level: 4,
+                                                        marker: marker
                                                     };
-                                                
-                                                // 이미지 지도를 생성합니다
                                                 var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
                                             </script>
                                         </div>
@@ -179,15 +219,16 @@
                                     <div class="col">
                                         <div class="row">
                                             <div class="col" style="word-wrap: break-word;">
-                                                배진우님께서 "올때 메로나" 미션 수락을 신청하셨습니다
-                                                아래 버튼을 클릭하셔서 미션을 수락해주세요!
+                                                ^alert!^배진우님께서 "올때 메로나" 미션 수락을 신청하셨습니다
+                                                아래 버튼을 클릭하셔서 미션을 수락해주세요!^alert!^
                                             </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col d-grid">
                                                 <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                                    style="font-size: 1.0em; background-color: #FF8827;">
-                                                    <span class="" style="font-size: 0.85em;">미션수락</span>
+                                                    style="font-size: 1.0rem; background-color: #FF8827;">
+                                                    <span class="me-2"><i class="bi bi-envelope-open"></i></span>
+                                                    <span class="" style="font-size: 0.9rem;">미션 수락</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -197,8 +238,15 @@
                         </div>
                     </div>
                 </div>
-                <div id="inputChat" class="row border-top" style="height: 3.4em;">
-                    <div class="col"></div>
+                <div id="inputChat" class="row border-top bg-white" style="height: 3.4rem;">
+                    <div class="col align-self-center px-1">
+                        <div class="input-group align-self-center">
+                            <button class="btn border-0 align-self-center px-2" style="font-size: 1.4rem; color: #b1b1b1;"><i class="bi bi-plus-lg mx-1"></i></button>
+                            <input class="form-control rounded-4 align-self-center" placeholder="메세지 보내기"
+                                style="font-size: 0.9rem; border: 0.08em solid #b1b1b1; padding-top: 0.3rem; padding-bottom: 0.3rem;">
+                            <button class="btn border-0 align-self-center px-2 me-1" style="font-size: 1.45rem; color: #b1b1b1; transform: rotate(45deg); width: 2.97rem; height: 2.97rem ;"><i class="bi bi-send-fill"></i></button>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -208,7 +256,7 @@
 
             </div>
         </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+
     </div>
 
 
