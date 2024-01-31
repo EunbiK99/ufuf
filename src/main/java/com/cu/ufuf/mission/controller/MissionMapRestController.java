@@ -210,7 +210,7 @@ public class MissionMapRestController {
 
 
     @PostMapping("getMissionDetail")
-    public RestResponseDto getMissionDetail(@RequestBody String mission_id){
+    public RestResponseDto getMissionDetail(@RequestBody String mission_id, HttpSession session){
 
         RestResponseDto restResponseDto = new RestResponseDto();
 
@@ -221,9 +221,11 @@ public class MissionMapRestController {
 
                 // mission_id 필드가 존재하는지 확인
                 if (jsonNode.has("mission_id")) {
-                    // mission_id 필드 추출 및 정수로 변환
+
+                    UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
                     int missionId = jsonNode.get("mission_id").asInt();
-                    restResponseDto.setData(missionMapService.getMissionDetail(missionId));
+                    restResponseDto.setData(missionMapService.getMissionDetail(missionId, sessionUserInfoDto.getUser_id()));
                     
                 } else {
                     System.out.println("mission_id field not found in JSON.");
@@ -241,11 +243,39 @@ public class MissionMapRestController {
     }
 
     @PostMapping("applyMission")
-    public RestResponseDto applyMission(@RequestBody MissionChatRoomDto params){
+    public RestResponseDto applyMission(@RequestBody String mission_id, HttpSession session){
 
         RestResponseDto restResponseDto = new RestResponseDto();
-        
-        MissionChatService.applyMission(params);
+
+        try {
+
+            if (mission_id != null && !mission_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_id")) {
+                    // mission_id 필드 추출 및 정수로 변환
+                    int missionId = jsonNode.get("mission_id").asInt();
+
+                    UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+                    int user_id = sessionUserInfo.getUser_id();
+
+                    MissionChatRoomDto missionChatRoomDto = new MissionChatRoomDto();
+                    missionChatRoomDto.setMission_id(missionId);
+                    missionChatRoomDto.setUser_id(user_id);
+
+                    MissionChatService.applyMission(missionChatRoomDto);
+
+                } else {
+                    System.out.println("mission_id field not found in JSON.");
+                }
+            } else {
+                System.out.println("Received empty or null JSON string.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
         
         restResponseDto.setResult("Success");
         
