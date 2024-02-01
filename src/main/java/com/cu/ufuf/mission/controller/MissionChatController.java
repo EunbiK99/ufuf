@@ -15,7 +15,7 @@ public class MissionChatController {
     }
 
     @RequestMapping("chatRoom")
-    public String chatRoom(HttpSession session){
+    public String chatRoom(HttpSession session, int chat_room_id){
         return "mission/chatRoom";
     }
 

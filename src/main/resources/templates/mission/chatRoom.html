@@ -13,17 +13,218 @@
 <script>
 
     var relativePath = window.location.origin;
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    const chat_room_id = urlParams.get('chat_room_id');
 
     var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
-    
 
-    var imageSrc = relativePath + "/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
-    imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
-    imageOption = {offset: new kakao.maps.Point(24, 30)};
+    function loadMap(lat, lng){
+
+        var imageSrc = relativePath + "/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
+        imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
+        imageOption = {offset: new kakao.maps.Point(24, 30)};
+
+        var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+        var markerPosition = new kakao.maps.LatLng(lat, lng);
+        var marker = new kakao.maps.Marker({
+            position: markerPosition,
+            image: markerImg
+        });
+
+        var staticMapContainer  = document.getElementById('staticMap'),
+            staticMapOption = { 
+                center: new kakao.maps.LatLng(lat, lng),
+                level: 4,
+                marker: marker
+            };
+
+        var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
+    }
+
+    // 채팅 기본정보 로딩
+    function loadBasicInfo(chat_room_id){
+
+        const data = {
+            chat_room_id: chat_room_id
+        }
+
+        fetch("./getBasicInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                loadChatDialogue(chat_room_id, response.data.missionInfoDto, response.data.missionCourseList);
+
+                const info = response.data;
+
+                const name = document.getElementById("name");
+                const missionInfo = document.getElementById("missionInfo");
+                const title = missionInfo.querySelector(".title");
+                const status = missionInfo.querySelector(".status");
+                const detail = missionInfo.querySelector(".detail");
+                const totalReward = missionInfo.querySelector(".totalReward");
+                const limitHour = missionInfo.querySelector(".limitHour");
+                const limitMinute = missionInfo.querySelector(".limitMinute");
+
+                name.innerText = info.chatMateInfoDto.name;
+                title.innerText = info.missionInfoDto.title;
+                detail.innerHTML = info.missionInfoDto.detail;
+
+                // 미션 진행상태
+                if(info.missionChatRoomDto.accept_at == null){
+                    status.innerText = "수락대기중";
+                }else if(info.missionChatRoomDto.accept_at != null && info.missionChatRoomDto.giveup_at == null){
+                    status.innerText = "수행중";
+                }else if(info.missionChatRoomDto.giveup_at != null){
+                    status.innerText = "미션종료";
+                }
+
+                var limitTime = info.missionInfoDto.limit_time;
+
+                var hour = Math.floor(limitTime / 60);
+                var minutes = limitTime % 60;
+
+                if(hour < 10){
+                    limitHour.innerText = "0" + hour;
+                }else{
+                    limitHour.innerText = hour;
+                }
+
+                if(minutes < 10){
+                    limitMinute.innerText = "0" + minutes;
+                }else{
+                    limitMinute.innerText = minutes;
+                }
+
+                let sum = 0;
+
+                for (let i = 0; i < info.missionCourseList.length; i++) {
+                    const course = info.missionCourseList[i];
+                    var courseEachReward = course.reward;
+                    sum += courseEachReward;
+                }
+
+                totalReward.innerText = sum;
+            });
+    }
 
     // 채팅 로딩
-    function loadChat(){
-        
+    function loadChatDialogue(chat_room_id, missionInfoDto, missionCourseList){
+
+        const data = {
+            chat_room_id: chat_room_id
+        }
+
+        fetch("./loadChatDialogue", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const chatDialogueBox = document.getElementById("chatDialogueBox");
+                chatDialogueBox.innerHTML = "";
+
+                missionCourseList
+
+                for(chat of response.data){
+
+                    if(chat.missionChatDto.user_id == sessionUser){
+
+                        const myChatWrapper = document.querySelector("#myChatTemplete .myChatWrapper").cloneNode(true);
+                        const text = myChatWrapper.querySelector(".text");
+
+                        if(chat.missionChatDto.chat_category_id === 1){
+                            text.innerText = chat.missionChatDto.message;
+                        }else if(chat.missionChatDto.chat_category_id === 2){
+                            text.innerText = "(사진)";
+                        }else if(chat.missionChatDto.chat_category_id === 3){
+
+                            let message = chat.missionChatDto.message;
+                            message = message.replace(/\^alert!\^/g, "");
+
+                            text.innerHTML = message;
+
+                            if (message.includes("loadMap")) {
+
+                                text.classList.remove("py-2");
+
+                                const loadMapIndex = message.indexOf("loadMap");
+
+                                if (loadMapIndex !== -1) {
+                                    const start = message.indexOf("(", loadMapIndex);
+                                    const end = message.indexOf(")", start);
+                                    if (start !== -1 && end !== -1) {
+                                        const coordinates = message.substring(start + 1, end).split(',').map(Number);
+
+                                        // coordinates 배열의 각각의 값을 따로 변수에 저장
+                                        const lat = coordinates[0];
+                                        const lng = coordinates[1];
+
+                                        setTimeout(() => {
+                                            loadMap(lat, lng);
+                                        }, 0);
+                                    }
+                                }
+                            }
+                        }
+
+                        chatDialogueBox.appendChild(myChatWrapper);
+
+                    }else{
+
+                        const mateChatWrapper = document.querySelector("#mateChatTemplete .mateChatWrapper").cloneNode(true);
+                        const text = mateChatWrapper.querySelector(".text");
+
+                        if(chat.missionChatDto.chat_category_id === 1){
+                            text.innerText = chat.missionChatDto.message;
+                        }else if(chat.missionChatDto.chat_category_id === 2){
+                            text.innerText = "(사진)";
+                        }else if(chat.missionChatDto.chat_category_id === 3){
+
+                            let message = chat.missionChatDto.message;
+                            message = message.replace(/\^alert!\^/g, "");
+
+                            text.innerHTML = message;
+                            
+                            if (message.includes("loadMap")) {
+                                
+                                const loadMapIndex = message.indexOf("loadMap");
+
+                                if (loadMapIndex !== -1) {
+                                    const start = message.indexOf("(", loadMapIndex);
+                                    const end = message.indexOf(")", start);
+                                    if (start !== -1 && end !== -1) {
+                                        const coordinates = message.substring(start + 1, end).split(',').map(Number);
+
+                                        // coordinates 배열의 각각의 값을 따로 변수에 저장
+                                        const lat = coordinates[0];
+                                        const lng = coordinates[1];
+
+                                        setTimeout(() => {
+                                            loadMap(lat, lng);
+                                        }, 0);
+                                    }
+                                }
+                            }
+
+                        }
+                        
+                        chatDialogueBox.appendChild(mateChatWrapper);
+
+                    } 
+                }
+            });
     }
 
     // 채팅 보낼때 마다 스크롤 제일 밑으로 내리기
@@ -34,14 +235,69 @@
         if (el.scrollHeight > 0) {
             el.scrollTop = el.scrollHeight;
         }
+        
     }
 
-    // 미션 수락 신청 버튼 누르면...
-    function acceptMissionPlayer(mission_id){
+    // 일반 메세지 보내기
+    function sendMessage(){
 
+        const inputMessage = document.getElementById("inputMessage").value;
+
+        const data = {
+            message: inputMessage,
+            chat_room_id: chat_room_id,
+            chat_category_id: 1,
+            is_read: "N"
+        }
+
+        fetch("./sendMessage", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                moveScroll(id);
+                loadBasicInfo(chat_room_id);
+
+                // 베이직 인포 로드랑 채팅 로드 따로 떼어내야함
+                // response로 id 값을 받아와서 set시켜야함! => 근데 비동기식 작동이라 안될거니까 전역동적변수 생성 필요
+
+            });
     }
+
+    // function autoResize() {
+
+    //     const inputMessage = document.getElementById("inputMessage");
+    //     const inputChat = document.getElementById("inputChat");
+
+    //     // 높이를 'auto'로 재설정하여 정확한 scrollHeight를 얻습니다.
+    //     inputMessage.style.height = "2rem";
+
+    //     const lineHeight = parseFloat(window.getComputedStyle(inputMessage).lineHeight);
+    //     const lines = Math.floor(inputMessage.scrollHeight / lineHeight);
+
+    //     const maxHeightInLines = 2; // 최대 높이를 6줄로 설정
+
+    //     // 스크롤이 발생하지 않는 경우에만 높이를 scrollHeight로 설정합니다.
+    //     if (lines <= maxHeightInLines) {
+    //         inputMessage.style.height = inputMessage.scrollHeight + "px";
+    //         inputMessage.scrollTop = 0; // 스크롤이 발생하지 않으면 scrollTop을 0으로 설정
+    //         inputChat.style.height = "3.4rem"; // inputChat 창도 기본 높이로 유지
+    //     } else {
+    //         // 스크롤이 발생할 때는 최대 높이를 6줄로 유지하고 scrollTop을 높이로 설정합니다.
+    //         inputMessage.style.height = maxHeightInLines * lineHeight + "px";
+    //         inputMessage.scrollTop = inputMessage.scrollHeight;
+    //         inputChat.style.height = (parseFloat(inputChat.style.height) + inputMessage.scrollHeight - (maxHeightInLines * lineHeight)) / 16 + "rem";
+    //     }
+    // }
 
     window.addEventListener("DOMContentLoaded", () => {
+
+        loadBasicInfo(chat_room_id);
 
         var spanElements = document.querySelectorAll("span");
         spanElements.forEach(function(span) {
@@ -128,37 +384,37 @@
                     <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./chatList'">
                         <i class="bi bi-arrow-left ms-2"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
-                        김은비
+                    <div id="name" class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+                        
                     </div>
                     <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
                         <i class="bi bi-three-dots-vertical me-1"></i>
                     </div>
                 </div>
 
-                <div id="missionInfo" class="row py-2 border-bottom px-2" style="background-color: #fffbf7; box-shadow: 0em 0.5em 0.6em #ffffff;">
+                <div id="missionInfo" class="row py-2 border-bottom px-2" style="background-color: #fffbf7; box-shadow: 0em 0.35em 0.4em #ffffff;">
                     <div class="col">
                         <div class="row">
-                            <div class="col fw-bold" style="font-size:1.05rem">
-                                <span class="">올때 메로나</span>
-                                <span class="px-2 rounded-5 text-center ms-1 bg-white" style="border: 0.08rem solid #FF8827; color:#FF8827; font-size: 0.77rem;">
-                                    미션 수락대기중
+                            <div class="col fw-bold d-flex align-self-center">
+                                <span class="title" style="font-size:1.07rem"></span>
+                                <span class="status px-2 rounded-5 ms-2 justify-content-center" 
+                                    style="border: 0.08em solid #FF8827; color: #FF8827; font-size: 0.75em; margin-top: 0.15em; margin-bottom: 0.15em; padding-top: 0.16em;">
                                 </span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col word" style="font-size:0.8rem; color: #b1b1b1;">저희 집에 메로나를 배달하는것이 최종 목표입니다! 얼마나 험난한 여정이 될지는 모르겠지만ㅋㅋㅋㅋ</div>
+                            <div class="detail col word" style="font-size:0.8rem; color: #b1b1b1;"></div>
                         </div>
                         <div class="row" style="margin-top: -0.05rem;">
                             <div class="col justify-content-start">
                                 <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">전체 미션성공시</span>
-                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.93rem;">17000</span>
+                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.93rem;"></span>
                                 <span class="" style="color: #818181; font-size: 0.88rem;">원</span>
                             </div>
                             <div class="col-5 justify-content-end text-end">
-                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.93rem;">08</span>
+                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
                                 <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">시간</span>
-                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.93rem;">00</span>
+                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
                                 <span class="fw-semibold" style="color: #818181; font-size: 0.88   rem;">분</span>
                             </div>
                         </div>
@@ -167,87 +423,23 @@
 
                 <div id="chatDialogue" class="row oveflow-y-rscroll overflow-x-hidden" style="height: 29.5rem;">
                     <div id="chatDialogueBox" class="col">
-
-                        <div class="row my-3 justify-content-start mx-3">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
-                                sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
-                            </div>
-                        </div>
-
-                        <div class="row my-3 justify-content-end mx-3">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
-                                sdfdssdfa,skdjf
-                            </div>
-                        </div>
-
-                        <div class="row my-3 justify-content-end mx-3">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm text-white" style="background-color: #FF8827; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
-                                sdfdssdfa,skdalskfjl;aseijfidjf
-                            </div>
-                        </div>
-
-                        <div class="row my-3 justify-content-start mx-3">
-                            <div class="col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
-                                sdfdssdfa,skdjfaksldfkjhsdkfjhkdhfkasjdhkfjhaskdjhfkhkadlfasldk
-                            </div>
-                        </div>
-
-                        <div class="row my-3 justify-content-start mx-3">
-                            <div class="col-7 rounded-2 lh-sm shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 16rem; overflow-wrap: break-word;">
-                                <div class="row">
-                                    <div class="col px-0">
-                                        <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 15.86rem; height: 8rem;">
-                                            <script>
-                                                var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
-                                                var markerPosition = new kakao.maps.LatLng(33.450701, 126.570667);
-                                                var marker = new kakao.maps.Marker({
-                                                    position: markerPosition,
-                                                    image: markerImg
-                                                });
-                                                var staticMapContainer  = document.getElementById('staticMap'),
-                                                    staticMapOption = { 
-                                                        center: new kakao.maps.LatLng(33.450701, 126.570667),
-                                                        level: 4,
-                                                        marker: marker
-                                                    };
-                                                var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
-                                            </script>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row py-3">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col" style="word-wrap: break-word;">
-                                                ^alert!^배진우님께서 "올때 메로나" 미션 수락을 신청하셨습니다
-                                                아래 버튼을 클릭하셔서 미션을 수락해주세요!^alert!^
-                                            </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col d-grid">
-                                                <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                                    style="font-size: 1.0rem; background-color: #FF8827;">
-                                                    <span class="me-2"><i class="bi bi-envelope-open"></i></span>
-                                                    <span class="" style="font-size: 0.9rem;">미션 수락</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
+
                 <div id="inputChat" class="row border-top bg-white" style="height: 3.4rem;">
                     <div class="col align-self-center px-1">
                         <div class="input-group align-self-center">
                             <button class="btn border-0 align-self-center px-2" style="font-size: 1.4rem; color: #b1b1b1;"><i class="bi bi-plus-lg mx-1"></i></button>
-                            <input class="form-control rounded-4 align-self-center" placeholder="메세지 보내기"
-                                style="font-size: 0.9rem; border: 0.08em solid #b1b1b1; padding-top: 0.3rem; padding-bottom: 0.3rem;">
-                            <button class="btn border-0 align-self-center px-2 me-1" style="font-size: 1.45rem; color: #b1b1b1; transform: rotate(45deg); width: 2.97rem; height: 2.97rem ;"><i class="bi bi-send-fill"></i></button>
+                            <textarea id="inputMessage" class="form-control rounded-4 align-self-center" placeholder="메세지 보내기"
+                                style="font-size: 0.9rem; border: 0.08em solid #b1b1b1; padding-top: 0.3rem; padding-bottom: 0.3rem; height: 2rem;"></textarea>
+                            <button class="btn border-0 align-self-center px-2 me-1" style="font-size: 1.45rem; color: #b1b1b1; transform: rotate(45deg); width: 2.97rem; height: 2.97rem ;">
+                                <i class="bi bi-send-fill" onclick="sendMessage()"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+
 
 
 
@@ -260,7 +452,22 @@
     </div>
 
 
+<div id="myChatTemplete" class="d-none">
+    <div class="myChatWrapper row my-3 justify-content-end mx-3">
+        <div class="text col-7 rounded-2 lh-sm py-2 shadow-sm text-white"
+            style="border: 0.07rem solid #FF8827; background-color: #FF8827; font-size: 0.9rem; width: auto; max-width: 15rem; overflow-wrap: break-word;">
+            
+        </div>
+    </div>
+</div>
 
+<div id="mateChatTemplete" class="d-none">
+    <div class="mateChatWrapper row my-3 justify-content-start mx-3">
+        <div class="text col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 15rem; overflow-wrap: break-word;">
+            
+        </div>
+    </div>
+</div>
 
 
     

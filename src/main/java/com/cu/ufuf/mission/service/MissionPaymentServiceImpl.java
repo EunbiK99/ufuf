@@ -51,6 +51,9 @@ public class MissionPaymentServiceImpl {
 
     public void insertKakaoPayAccResInfo(GetKakaoPaymentAcceptResDto params){
 
+        MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionByOrderId(params.getPartner_order_id());
+        missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "모집중");
+
         KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto = new KakaoPaymentAcceptResDto();
 
         AmountDto amountDto = params.getAmount();
@@ -62,21 +65,19 @@ public class MissionPaymentServiceImpl {
             merchanSqlMapper.insertCardInfo(cardDto);
             int card_id = cardDto.getCard_id();
             kakaoPaymentAcceptResDto.setCard_info(card_id);
+        }else{
+            kakaoPaymentAcceptResDto.setCard_info(0);
         }
 
         kakaoPaymentAcceptResDto.setTid(params.getTid());
         kakaoPaymentAcceptResDto.setAid(params.getAid());
         kakaoPaymentAcceptResDto.setAmount(amount_id);
-        kakaoPaymentAcceptResDto.setCard_info(0);
         kakaoPaymentAcceptResDto.setPartner_order_id(params.getPartner_order_id());
         kakaoPaymentAcceptResDto.setPartner_user_id(params.getPartner_user_id());
+        kakaoPaymentAcceptResDto.setPayment_method_type(params.getPayment_method_type());
         kakaoPaymentAcceptResDto.setApproved_at(params.getApproved_at());
 
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
-
-        MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionByOrderId(params.getPartner_order_id());
-        missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "모집중");
-
     }
 
 

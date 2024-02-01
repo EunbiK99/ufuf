@@ -20,7 +20,7 @@
             sendKakaoPayAccReq(response.data);
 
         });
-    }
+    } 
     
     // 카카페이 승인 요청
     function sendKakaoPayAccReq(KakaoPayAccReqInfo) {
@@ -48,11 +48,12 @@
             .then(response => response.json())
             .then(response => {
 
-                insertkakaoPayAccReq(KakaoPayAccReqInfo, pg_token);
-                removeSession();
-                console.log(response);
                 loadPaymentInfo(response);
-        });
+                insertKakaoPayAccRes(response);
+            });
+            
+            insertkakaoPayAccReq(KakaoPayAccReqInfo, pg_token);
+            removeSession();
     }
 
     function insertkakaoPayAccReq(KakaoPayAccReqInfo, pg_token){
@@ -87,18 +88,21 @@
     }
 
     function insertKakaoPayAccRes(res){
+
+        var cardInfo = res.card_info || {};
+
         const data = {
             tid: res.tid,
             amount: res.amount,
             card_info: res.card_info,
             partner_order_id: res.partner_order_id,
             partner_user_id: res.partner_user_id,
-            item_id: res.item_id,
             aid: res.aid,
             payment_method_type: res.payment_method_type,
             approved_at: res.approved_at
         };
-        fetch("./insertkakaoPaymentAccReq", {
+
+        fetch("./insertKakaoPayAccRes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -112,6 +116,8 @@
     }
 
     function loadPaymentInfo(res){
+
+        console.log(res);
 
         const data = {
             order_id: res.partner_order_id
@@ -127,7 +133,9 @@
             .then(response => response.json())
             .then(response => {
 
-                const order_id = document.getElementById("orderId");
+                console.log(response);
+
+                const order_id = document.getElementById("order_id");
                 const total_amount = document.getElementById("total_amount");
                 const approved_at = document.getElementById("approved_at");
                 const title = document.getElementById("title");
@@ -143,7 +151,7 @@
                 let appHour = appDate.getHours();
                 let appMinute = appDate.getMinutes();
 
-                approved_at.innerText = "승인일시: " + appYear + "-" + appMonth + "-" + appDay + " " + appHour + "시 " + appMinute + "분";
+                approved_at.innerText = "승인일시: " + appYear + "." + appMonth + "." + appDay + " " + appHour + "시 " + appMinute + "분";
                 title.innerText = response.data.title;
                 detail.innerText = response.data.detail;
         });

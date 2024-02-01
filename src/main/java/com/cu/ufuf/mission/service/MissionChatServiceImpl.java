@@ -39,48 +39,31 @@ public class MissionChatServiceImpl {
         MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionById(mission_id);
         List<MissionCourseDto> missionCourseDtoList = missionMapSqlMapper.selectCourseByMission(mission_id);
 
-        String text = """
+        MissionCourseDto firstMissionCourse = missionCourseDtoList.get(0);
+
+        BigDecimal lat = firstMissionCourse.getLat();
+        BigDecimal lng = firstMissionCourse.getLng();
+        String name = userInfoDto.getName();
+        String title = missionInfoDto.getTitle();
+
+        String text = String.format("""
+            <div class="row">
+                <div class="col px-0">
+                    <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 14.85rem; height: 8rem;" onload="loadMap(%f, %f)">
+                    </div>
+                </div>
+            </div>
+            <div class="row py-3">
+                <div class="col">
                     <div class="row">
-                        <div class="col px-0">
-                            <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 15.86rem; height: 8rem;">
-                                <script>
-                                    var markerImg = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
-                                    var markerPosition = new kakao.maps.LatLng(${lat}, ${lng});
-                                    var marker = new kakao.maps.Marker({
-                                        position: markerPosition,
-                                        image: markerImg
-                                    });
-                                    var staticMapContainer  = document.getElementById('staticMap'),
-                                        staticMapOption = { 
-                                            center: new kakao.maps.LatLng(${lat}, ${lng}),
-                                            level: 4,
-                                            marker: marker
-                                        };
-                                    var staticMap = new kakao.maps.StaticMap(staticMapContainer, staticMapOption);
-                                </script>
-                            </div>
+                        <div class="col" style="word-wrap: break-word;">
+                            ^alert!^%s님께서 "%s" 미션 수락을 신청하셨습니다!
+                            ^alert!^
                         </div>
                     </div>
-                    <div class="row py-3">
-                        <div class="col">
-                            <div class="row">
-                                <div class="col" style="word-wrap: break-word;">
-                                    ^alert!^${name}님께서 "${title}" 미션 수락을 신청하셨습니다
-                                    아래 버튼을 클릭하셔서 미션을 수락해주세요!^alert!^
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col d-grid">
-                                    <button id="acceptMissionPlayerBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                        style="font-size: 1.0rem; background-color: #FF8827;" onclick="acceptMissionPlayer()">
-                                        <span class="me-2"><i class="bi bi-envelope-open"></i></span>
-                                        <span class="" style="font-size: 0.9rem;">미션 수락</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    """;
+                </div>
+            </div>
+            """, lat, lng, name, title);
      
         MissionChatDto missionChatDto = new MissionChatDto();
         missionChatDto.setChat_room_id(chat_room_id);
@@ -113,7 +96,7 @@ public class MissionChatServiceImpl {
             chatRoomInfo.put("missionInfoDto", missionMapSqlMapper.selectMissionById(mission_id));
             chatRoomInfo.put("latestChatDto", latestChatDto);
             chatRoomInfo.put("chatSenderDto", missionMapSqlMapper.selectUserById(sender_id));
-            chatRoomInfo.put("countUnreadChat", missionChatSqlMapper.countUnreadChat(chat_room_id));
+            chatRoomInfo.put("countUnreadChat", missionChatSqlMapper.countUnreadChat(chat_room_id, user_id));
             chatRoomInfo.put("countChatRoomByMission", missionChatSqlMapper.countChatRoomByMission(mission_id));
 
             chatRoomInfoList.add(chatRoomInfo);
@@ -121,6 +104,88 @@ public class MissionChatServiceImpl {
 
         return chatRoomInfoList;
     }
+
+    public List<Map<String, Object>> getChatListByMission(int mission_id, int user_id){
+
+        List<Map<String, Object>> chatRoomInfoList = new ArrayList();
+
+        List<MissionChatRoomDto> missionChatRoomList = missionChatSqlMapper.selectChatRoomListByMission(mission_id);
+
+        for(MissionChatRoomDto missionChatRoomDto : missionChatRoomList){
+
+            int chat_room_id = missionChatRoomDto.getChat_room_id();
+            int player_id = missionChatRoomDto.getUser_id();
+
+            Map<String, Object> chatRoomInfo = new HashMap<>();
+
+            MissionChatDto latestChatDto = missionChatSqlMapper.selectLatestChat(chat_room_id);
+            int sender_id = latestChatDto.getUser_id();
+
+            chatRoomInfo.put("missionChatRoomDto", missionChatRoomDto);
+            chatRoomInfo.put("playerInfoDto", missionMapSqlMapper.selectUserById(player_id));
+            chatRoomInfo.put("latestChatDto", latestChatDto);
+            chatRoomInfo.put("chatSenderDto", missionMapSqlMapper.selectUserById(sender_id));
+            chatRoomInfo.put("countUnreadChat", missionChatSqlMapper.countUnreadChat(chat_room_id, user_id));
+            
+            chatRoomInfoList.add(chatRoomInfo);
+        }
+
+        return chatRoomInfoList;
+    }
+
+    // 채팅 읽음 업데이트
+    public void updateReadStatus(int chat_room_id, int user_id){
+        missionChatSqlMapper.updateReadStatus(chat_room_id, user_id);
+    }
+
+    // 채팅방 아이디로 기본정보 가져오기
+    public Map<String, Object> getBasicInfo(int chat_room_id, int user_id){
+
+        Map<String, Object> basicInfo = new HashMap<>();
+
+        MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
+        MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id);
+
+        int mission_id = missionInfoDto.getMission_id();
+
+        if(user_id == missionInfoDto.getUser_id()){
+            // 만약 내가 미션등록자면..
+            basicInfo.put("chatMateInfoDto", missionMapSqlMapper.selectUserById(missionChatRoomDto.getUser_id()));
+        }else{
+            // 만약 내가 플레이어면..
+            basicInfo.put("chatMateInfoDto", missionMapSqlMapper.selectUserById(missionInfoDto.getUser_id()));
+        }
+
+        basicInfo.put("missionChatRoomDto", missionChatRoomDto);
+        basicInfo.put("missionInfoDto", missionInfoDto);
+        basicInfo.put("missionCourseList", missionMapSqlMapper.selectCourseByMission(mission_id));
+
+        return basicInfo;
+    }
+
+    // 채팅방 채팅들 다 가져오기
+    public List<Map<String, Object>> getChatDialogue(int chat_room_id){
+
+        List<Map<String, Object>> chatInfoList = new ArrayList<>();
+
+        List<MissionChatDto> missionChatList = missionChatSqlMapper.selectChatListByChatRoom(chat_room_id);
+        for(MissionChatDto missionChatDto : missionChatList){
+
+            Map<String, Object> chatInfo = new HashMap<>();
+
+            chatInfo.put("missionChatDto", missionChatDto);
+            chatInfo.put("chatSenderDto", missionMapSqlMapper.selectUserById(missionChatDto.getUser_id()));
+
+            chatInfoList.add(chatInfo);
+        }
+
+        return chatInfoList;
+    }
+
+    public void insertChat(MissionChatDto missionChatDto){
+        missionChatSqlMapper.insertChat(missionChatDto);
+    }
+
 
     
 

@@ -52,10 +52,11 @@
     </select>
 
     <select id="countUnreadChat" resultType="int">
-        select count(*) from  mission_chat
-        where chat_room_id = #{chat_room_id}
-        and is_read = "N"
-    </select>   
+        select count(*) from mission_chat
+        where chat_room_id = #{param1}
+        and is_read = 'N'
+        and user_id != ${param2}
+    </select>
 
     <select id="countChatRoomByMission" resultType="int">
         select count(*) from mission_chat_room
@@ -67,6 +68,29 @@
         where mission_id = #{mission_id}
     </select>
 
+    <update id="updateReadStatus">
+        update from mission_chat
+        set is_read = "Y"
+        where chat_room_id = #{chat_room_id}
+        and user_id != ${user_id}
+    </update>
+
+    <select id="selectChatListByChatRoom" resultType="com.cu.ufuf.dto.MissionChatDto">
+        select * from mission_chat
+        where chat_room_id = #{chat_room_id}
+        order by created_at ASC
+    </select>
+
+    <select id="selectMissionByChatRoom" resultType="com.cu.ufuf.dto.MissionInfoDto">
+        select mi.* from mission_info mi
+        inner join mission_chat_room mcr on mi.mission_id = mcr.mission_id
+        where mcr.chat_room_id = #{chat_room_id}
+    </select>
+
+    <select id="selectChatRoomByChatRoom" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        select * from mission_chat_room
+        where chat_room_id = #{chat_room_id}
+    </select>
 
     
 

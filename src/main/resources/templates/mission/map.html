@@ -39,7 +39,7 @@
 	function doesUserLogin(){
 		return fetch("./doesUserLogin")
 		.then(response => response.json())
-		.then(response => response.data);
+		.then(response => response.data || 0);
 	}
 
     // 지금 현재 위치 가져오기
@@ -191,7 +191,7 @@
         showMissionList.classList.remove("d-none");     
 
         const mapContainer = document.getElementById("map");
-        mapContainer.style.height = "21em";
+        mapContainer.style.height = "20.85rem";
 
         const findMyLocation = document.getElementById("findMyLocation");
         findMyLocation.classList.add("button-slide-up");
@@ -417,22 +417,22 @@
 
                         if(mission.isUserApplied == 0){
                             if(sessionUserPk === mission.userInfoDto.user_id){
-                                missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.8em;"></i><span style="font-size: 0.85em;">미션 삭제</span>`;
+                                missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.9rem;"></i><span style="font-size: 0.93rem;">미션 삭제</span>`;
                             }else if(sessionUserPk == 0){
                                 missionApplyModalBtn.onclick = function(){
                                     alert("로그인 후 이용 가능합니다."); 
                                 };
                             }else{
                                 missionApplyModalBtn.onclick = function(){
-                                    missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.8em;"></i><span class="" style="font-size: 0.85em;">미션신청</span>`;
-                                    openMissionApplyModal(mission.missionInfoDto.mission_id);  
+                                    missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9rem;"></i><span class="" style="font-size: 0.93rem;">미션신청</span>`;
+                                    openMissionApplyModal(mission.missionInfoDto.mission_id);
                                 };
                             }
                         }else{
                             missionApplyModalBtn.classList.add("disabled");
                             missionApplyModalBtn.innerText = "미션신청완료";
+                            missionApplyModalBtn.style.fontSize = "0.9em";
                         }
-
                     });
 
                 missionApplyModalBtn.addEventListener('touchstart', function() {
@@ -491,8 +491,7 @@
             .then(response => response.json())
             .then(response => {
 
-                missionApplyModalBtn.classList.add("disabled");
-                missionApplyModalBtn.innerText = "미션신청완료";
+                loadMisisonDetail(mission_id);
 
                 closeMissionApplyModal();
 
@@ -597,10 +596,10 @@
                         <div class="row">
                             <div class="fixed-top z-2">
                                 <div class="col bg-white justify-content-center shadow-sm rounded-5 border border-secondary-subtle d-flex align-text-center mx-4"
-                                    style="margin-top: 0.55em;">
-                                    <span><i class="bi bi-geo-alt me-2" style="margin-bottom: 0.05em;"></i></span>
+                                    style="margin-top: 0.7rem;">
+                                    <span><i class="bi bi-geo-alt me-2" style="margin-bottom: 0.05rem;"></i></span>
                                     <span id="nowLocation" class="text-secondary"
-                                        style="font-size: 0.85em; margin-top: 0.1em;"></span>
+                                        style="font-size: 0.85rem; margin-top: 0.1rem;"></span>
                                 </div>
                             </div>
                         </div>
@@ -660,14 +659,14 @@
                         </div>
 
                         <!-- 미션 리스트 -->
-                        <div id="showMissionList" class="row border-top d-none" style="height:17.3em; box-shadow: inset 0 -2em 1.5em -2.5em #cacaca;">
+                        <div id="showMissionList" class="row border-top d-none" style="height:17.3rem; box-shadow: inset 0 -2rem 1.5rem -2.5rem #cacaca;">
                             <div class="col">
                                 <div class="row py-2 border-bottom">
-                                    <div class="col text-end align-self-center text-secondary" style="font-size: 0.95em;">
-                                        <span>반경</span>
-                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center ms-2" style="font-size: 0.85em;">100m</button>
-                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center active" style="font-size: 0.85em;">300m</button>
-                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.85em;">500m</button>
+                                    <div class="col text-end align-self-center text-secondary" style="font-size: 0.95rem;">
+                                        <span style="font-size: 0.9rem;">반경</span>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center ms-2" style="font-size: 0.8rem;">100m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center active" style="font-size: 0.8rem;">300m</button>
+                                        <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.8rem;">500m</button>
                                     </div>
                                 </div>
                                 <div class="overflow-y-scroll overflow-x-hidden" style="height:13.8em;">
@@ -750,9 +749,9 @@
                                         </div>
                                     </div>
                                     <div class="col-4 fw-semibold align-self-center d-grid justify-content-end pe-1 ps-0">
-                                        <button id="missionApplyModalBtn" class="btn py-1 px-3 rounded-1 text-white fw-semibold"
-                                            style="font-size: 0.9em; background-color: #FF8827;">
-                                            <i class="bi bi-plus-lg me-1" style="font-size: 0.8em;"></i><span class="" style="font-size: 0.85em;">미션신청</span>
+                                        <button id="missionApplyModalBtn" class="btn px-3 rounded-1 text-white fw-semibold"
+                                            style="background-color: #FF8827; padding-top: 0.4rem; padding-bottom: 0.4rem;">
+                                            <i class="bi bi-plus-lg me-1" style="font-size: 0.9em;"></i><span class="" style="font-size: 0.93em;">미션신청</span>
                                         </button>
                                     </div>
                                 </div>
@@ -773,9 +772,9 @@
 
     <div class="row" >
         <div class="col-2 px-0">
-            <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5" 
-                onclick="findMyLocation()" style="height: 1.8em; width: 1.8em; border-radius: 50%; background-color: white;">
-                <i class="bi bi-crosshair d-flex justify-content-center text-center"></i>
+            <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
+                onclick="findMyLocation()" style="height: 2.2rem; width: 2.2rem; border-radius: 50%; background-color: white;">
+                <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
             </button>
         </div>
     </div>
@@ -783,13 +782,13 @@
     <div class="row z-2 shut px-1" id="startBtn">
         <div class="col d-grid pe-1">
             <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 shadow" 
-                style="background-color: #FF8827; font-size: 1.15em;" onclick="loadMissionList()">
+                style="background-color: #FF8827; font-size: 1.15rem;" onclick="loadMissionList()">
                 <span>미션 찾기</span>
             </button>
         </div>
         <div class="col d-grid ps-1">       
             <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 shadow" onclick="window.location.href='./missionRegistration'"
-                style="border: 0.1em solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.15em;">
+                style="border: 0.1rem solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.15rem;">
                 <span>미션 등록</span>
             </button>
         </div>

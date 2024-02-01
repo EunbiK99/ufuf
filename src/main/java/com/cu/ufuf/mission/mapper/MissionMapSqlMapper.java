@@ -22,7 +22,7 @@ public interface MissionMapSqlMapper {
     public MissionInfoDto selectMissionById(int mission_id);
 
     // 주문 아이디로 미션 셀렉트
-    public MissionInfoDto selectMissionByOrderId(String Order_id);
+    public MissionInfoDto selectMissionByOrderId(String order_id);
 
     // 미션 리스트 출력
     public List<MissionInfoDto> selectAllMission();
