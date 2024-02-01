@@ -91,29 +91,32 @@ public class MeetingController {
         
         UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-        if(sessionUserInfo == null){            
-            session.setAttribute("userType", "guest");
+        if(sessionUserInfo == null){
+            model.addAttribute("userType", "guest");
             return "./meeting/myPage";
         }else{
-            session.setAttribute("userType", "user");
-            session.setAttribute("sessionUserInfo", sessionUserInfo);
+            model.addAttribute("userType", "user");
             
             int user_id = sessionUserInfo.getUser_id();        
             int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
             System.out.println(profileCheckValue);            
 
             if(profileCheckValue > 0){
+                
                 MeetingProfileDto meetingProfileDto = meetingService.getMeetingProfileByUserId(user_id);
+                
                 int profileId = meetingProfileDto.getProfileid();
+                
                 MeetingSNSDto userSNSDto = meetingService.getSNSDtoByProfileId(profileId);
-
-                session.setAttribute("meetingProfileExist", "Y");
-                session.setAttribute("meetingProfileInfo", meetingProfileDto);
-                session.setAttribute("userSNSDto", userSNSDto);
+                
+                model.addAttribute("meetingProfileExist", "Y");
+                model.addAttribute("meetingProfileInfo", meetingProfileDto);
+                model.addAttribute("userSNSDto", userSNSDto);
+                model.addAttribute("groupMemberDtoList", meetingService.getGroupMemberDtoListByProfileId(profileId));
                 return "./meeting/myPage";
             }
             else{
-                session.setAttribute("meetingProfileExist", "N");
+                model.addAttribute("meetingProfileExist", "N");
                 return "./meeting/myPage";
             }
         }        

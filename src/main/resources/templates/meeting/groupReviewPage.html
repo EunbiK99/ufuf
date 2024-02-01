@@ -106,6 +106,7 @@ function registerBothLike(targetGroupMemberId){
         .then(response => response.json())
         .then(response =>{
             alert("Signal 보내기 완료!");
+            window.location.reload();
         });
     }
     else{
@@ -260,13 +261,13 @@ function makeGroupMemberListRow(){
 }
 
 function checkExistBothLike(){
-    const meetingBothLikeDtoList = sessionUserReviewData.meetingBothLikeDtoList;
-    console.log('meetingBothLikeDtoList: ', meetingBothLikeDtoList);
+    const meetingBothLikeFromList = sessionUserReviewData.meetingBothLikeFromList;
+    console.log('meetingBothLikeFromList: ', meetingBothLikeFromList);
 
-    if(meetingBothLikeDtoList.length > 0){
-        for(meetingBothLikeDto of meetingBothLikeDtoList){
+    if(meetingBothLikeFromList.length > 0){
+        for(meetingBothLikeFromDto of meetingBothLikeFromList){
             
-            const targetRow = document.getElementById(`groupMemberId${meetingBothLikeDto.groupMemberIdTo}`);
+            const targetRow = document.getElementById(`groupMemberId${meetingBothLikeFromDto.groupMemberIdTo}`);
             
             const groupMemberLikeIconCol = targetRow.querySelector("#groupMemberLikeIcon");
             groupMemberLikeIconCol.setAttribute("onclick", "alert('이미 Signal을 보낸 멤버입니다.')");
@@ -719,8 +720,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="col-auto align-self-center px-0">
                                     <span id="groupMemberListNickname" class="fs-5"></span>
                                 </div>
-                                <div id="groupMemberLikeIcon" class="col-auto align-self-center d-none btn py-0" role="button">
-                                    <span class="fs-3 text-danger"><i class="bi bi-heart-pulse"></i></span>
+                                <div id="groupMemberLikeIcon" class="col-auto align-self-center d-none btn" role="button">
+                                    <span class="fs-3 text-danger align-middle"><i class="bi bi-heart-pulse"></i></span>
                                 </div>
                             </div>
                         </div>

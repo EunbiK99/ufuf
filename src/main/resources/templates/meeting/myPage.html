@@ -37,28 +37,109 @@
     .menuMouseOver:hover{
         background-color: #FF8827 !important;        
     }
+
+    .customModal, .modalDialogCentered {
+        /* 트랜지션으로 표시 부드럽게 처리 */
+        transition: opacity 0.4s, visibility 0.4s;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .customModal {
+        /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
+        position: fixed;
+        width: 100%;
+        height: 100%;        
+        background-color: rgba(0, 0, 0, 0.5);
+        
+        /* 아래 CSS 모달 화면 중앙에 위치*/
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .modalDialogCentered {
+        /* 아래 CSS 모달 컨텐츠 표시*/
+        position: absolute;
+        width: 80%;
+        height: auto;
+        background-color: rgba(255,255,255);
+        
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+    }    
+
+    .active {
+        /* 액티브 토글로 출력-비출력 처리 */
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
     </style>
 </head>
 <script th:inline="javascript">
 let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
-let userType = /*[[${session.userType}]]*/;
-let meetingProfileExist = /*[[${session.meetingProfileExist}]]*/;
-let meetingProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
-let userSNSDto = /*[[${session.userSNSDto}]]*/;
+let userType = /*[[${userType}]]*/;
+let meetingProfileExist = /*[[${meetingProfileExist}]]*/;
+let meetingProfileInfo = /*[[${meetingProfileInfo}]]*/;
+let userSNSDto = /*[[${userSNSDto}]]*/;
+let groupMemberDtoList = /*[[${groupMemberDtoList}]]*/;
 
 console.log('sessionUserInfo: ', sessionUserInfo);
 console.log('userType: ', userType);
 console.log('meetingProfileExist: ', meetingProfileExist);
 console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
+console.log('groupMemberDtoList: ', groupMemberDtoList);
 
-function changeMenuColor(target){
-    console.log('changeMenuColor 실행됨');    
+function mySignalModalCSS(){
+    
+    const userGroupMemberIdList = [];
+    
+    for(e of groupMemberDtoList){
+        userGroupMemberIdList.push(e.meetingGroupMemberDto.groupMemberId);
+    }    
+    console.log('userGroupMemberIdList: ', userGroupMemberIdList);
+
+    fetch("./api/getUserMySignalToList", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(userGroupMemberIdList)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const resultData = response.data;
+        console.log('resultData: ', resultData);        
+
+    });
+    
+    
+}
+
+function showMySignalToModal(){ 
+    mySignalModalCSS();
+    const mySignalToModal = document.getElementById("mySignalToModal");
+    mySignalToModal.classList.add('active');
+    const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");
+    mySignalToModalDialog.classList.add('active');
+}
+
+function closeMySignalToModal(){
+    const mySignalToModal = document.getElementById("mySignalToModal");
+    mySignalToModal.classList.remove('active');
+    const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");
+    mySignalToModalDialog.classList.remove('active');
+}
+
+function changeMenuColor(target){    
     target.classList.add("menuMouseOver");
 }
 
-function restoreMenuColor(target){
-    console.log('restoreMenuColor 실행됨');
+function restoreMenuColor(target){    
     target.classList.remove("menuMouseOver");
 }
 
@@ -74,10 +155,14 @@ function userProfileCSR(){
 
     const userGender = document.getElementById("userGender");
     if(sessionUserInfo.gender === "M"){
-        userGender.innerText = "남";
+        const maleIcon = document.createElement("i");
+        maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+        userGender.appendChild(maleIcon);
     }
     else{
-        userGender.innerText = "여";
+        const femaleIcon = document.createElement("i");
+        femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");
+        userGender.appendChild(femaleIcon);        
     }
 
     const userUniversity = document.getElementById("userUniversity")
@@ -88,6 +173,33 @@ function userProfileCSR(){
 
     const userProfileComment = document.getElementById("userProfileComment")
     userProfileComment.innerText = meetingProfileInfo.profileComment;
+
+    let mySignalToCount = 0;
+    const mySignalTo = document.getElementById("mySignalTo");
+    mySignalTo.innerText = mySignalToCount
+
+    let mySignalBothCount = 0;
+    const mySignalBoth = document.getElementById("mySignalBoth");
+    mySignalBoth.innerText = mySignalBothCount;
+
+    for(e of groupMemberDtoList){
+        for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+            if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
+            mySignalToCount++;
+            mySignalTo.innerText = mySignalToCount;
+            }
+        }
+        if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
+            for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
+                for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                    if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
+                        mySignalBothCount++;
+                        mySignalBoth.innerText = mySignalBothCount;
+                    }                    
+                }                
+            }
+        }        
+    }
 }
 
 
@@ -238,7 +350,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             <div class="col-6 me-1 border border-black rounded">
                                                 <div class="row my-2">
                                                     <div class="col">
-                                                        <img id="userProfileImage" class="img-fluid">
+                                                        <img id="userProfileImage" class="img-fluid" style="width: 18.75em; aspect-ratio:3/4;">
                                                     </div>
                                                 </div>
                                             </div>
@@ -248,13 +360,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                         <div class="row">
                                                             <div class="col">
                                                                 <span id="userNickname" class="fw-bold"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mt-2">
-                                                            <div class="col">
                                                                 <span id="userGender"></span>
                                                             </div>
-                                                        </div>
+                                                        </div>                                                        
                                                         <div class="row mt-2">
                                                             <div class="col">
                                                                 <span id="userUniversity"></span>
@@ -263,6 +371,26 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                         <div class="row mt-2">
                                                             <div class="col">
                                                                 <span id="userUniversityDepartment"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-auto btn py-0" onclick="showMySignalToModal()">
+                                                                <span class="fs-3">
+                                                                    <i class="bi bi-activity" style="color: #FF8827;"></i>
+                                                                     : 
+                                                                </span>                                                                
+                                                                <span id="mySignalTo" class="fw-bold fs-3"></span>
+                                                                <span>명</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-auto btn py-0" onclick="showMySignalBothModal()">
+                                                                <span class="fs-3">
+                                                                    <i class="bi bi-heart-pulse-fill fs-3 text-danger"></i>
+                                                                     :
+                                                                </span>
+                                                                <span id="mySignalBoth" class="fs-3 fw-bold"></span>
+                                                                <span>명</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -299,38 +427,38 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3" onclick="moveMyRecruitGroup()">내가 모집한 미팅</button>
+                            <div class="col btn text-start" onclick="moveMyRecruitGroup()">
+                                <span class="fw-bold fs-3">내가 모집한 미팅</span>                                
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</span>                                
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3">My Signal</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3">My Signal</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3">결제 정보</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3">결제 정보</span>
                             </div>
                         </div>
                     </div>
@@ -422,7 +550,60 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
+<!--/* 모집글 지원 모달 */-->
+<div id="mySignalToModal" class="customModal" tabindex="-1">
+    <div id="mySignalToModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col">
+                            <span id="" class="modal-title fw-bold fs-4">내가 보낸 Signal</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeMySignalToModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
 
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <div class="userImageBox">
+                                                <img id="" class="img-fluid userImage">
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col align-self-center">
+                                    <span id="" class="fs-5"></span>
+                                    <span class="fs-5">님</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="row modal-footer">                                
+                <div class="col btn" role="button" onclick="closeMySignalToModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
