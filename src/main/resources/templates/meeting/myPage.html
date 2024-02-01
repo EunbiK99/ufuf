@@ -63,6 +63,7 @@
         position: absolute;
         width: 80%;
         height: auto;
+        overflow-x: scroll;
         background-color: rgba(255,255,255);
         
         top: 50%;
@@ -76,6 +77,24 @@
         opacity: 1;
         visibility: visible;
         display: block;
+    }
+
+    .userImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
     }
     </style>
 </head>
@@ -94,7 +113,65 @@ console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
 console.log('groupMemberDtoList: ', groupMemberDtoList);
 
-function mySignalModalCSS(){
+function mySignalBothModalCSR(){
+    const userGroupMemberIdList = [];
+    
+    for(e of groupMemberDtoList){
+        userGroupMemberIdList.push(e.meetingGroupMemberDto.groupMemberId);
+    }    
+    console.log('userGroupMemberIdList: ', userGroupMemberIdList);
+
+    fetch("./api/getUserMySignalToList", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(userGroupMemberIdList)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const userBothLikeDataList = response.data;
+        console.log('userBothLikeDataList: ', userBothLikeDataList);
+
+        const userSignalBothListCol = document.getElementById("userSignalBothListCol");
+        userSignalBothListCol.innerHTML = "";
+
+        for(list of userBothLikeDataList){
+            if(list.length > 0){
+                for(e of list){
+                    if(e.meLikeGroupMemberProfileDto){
+                        const userSignalBothWrapperRow = document.querySelector("#templete #userSignalBothWrapperRow").cloneNode(true);
+
+                        const userSignalBothImage = userSignalBothWrapperRow.querySelector("#userSignalBothImage");
+                        userSignalBothImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.meLikeGroupMemberProfileDto.profileImg}`);
+
+                        const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
+                        userSignalBothNickname.innerText = e.meLikeGroupMemberProfileDto.profileNickname;
+
+                        userSignalBothListCol.appendChild(userSignalBothWrapperRow);
+                    }                    
+                }                
+            }
+        }
+    });
+}
+
+function showMySignalBothModal(){ 
+    mySignalBothModalCSR();
+    const mySignalBothModal = document.getElementById("mySignalBothModal");
+    mySignalBothModal.classList.add('active');
+    const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
+    mySignalBothModalDialog.classList.add('active');
+}
+
+function closeMySignalBothModal(){
+    const mySignalBothModal = document.getElementById("mySignalBothModal");
+    mySignalBothModal.classList.remove('active');
+    const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
+    mySignalBothModalDialog.classList.remove('active');
+}
+
+function mySignalToModalCSR(){
     
     const userGroupMemberIdList = [];
     
@@ -112,16 +189,34 @@ function mySignalModalCSS(){
     })
     .then(response => response.json())
     .then(response => {
-        const resultData = response.data;
-        console.log('resultData: ', resultData);        
+        const userBothLikeDataList = response.data;
+        console.log('userBothLikeDataList: ', userBothLikeDataList);
+        
+        const userSignalToListCol = document.getElementById("userSignalToListCol");
+        userSignalToListCol.innerText = "";
+        
+        for(list of userBothLikeDataList){
+            for(e of list){
+                const userSignalToWrapperRow = document.querySelector("#templete #userSignalToWrapperRow").cloneNode(true);
 
+                const userSignalToImage = userSignalToWrapperRow.querySelector("#userSignalToImage");
+                userSignalToImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
+
+                const userSignalToNickname = userSignalToWrapperRow.querySelector("#userSignalToNickname");
+                userSignalToNickname.innerText = e.targetProfileDto.profileNickname;
+
+                const userSignalToRegdate = userSignalToWrapperRow.querySelector("#userSignalToRegdate");
+                const dateValue = e.targetProfileDto.regdate;
+                userSignalToRegdate.innerText = dateValue[0] + '년 ' + dateValue[1] + '월 ' + dateValue[2] + '일';
+
+                userSignalToListCol.appendChild(userSignalToWrapperRow);
+            }            
+        }
     });
-    
-    
 }
 
 function showMySignalToModal(){ 
-    mySignalModalCSS();
+    mySignalToModalCSR();
     const mySignalToModal = document.getElementById("mySignalToModal");
     mySignalToModal.classList.add('active');
     const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");
@@ -304,7 +399,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row">
                     <div class="col mx-1 border border-black rounded">
                         
-                        <div class="row border-bottom border-black justify-content-between" style="background-color: #FF8827;">
+                        <div class="row border-bottom border-black justify-content-between rounded-top" style="background-color: #FF8827;">
                             <div class="col-auto align-self-center">
                                 <div class="row">
                                     <div class="col">
@@ -550,7 +645,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-<!--/* 모집글 지원 모달 */-->
+<!--/* 내가 보낸 시그널 리스트 모달 */-->
 <div id="mySignalToModal" class="customModal" tabindex="-1">
     <div id="mySignalToModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
         <div class="modal-content container-fluid rounded-2">
@@ -558,7 +653,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span id="" class="modal-title fw-bold fs-4">내가 보낸 Signal</span>
+                            <span id="" class="modal-title fw-bold fs-4">Send Signal List</span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeMySignalToModal()" class="btn btn-close"></button>                            
@@ -569,26 +664,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
             <div class="row modal-body mt-2 border-bottom">
                 <div class="col">
-                    <div class="row mt-2">
-                        <div class="col">
-                            <div class="row mb-2">
-                                <div class="col-3">
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <div class="userImageBox">
-                                                <img id="" class="img-fluid userImage">
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col align-self-center">
-                                    <span id="" class="fs-5"></span>
-                                    <span class="fs-5">님</span>
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div id="userSignalToListCol" class="col">
+                            
                         </div>
-                    </div>
-                    
+                    </div>                    
                 </div>
             </div>
 
@@ -603,6 +683,117 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
     </div>
+</div>
+
+<!--/* 매칭된 시그널 리스트 모달 */-->
+<div id="mySignalBothModal" class="customModal" tabindex="-1">
+    <div id="mySignalBothModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col">
+                            <span id="" class="modal-title fw-bold fs-4">Match Signal List</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeMySignalBothModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
+
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col" style="height:12em;">
+                    <div class="row">
+                        <div id="userSignalBothListCol" class="col">
+                            
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="row modal-footer">                                
+                <div class="col btn" role="button" onclick="closeMySignalBothModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="userSignalToWrapperRow" class="row my-2 mx-1 border rounded shadowBox">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="row mt-1">
+                                <div class="col-auto">
+                                    <div class="userImageBox">
+                                        <img id="userSignalToImage" class="img-fluid userImage">
+                                    </div>                                            
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <span id="userSignalToNickname" class="fs-6 fw-bold"></span>
+                            <span class="">님께</span>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col text-end pe-1">
+                                    <span style="font-size: 0.8em;">
+                                        <span id="userSignalToRegdate" class="fw-bold"></span>
+                                        보냄
+                                    </span>                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    <div id="userSignalBothWrapperRow" class="row my-2 mx-1 border rounded shadowBox">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="row my-1">
+                        <div class="col-auto">
+                            <div class="row mt-1">
+                                <div class="col-auto">
+                                    <div class="userImageBox">
+                                        <img id="userSignalBothImage" class="img-fluid userImage">
+                                    </div>                                            
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <span id="userSignalBothNickname" class="fw-bold"></span>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto me-1 align-self-center">
+                    <div class="row">
+                        <div class="col btn" style="background-color: #FF8827;">
+                            <span id="userSignalBothChatButton" class="fw-bold">Chat</span>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

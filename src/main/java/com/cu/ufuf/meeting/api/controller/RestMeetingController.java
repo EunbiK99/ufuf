@@ -511,14 +511,14 @@ public class RestMeetingController {
     @PostMapping("getUserMySignalToList")
     public MeetingRestResponseDto getUserMySignalToList(@RequestBody int[] userGroupMemberIdList){
 
-        for(int x : userGroupMemberIdList){
-            System.out.println("그룹멤버id : " + x);
-        }
+        // for(int x : userGroupMemberIdList){
+        //     System.out.println("그룹멤버id : " + x);
+        // }
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
-        // meetingRestResponseDto.setData(1);
+        meetingRestResponseDto.setData(meetingService.getUserBothLikeInfo(userGroupMemberIdList));
         return meetingRestResponseDto;
     }
 
