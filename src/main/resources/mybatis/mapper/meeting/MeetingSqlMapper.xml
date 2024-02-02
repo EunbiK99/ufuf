@@ -463,6 +463,25 @@ values (
     where groupMemberId  = #{groupMemberId}
 </select>
 
+<!-- * 채팅방 Dto 인서트-->
+<insert id="insertChatRoomDto">
+    insert into meeting_chatRoom(chatRoomId ,chatRoomTitle) values(
+        #{chatRoomId},
+        #{chatRoomTitle}
+    )
+</insert>
+
+<!-- * 프로필PK기준 채팅방DTo 셀렉트-->
+<select id="selectChatRoomDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingChatRoomDto">
+    SELECT * from meeting_chatRoom
+    where profileId = #{profileId}
+</select>
+
+<!-- * 채팅방PK 생성-->
+<select id="createChatRoomPk" resultType="int">
+    SELECT IFNULL(MAX(chatRoomId), 0) + 1  from meeting_chatRoom
+</select>
+
 
 
 
