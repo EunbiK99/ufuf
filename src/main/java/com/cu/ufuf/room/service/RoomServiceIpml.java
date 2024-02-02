@@ -11,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.dto.InterestRoomDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RoomGuestDto;
 import com.cu.ufuf.dto.RoomGuestReviewDto;
 import com.cu.ufuf.dto.RoomImageDto;
@@ -379,4 +384,54 @@ public class RoomServiceIpml {
         roomSqlMapper.deleteRoomGuestReview(room_info_id);
     }
     
+
+
+
+    //카카오페이
+    
+    public void itemInfoInsert(int room_info_id){
+        
+        roomSqlMapper.itemInfoInsert(room_info_id);
+    }
+
+    public int roomInfoIdMaxValue(){
+        
+        return roomSqlMapper.roomInfoIdMaxValue();
+    }
+    
+    public void kakaoPaymentReqInsert(KakaoPaymentReqDto kakaoPaymentReqDto){
+        
+        roomSqlMapper.kakaoPaymentReqInsert(kakaoPaymentReqDto);
+    }
+    public void orderInfoInsert(OrderInfoDto orderInfoDto){
+
+        roomSqlMapper.orderInfoInsert(orderInfoDto);
+    }
+    public int itemPkGetByRoomInfoId(int room_info_id){
+
+        return roomSqlMapper.itemPkGetByRoomInfoId(room_info_id);
+    }
+    public int userPkByRoomInfoId(int room_info_id){
+
+        return roomSqlMapper.userPkByRoomInfoId(room_info_id);
+    }
+
+
+    public String orderIdMax(){
+        
+        return roomSqlMapper.orderIdMax();
+    }
+
+    public void kakaoPaymentResInsert(KakaoPaymentResDto kakaoPaymentResDto){
+        
+        roomSqlMapper.kakaoPaymentResInsert(kakaoPaymentResDto);
+    }
+    public void kakaoPaymentAcceptReqInsert(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+
+        roomSqlMapper.kakaoPaymentAcceptReqInsert(kakaoPaymentAcceptReqDto);
+    }
+    public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+
+        roomSqlMapper.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
+    }
 }

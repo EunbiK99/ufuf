@@ -162,6 +162,7 @@
     <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
         SELECT * from room_guest
         where user_id=#{user_id}
+        ORDER BY room_guest_id DESC
     </select>
 
     <select id="roomGuestSelectByGuestId" resultType="com.cu.ufuf.dto.RoomGuestDto">
@@ -349,5 +350,61 @@
         where room_guest_id=#{room_guest_id}
     </select>
     
+
+    <!--카카오결제-->
+
+    <select id="roomInfoIdMaxValue" resultType="int">
+        select max(room_info_id) from room_info
+    </select>
+
+    <!--결제할거 등록?-->
+    <insert id="itemInfoInsert">
+        INSERT into item_info(item_category_id, merchan_id) values(
+            4, #{merchan_id}
+        )
+    </insert>
+
+    <!--결제요청-->
+    <insert id="kakaoPaymentReqInsert">
+        INSERT into kakao_payment_req(cid, partner_user_id, partner_order_id, item_code, item_name, quantity, total_amount, tax_free_amount) values(
+                'TC0ONETIME', #{partner_user_id}, #{partner_order_id}, #{item_code}, #{item_name}, #{quantity}, #{total_amount}, #{tax_free_amount}
+        )
+    </insert>
+
+    <insert id="orderInfoInsert">
+        INSERT into order_info(order_id, item_id, user_id, status) values(
+            #{order_id}, #{item_id}, #{user_id}, #{status}
+        )
+    </insert>
+
+    <select id="itemPkGetByRoomInfoId" resultType="int">
+        select item_id from item_info where merchan_id = #{room_info_id} and item_category_id = 4
+    </select>
+
+    <select id="userPkByRoomInfoId" resultType="int">
+        SELECT user_id from room_info ri where room_info_id=#{room_info_id}
+    </select>
+
+    <select id="orderIdMax" resultType="java.lang.String">
+        SELECT MAX(order_id) from order_info
+    </select>
+
+    <insert id="kakaoPaymentResInsert">
+        INSERT into kakao_payment_res(tid, next_redirect_mobile_url) values(
+            #{tid}, #{next_redirect_mobile_url}
+        )
+    </insert>
+
+    <insert id="kakaoPaymentAcceptReqInsert">
+        INSERT into kakao_payment_accept_req(cid, tid, partner_order_id, partner_user_id, pg_token) values(
+            #{cid}, #{tid}, #{partner_order_id}, #{partner_user_id}, #{pg_token}
+        )
+    </insert>
+    
+    <insert id="kakaoPaymentAcceptResInsert">
+        insert into kakao_payment_accept_res(tid, amount, card_info, partner_order_id, partner_user_id, aid, payment_method_type, approved_at) values(
+            #{tid}, #{amount}, #{card_info}, #{partner_order_id}, #{partner_user_id}, #{aid}, #{payment_method_type}, #{approved_at}
+        )
+    </insert>
     
 </mapper>

@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +26,13 @@ import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
+import com.cu.ufuf.dto.MeetingGroupReviewDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
+import com.cu.ufuf.dto.MeetingKakaoApproveReqDto;
+import com.cu.ufuf.dto.MeetingKakaoApproveResponseDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
+import com.cu.ufuf.dto.MeetingMemberReviewDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingRestResponseDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
@@ -344,7 +348,7 @@ public class RestMeetingController {
     }
 
     @PostMapping("kakaoPayReady")
-    public MeetingRestResponseDto kakaoPayReady(Model model,@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
+    public MeetingRestResponseDto kakaoPayReady(HttpSession session,@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
         System.out.println("kakaoPayReady 실행됨");
         
         System.out.println("Cid : " + kakaoPaymentReqDto.getCid());
@@ -356,15 +360,22 @@ public class RestMeetingController {
         System.out.println("Total_amount : " + kakaoPaymentReqDto.getTotal_amount());
         System.out.println("Tax_free_amount : " + kakaoPaymentReqDto.getTax_free_amount());        
         
-        KakaoPaymentResDto kakaoPaymentResDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
-        model.addAttribute("tid", kakaoPaymentResDto.getTid());
-		System.out.println("결재고유 번호: " + kakaoPaymentResDto.getTid());
-		// Order정보를 모델에 저장
+        // PC 테스트용 코드
+        MeetingKakaoReadyResponseDto meetingKakaoReadyResponseDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
+        session.setAttribute("tid", meetingKakaoReadyResponseDto.getTid());
+		System.out.println("결재고유 번호: " + meetingKakaoReadyResponseDto.getTid());
+        
+        // 모바일용 코드        
+        // KakaoPaymentResDto kakaoPaymentResDto = meetingService.kakaoPayReady(kakaoPaymentReqDto);
+        // model.addAttribute("tid", kakaoPaymentResDto.getTid());
+		// System.out.println("결재고유 번호: " + kakaoPaymentResDto.getTid());
+		// // Order정보를 모델에 저장
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
-        meetingRestResponseDto.setData(kakaoPaymentResDto);
+        // meetingRestResponseDto.setData(kakaoPaymentResDto);
+        meetingRestResponseDto.setData(meetingKakaoReadyResponseDto);
         return meetingRestResponseDto;		
     }
 
@@ -381,6 +392,136 @@ public class RestMeetingController {
         meetingRestResponseDto.setData(resOrderInfoDto);
         return meetingRestResponseDto;
     }
+
+    @PostMapping("kakaoPaymentAcceptRequestProcess")
+    public MeetingRestResponseDto kakaoPaymentAcceptRequestProcess(@RequestBody MeetingKakaoApproveReqDto meetingKakaoApproveReqDto){
+
+        System.out.println("kakaoPaymentAcceptRequestProcess 실행됨");
+
+        System.out.println("tid : " + meetingKakaoApproveReqDto.getTid());
+        System.out.println("pg_token : " + meetingKakaoApproveReqDto.getPg_token());
+        System.out.println("Partner_order_id : " + meetingKakaoApproveReqDto.getPartner_order_id());
+        System.out.println("Partner_user_id : " + meetingKakaoApproveReqDto.getPartner_user_id());
+
+        MeetingKakaoApproveResponseDto meetingKakaoApproveResponseDto = meetingService.kakaoPayApprove(meetingKakaoApproveReqDto);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingKakaoApproveResponseDto);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("changePaymentStatus")
+    public MeetingRestResponseDto changePaymentStatus(int groupId, int userId){
+
+        meetingService.updateGroupMemberPaymentStatus(groupId, userId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("isGroupReviewExist")
+    public MeetingRestResponseDto isGroupReviewExist(int groupMemberId){
+
+        String resultValue = meetingService.checkExistGroupReviewByGroupMemberId(groupMemberId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(resultValue);
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerGroupReviewProcess")
+    public MeetingRestResponseDto registerGroupReviewProcess(MeetingGroupReviewDto meetingGroupReviewDto){
+        int groupMemberId = meetingGroupReviewDto.getGroupMemberId();
+        String checkedValue = meetingService.checkExistGroupReviewByGroupMemberId(groupMemberId);
+        if(checkedValue == "Y"){
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+            meetingRestResponseDto.setResult("fail");
+            return meetingRestResponseDto;
+        }
+        else{
+            meetingService.registerGroupReview(meetingGroupReviewDto);            
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+            meetingRestResponseDto.setResult("success");            
+            return meetingRestResponseDto;
+        }
+    }
+
+    @GetMapping("getGroupMemberReview")
+    public MeetingRestResponseDto getGroupMemberReview(int groupId){
+
+        List<Map<String, Object>> groupMemberReviewList = meetingService.getGroupMemberReviewList(groupId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(groupMemberReviewList);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("isMemberReviewExist")
+    public MeetingRestResponseDto isMemberReviewExist(int groupMemberIdFrom, int groupMemberIdTo){
+        String reseult = meetingService.checkExistGroupMemberReviewByFromIdAndToId(groupMemberIdFrom, groupMemberIdTo);
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(reseult);
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerGroupMemberReview")
+    public MeetingRestResponseDto registerGroupMemberReview(@RequestBody MeetingMemberReviewDto meetingMemberReviewDto){
+
+        meetingService.registerGroupMemberReview(meetingMemberReviewDto);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getSessionUserReviewDataAll")
+    public MeetingRestResponseDto getSessionUserReviewDataAll(int groupMemberId){
+
+        Map<String, Object> map = meetingService.getUserReviewDataAll(groupMemberId);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(map);
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("registerBothLike")
+    public MeetingRestResponseDto registerBothLike(int groupMemberIdTo, int groupMemberIdFrom){
+
+        meetingService.registerBothLike(groupMemberIdTo, groupMemberIdFrom);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("getUserMySignalToList")
+    public MeetingRestResponseDto getUserMySignalToList(@RequestBody int[] userGroupMemberIdList){
+
+        // for(int x : userGroupMemberIdList){
+        //     System.out.println("그룹멤버id : " + x);
+        // }
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getUserBothLikeInfo(userGroupMemberIdList));
+        return meetingRestResponseDto;
+    }
+
 
 
 

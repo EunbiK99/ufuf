@@ -56,6 +56,8 @@ let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
 
+
+/* 카카오 결제요청 전 OrderInfoDto 생성 */
 function registerOrderProcess(){
     const userNickname = sessionUserMeetingProfileDto.profileNickname;
     console.log('userNickname: ', userNickname);
@@ -202,7 +204,7 @@ function getMeetingGroupMemberList(){
                 
                 const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
                 if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
-                    kakaoPayButton.classList.toggle("d-none");
+                    kakaoPayButton.classList.remove("d-none");
                 }
             }
 
@@ -276,6 +278,12 @@ function makeGroupDetailPage(){
         const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
         const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
         noApplyProfileInfoText.innerText = " 멤버모집이 완료되었습니다 :) ";
+        
+        const childCol = noApplyProfileRow.children[0];        
+        
+        const reviewPageButton = document.querySelector("#templete #reviewPageButton").cloneNode(true);
+        reviewPageButton.setAttribute("onclick", `window.location.href='./groupReviewPage?groupId='+${groupDetailInfo.meetingGroupDto.groupId}`);
+        childCol.appendChild(reviewPageButton);
         applyProfileListWrapperCol.appendChild(noApplyProfileRow);
     }
     else{
@@ -464,7 +472,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                             <div class="col">
                                                                 <div class="row">
                                                                     <div class="col">
-                                                                        <span>멤버별 납부현황</span>
+                                                                        <span class="fw-bold">멤버별 납부현황</span>
                                                                     </div>
                                                                 </div>
                                                                 <div class="row mt-1">
@@ -500,7 +508,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
                     </div>                    
-                </div>
+                </div>                
             </div>
         </div>
 
@@ -641,10 +649,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="noApplyProfileRow" class="row">
-        <div class="col text-center align-self-center">
-            <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-secondary"></span>
-        </div>
+    <div id="noApplyProfileRow" class="row my-3">
+        <div class="col">
+            <div class="row">
+                <div class="col text-center align-self-center">
+                    <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-secondary"></span>
+                </div>
+            </div>            
+        </div>        
+    </div>
+
+    <div id="reviewPageButton" class="row my-3 mx-1 justify-content-center">        
+        <div class="col-auto text-center btn" style="background-color: #FF8827;">
+            <span class="fs-5 fw-bold">Go to Review Page</span>
+        </div>        
     </div>
     
 

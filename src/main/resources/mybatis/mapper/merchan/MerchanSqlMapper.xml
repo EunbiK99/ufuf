@@ -124,22 +124,20 @@
 <insert id="insertKakaoPayAccResInfo">
 	insert into kakao_payment_accept_res(
     	tid,
-        amount_id,
-        card_id,
+        amount,
+        card_info,
         partner_order_id,
         partner_user_id,
-        item_id,
         aid,
         payment_method_type,
         approved_at
         )
 	values(
     	#{tid},
-        #{amount_id},
-        #{card_id},
+        #{amount},
+        #{card_info},
         #{partner_order_id},
         #{partner_user_id},
-        #{item_id},
         #{aid},
     	#{payment_method_type},
         #{approved_at}

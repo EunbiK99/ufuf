@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
     <script>
         var relativePath = window.location.origin;
         var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
@@ -138,15 +140,60 @@
 
                                 // 마커를 배열에 추가
                                 markers.push(marker);
+                                 // 인포윈도우 내용을 구성합니다
+                                var content = '<div class="row py-2 px-2">'+
+                                    '<div class="col" style="width: 7em;">'+
+                                        '<a href="./roomDetailPage?room_info_id='+e.roomInfoDto.room_info_id+'">'+
+                                            '<img src="/public/image/room/'+e.roomInfoDto.main_image+'" class="img-fluid" style="width: 7em; height: 5em; overflow: hidden; position: relative;">'+
+                                        '</a>'+
+                                    '</div>'+
+                                    '<div class="col-7 ms-0 ps-0" style="max-height: 10em;">'+
+                                        '<div class="row ps-1" style="max-width: 13em;">'+
+                                            '<a href="./roomDetailPage?room_info_id='+e.roomInfoDto.room_info_id+'" class="fw-bold text-start py-0 ms-0 text-truncate" style="color: black; text-decoration: none; max-width: 11em;">'+e.roomInfoDto.title+'</a>'+
+                                        '</div>'+
+                                        '<div class="row ms-1" style="max-width: 10em;">'+
+                                        '    <div class="col text-secondary ps-0 text-truncate" style="max-width: 10em;"><a href="./roomDetailPage?room_info_id='+e.roomInfoDto.room_info_id+'" class="text-secondary text-start py-0" style="font-size: 0.7em; color: black; text-decoration: none; max-width: 5em;">'+e.roomInfoDto.location+'</a></div>'+
+                                            
+                                        '</div>'+
 
+                                        '<div class="row mb-2 mt-1 ps-1" style="max-width: 12em;">'+
+                                            '<div class="col"> <a href="./roomDetailPage?room_info_id='+e.roomInfoDto.room_info_id+'" class="text-start ms-0 ps-0" style="color: black; text-decoration: none;">'+ Number(e.roomInfoDto.room_charge).toLocaleString()+'<span class="text-secondery" style="font-size: 0.9em;">'+'/1박'+'<span>' +'</a></div>'
+                                            
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>';
+
+                                // 인포윈도우를 생성합니다
+                                var infowindow = new kakao.maps.InfoWindow({
+                                    content: content,
+                                });
+
+                                // 마커 클릭 이벤트 리스너 등록
+                                kakao.maps.event.addListener(marker, 'click', function () {
+                                    // 인포윈도우를 열고 닫습니다
+                                    infowindow.open(map, marker);
+                                });
+
+                                // 리스트 아이템 클릭 이벤트 등록
+                                a.addEventListener("click", function () {
+                                    // 인포윈도우를 열고 닫습니다
+                                    infowindow.open(map, marker);
+
+                                    // 마커를 클릭하면 해당 아이템의 주소로 지도 중심 이동
+                                    map.setCenter(marker.getPosition());
+                                    panTo(marker.getPosition());
+                                });
                                 // 리스트 아이템 클릭 이벤트 등록
                                 a.addEventListener("click", function () {
                                     // 마커를 클릭하면 해당 아이템의 주소로 지도 중심 이동
                                     map.setCenter(marker.getPosition());
                                     panTo(marker.getPosition());
+
+                                    
                                 });
                             }
                         });
+                        
 
                         // 본문에 붙이는 코드(리스트들)
                         const roomListBox = document.querySelector("#roomListBox");
@@ -183,6 +230,13 @@
 
         }
 
+        // 현재위치로 이동하는 버튼
+        function findMyLocation(){
+            getNowLocation(function(locPosition) {
+                panTo(locPosition);
+            });
+        }
+
 
 
 
@@ -193,7 +247,20 @@
     </script>
 
     <style>
-        
+        *{
+            font-family: -apple-system, BlinkMacSystemFont, 
+            "Apple SD Gothic Neo", 
+            "Pretendard Variable", 
+            Pretendard, 
+            Roboto, 
+            "Noto Sans KR", 
+            "Segoe UI", 
+            "Malgun Gothic", 
+            "Apple Color Emoji", 
+            "Segoe UI Emoji", 
+            "Segoe UI Symbol", 
+            sans-serif;
+        }
 
         .fixed-bottom {
             position: fixed;
@@ -253,12 +320,7 @@
         overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
 
-        *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
-        }
+        
 
         #roomListBox {
             display: flex;
@@ -298,6 +360,16 @@
                 </div>
                 
             </div>
+
+            <div class="row ms-3" style="position: fixed; right: 2.3em; bottom: 12.5em; z-index: 1000;">
+                <div class="col-1 px-0 text-end">
+                    <button id="findMyLocation" class="btn-sm text-secondary rounded-circle bg-white border fs-5 shadow" 
+                        onclick="findMyLocation()" style="height: 2em; width: 2em;">
+                        <i class="bi bi-crosshair align-text-bottom"></i>
+                    </button>
+                </div>
+            </div>
+
 
         <div class="row" style="position: fixed; top: 5.5em;">
             <div class="col-1 text-secondery"><i class="bi bi-geo-alt-fill"></i></div>
@@ -341,7 +413,14 @@
         </div>
 
         <div id="global-navi" class="fixed-bottom shadow border bg-white mt-1 overflow-x-auto mx-3 rounded-3" style="bottom: 2.5em ; z-index: 1000;">
-            
+            <div class="row mt-1 pt-1 ">
+                <div class="col fw-bold">
+                    지도로 숙소찾기
+                </div>
+                <div class="col ms-2">
+                    <a class="text-secondary ms-3" href="./roomListPage" style="font-size: 0.8em; text-decoration: none;">숙소 목록으로 ></a>
+                </div>
+            </div>
             <div class="row p-3" id="roomListBox">
             </div>
         </div>

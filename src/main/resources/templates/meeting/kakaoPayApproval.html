@@ -30,6 +30,75 @@
     }
     </style>
 </head>
+<script th:inline="javascript">
+let tid = /*[[${session.tid}]]*/
+
+function kakaoPaymentAcceptRequestProcess(){
+    const curruntURL = new URL(window.location.href);
+    console.log('curruntURL: ', curruntURL);
+
+    const URLparams = curruntURL.searchParams;
+    console.log('URLparams: ', URLparams);
+
+    let pg_token = URLparams.get('pg_token');
+    console.log('pg_token: ', pg_token);
+
+    let userId = URLparams.get('userId');
+    console.log('userId: ', userId);
+    let orderId = URLparams.get('orderId');
+    console.log('orderId: ', orderId);
+
+    console.log("tid : ", tid);
+
+    const kakaoPaymentApproveReqDto = {
+        tid : tid,
+        partner_order_id : orderId,
+        partner_user_id : userId,
+        pg_token : pg_token
+    }
+
+    fetch("./api/kakaoPaymentAcceptRequestProcess", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(kakaoPaymentApproveReqDto)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const responseData = response.data
+        console.log('responseData: ', responseData);
+
+        let groupId = responseData.item_name.substring(12);
+        console.log('groupId: ', groupId);
+
+        const userId = responseData.partner_user_id;
+        console.log('userId: ', userId);
+
+        changePaymentStatus(groupId, userId)
+
+
+    });
+}
+
+function changePaymentStatus(groupId, userId){    
+    
+    console.log('groupId: ', groupId);    
+    console.log('userId: ', userId);
+
+    fetch("./api/changePaymentStatus?groupId=" + groupId + "&userId=" + userId)
+    .then(response => response.json())
+    .then(response => {
+        const result = response.result;
+        console.log('result: ', result);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    kakaoPaymentAcceptRequestProcess();
+})
+
+</script>
 
 <body class="pt-5 pb-5">
     <div class="container-fluid">
@@ -37,7 +106,7 @@
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
-                <div class="row mt-1 justify-content-between">
+                <div class="row mt-1 mx-1 justify-content-between">
                     <div class="col">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
@@ -57,7 +126,41 @@
         
         <div class="row">
             <div class="col">
-                <span class="fs-1">결제 정상완료됨!!</span>
+                
+                <div class="row text-center">
+                    <div class="col">
+                        <div class="row mt-5">
+                            <div class="col">
+                                <img class="img-fluid" src="/public/image/circle/success.png">
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col" style="font-size: 1.3em;">
+                                결제를 성공하였습니다.
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                                결제가 정상적으로 완료되었습니다.
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
+                                결제내역을 확인해 주세요!
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col d-grid">
+                                <button onclick="window.location.href='../meeting/mainPage'" class="btn" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col d-grid"><!-- 여기는 마이페이지에 있는 내 일정내역 결제한거 확인하는 페이지로 이동시켜야함,-->
+                                <button onclick="" class="btn" style="background-color: #fb7928; color: white;">일정내역 확인하러가기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -65,12 +168,12 @@
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
-                    <div class="col mx-1">
+                    <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -79,10 +182,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -91,17 +194,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 3em; height: auto;">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center mx-2 mx-1">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -110,10 +213,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 2em; height: auto;">                                                                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
                                     </div>
                                 </div>
                                 <div class="row">

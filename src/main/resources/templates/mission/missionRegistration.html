@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
 <script>
 
@@ -280,17 +281,36 @@
         }
     }
 
-    // 가격 입력 시, 1000원 이상 입력 필요
-    function checkReward(input, courseCounter){
+    // 전체 총 금액을 계산하는 함수
+    function calculateTotalReward() {
+        let sum = 0;
 
+        for (var i = 1; i < courseCounter; i++) {
+            var currentInput = document.getElementById(`course${i}`);
+            var currentReward = currentInput.querySelector(".reward").value;
+
+            // 현재 코스의 보상을 더함
+            if (!isNaN(currentReward)) {
+                sum += parseInt(currentReward, 10);
+            }
+        }
+
+        const totalReward = document.getElementById("totalReward");
+        totalReward.innerText = sum;
+
+        if (totalReward.innerText === "NaN") {
+            totalReward.innerText = 0;
+        }
+    }
+
+    // 가격 입력 시, 1000원 이상 입력 필요
+    function checkReward(input, courseCounter) {
         var MinWarning = `#course${courseCounter} .MinWarning`;
         var MinWarningDiv = document.querySelector(MinWarning);
-        const totalReward = document.getElementById("totalReward");
 
         var inputValue = input.value;
 
-        if(!isNaN(inputValue)){
-
+        if (!isNaN(inputValue)) {
             let inputNumber = parseInt(inputValue, 10);
 
             if (inputNumber >= 1000) {
@@ -299,22 +319,12 @@
                 MinWarningDiv.classList.remove("d-none");
             }
 
-            let sum = 0;
+            // 전체 총 금액을 다시 계산
+            calculateTotalReward();
 
-            for (var i = 1; i <= courseCounter; i++) {
-                var currentInput = document.getElementById(`course${i}`).value;
-                sum += inputNumber;
-                totalReward.innerText = sum;
-
-                if (totalReward.innerText === "NaN"){
-                    totalReward.innerText = 0;
-                }
-            }
-
-        }else{
+        } else {
             input.value = '';
         }
-
     }
 
     // 상금 버튼
@@ -340,8 +350,7 @@
         const hour = document.getElementById("hour").value;
         const minute = document.getElementById("minute").value;
 
-        var total_minutes = hour * 60;
-        total_minutes = total_minutes + minute;
+        var total_minutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
 
         for(i = 1; i < courseCounter; i++){
 
@@ -495,6 +504,21 @@
 </script>
 
 <style>
+
+    *{font-family: -apple-system, 
+        BlinkMacSystemFont, 
+        "Apple SD Gothic Neo", 
+        "Pretendard Variable", 
+        Pretendard, Roboto, 
+        "Noto Sans KR", 
+        "Segoe UI",
+        "Malgun Gothic", 
+        "Apple Color Emoji", 
+        "Segoe UI Emoji", 
+        "Segoe UI Symbol", 
+        sans-serif;
+        letter-spacing: 0.03em;
+    }
 
     .form-control:focus {
       border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */

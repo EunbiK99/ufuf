@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>미션등록</title>
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+<script>
+
+    var relativePath = window.location.origin;
+
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+    function loadChatList(){
+
+        const chatListBox = document.getElementById("chatListBox");
+        chatListBox.innerHTML = "";
+
+        const processedMissionIds = new Set();
+
+        fetch("./loadChatList")
+            .then(response => response.json())
+            .then(response => {
+
+                for(chat of response.data){
+
+                    if(sessionUser == chat.missionInfoDto.user_id){
+
+                        // 내가 등록한 미션의 채팅일 경우
+
+                        if (!processedMissionIds.has(chat.missionInfoDto.mission_id)) {
+
+                            const myMissionChatWrapper = document.querySelector("#myMissionChatTemplete .myMissionChatWrapper").cloneNode(true);
+                    
+                            myMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
+                            myMissionChatWrapper.querySelector(".detail").innerHTML = chat.missionInfoDto.detail;
+                            myMissionChatWrapper.querySelector(".countChatRoom").innerText = chat.countChatRoomByMission;
+
+                            (function (currentChatWrapper, missionChatRoomDto) {
+                                myMissionChatWrapper.onclick = function () {
+                                    loadMyMissionPlayer(chat.missionInfoDto);
+                                };
+                            })(myMissionChatWrapper, chat.missionChatRoomDto);
+
+                            chatListBox.appendChild(myMissionChatWrapper);
+
+                            processedMissionIds.add(chat.missionInfoDto.mission_id);
+                        }
+
+                    }else if(sessionUser == chat.missionChatRoomDto.user_id){
+
+                        // 내가 신청 및 수행하는 미션의 채팅일 경우
+                        const myPlayMissionChatWrapper = document.querySelector("#myPlayMissionChatTemplete .myPlayMissionChatWrapper").cloneNode(true);
+
+                        myPlayMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
+
+                        var countUnread = chat.countUnreadChat;
+
+                        // 미션 진행상태
+                        if(chat.missionChatRoomDto.accept_at == null){
+                            myPlayMissionChatWrapper.querySelector(".status").innerText = "수락대기중";
+                        }else if(chat.missionChatRoomDto.accept_at != null && chat.missionChatRoomDto.giveup_at == null){
+                            myPlayMissionChatWrapper.querySelector(".status").innerText = "수행중";
+                        }else if(chat.missionChatRoomDto.giveup_at != null){
+                            myPlayMissionChatWrapper.querySelector(".status").innerText = "미션종료";
+                        }
+
+                        // 채팅 읽음 0이면 표시 X
+                        if(chat.countUnreadChat == 0){
+                            myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = "";
+                        }else{
+                            myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = `<span class="countUnread px-2 rounded-5 text-white fw-semibold text-center d-flex align-self-center" 
+                                                                                                        style="background-color: #FF8827; font-size: 0.9em;">
+                                                                                                        ${countUnread}
+                                                                                                    </span>`
+                        }
+
+                        // 가장 마지막에 온 채팅 유형 구분 => 미리보기에 뭘 내보낼지
+                        if(chat.latestChatDto.chat_category_id === 1){
+                            myPlayMissionChatWrapper.querySelector(".latestChat").innerText = chat.latestChatDto.message;
+                        }else if(chat.latestChatDto.chat_category_id === 2){
+                            myPlayMissionChatWrapper.querySelector(".latestChat").innerText = "(사진)";
+                        }else if(chat.latestChatDto.chat_category_id === 3){
+
+                            let pattern = /\^alert!\^([\s\S]*?)\^alert!\^/g;
+                            let match = pattern.exec(chat.latestChatDto.message);
+
+                            var title = chat.missionInfoDto.title;
+                            var name = chat.chatSenderDto.name;
+
+                            let text = match[1].replace("${name}", name);
+                            text = text.replace("${title}", title);
+
+                            myPlayMissionChatWrapper.querySelector(".latestChat").innerHTML = text;
+                        }
+
+                        (function (currentChatWrapper, currentChatRoomId) {
+                            myPlayMissionChatWrapper.onclick = function () {
+                                window.location.href="./chatRoom?chat_room_id=" + currentChatRoomId;
+                            };
+                        })(myPlayMissionChatWrapper, chat.missionChatRoomDto.chat_room_id);
+
+                        chatListBox.appendChild(myPlayMissionChatWrapper);
+                    }
+                }
+            });
+    }
+
+    function loadMyMissionPlayer(missionInfoDto){
+
+        const myMissionChatWrapper = document.querySelector("#myMissionChatTemplete .myMissionChatWrapper");
+
+        const data = {
+            mission_id: missionInfoDto.mission_id
+        }
+
+        fetch("./loadMyMissionPlayer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const myMissionPlayerBox = document.getElementById("myMissionPlayerBox");
+
+                if (myMissionPlayerBox.style.display === "none" || myMissionPlayerBox.innerHTML.trim() === "") {
+                    // 현재 숨겨져 있으면 보이게 변경하고 리스트 추가
+                    myMissionPlayerBox.style.display = "block";
+                    myMissionPlayerBox.innerHTML = "";
+
+                    for(player of response.data){
+                        
+                        const myMissionPlayerTemplete = document.getElementById("myMissionPlayerTemplete");
+                        const myMissionPlayerWrapper = document.querySelector("#myMissionPlayerTemplete .myMissionPlayerWrapper").cloneNode(true);
+    
+                        myMissionPlayerWrapper.querySelector(".name").innerText = player.playerInfoDto.name;
+                        
+                        // 미션 진행상태
+                        if(player.missionChatRoomDto.accept_at == null){
+                            myMissionPlayerWrapper.querySelector(".status").innerText = "수락대기중";
+                        }else if(player.missionChatRoomDto.accept_at != null && player.missionChatRoomDto.giveup_at == null){
+                            myMissionPlayerWrapper.querySelector(".status").innerText = "수행중";
+                        }else if(player.missionChatRoomDto.giveup_at != null){
+                            myMissionPlayerWrapper.querySelector(".status").innerText = "미션종료";
+                        }
+    
+                        var countUnread = player.countUnreadChat;
+                        if(player.countUnreadChat == 0){
+                            myMissionPlayerWrapper.querySelector(".countUnreadBox").innerHTML = "";
+                        }else{
+                            myMissionPlayerWrapper.querySelector(".countUnreadBox").innerHTML = `<span class="countUnread px-2 rounded-5 text-white fw-semibold text-center d-flex align-self-center" 
+                                                                                                    style="background-color: #FF8827; font-size: 0.9em;">
+                                                                                                    ${countUnread}
+                                                                                                </span>`
+                        }
+    
+                        // 가장 마지막에 온 채팅 유형 구분 => 미리보기에 뭘 내보낼지
+                        if(player.latestChatDto.chat_category_id === 1){
+                            myMissionPlayerWrapper.querySelector(".latestChat").innerText = player.latestChatDto.message;
+                        }else if(player.latestChatDto.chat_category_id === 2){
+                            myMissionPlayerWrapper.querySelector(".latestChat").innerText = "(사진)";
+                        }else if(player.latestChatDto.chat_category_id === 3){
+
+                            let pattern = /\^alert!\^([\s\S]*?)\^alert!\^/g;
+                            let match = pattern.exec(player.latestChatDto.message);
+
+                            var title = missionInfoDto.title;
+                            var name = player.chatSenderDto.name;
+
+                            let text = match[1].replace("${name}", name);
+                            text = text.replace("${title}", title);
+
+                            myMissionPlayerWrapper.querySelector(".latestChat").innerHTML = text;
+                        }
+    
+                            (function (currentChatWrapper, currentChatRoomId) {
+                                myMissionPlayerWrapper.onclick = function () {
+                                    window.location.href="./chatRoom?chat_room_id=" + currentChatRoomId;
+                                };
+                            })(myMissionPlayerWrapper, player.missionChatRoomDto.chat_room_id);
+    
+                            myMissionPlayerBox.appendChild(myMissionPlayerWrapper);
+                    }
+                } else {
+                    // 현재 보이고 있으면 숨기게 변경
+                    myMissionPlayerBox.style.display = "none";
+                }
+            });
+    }
+
+
+
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        loadChatList();
+    });
+
+</script>
+
+<style>
+
+    *{font-family: -apple-system, 
+        BlinkMacSystemFont, 
+        "Apple SD Gothic Neo", 
+        "Pretendard Variable", 
+        Pretendard, Roboto, 
+        "Noto Sans KR", 
+        "Segoe UI",
+        "Malgun Gothic", 
+        "Apple Color Emoji", 
+        "Segoe UI Emoji", 
+        "Segoe UI Symbol", 
+        sans-serif;
+        letter-spacing: 0.03em;
+    }
+
+    .form-control:focus {
+        border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
+        box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
+
+    body { 
+        position: fixed;
+        width: 100%;
+    }
+
+    .word {
+        width: 1rem;
+        font-size: 1rem;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .titleOver {
+        max-width: 13rem;
+        font-size: 1rem;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col px-0">
+                <div class="row py-2 px-2 border-bottom border-dark-subtle" style="height: 3.3rem;">
+                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./chatList'">
+                        <i class="bi bi-arrow-left ms-2"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+                        채팅 목록
+                    </div>
+                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+                        <i class="bi bi-three-dots-vertical me-1"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="overflow-y-scroll overflow-x-hidden" style="height: 35rem;">
+                        <div id="chatListBox" class="col">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+    </div>
+
+
+
+<div id="myMissionChatTemplete" class="d-none">
+    <div class="myMissionChatWrapper row">
+        <div class="col">
+            <div class="row border-bottom px-3" style="padding-top: 0.8rem; padding-bottom: 0.85rem;">
+                <div class="col align-self-center">
+                    <div class="row">
+                        <div class="col fw-semibold d-flex" style="font-size: 1.05rem;">
+                            <span class="px-2 rounded-3 text-white me-2" 
+                                style="background-color: #FF8827; font-size: 0.75rem; margin-top: 0.1rem; margin-bottom: 0.1rem; padding-top: 0.2rem;">
+                                내 미션
+                            </span>
+                            <span class="title align-self-center titleOver"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="detail col text-secondary word" style="font-size: 0.83rem;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 d-flex justify-content-end align-items-center" style="color: #cfcfcf">
+                    <i class="bi bi-person align-middle me-1 fs-4"></i>
+                    <span class="countChatRoom align-middle fw-semibold" style="font-size: 0.95rem; color: #acacac"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div id="myMissionPlayerBox" class="col"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myMissionPlayerTemplete" class="d-none">
+    <div class="myMissionPlayerWrapper row border-bottom px-3" style="padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #fffbf7;">
+        <div class="col-1 d-flex align-self-center">
+            <i class="bi bi-chevron-compact-right" style="font-size:1.3rem; color: #cccccc;"></i>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col d-flex align-self-center">
+                    <span class="name align-self-center" style="font-size: 0.95rem;"></span>
+                    <span class="status ms-2 align-self-center" style="color: #ffbf8b; font-size: 0.73rem;">
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="latestChat col text-secondary word" style="font-size: 0.75rem;">
+                </div>  
+            </div>
+        </div>
+        <div class="col-2 countUnreadBox d-flex justify-content-end">
+        </div>  
+    </div>
+</div>
+
+<div id="myPlayMissionChatTemplete" class="d-none">
+    <div class="myPlayMissionChatWrapper row border-bottom px-3" style="padding-top: 0.8em; padding-bottom: 0.85em;">
+        <div class="col">
+            <div class="row">
+                <div class="col fw-semibold d-flex" style="font-size: 1.05em;">
+                    <span class="title titleOver align-self-center"></span>
+                    <span class="status align-self-center ms-2 fw-lighter" 
+                        style="color: #ffbf8b; font-size: 0.75em;">
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="latestChat col text-secondary word" style="font-size: 0.83em;">
+                </div>
+            </div>
+        </div>
+        <div class="col-2 countUnreadBox d-flex justify-content-end">
+            
+        </div>
+    </div>
+</div>
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

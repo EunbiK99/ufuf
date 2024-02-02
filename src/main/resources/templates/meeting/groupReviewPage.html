@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${groupDetailInfo.meetingGroupDto.groupTitle} 리뷰페이지|"></title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <style>
+    *{
+        /* font-family: 'Dongle', sans-serif; */
+        /* font-family: 'Gowun Dodum', sans-serif; */
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;        
+    }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
+    .userImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+
+    .listBackground{
+        border: 0;
+        border-radius: 10%;
+        background-color: cornsilk;
+    }
+
+    .card-body{
+        transition: all 0.5s ease-in-out !important;
+        overflow: hidden;
+        max-height: 40em;
+    }
+
+    .collapse.show .card-body {
+        max-height: 40em !important; /* 최대 높이를 설정하세요. */
+    }
+    </style>
+</head>
+<script th:inline="javascript">
+let groupDetailInfo = /*[[${groupDetailInfo}]]*/
+let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
+let sessionUserInfo = /*[[${session.userInfoDto}]]*/
+let sessionUserReviewData = /*[[${userReviewData}]]*/
+
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('groupDetailInfo: ', groupDetailInfo);
+console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+console.log('sessionUserReviewData: ', sessionUserReviewData);
+
+function registerBothLike(targetGroupMemberId){
+    
+    const groupMemberIdTo = targetGroupMemberId;
+    console.log('groupMemberIdTo: ', groupMemberIdTo);
+
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+    let groupMemberId;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+            groupMemberId = e.groupMemberDto.groupMemberId;
+        }
+    }
+
+    const groupMemberIdFrom = groupMemberId;
+    console.log('groupMemberIdFrom: ', groupMemberIdFrom);
+
+    let groupMemberNicknameTo;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.groupMemberId === groupMemberIdTo){
+            groupMemberNicknameTo = e.groupMemberProfileDto.profileNickname;
+        }
+    }
+
+    const confirmValue = confirm(`${groupMemberNicknameTo} 님에게 Signal을 보내시겠습니까?`);
+    if(confirmValue){
+        fetch("api/registerBothLike?groupMemberIdTo=" + groupMemberIdTo + "&groupMemberIdFrom=" + groupMemberIdFrom)
+        .then(response => response.json())
+        .then(response =>{
+            alert("Signal 보내기 완료!");
+            window.location.reload();
+        });
+    }
+    else{
+        return;
+    }
+}
+
+const isMemberReviewExist = async(targetMemberIdTo)=>{
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+    let groupMemberId;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+            groupMemberId = e.groupMemberDto.groupMemberId;
+        }
+    }
+    const groupMemberIdFrom = groupMemberId;
+    const groupMemberIdTo = targetMemberIdTo;
+
+    const response = await fetch("./api/isMemberReviewExist?groupMemberIdFrom=" + groupMemberIdFrom + "&groupMemberIdTo=" + groupMemberIdTo);
+    const responseData = await response.json();
+    console.log('responseData: ', responseData);
+    return responseData.data;
+}
+
+async function registerGroupMemberReview(targetGroupMemberId){
+    
+    const resultValue = await isMemberReviewExist(targetGroupMemberId);
+    console.log('resultValue: ', resultValue);
+    
+    if(isMemberReviewExist === "Y"){
+        alert("해당 멤버의 리뷰는 이미 작성되었습니다.");
+        return;
+    }
+    else{
+        const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+        let groupMemberId;
+        for(e of groupMemberDataList){
+            if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+                groupMemberId = e.groupMemberDto.groupMemberId;
+            }
+        }
+        const groupMemberIdFrom = groupMemberId;
+        console.log('groupMemberIdFrom: ', groupMemberIdFrom);
+
+        const groupMemberIdTo = targetGroupMemberId;
+        console.log('groupMemberIdTo: ', groupMemberIdTo);
+
+        const memberReviewCommentInput = document.getElementById("commentToGroupMemberId" + groupMemberIdTo);
+        const memberReviewComment = memberReviewCommentInput.value;
+        console.log('memberReviewComment: ', memberReviewComment);        
+        if(memberReviewComment.trim() === ""){
+            alert("리뷰내용은 필수 입력항목입니다.");
+            focus(memberReviewCommentInput);
+            return;
+        }
+
+        const starScoreWrapper = document.getElementById("starScoreForGroupMemberId" + groupMemberIdTo);        
+        const starFillList = starScoreWrapper.querySelectorAll(".bi-star-fill");
+        if(starFillList.length === 0){
+            alert("해당 멤버의 별점을 선택해주세요!");
+            return;
+        }
+        
+
+        const memberReviewScore = starFillList[starFillList.length-1].getAttribute("value");
+        console.log('memberReviewScore: ', memberReviewScore);        
+        
+        const meetingMemberReviewDto = {
+            groupMemberIdFrom : groupMemberIdFrom,
+            groupMemberIdTo : groupMemberIdTo,
+            memberReviewComment : memberReviewComment,
+            memberReviewScore : memberReviewScore
+        }
+
+        fetch("./api/registerGroupMemberReview", {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify(meetingMemberReviewDto)
+        })
+        .then(response => response.json())
+        .then(response =>{
+            const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+            let groupMemberNicknameTo;
+            for(e of groupMemberDataList){
+                if(e.groupMemberDto.groupMemberId === groupMemberIdTo){
+                    groupMemberNicknameTo = e.groupMemberProfileDto.profileNickname;
+                }
+            }
+            alert(groupMemberNicknameTo + " 멤버의 댓글작성이 완료되었습니다.");
+            window.location.reload();
+        });
+    }    
+}
+
+
+function makeGroupMemberListRow(){
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+        let groupMemberId;
+        for(e of groupMemberDataList){
+            if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+                groupMemberId = e.groupMemberDto.groupMemberId;
+            }
+        }
+
+    const groupMemberListWrapperCol = document.getElementById("groupMemberListWrapperCol");
+    groupMemberListWrapperCol.innerHTML = "";
+        
+    for(groupMemberdata of groupMemberDataList){
+        
+        if(groupMemberId === groupMemberdata.groupMemberDto.groupMemberId){
+            continue;
+        }
+
+        const groupMemberListRow = document.querySelector("#templete .groupMemberListRow").cloneNode(true);
+        groupMemberListRow.setAttribute("id", `groupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
+        const groupMemberListImage = groupMemberListRow.querySelector("#groupMemberListImage");
+        groupMemberListImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupMemberdata.groupMemberProfileDto.profileImg}`);
+
+        const groupMemberListNickname = groupMemberListRow.querySelector("#groupMemberListNickname");
+        groupMemberListNickname.innerText = groupMemberdata.groupMemberProfileDto.profileNickname;
+
+        const groupMemberAccordionButton = groupMemberListRow.querySelector("#groupMemberAccordionButton");
+        groupMemberAccordionButton.dataset.bsTarget = `#accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`;
+        groupMemberAccordionButton.setAttribute("aria-controls", `accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`);
+
+        const accordionCollapse = groupMemberListRow.querySelector(".accordion-collapse");
+        accordionCollapse.setAttribute("id", `accordionCollapse${groupMemberdata.groupMemberDto.groupMemberId}`);
+        accordionCollapse.dataset.bsParent = `#groupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`;
+
+        const groupMemberListComment = groupMemberListRow.getElementsByTagName("textarea");
+        // console.log('groupMemberListComment: ', groupMemberListComment, typeof groupMemberListComment);
+        groupMemberListComment[0].setAttribute("id", `commentToGroupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
+
+        const starScoreWrapper = groupMemberListRow.querySelector(".starScoreWrapper");        
+        starScoreWrapper.setAttribute("id", `starScoreForGroupMemberId${groupMemberdata.groupMemberDto.groupMemberId}`);
+
+        const groupMemberReviewSubmitButton = groupMemberListRow.querySelector("#groupMemberReviewSubmitButton");
+        groupMemberReviewSubmitButton.setAttribute("onclick", `registerGroupMemberReview(${groupMemberdata.groupMemberDto.groupMemberId})`);
+
+        if(sessionUserInfo.gender !== groupMemberdata.groupMemberUserDto.gender){
+            const groupMemberLikeIcon = groupMemberListRow.querySelector("#groupMemberLikeIcon");
+            groupMemberLikeIcon.setAttribute("onclick", `registerBothLike(${groupMemberdata.groupMemberDto.groupMemberId})`);
+            groupMemberLikeIcon.classList.remove("d-none");
+        }
+
+        groupMemberListWrapperCol.appendChild(groupMemberListRow);        
+    }
+    checkExistMemberReview();
+    checkExistBothLike();
+}
+
+function checkExistBothLike(){
+    const meetingBothLikeFromList = sessionUserReviewData.meetingBothLikeFromList;
+    console.log('meetingBothLikeFromList: ', meetingBothLikeFromList);
+
+    if(meetingBothLikeFromList.length > 0){
+        for(meetingBothLikeFromDto of meetingBothLikeFromList){
+            
+            const targetRow = document.getElementById(`groupMemberId${meetingBothLikeFromDto.groupMemberIdTo}`);
+            
+            const groupMemberLikeIconCol = targetRow.querySelector("#groupMemberLikeIcon");
+            groupMemberLikeIconCol.setAttribute("onclick", "alert('이미 Signal을 보낸 멤버입니다.')");
+            
+            const signalIcon = groupMemberLikeIconCol.querySelector(".bi");
+            signalIcon.setAttribute("class", "bi bi-heart-pulse-fill");
+        }
+    }
+}
+
+
+function checkExistMemberReview(){
+    
+    const memberReviewDtoList = sessionUserReviewData.meetingMemberReviewDtoList;
+    console.log('memberReviewDtoList: ', memberReviewDtoList);    
+
+    if(memberReviewDtoList.length > 0){
+        
+        for(memberReviewDto of memberReviewDtoList){
+
+            const targetRow = document.getElementById(`groupMemberId${memberReviewDto.groupMemberIdTo}`);
+
+            const targetAccordionButton = targetRow.querySelector("#groupMemberAccordionButton");
+            targetAccordionButton.setAttribute("style", "background-color : green;");
+            
+            const buttonText = targetAccordionButton.children[0];
+            buttonText.setAttribute("class", "fw-bold text-white")
+            buttonText.innerText = "작성완료!";
+
+            const targetReviewComment = targetRow.querySelector(`#commentToGroupMemberId${memberReviewDto.groupMemberIdTo}`);
+            targetReviewComment.setAttribute("readonly","");
+            targetReviewComment.value = memberReviewDto.memberReviewComment;
+
+            const starFillList = targetRow.querySelectorAll(".starScoreWrapper .bi");
+            for(stars of starFillList){
+                stars.removeAttribute("onclick");
+                stars.setAttribute("class", "bi bi-star");
+            }
+            for(let x = 0 ; x < memberReviewDto.memberReviewScore ; x++){                
+                starFillList[x].setAttribute("class", "bi bi-star-fill");
+            }
+
+            const groupMemberReviewSubmitButton = targetRow.querySelector("#groupMemberReviewSubmitButton");
+            const submitButtonText = groupMemberReviewSubmitButton.children[0];
+            groupMemberReviewSubmitButton.removeAttribute("onclick");
+            submitButtonText.innerText = "Thanks for Review :)";            
+        }
+    }
+}
+
+async function isGroupReviewExist(){
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+    let groupMemberId;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+            groupMemberId = e.groupMemberDto.groupMemberId;
+        }
+    }
+    console.log('groupMemberId: ', groupMemberId);
+
+    const response = await fetch("./api/isGroupReviewExist?groupMemberId=" + groupMemberId);
+    const resultData = await response.json();
+    console.log('resultData: ', resultData);
+    return resultData.data;
+
+    // fetch("./api/isReviewExist?groupMemberId=" + groupMemberId)
+    // .then(async response => response.json())
+    // .then(async response => {
+    //     const resultData = response.data;
+    //     console.log('resultData: ', resultData);
+    //     return resultData;
+    // });    
+}
+
+function makeGroupMemberReviewListRow(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+
+    fetch("./api/getGroupMemberReview?groupId=" + groupId)
+    .then(response => response.json())
+    .then(response => {
+        const responseData = response.data;
+        console.log('responseData: ', responseData);
+        
+        const groupReviewWrapperCol = document.getElementById("groupReviewWrapperCol");
+        groupReviewWrapperCol.innerHTML = "";
+        
+        for(e of responseData){
+            if(e.groupMemberReviewDto !== null){
+                const groupReviewListRow = document.querySelector("#templete #groupReviewListRow").cloneNode(true);
+                const groupMemberImage = groupReviewListRow.querySelector("#groupMemberImage");
+                groupMemberImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberDto.profileImg}`);
+
+                const groupMemberNickname = groupReviewListRow.querySelector("#groupMemberNickname");
+                groupMemberNickname.innerText = e.groupMemberDto.profileNickname;
+
+                const groupReviewScore = groupReviewListRow.querySelector("#groupReviewScore");
+                groupReviewScore.innerText = e.groupMemberReviewDto.groupReviewScore;
+
+                const groupReviewComment = groupReviewListRow.querySelector("#groupReviewComment");
+                groupReviewComment.innerText = e.groupMemberReviewDto.groupReviewComment;
+
+                groupReviewWrapperCol.appendChild(groupReviewListRow);
+            }
+        }        
+    });
+}
+
+function registerGroupReviewProcess(){    
+
+    const groupMemberDataList = groupDetailInfo.groupMemberDataList;
+    let groupMemberId;
+    for(e of groupMemberDataList){
+        if(e.groupMemberDto.profileId === sessionUserMeetingProfileDto.profileid){
+            groupMemberId = e.groupMemberDto.groupMemberId;
+        }
+    }  
+    console.log('groupMemberId: ', groupMemberId);
+    
+    const groupReviewComment = document.getElementById("sessionUserComment").value;
+    console.log('groupReviewComment: ', groupReviewComment);
+    if(groupReviewComment.trim() === ""){
+        alert("리뷰내용은 필수 입력항목입니다.");
+        return;        
+    }
+
+    const starFillList = document.querySelectorAll("#sessionUserReviewStarScore .bi-star-fill");
+    console.log('starFillList: ', starFillList);    
+    console.log('starFillList.length: ', starFillList.length);
+    if(starFillList.length === 0){
+        alert("해당 멤버의 별점을 선택해주세요!");
+        return;
+    }
+
+    const groupReviewScore = starFillList[starFillList.length - 1].getAttribute("value");
+    console.log('groupReviewScore: ', groupReviewScore);
+
+    const meetingGroupReviewDto = new FormData();
+    meetingGroupReviewDto.append("groupMemberId", groupMemberId);
+    meetingGroupReviewDto.append("groupReviewComment", groupReviewComment);
+    meetingGroupReviewDto.append("groupReviewScore", groupReviewScore);
+
+    fetch("./api/registerGroupReviewProcess", {
+        method : "post",        
+        body : meetingGroupReviewDto
+    })
+    .then(response => response.json())
+    .then(response => {
+        const result = response.result;
+        if(result === "fail"){
+            alert("해당 미팅에 대한 리뷰는 이미 작성하였습니다.");
+            return;
+        }
+        else{
+            alert("리뷰가 정상적으로 등록되었습니다.");
+            window.location.reload();
+        }
+    });
+}
+
+async function makeSessionUserReviewInputRow(){
+    let isExist = await isGroupReviewExist();
+    console.log('isExist: ', isExist);
+    if(isExist === "Y"){
+        const sessionUserReviewInputRow = document.getElementById("sessionUserReviewInputRow");
+        sessionUserReviewInputRow.innerHTML = "";
+        
+        const reviewExistCol = document.getElementById("reviewExistCol").cloneNode(true);
+        sessionUserReviewInputRow.appendChild(reviewExistCol);
+    }
+    else{
+        const sessionUserImageBox = document.getElementById("sessionUserImageBox");
+        sessionUserImageBox.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${sessionUserMeetingProfileDto.profileImg}`);
+
+        const sessionUserNickname = document.getElementById("sessionUserNickname");
+        sessionUserNickname.innerText = sessionUserMeetingProfileDto.profileNickname;
+    }
+    
+}
+
+function changeStarFill(target){    
+    const parentNode = target.closest("span");
+    // console.log('parentNode: ', parentNode);
+    const value = target.getAttribute("value");
+    // console.log('value: ', value);
+
+    const starList = parentNode.querySelectorAll(".bi");
+    // console.log('starList: ', starList);
+
+    for(e of starList){
+        e.setAttribute("class", "bi bi-star");
+    }
+
+    for(let i = 0 ; i < value ; i++){
+        starList[i].setAttribute("class", "bi bi-star-fill");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+    // getSessionUserReviewDataAll();    
+    makeSessionUserReviewInputRow();
+    makeGroupMemberReviewListRow();
+    makeGroupMemberListRow();
+
+})
+
+</script>
+<body class="pt-5 pb-5">
+    <div class="container-fluid">
+        
+        <!--/* 임시 탑 에어리어 */-->
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 mx-1 justify-content-between">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="row fs-3">
+                            <div class="col-auto" onclick="window.history.back()">
+                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            </div>
+                            <div class="col">
+                                <span class="fw-bold">리뷰 작성</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col mx-1 border border-black rounded">
+
+                        <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
+                            <div class="col-auto my-1">
+                                <span id="" class="fs-4 fw-bold">Review for Meeting</span>
+                            </div>                            
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div id="groupReviewWrapperCol" class="col overflow-y-scroll" style="height: 13em;">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+
+                        <div id="sessionUserReviewInputRow" class="row mt-4 mb-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="userImageBox">
+                                            <img id="sessionUserImageBox" class="userImage">                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-auto align-self-center px-0">
+                                        <span id="sessionUserNickname" class="fs-5 fw-bold"></span>
+                                    </div>
+                                    <div id="sessionUserReviewStarScore" class="col align-self-center">
+                                        <span class="text-warning" style="font-size: 0.9em;">
+                                            <i class="bi bi-star" value="1" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="2" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="3" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="4" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="5" onclick="changeStarFill(this)"></i>                                            
+                                        </span>                                        
+                                    </div>
+                                </div>
+                                <div class="row my-2">
+                                    <div class="col">
+                                        <textarea id="sessionUserComment" rows="2" class="form-control" placeholder="리뷰를 입력해주세요"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 justify-content-center">
+                                    <div class="col-4 btn" role="button" style="background-color: #FF8827;" onclick="registerGroupReviewProcess()">
+                                        <span class="fw-bold">작성완료</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mt-2 mb-5">
+                    <div class="col mx-1 border border-black rounded">
+
+                        <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
+                            <div class="col-auto my-1">
+                                <span id="" class="fs-4 fw-bold">Review to Member</span>
+                            </div>                            
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span class="fw-bold fs-5">리뷰와 Signal을 보내세요 :)</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="groupMemberListWrapperCol" class="col overflow-y-scroll" style="height: 13em;">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1 mt-1">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="groupReviewListRow" class="row my-2">
+        <div class="col border rounded shadowBox mx-1">
+            <div class="row my-1">
+                <div class="col-auto">
+                    <div class="userImageBox">
+                        <img id="groupMemberImage" class="userImage">                                            
+                    </div>
+                </div>
+                <div class="col-auto align-self-center px-0">
+                    <span id="groupMemberNickname" class="fs-5 fw-bold"></span>
+                    <span>님의 리뷰</span>
+                </div>
+                <div class="col align-self-center">
+                    <span>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span> x </span>
+                        <span id="groupReviewScore"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col border border-0 rounded">
+                    <p id="groupReviewComment"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reviewExistCol" class="col">
+        <div class="row">
+            <div class="col text-center">
+                <span class="fs-5 fw-bold">해당 미팅의 리뷰는 이미 작성하였습니다.</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span class="fs-5 fw-bold">리뷰를 남겨주셔서 감사합니다 :)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="groupMemberListRow accordion accordion-flush row my-2">
+        <div class="col mx-1 border rounded shadowBox">
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <div class="row my-2 justify-content-between">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="userImageBox">
+                                        <img id="groupMemberListImage" class="userImage">                                            
+                                    </div>
+                                </div>
+                                <div class="col-auto align-self-center px-0">
+                                    <span id="groupMemberListNickname" class="fs-5"></span>
+                                </div>
+                                <div id="groupMemberLikeIcon" class="col-auto align-self-center d-none btn" role="button">
+                                    <span class="fs-3 text-danger align-middle"><i class="bi bi-heart-pulse"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="groupMemberAccordionButton" class="col-auto mx-1 align-self-center btn" type="button" data-bs-toggle="collapse" aria-expanded="false" style="background-color: #FF8827;">
+                            <span>Review</span>
+                        </div>
+                    </div>                                        
+                </div>
+                <div id="flush-collapseOne" class="accordion-collapse collapse row">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span>Comment</span>
+                                    </div>
+                                    <div id="groupMemberListScore" class="col starScoreWrapper align-self-center text-end">
+                                        <span class="text-warning" style="font-size: 0.9em;">
+                                            <i class="bi bi-star" value="1" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="2" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="3" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="4" onclick="changeStarFill(this)"></i>
+                                            <i class="bi bi-star" value="5" onclick="changeStarFill(this)"></i>                                            
+                                        </span>                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <textarea id="groupMemberListComment" class="form-control" placeholder="리뷰를 입력해주세요"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 justify-content-center">
+                                    <div id="groupMemberReviewSubmitButton" class="col-4 btn" role="button" style="background-color: #FF8827;">
+                                        <span class="fw-bold">작성완료</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>                            
+    </div>
+
+    
+
+
+
+
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

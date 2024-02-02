@@ -9,16 +9,20 @@ import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
+import com.cu.ufuf.dto.MeetingBothLikeDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
+import com.cu.ufuf.dto.MeetingGroupReviewDto;
 import com.cu.ufuf.dto.MeetingGroupSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupTagDto;
+import com.cu.ufuf.dto.MeetingMemberReviewDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.MeetingVoteBestMemberDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
@@ -128,6 +132,55 @@ public interface MeetingSqlMapper {
 
     // * 카카오 결제준비응답 테이블 인서트
     public void insertKakaoPaymentRes(KakaoPaymentResDto kakaoPaymentResDto);
+
+    // * 결제 완료 후 미팅-선발멤버 테이블에서 결제내역 업데이트
+    public void updateGroupMemberPaymentStatusByGroupIdAndProfileId(int groupId, int profileId);
+
+    // * 모집글PK, 프로필PK 기준 모집글 확정멤버 Dto 셀렉트
+    public MeetingGroupMemberDto selectGroupMemberDtoByGroupIdAndProfileId(int groupId, int profileId);
+
+    // * 모집글PK기준 확정멤버 회비 미납인원 카운트
+    public int countNotPaidGroupMemberCount(int groupId);
+
+    // * 그룹리뷰 인서트
+    public void insertGroupReviewDto(MeetingGroupReviewDto meetingGroupReviewDto);
+
+    // * 선발멤버PK 기준 그룹리뷰 존재 확인 쿼리
+    public int countIsExistGroupReviewByGroupMemberId(int groupMemberId);    
+
+    // * 그룹멤버 누가/누구에게PK 기준 리뷰 존재여부 확인
+    public int countIsExistGroupMemberReviewByFromIdAndToId(int groupMemberIdFrom, int groupMemberIdTo);
+
+    // * 그룹멤버 테이블 인서트
+    public void insertGroupMemberReviewDto(MeetingMemberReviewDto meetingMemberReviewDto);
+
+    // * 그룹멤버PK 기준 그룹리뷰 셀렉트
+    public MeetingGroupReviewDto selectGroupReviewByGroupMemberId(int groupMemberId);
+
+    // * 그룹멤버PK 기준 내가 작성한 멤버후기 셀렉트
+    public List<MeetingMemberReviewDto> selectgGroupMemberReviewFromByGroupMemberId(int groupMemberIdFrom);
+
+    // * 그룹멤버PK 기준 내가 선발한 킹/퀸선발내역 셀렉트
+    public List<MeetingVoteBestMemberDto> selectVoteBestMemberFromByGroupMemberId(int groupMemberIdFrom);
+
+    // * 그룹멤버PK 기준 '내가' 선택한 쌍방호감도 셀렉트
+    public List<MeetingBothLikeDto> selectBothLikeFromByGroupMemberId(int groupMemberIdFrom);
+
+    // * 그룹멤버PK 기준 '나를' 선택한 쌍방호감도 셀렉트
+    public List<MeetingBothLikeDto> selectBothLikeToByGroupMemberId(int groupMemberIdTo);
+
+    // * 쌍방호감도 테이블 인서트
+    public void insertBothLikeDto(int groupMemberIdTo, int groupMemberIdFrom);
+
+    // * 접속유저PK기준 SNS Dto 셀렉트
+    public MeetingSNSDto selectSNSDtoByProfileId(int profileId);
+
+    // * 프로필PK기준 그룹멤버PK 셀렉트
+    public List<MeetingGroupMemberDto> selectGroupMemberDtoListByProfileId(int profileId);
+
+    // * 그룹멤버PK기준 그룹멤버Dto 셀렉트
+    public MeetingGroupMemberDto selectGroupMemberDtoByGroupMemberId(int groupMemberId);
+
 
 
 }

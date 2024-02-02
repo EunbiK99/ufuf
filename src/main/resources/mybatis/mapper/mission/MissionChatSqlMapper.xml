@@ -3,5 +3,95 @@
 
 <mapper namespace="com.cu.ufuf.mission.mapper.MissionChatSqlMapper">
 
+    <insert id="createMissionRoom">
+        <selectKey keyProperty="chat_room_id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS chat_room_id
+        </selectKey>
+        insert into mission_chat_room(
+            mission_id,
+            user_id
+            )
+        VALUES(
+            #{mission_id},
+            #{user_id}
+        )
+    </insert>
+
+    <insert id="insertChat">
+        <selectKey keyProperty="chat_id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS chat_id
+        </selectKey>
+        insert into mission_chat(
+            chat_room_id,
+            chat_category_id,
+            user_id,
+            message,
+            is_read
+            )
+        values(
+            #{chat_room_id},
+            #{chat_category_id},
+            #{user_id},
+            #{message},
+            #{is_read}
+        )
+    </insert>
+
+    <select id="selectChatRoomList" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        SELECT mcr.* from mission_chat_room mcr
+        inner join mission_info mi on mcr.mission_id = mi.mission_id
+        where mi.user_id = #{user_id} or mcr.user_id = #{user_id}
+        order by created_at desc
+    </select>
+
+    <select id="selectLatestChat" resultType="com.cu.ufuf.dto.MissionChatDto">
+        SELECT * from mission_chat
+        where chat_room_id = #{chat_room_id}
+        order by created_at desc
+        limit 1
+    </select>
+
+    <select id="countUnreadChat" resultType="int">
+        select count(*) from mission_chat
+        where chat_room_id = #{param1}
+        and is_read = 'N'
+        and user_id != ${param2}
+    </select>
+
+    <select id="countChatRoomByMission" resultType="int">
+        select count(*) from mission_chat_room
+        where mission_id = #{mission_id}
+    </select>
+
+    <select id="selectChatRoomListByMission" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        select * from mission_chat_room
+        where mission_id = #{mission_id}
+    </select>
+
+    <update id="updateReadStatus">
+        update from mission_chat
+        set is_read = "Y"
+        where chat_room_id = #{chat_room_id}
+        and user_id != ${user_id}
+    </update>
+
+    <select id="selectChatListByChatRoom" resultType="com.cu.ufuf.dto.MissionChatDto">
+        select * from mission_chat
+        where chat_room_id = #{chat_room_id}
+        order by created_at ASC
+    </select>
+
+    <select id="selectMissionByChatRoom" resultType="com.cu.ufuf.dto.MissionInfoDto">
+        select mi.* from mission_info mi
+        inner join mission_chat_room mcr on mi.mission_id = mcr.mission_id
+        where mcr.chat_room_id = #{chat_room_id}
+    </select>
+
+    <select id="selectChatRoomByChatRoom" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+        select * from mission_chat_room
+        where chat_room_id = #{chat_room_id}
+    </select>
+
+    
 
 </mapper>

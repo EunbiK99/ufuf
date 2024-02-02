@@ -344,6 +344,125 @@ values (
     )
 </insert>
 
+<!-- * 결제완료 후 미팅-선발멤버 페이지에서 멤버 결제내역 업데이트-->
+<update id="updateGroupMemberPaymentStatusByGroupIdAndProfileId">
+    update meeting_groupMember set groupMemberPaymentStatus = "Y"
+    where 1=1
+    and groupId = #{groupId}
+    and profileId = #{profileId}
+</update>
+
+<!-- * 모집글PK, 프로필PK기준 해당 모집글 확정멤버 Dto 셀렉트-->
+<select id="selectGroupMemberDtoByGroupIdAndProfileId" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember mgm 
+    where 1=1
+    and groupId = #{groupId}
+    and profileId = #{profileId}
+</select>
+
+<!-- * 모집글PK기준 확정멤버 회비 미납인원 카운트-->
+<select id="countNotPaidGroupMemberCount" resultType="int">
+    SELECT count(*) from meeting_groupMember mgm 
+    where 1=1
+    and groupId = #{groupId}
+    and groupMemberPaymentStatus = "N"
+</select>
+
+<!-- * 그룹리뷰 테이블 인서트 쿼리-->
+<insert id="insertGroupReviewDto">
+    insert into meeting_groupReview(groupMemberId, groupReviewComment, groupReviewScore) values(
+        #{groupMemberId},
+        #{groupReviewComment},
+        #{groupReviewScore}
+    )
+</insert>
+
+<!-- * 선발멤버PK 기준 미팅리뷰 존재 확인 쿼리-->
+<select id="countIsExistGroupReviewByGroupMemberId" resultType="int">
+    SELECT count(*) from meeting_groupReview
+    where groupMemberId = #{groupMemberId}
+</select>
+
+<!-- * 그룹멤버 누가/누구에게PK 기준 리뷰 존재여부 확인 카운트-->
+<select id="countIsExistGroupMemberReviewByFromIdAndToId" resultType="int">
+    select count(*) from meeting_memberReview
+    where 1=1
+    and groupMemberIdFrom = #{groupMemberIdFrom}
+    and groupMemberIdTo = #{groupMemberIdTo}
+</select>
+
+<!-- * 멤버리뷰 테이블 인서트-->
+<insert id="insertGroupMemberReviewDto">
+    INSERT into meeting_memberReview(
+        groupMemberIdFrom,
+        groupMemberIdTo,
+        memberReviewComment,
+        memberReviewScore
+    )
+    values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo},
+        #{memberReviewComment},
+        #{memberReviewScore}
+    )
+</insert>
+
+<!-- * 그룹멤버PK 기준 그룹리뷰 DTO 셀렉트-->
+<select id="selectGroupReviewByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingGroupReviewDto">
+    SELECT * from meeting_groupReview
+    where groupMemberId = #{groupMemberId}
+</select>
+
+<!-- * 그룹멤버PK 기준 내가 작성한 멤버 후기 셀렉트-->
+<select id="selectgGroupMemberReviewFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingMemberReviewDto">
+    SELECT * from meeting_memberReview
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 내가 선발한 킹/퀸선발내역 셀렉트-->
+<select id="selectVoteBestMemberFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingVoteBestMemberDto">
+    SELECT * from meeting_voteBestMember
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 '내가' 선택한 쌍방호감도 셀렉트-->
+<select id="selectBothLikeFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingBothLikeDto">
+    SELECT * from meeting_bothLike 
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 '나를' 선택한 쌍방호감도 셀렉트-->
+<select id="selectBothLikeToByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingBothLikeDto">
+    SELECT * from meeting_bothLike 
+    where groupMemberIdTo = #{groupMemberIdTo}
+</select>
+
+<!-- * 쌍방호감도 테이블 인서트-->
+<insert id="insertBothLikeDto">
+    insert into meeting_bothLike(groupMemberIdFrom, groupMemberIdTo) values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo}
+    )
+</insert>
+
+<!-- * 접속유저 프로필PK기준 SNS Dto셀렉트-->
+<select id="selectSNSDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingSNSDto">
+    SELECT * from meeting_sns
+    where profileid = #{profileId}
+</select>
+
+<!-- * 프로필PK 기준 자신의 확정멤버PK 리스트 셀렉트-->
+<select id="selectGroupMemberDtoListByProfileId" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember
+    where profileId = #{profileId}
+</select>
+
+<!-- * 그룹멤버PK기준 그룹멤버Dto 셀렉트-->
+<select id="selectGroupMemberDtoByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember mgm
+    where groupMemberId  = #{groupMemberId}
+</select>
+
 
 
 

@@ -13,13 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;        
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;
     }
 
     * .titleWord{
@@ -52,14 +54,92 @@
         border-radius: 10%;
         background-color: cornsilk;
     }
+
+    .custom-border-color{
+        border-color: #FF8827 !important;
+    }
+
+    .custom-input:focus{
+        border-color: #FF8827;
+        box-shadow: 0 0 10px #FF8827;
+    }
     </style>
 </head>
 <script th:inline="javascript">
 let groupDetailInfo = /*[[${groupDetailInfo}]]*/
-
 let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 
+console.log('groupDetailInfo: ', groupDetailInfo);
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
+
+function moveToReviewPage(){
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    window.location.href = "./groupReviewPage?groupId=" + groupId;
+}
+
+/* 카카오 결제요청 전 OrderInfoDto 생성 */
+function registerOrderProcess(){
+    const userNickname = sessionUserMeetingProfileDto.profileNickname;
+    console.log('userNickname: ', userNickname);
+    const groupTitle = groupDetailInfo.meetingGroupDto.groupTitle;
+    console.log('groupTitle: ', groupTitle);
+    const Amount = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    console.log('Amount: ', Amount);
+
+    const profileId = sessionUserMeetingProfileDto.profileid;
+    console.log('profileId: ', profileId);
+
+    const groupId = groupDetailInfo.meetingGroupDto.groupId;
+    console.log('groupId: ', groupId);
+
+
+    const confirmValue = confirm(`미팅그룹 : ${groupTitle}\n결제유저 : ${userNickname}\n결제금액 : ${Amount}\n\n위 내용대로 결제를 진행하시겠습니까?`);
+    if(confirmValue){
+        fetch("./api/registerOrderProcess?profileId=" + profileId + "&groupId=" + groupId)
+        .then(response => response.json())
+        .then(response => {
+            const orderInfoDto = response.data;
+            console.log('orderInfoDto: ', orderInfoDto);
+            kakaoPayReady(orderInfoDto);
+        });
+    }
+}
+
+function kakaoPayReady(orderInfoDto){
+
+    const groupApplyCharge = groupDetailInfo.meetingGroupDto.groupApplyCharge;
+    
+    const kakaoPaymentReqDto = {
+        cid : "TC0ONETIME",
+        partner_user_id : orderInfoDto.user_id,
+        partner_order_id : orderInfoDto.order_id,
+        item_code : orderInfoDto.item_id,
+        item_name : "MeetingGroup" + groupDetailInfo.meetingGroupDto.groupId,
+        quantity : 1,
+        total_amount : groupApplyCharge,
+        tax_free_amount : groupApplyCharge - (groupApplyCharge/1.1)
+    }
+    fetch("./api/kakaoPayReady", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(kakaoPaymentReqDto)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const result = response.data;
+        console.log('result: ', result);
+        
+        const reusltConfirm = confirm("통신성공, 이동하시겠습니까?");
+        if(reusltConfirm){
+            window.location.href = result.next_redirect_pc_url;
+        }else{
+            return;
+        }
+
+    });
+}
 
 function makeDetailPage(){
     
@@ -68,6 +148,14 @@ function makeDetailPage(){
 
     const groupTitle = document.getElementById("groupTitle");
     groupTitle.innerText = groupData.meetingGroupDto.groupTitle;
+
+    if(groupData.meetingGroupDto.groupMeetingStatus === "Y"){
+        const meetingDoneCol = document.getElementById("meetingDoneCol");
+        meetingDoneCol.innerHTML = "";
+
+        const meetingDoneBadge = document.querySelector("#templete #meetingDoneBadge").cloneNode(true);
+        meetingDoneCol.appendChild(meetingDoneBadge);
+    }
 
     const groupLeaderImage = document.getElementById("groupLeaderImage");
     groupLeaderImage.setAttribute("src", `/public/image/meeting/profileImage/${groupData.meetingProfileDto.profileImg}`);
@@ -149,6 +237,15 @@ function makeDetailPage(){
             meBadge.setAttribute("class", "badge text-bg-warning");
             meBadge.innerText = "Me";
             groupMemberNickname.appendChild(meBadge);
+
+            if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "N"){
+                const kakaoPayButton = groupMemberListRow.querySelector("#kakaoPayButton");
+                kakaoPayButton.classList.remove('d-none');
+            }
+            else if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "Y"){
+                const paidMember = groupMemberListRow.querySelector("#paidMember");
+                paidMember.classList.remove("d-none");
+            }
         }
         GroupMemberListWrapperCol.appendChild(groupMemberListRow);
     }
@@ -198,7 +295,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                             <div class="col">
                                 <span class="fw-bold">내가 참여중인 미팅</span>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -206,9 +303,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-2">
                     <div class="col mx-1 border border-black rounded">
                         
-                        <div class="row border-bottom border-black rounded-top" style="background-color: #FF8827;">
-                            <div class="col my-1">
+                        <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
+                            <div class="col-auto my-1">
                                 <span id="groupTitle" class="fs-4 fw-bold"></span>
+                            </div>
+                            <div id="meetingDoneCol" class="col-auto align-self-center">
                             </div>
                         </div>
 
@@ -217,7 +316,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row">
                                     <div class="col-auto">
                                         <div class="userImageBox">
-                                            <img id="groupLeaderImage" class="userImage">                                            
+                                            <img id="groupLeaderImage" class="userImage">
                                         </div>
                                     </div>
                                     <div class="col-auto align-self-center px-0">
@@ -300,7 +399,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div> 
                         </div>
 
+                        <div class="row mt-5 mb-5">
+                            <div class="col">
+                                <div class="row justify-content-center">
+                                    <div class="col-4 btn" role="button" style="background-color: #FF8827;" onclick="moveToReviewPage()">
+                                        <span class="fw-bold">리뷰 남기기</span>
+                                    </div>
+                                </div>
 
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -390,7 +498,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div> -->
                 <div class="col-auto">
                     <span id="applyUserGender"></span>
-                </div>
+                </div>                
             </div>
         </div>
     </div>
@@ -407,9 +515,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col-auto">
                     <span id="groupMemberGender"></span>
                 </div>
+                <div id="kakaoPayButton" class="col d-none text-center btn py-0" onclick="registerOrderProcess()">
+                    <span>회비 결제</span>
+                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid " style="width: 40%; height: 90%;">
+                </div>
+                <div id="paidMember" class="col d-none text-center">
+                    <span class="fw-bold text-success">회비납부함!</span>
+                </div>
             </div>
         </div>
     </div>
+
+    <span id="meetingDoneBadge" class="badge fw-bold text-bg-success">미팅완료</span>
 
 
 </div>
