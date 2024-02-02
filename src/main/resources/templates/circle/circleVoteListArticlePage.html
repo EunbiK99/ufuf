@@ -50,7 +50,7 @@
             const circle_vote_id = urlParams.get("circle_vote_id");
             const circle_id = urlParams.get("circle_id");
 
-            const radiobutton = document.querySelectorAll(".radiobutton");
+            const radiobutton = document.querySelectorAll(".radiobutton"); //모든 라디오 버튼을 가져와서 반복문을 돌려 체크된걸 찾은다음 값에 전송
                 let selectedValue = "";
                 
                 for (let i = 0; i < radiobutton.length; i++) {
@@ -72,7 +72,7 @@
             location.href = "./circleVoteListPage?circle_id=" + circle_id;
 
         }
-        // 특정 투표의 정보값들을 가져옴
+        // 특정 투표의 정보값들을 가져옴>>>> 마감기한이지나면 투표마감찍고 disabled
         const voteInfoOne = () => {
 
             const queryString = window.location.search;
@@ -123,16 +123,17 @@
             .then(response => {
                 
                 for(e of response.data){
-
+                    
                     const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
                     Wrapper.classList.remove("d-none");
                     const option_content = Wrapper.querySelector(".option_content");
                     option_content.innerText = e.option_content;
                     const option_image = Wrapper.querySelector(".option_image");
                     option_image.setAttribute("src", "/uploadFiles/" + e.option_image);
-                    const radiobutton = Wrapper.querySelector(".radiobutton");
+                    const radiobutton = Wrapper.querySelector(".radiobutton"); // 라디오버튼의 value값을 여기다 줌
                     radiobutton.setAttribute("value", e.vote_option_id);
                     
+                 
                     const listInsert = document.querySelector("#listInsert");
                     listInsert.appendChild(Wrapper);
                     
@@ -147,11 +148,9 @@
         
 
         // 로드됐을때 바로실행
-        
         window.addEventListener("DOMContentLoaded", () => {
             voteInfoOne();
             voteOptionPrint();
-            
         })
      </script>
      <style>
@@ -179,10 +178,6 @@
             padding: 1em;
             text-align: center;
         }
-        .custom-radio {
-            transform: scale(1.5); /* 크기 조절 */
-            /* margin-right: 5px; */
-        }
             /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
         .image-container {
             width: 10em;
@@ -195,6 +190,11 @@
             height: 100%;
             object-fit: cover;
         }
+         /* .self_check input[type="radio"] {
+            display: none; 
+        }   */
+
+        
     </style>
 </head>
 <body>
@@ -209,22 +209,21 @@
                 <div class="row">
                     <div class="col mt-2">
                         <div class="row align-items-center">
-                            <div id="vote_title" class="col" style="font-size: 1.4em;">
+                            <div id="vote_title" class="col fw-semibold" style="font-size: 1.4em;">
                                 제목
-                            </div>
-                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
-                                중복투표는 불가!
                             </div>
                         </div>
                         <div class="row">
-                            <div id="vote_theme" class="col" style="font-size: 1.27em;">
+                            <div id="vote_theme" class="col" style="font-size: 1.27em; color: #787878;">
                                 투표 주제
                             </div>
                         </div>
                         <div class="row mt-2">
-                            
+                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
+                                중복투표는 불가!
+                            </div>
                         </div>
-                        <div class="row mt-0">
+                        <div class="row mt-1">
                             <div id="listInsert" class="col"><!-- Wrapper가 들어갈곳-->
                                 
                             </div>
@@ -243,6 +242,8 @@
         </div>
     </div>
     <div id="Wrapper" class="row d-none rounded-3">
+        <label class="labelchange self_check" for="aa">
+        <span>
         <div class="col rounded-3">
             <div class="row py-1 rounded-3 justify-content-center align-items-center">
                 <div class="col image-container rounded-3">
@@ -262,6 +263,8 @@
                 </div>
             </div>
         </div>
+        </span>
+        </label>
     </div>
     <!-- 버튼 꼴뵈기싫음 ==> 나중에 이거 자바스크립트로 radio d-none 처리하고 input checked 이용-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>

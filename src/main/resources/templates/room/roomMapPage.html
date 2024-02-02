@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
     <script>
         var relativePath = window.location.origin;
         var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
@@ -245,7 +247,20 @@
     </script>
 
     <style>
-        
+        *{
+            font-family: -apple-system, BlinkMacSystemFont, 
+            "Apple SD Gothic Neo", 
+            "Pretendard Variable", 
+            Pretendard, 
+            Roboto, 
+            "Noto Sans KR", 
+            "Segoe UI", 
+            "Malgun Gothic", 
+            "Apple Color Emoji", 
+            "Segoe UI Emoji", 
+            "Segoe UI Symbol", 
+            sans-serif;
+        }
 
         .fixed-bottom {
             position: fixed;
@@ -305,12 +320,7 @@
         overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
 
-        *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
-        }
+        
 
         #roomListBox {
             display: flex;
@@ -351,7 +361,7 @@
                 
             </div>
 
-            <div class="row ms-3" style="position: fixed; right: 2.3em; bottom: 11.5em; z-index: 1000;">
+            <div class="row ms-3" style="position: fixed; right: 2.3em; bottom: 12.5em; z-index: 1000;">
                 <div class="col-1 px-0 text-end">
                     <button id="findMyLocation" class="btn-sm text-secondary rounded-circle bg-white border fs-5 shadow" 
                         onclick="findMyLocation()" style="height: 2em; width: 2em;">
@@ -403,7 +413,14 @@
         </div>
 
         <div id="global-navi" class="fixed-bottom shadow border bg-white mt-1 overflow-x-auto mx-3 rounded-3" style="bottom: 2.5em ; z-index: 1000;">
-            
+            <div class="row mt-1 pt-1 ">
+                <div class="col fw-bold">
+                    지도로 숙소찾기
+                </div>
+                <div class="col ms-2">
+                    <a class="text-secondary ms-3" href="./roomListPage" style="font-size: 0.8em; text-decoration: none;">숙소 목록으로 ></a>
+                </div>
+            </div>
             <div class="row p-3" id="roomListBox">
             </div>
         </div>

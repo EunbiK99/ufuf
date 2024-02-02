@@ -133,6 +133,8 @@ public class RoomController {
 				roomImageDto.setOriginal_filename(originalFileName);
 				
 				roomImageDtoList.add(roomImageDto);
+
+				
 				
 			}
 		}
@@ -148,6 +150,11 @@ public class RoomController {
 		roomInfoDto.setCheckout_time(checkout1+" "+checkout2);
 		
 		roomService.roomRegister(roomInfoDto, room_option_category_id, roomImageDtoList);
+
+		// 카카오페이 결제 상품 insert
+		int room_info_id = roomService.roomInfoIdMaxValue();
+
+		roomService.itemInfoInsert(room_info_id);
         
         
         return "redirect:./roomRegisterCompletePage";
@@ -427,6 +434,28 @@ public class RoomController {
 
 		return "room/roomTestPage";
 	}
+
+
+	//결제실패
+	@RequestMapping("roomPaymentFail")
+    public String roomPaymentFail(){
+
+        return "room/roomPaymentFail";
+    }
+
+	//결제 성공
+    @RequestMapping("roomPaymentSuccess")
+    public String roomPaymentSuccess(){
+
+        return "room/roomPaymentSuccess";
+    }
+
+	//결제 취소
+    @RequestMapping("roomPaymentCancel")
+    public String roomPaymentCancel(){
+
+        return "room/roomPaymentCancel";
+    }
 
 
 }

@@ -96,6 +96,7 @@
                     const smallC = document.querySelector("#smallC");
                     const div = document.createElement("div");
                     div.classList.add("col", "px-1", "py-1" ,"d-grid", "align-items-center");
+                    div.setAttribute("onclick", "listChange(" + e.circle_small_category_id + ",'" + e.category_name + "')")
 
                     //<span class="badge text-bg-light">축구</span>
                     const span = document.createElement("span")
@@ -109,6 +110,62 @@
                     smallC.appendChild(div);
                 }
             })
+
+        }
+        // 리스트 랜더링 #카테고리 클릭시
+        const listChange = (circle_small_category_id, category_name) => {
+
+            const deleteList = document.querySelector("#deleteList");
+            deleteList.innerHTML = "";
+            
+            const subname1 = document.querySelector("#subWrapper .subname1");
+            subname1.innerText = category_name;
+            
+
+            const url = "circleListByCircleSmallcategory?circle_small_category_id=" + circle_small_category_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const deleteList = document.querySelector("#deleteList");
+                    deleteList.appendChild(a);
+
+                }
+
+            })
+
 
         }
 
@@ -241,63 +298,68 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="row mt-2">
                     <div class="col overflow-x-auto">
                         <div id="smallC" class="row" style="width: 200%;">
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2 align-items-center me-1">
+                <div id="subWrapper" class="row mt-2 align-items-center me-1">
                     <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
-                        <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;핫한 동아리
+                        <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;<span class="subname1">핫한 동아리</span>
                     </div>
                     <div class="col-1">
                         <a href="./circleListPage" style="text-decoration: none; color: black;">+</a>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col" id="listInsert">
-                        
-                    </div>
-                </div>
-                <div class="row mt-2 align-items-center me-1">
-                    <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
-                        <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;인기있는 동아리 게시글
-                    </div>
-                    <div class="col-1">
-                        <a href="#" style="text-decoration: none; color: black;">+</a>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col">
-                        <div class="row mx-1 border rounded-3">
-                            <div class="col-3 text-center">
-                                인원이 많은
-                            </div>
-                            <div class="col text-center">
-                                글 (3개정도?)
+                    <div id="deleteList" class="col">
+                        <div class="row">
+                            <div class="col" id="listInsert">
+                                
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row fixed-bottom mx-0 align-items-center">
-                    <div class="button col py-0 text-center fs-1">
-                        <i class="bi bi-house-door-fill"></i>
-                    </div>
-                    <div class="button col py-0 text-center fs-1">
-                        <i class="bi bi-messenger"></i>
-                    </div>
-                    <div class="col-2 px-0 d-grid">
-                        <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
-                    </div>
-                    <div class="button col py-0 text-center fs-1" onclick="(() => {
-                        location.href = './myCircleListPage'
-                    })()">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
-                    <div class="button col py-0 text-center fs-1">
-                        <i class="bi bi-person-circle"></i>
+                        <div class="row mt-2 align-items-center me-1">
+                            <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
+                                <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;인기있는 동아리 게시글
+                            </div>
+                            <div class="col-1">
+                                <a href="#" style="text-decoration: none; color: black;">+</a>
+                            </div>
+                        </div>
+                        <div class="row mt-2 ">
+                            <div class="col">
+                                <div class="row mx-1 border rounded-3">
+                                    <div class="col-3 text-center">
+                                        인원이 많은
+                                    </div>
+                                    <div class="col text-center">
+                                        글 (3개정도?)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row fixed-bottom mx-0 align-items-center">
+                            <div class="button col py-0 text-center fs-1">
+                                <i class="bi bi-house-door-fill"></i>
+                            </div>
+                            <div class="button col py-0 text-center fs-1">
+                                <i class="bi bi-messenger"></i>
+                            </div>
+                            <div class="col-2 px-0 d-grid">
+                                <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
+                            </div>
+                            <div class="button col py-0 text-center fs-1" onclick="(() => {
+                                location.href = './myCircleListPage'
+                            })()">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="button col py-0 text-center fs-1" onclick="(() => {
+                                location.href = './circleMyPage'
+                            })()">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

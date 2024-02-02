@@ -213,8 +213,8 @@
         SELECT MAX(order_id) from order_info
     </select>
     <insert id="kakaoPaymentResInsert">
-        INSERT into kakao_payment_res(tid, next_redirect_mobile_url) values(
-            #{tid}, #{next_redirect_mobile_url}
+        INSERT into kakao_payment_res(tid, next_redirect_mobile_url, created_at) values(
+            #{tid}, #{next_redirect_mobile_url}, #{created_at}
         )
     </insert>
     <insert id="kakaoPaymentAcceptReqInsert">
@@ -227,6 +227,81 @@
             #{tid}, #{amount}, #{card_info}, #{partner_order_id}, #{partner_user_id}, #{aid}, #{payment_method_type}, #{approved_at}
         )
     </insert>
+    <insert id="amountInfoInsert">
+        INSERT into amount(total, `point`) values(
+            #{total}, #{point}
+        )
+    </insert>
+    <insert id="cardInfoInsert">
+        INSERT into card_info(bin_, card_type, install_month, approved_id) values(
+            #{bin_}, #{card_type}, #{install_month}, #{approved_id}
+        )
+    </insert>
+    <select id="cardIdMax" resultType="int">
+        select max(card_id) from card_info
+    </select>
+    <select id="amountIdMax" resultType="int">
+        select max(amount_id) from amount
+    </select>
+    <update id="orderInfoStatusByOrderId">
+        UPDATE order_info set status='결제완료' where order_id = #{order_id}
+    </update>
+    <select id="circleListByCircleSmallcategory" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle WHERE circle_small_category_id = #{circle_small_category_id}
+    </select>
+    <select id="circleMemberListMemberCntOrderByCircleId" resultType="com.cu.ufuf.dto.CircleMemberDto">
+        SELECT t1.circle_member_id, t1.circle_id, t1.user_id, t1.circle_position, t1.created_at 
+        from (SELECT *,COUNT(*) from circle_member group by circle_id order by count(*) desc)t1
+    </select>
+    <select id="circleInfoListOrderByGradeId" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT c.circle_id, c.circle_small_category_id, c.circle_grade_id, c.user_id, c.circle_name, c.circle_university, c.circle_content, c.circle_image, c.application_date  
+        from circle_grade cg inner join circle c ON cg.circle_grade_id = c.circle_grade_id
+        order by circle_grade_id desc
+    </select>
+    <insert id="circleLikeInfoInsert">
+        INSERT into circle_like(circle_id, user_id) values(
+            #{circle_id}, #{user_id}
+        )
+    </insert>
+    <select id="circleLikeInfoCheck" resultType="int">
+        SELECT count(*) from circle_like where circle_id = #{circle_id} and user_id = #{user_id}
+    </select>
+    <delete id="circleLikeInfoDelete">
+        delete from circle_like where circle_id = #{circle_id} and user_id = #{user_id}
+    </delete>
+    <select id="circleLikeInfoByUserId" resultType="com.cu.ufuf.dto.CircleLikeDto">
+        select * from circle_like where user_id = #{user_id}
+    </select>
+    <select id="circleScheduleByCircleScheduleId" resultType="com.cu.ufuf.dto.CircleScheduleDto">
+        select * from circle_schedule where circle_schedule_id = #{circle_schedule_id}
+    </select>
+    <select id="circleScheduleApplicationByCircleScheduleId" resultType="int">
+        select count(*) from circle_schedule_application where circle_schedule_id = #{circle_schedule_id}
+    </select>
+    <select id="circleScheduleApplyByUserId" resultType="com.cu.ufuf.dto.CircleScheduleApplyDto">
+        SELECT * from circle_schedule_application WHERE circle_member_id in (SELECT circle_member_id from circle_member WHERE user_id = #{user_id})
+    </select>
+    <select id="itemInfoByCircleScheduleId" resultType="com.cu.ufuf.dto.ItemInfoDto">
+        select * from item_info where merchan_id = #{circle_schedule_id} and item_category_id = 2
+    </select>
+    <select id="orderInfoByItemId" resultType="com.cu.ufuf.dto.OrderInfoDto">
+        select * from order_info where item_id = #{item_id}
+    </select>
+    <select id="kakaoPaymentReqInfoByItemId" resultType="com.cu.ufuf.dto.KakaoPaymentReqDto">
+        select * from kakao_payment_req where partner_order_id = #{order_id}
+    </select>
+    <select id="kakaoPaymentAccResInfoByItemId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptResDto">
+        select * from kakao_payment_accept_res where partner_order_id = #{order_id}
+    </select>
+    <select id="circleScheduleInfoByCircleScheduleid" resultType="com.cu.ufuf.dto.CircleScheduleDto">
+        select * from circle_schedule where circle_schedule_id = #{circle_schedule_id}
+    </select>
+    <select id="circleScheduleApplyPeopleCount" resultType="int">
+        SELECT count(*) from circle_schedule_application WHERE circle_schedule_id = #{circle_schedule_id}
+    </select>
     
-    
+
+
+
+
 </mapper>

@@ -20,7 +20,7 @@
         function roomList(){
             // 처음에 초기화
             document.querySelector("#roomListBox").innerHTML = "";
-            const url = "./getRoomList";
+            const url = "./getRoomListForMain";
             
             fetch(url)
             .then(response => response.json())
@@ -65,7 +65,7 @@
         function reviewList(){
             // 처음에 초기화
             document.querySelector("#reviewListBox").innerHTML = "";
-            const url = "./getReviewList";
+            const url = "./getReviewListForMain";
             
             fetch(url)
             .then(response => response.json())

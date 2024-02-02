@@ -7,11 +7,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleBoardImageDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
+import com.cu.ufuf.dto.CircleLikeDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
@@ -22,6 +25,7 @@ import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
 import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
+import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
@@ -165,6 +169,50 @@ public interface CircleSqlMapper {
     public void kakaoPaymentAcceptReqInsert(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
     public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
 
+    // 카카오페이 Amount
+    public void amountInfoInsert(AmountDto amountDto);
+    public void cardInfoInsert(CardInfoDto cardInfoDto);
 
+    // Max값 추출
+    public int cardIdMax();
+    public int amountIdMax();
+
+    // orderInfo 업데이트 '결제완료'
+    public void orderInfoStatusByOrderId(String order_id);
     
+    // mainPage #눌렀을때 리스트 리스팅
+    public List<CircleDto> circleListByCircleSmallcategory(int circle_small_category_id);
+
+    // 동아리 리스트 인기순 가져올 항목들 ==> 1.동아리 맴버수 높은순으로 리스트 가져오기
+    public List<CircleMemberDto> circleMemberListMemberCntOrderByCircleId();
+
+    // 동아리 리스트 등급별로 가져올 항목
+    public List<CircleDto> circleInfoListOrderByGradeId();
+    
+    // 동아리 좋아요 && 확인 && 삭제
+    public void circleLikeInfoInsert(CircleLikeDto circleLikeDto);
+    public int circleLikeInfoCheck(CircleLikeDto circleLikeDto);
+    public void circleLikeInfoDelete(CircleLikeDto circleLikeDto);
+
+    // 동아리 좋아요 리스트 가져오기
+    public List<CircleLikeDto> circleLikeInfoByUserId(int user_id);
+
+    // 동아리 일정단일테이블 가져오기 && 일정 신청 테이블 개수가져오기 => 검증2
+    public CircleScheduleDto circleScheduleByCircleScheduleId(int circle_schedule_id);
+    public int circleScheduleApplicationByCircleScheduleId(int circle_schedule_id);
+
+    // 동아리 내가 일정신청한 리스트를 가져옴 && 스케쥴id로 상품테이블 가져옴 && item테이블정보 상품pk로
+    public List<CircleScheduleApplyDto> circleScheduleApplyByUserId(int user_id);
+    public ItemInfoDto itemInfoByCircleScheduleId(int circle_schedule_id);
+    public OrderInfoDto orderInfoByItemId(int item_id);
+
+    // 카카오페이 결제요청 내역 상품pk로 가져오기 && 결제응답도 상품pk로 가져옴
+    public KakaoPaymentReqDto kakaoPaymentReqInfoByItemId(String order_id);
+    public KakaoPaymentAcceptResDto kakaoPaymentAccResInfoByItemId(String order_id);
+
+    // 스케쥴 정보 가져오기
+    public CircleScheduleDto circleScheduleInfoByCircleScheduleid(int circle_schedule_id);
+
+    // 일정신청한 인원
+    public int circleScheduleApplyPeopleCount(int circle_schedule_id);
 }

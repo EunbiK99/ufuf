@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <script>
+        function goBack() {
+            window.history.go(-1);
+        }
+        // 내 세션정보로 내가신청한 결제내역 리스트
+        const schedulePaymentMyList = () => {
+
+            const url = "./circleScheduleApplyByUserId";
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                for(e of response.data){
+
+                    const paymentList = document.querySelector("#Wrapper .paymentList").cloneNode(true);
+                    const title = paymentList.querySelector(".title").innerText = e.circleScheduleDto.schedule_title
+                    const place = paymentList.querySelector(".place").innerText = e.circleScheduleDto.schedule_address
+                    const status = paymentList.querySelector(".status").innerText = e.orderInfoDto.status
+                    const totalprice = paymentList.querySelector(".totalprice").innerText = e.kakaoPaymentReqDto.total_amount
+                    const changetime = e.orderInfoDto.created_at;
+                    // changetime은 2022,2,1,14,22,12 형식임
+                    const changetime2 = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4], changetime[5]);
+                    // 이게 맞음 
+                    const formattedDate = `${String(changetime[0]).slice(-2)}.${String(changetime[1]).padStart(2, '0')}.${String(changetime[2]).padStart(2, '0')}`;
+                    const ordertime = paymentList.querySelector(".ordertime").innerText =  formattedDate
+                    
+                    paymentList.addEventListener("click", function() {
+                        paymentHistoryPlusModal(e);
+                    });
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(paymentList);
+
+                }
+
+            })
+        }
+        // 클릭했을때는 일정에 대한 주문 상세내역이 나오면서 결제취소가 가능하게끔 해야함
+        
+        const paymentHistoryPlusModal = (element) => {
+            console.log(element);
+            const ScheduleModal = document.querySelector("#ScheduleModal")
+            const start_time = ScheduleModal.querySelector(".start_time");
+            const changetime = element.circleScheduleDto.start_time;
+            const startDummytime = new Date(changetime[0], changetime[1] - 1, changetime[2], changetime[3], changetime[4], changetime[5]);
+            const formattedDateTime = `${String(changetime[0]).slice(-2)}.${String(changetime[1]).padStart(2, '0')}.${String(changetime[2]).padStart(2, '0')} ${String(changetime[3]).padStart(2, '0')}:${String(changetime[4]).padStart(2, '0')}`;
+            start_time.innerText = formattedDateTime; // 일정 시작일
+            const end_time = ScheduleModal.querySelector(".end_time");
+            const changetime2 = element.circleScheduleDto.end_time;
+            const startDummytime2 = new Date(changetime2[0], changetime2[1] - 1, changetime2[2], changetime2[3], changetime2[4], changetime2[5]);
+            const formattedDateTime2 = `${String(changetime2[0]).slice(-2)}.${String(changetime2[1]).padStart(2, '0')}.${String(changetime2[2]).padStart(2, '0')} ${String(changetime2[3]).padStart(2, '0')}:${String(changetime2[4]).padStart(2, '0')}`;
+            end_time.innerText = formattedDateTime2; // 일정 종료일
+            const people = ScheduleModal.querySelector(".people").innerText = element.circleScheduleDto.participation // 총 인원
+            const person = ScheduleModal.querySelector(".person").innerText = element.applyPeopleCount // 신청한 인원
+            const mypay = ScheduleModal.querySelector(".mypay").innerText = element.kakaoPaymentReqDto.total_amount // 내가 낸 회비
+            const orderNumber = ScheduleModal.querySelector(".orderNumber").innerText = element.kakaoPaymentAcceptResDto.partner_order_id // 주문번호
+            const Stitle = ScheduleModal.querySelector(".Stitle").innerText = element.circleScheduleDto.schedule_title // 제목
+            const Scontent = ScheduleModal.querySelector(".Scontent").innerText = element.circleScheduleDto.schedule_content // 내용
+            const Saddress = ScheduleModal.querySelector(".Saddress").innerText = element.circleScheduleDto.schedule_address // 주소
+            const schedulecancel = ScheduleModal.querySelector(".schedulecancel")
+            schedulecancel.setAttribute("onclick", `kakaoPaymentCancel(${JSON.stringify(element)})`)
+            
+            if(element.kakaoPaymentAcceptResDto.payment_method_type === "MONEY"){
+                const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "현금결제"
+            }else if(element.kakaoPaymentAcceptResDto.payment_method_type === "CARD"){
+                const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "카드결제"
+            }
+            
+             // 결제타입 ==> MONEY CARD 로 출력
+            
+
+            const mapboot = document.querySelector("#map");
+            mapboot.innerHTML = "";
+
+            // 여기서 맵을 만들어야할듯?    
+            // 주소-좌표 변환 객체를 생성합니다
+            const geocoder = new kakao.maps.services.Geocoder();
+
+            // eventData.schedule_address 바꿔야됨
+            geocoder.addressSearch(element.circleScheduleDto.schedule_address, function(result, status) {
+
+                // 정상적으로 검색이 완료됐으면 
+                if (status === kakao.maps.services.Status.OK) {
+
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = {
+                        center: new kakao.maps.LatLng(coords.getLat(), coords.getLng()), // 지도의 중심좌표
+                        level: 3 // 지도의 확대 레벨
+                    };
+                    
+                    // 지도를 생성합니다    
+                    var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+                    const marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                } 
+            }); 
+            
+            const modal = bootstrap.Modal.getOrCreateInstance("#ScheduleModal");
+            modal.show();
+
+        }
+        // 여기서 결제 취소 api가 나와야하는데.. 플랫폼 등록이 이상함..
+
+        const kakaoPaymentCancel = (element) => {
+
+            console.log(element);
+            
+
+            //옛날 카카오 디벨롭 링크라는데.. 
+            const API_URL = "https://kapi.kakao.com/v1/payment/cancel"
+            const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a'; 
+
+            // 결제 취소요청 
+            const requestData = new URLSearchParams({
+                
+                cid: element.kakaoPaymentReqDto.cid,
+                tid: element.kakaoPaymentAcceptResDto.tid,
+                cancel_amount: element.kakaoPaymentReqDto.total_amount,
+                cancel_tax_free_amount: element.kakaoPaymentReqDto.tax_free_amount
+
+            })
+
+            // 요청값 저장시킬 JSON
+            const sendData = {
+
+                cid: element.kakaoPaymentReqDto.cid,
+                tid: element.kakaoPaymentAcceptResDto.tid,
+                cancel_amount: element.kakaoPaymentReqDto.total_amount,
+                cancel_tax_free_amount: element.kakaoPaymentReqDto.tax_free_amount
+
+            }
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': `KakaoAK ${ADMIN_KEY}`
+                },
+                body: requestData 
+            })
+                .then(response => response.json())
+                .then(data => {
+                    
+                    //여기서 함수 3개정도 호출
+                    
+                    
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+        }
+        
+        // 결제취소요청테이블 insert
+        
+        
+
+        // 결제취소응답테이블 insert
+
+        // 결제취소가 되면 status ==> 결제취소 바꿔야하고
+        // 일정신청테이블 스케줄pk랑 동아리맴버pk이용해서 일정신청삭제해야함..
+
+        window.addEventListener("DOMContentLoaded", () => {
+
+            schedulePaymentMyList()
+
+        })
+     </script>
+     <style>
+        *{
+        /* font-family: 'Dongle', sans-serif; */
+        font-family: 'Gowun Dodum', sans-serif;
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        }
+        .shadow {
+        background-color: #ffffff; /* 요소의 배경색을 지정 */
+        box-shadow: 10em 10em 2em #fd731e;
+        /* 
+            첫 번째 값: 가로 그림자의 위치
+            두 번째 값: 세로 그림자의 위치
+            세 번째 값: 그림자의 흐림 정도
+            네 번째 값: 그림자의 색상과 투명도
+        */
+        }
+    </style>
+</head>
+<body>
+    <!-- 내가 일정 신청한 주문정보 페이지가 나와야 함 어느동아리에 무슨일정인지 나와야되고 장소+ 주문정보.. 엮을게 많다.-->
+    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="row mt-2 justify-content-center">
+                    <div class="col">
+                        <span class="bi bi-credit-card-fill" style="color: #fb7928;font-size: 1.2em;"></span>&nbsp;&nbsp;<span style="font-size: 1.2em;">결제내역</span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div id="listInsert" class="col">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 여기는 리스트 페이지 -->
+    <div id="Wrapper" class="d-none">
+        <div class="paymentList row shadow py-2" style="border: 0.001em solid rgb(238, 238, 238); border-radius: 0.5em;margin-left: 0.05em;margin-right: 0.05em;">
+            <div class="col">
+                <div class="row">
+                    <div class="title col" style="font-size: 1em;">
+                        일정제목
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="place col fw-semibold" style="font-size: 0.9em;">
+                        일정장소
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="status col fw-semibold" style="color: #fb7928;">
+                       주문상태(맨마지막) fw-semibold 
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row mt">
+                    <div class="ordertime col text-end fw-semibold" style="color: rgb(155, 155, 155); font-size: 0.9em;">
+                        
+                    </div>
+                </div>   
+                <div class="row">
+                    <div class="col fw-semibold text-end" style="color: rgb(155, 155, 155); font-size: 0.8em;">
+                        &nbsp;&nbsp;
+                    </div>
+                </div>
+                <div class="row mt-2 pb-0 mb-0">
+                    <div class="col pb-0 mb-0 text-end">
+                        <span class="totalprice" style="color: red;"></span><span>원</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 여기는 모달창 !! -->
+    <div id="Wrapper d-none">
+        <div id="ScheduleModal" class="modal" tabindex="-1">
+            <div class="modal-dialog custom-z-index">
+              <div class="modal-content">
+                <div class="modal-header fw-semibold">
+                  <h5 class="modal-title">상세일정</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            주문번호:
+                        </div>
+                        <div class="col orderNumber text-end">
+                            
+                        </div>
+                    </div>
+                    <div class="row mt-3 align-items-center">
+                        <div class="col">
+                            일정제목:
+                        </div>
+                        <div class="col Stitle text-end">
+
+                        </div>
+                    </div>
+                    <div class="row mt-1 align-items-center">
+                        <div class="col">
+                            일정내용:
+                        </div>
+                        <div class="col Scontent text-end">
+
+                        </div>
+                    </div>
+                    <div class="row mt-1 align-items-center">
+                        <div class="col-3">
+                            일정기간:
+                        </div>
+                        <div class="col text-end" style="font-size: 0.8em;">
+                            <span class="start_time"></span> - <span class="end_time"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-3 align-items-center">
+                        <div class="col">
+                            신청인원:
+                        </div>
+                        <div class="col text-end">
+                            <span class="person" style="color: #fb7928;"></span> / <span class="people"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-1 align-items-center">
+                        <div class="col">
+                            결제방식:
+                        </div>
+                        <div class="col text-end">
+                            <span class="paymentType"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-1 align-items-center">
+                        <div class="col">
+                            결제금액:
+                        </div>
+                        <div class="col text-end">
+                            <span class="mypay" style="color: red;"></span><span>원</span>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col ps-0">
+                            <span class="schedule_address fw-semibold" style="font-size: 0.85em; color: #6b6b6b;"></span>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col text-end">
+                            <span class="Saddress"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0"><!-- 일정에 주소좌표가 들어갈 예정 --> 
+                            <div id="map" style="width: 100%; height: 15em;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn fw-semibold schedulecancel" style="background-color: red;color: white;">일정 취소</button>
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <!-- 결제취소 했을때 환불이 진행되어야하고 마지막에 일정신청리스트에서 삭제되어야함.-->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf&libraries=services"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

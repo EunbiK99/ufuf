@@ -2,6 +2,7 @@ package com.cu.ufuf.circle.controller;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,9 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.circle.service.CircleService;
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
+import com.cu.ufuf.dto.CircleLikeDto;
 import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
@@ -749,6 +753,7 @@ public class CircleRestController {
       return responseDto;
       }
       // orderInfoInsert
+      // 주문정보 insert는 잘됨
     @RequestMapping("orderInfoInsert")
         public RestResponseDto orderInfoInsert(@RequestParam("item_id") int item_id, @RequestParam("circle_schedule_id") int circle_schedule_id, HttpSession session){
         
@@ -788,6 +793,7 @@ public class CircleRestController {
         orderInfoDto.setUser_id(user_id);
         orderInfoDto.setStatus("READY");
         orderInfoDto.setOrder_id(orderNumber);
+        System.out.println(orderNumber);
 
         // insert
         circleService.orderInfoInsert(orderInfoDto);
@@ -795,7 +801,7 @@ public class CircleRestController {
         // 데이터 보낼거 ==> 주문정보pk + 판매자userpk
         Map<String, Object> map = new HashMap<>();
         map.put("schedule_user_id", scheduleUserIdString);
-        map.put("order_id", circleService.orderIdMax());
+        map.put("order_id", orderNumber); // ?????????????????????????? 이걸 잘못넣었네..휴,.. max값을 넣네 미친놈..
         map.put("item_id", item_id); // 그냥한번넣어봄 test 지워도 무관
         
         responseDto.setData(map);
@@ -816,14 +822,17 @@ public class CircleRestController {
         return responseDto;
     }
     // 승인응답테이블 ==> 여기서 amount는 서버에서 dto로 응답받음 insert시키고 max값 받아서 insert시켜야됨 (amount먼저)
-    @RequestMapping("kakaoPaymentAcceptResInsert")
+    @RequestMapping("kakaoPaymentAcceptResInsert") 
         public RestResponseDto kakaoPaymentAcceptResInsert(@RequestBody KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
         
         RestResponseDto responseDto = new RestResponseDto();
-
+        // 여기서 amountpk랑 cardpk받아서 insert 시켜야함
+        kakaoPaymentAcceptResDto.setAmount(circleService.amountIdMax());
+        kakaoPaymentAcceptResDto.setCard_info(circleService.cardIdMax());
+        
+        // 이거 승인 완료시간이 이상함??? 21시 몇분 이렇게 나옴 => 난 12시에 함 !!!!!!
         circleService.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
         
-        responseDto.setData(null);
         responseDto.setResult("success");
         
         return responseDto;
@@ -846,16 +855,232 @@ public class CircleRestController {
         
         RestResponseDto responseDto = new RestResponseDto();
 
-        KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto =(KakaoPaymentAcceptReqDto)session.getAttribute("kakaoPaymentAcceptReqValue");
+        KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto = (KakaoPaymentAcceptReqDto)session.getAttribute("kakaoPaymentAcceptReqValue");
         
         responseDto.setData(kakaoPaymentAcceptReqDto);
         responseDto.setResult("success");
         
         return responseDto;
     }
-    
-    
+    //amountInfoInsert
+    @RequestMapping("amountInfoInsert")
+        public RestResponseDto amountInfoInsert(@RequestBody AmountDto amountDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.amountInfoInsert(amountDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // cardInfoInsert
+    @RequestMapping("cardInfoInsert")
+        public RestResponseDto cardInfoInsert(@RequestBody CardInfoDto cardInfoDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
 
+        circleService.cardInfoInsert(cardInfoDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //orderStatusChange
+    @RequestMapping("orderStatusChange")
+        public RestResponseDto orderStatusChange(@RequestParam("order_id") String order_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.orderInfoStatusByOrderId(order_id);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 카테고리 수정 circleListByCircleSmallcategory
+    @RequestMapping("circleListByCircleSmallcategory")
+        public RestResponseDto circleListByCircleSmallcategory(@RequestParam("circle_small_category_id") int circle_small_category_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        // 리스트값 들어가야함
+        responseDto.setData(circleService.circleListByCircleSmallcategory(circle_small_category_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circlePopularList
+    @RequestMapping("circlePopularList")
+        public RestResponseDto circlePopularList(){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleMemberListMemberCntOrderByCircleId());
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    @RequestMapping("circleGradeList")
+        public RestResponseDto circleGradeList(){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleInfoListOrderByGradeId());
+        responseDto.setResult("success");
+        
+        return responseDto;
+    } 
+    //circleLikeInfoInsert
+    @RequestMapping("circleLikeInfoInsert")
+        public RestResponseDto circleLikeInfoInsert(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleLikeDto circleLikeDto = new CircleLikeDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        circleLikeDto.setUser_id(user_id);
+        circleLikeDto.setCircle_id(circle_id);
+        
+        circleService.circleLikeInfoInsert(circleLikeDto);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    @RequestMapping("circleLikeCheck")
+        public RestResponseDto circleLikeCheck(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleLikeDto circleLikeDto = new CircleLikeDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        circleLikeDto.setUser_id(user_id);
+        circleLikeDto.setCircle_id(circle_id);
+        
+        responseDto.setData(circleService.circleLikeInfoCheck(circleLikeDto));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleLikeDelete
+    @RequestMapping("circleLikeDelete")
+        public RestResponseDto circleLikeDelete(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleLikeDto circleLikeDto = new CircleLikeDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        circleLikeDto.setUser_id(user_id);
+        circleLikeDto.setCircle_id(circle_id);
+        
+        circleService.circleLikeInfoDelete(circleLikeDto);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    @RequestMapping("circleMyLikeList")
+        public RestResponseDto circleMyLikeList(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        responseDto.setData(circleService.circleLikeInfo(user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleMyVoteList
+    @RequestMapping("circleMyVoteList")
+        public RestResponseDto circleMyVoteList(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+
+        responseDto.setData(circleService.circleMyVoteList(user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleSchedulePeopleCheck
+    @RequestMapping("circleSchedulePeopleCheck")
+        public RestResponseDto circleSchedulePeopleCheck(@RequestParam("circle_schedule_id") int circle_schedule_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleScheduleDto circleScheduleDto = circleService.circleScheduleByCircleScheduleId(circle_schedule_id);
+        int participationPeople = circleScheduleDto.getParticipation(); // 참여인원
+
+        int applicationPeople = circleService.circleScheduleApplicationByCircleScheduleId(circle_schedule_id); // 신청한인원
+
+        Boolean check = true; // 초기값 ==> 일정을 신청할 수 있음
+        if(participationPeople <= applicationPeople){ // 신청한인원이 참여인원이랑 인원수가 같거나 클경우 check값은 false가됨 ==> 일정 신청 불가
+            check = false;
+        }
+
+        responseDto.setData(check);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleScheduleStartTimeCheck
+    @RequestMapping("circleScheduleStartTimeCheck")
+        public RestResponseDto circleScheduleStartTimeCheck(@RequestParam("circle_schedule_id") int circle_schedule_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        CircleScheduleDto circleScheduleDto = circleService.circleScheduleByCircleScheduleId(circle_schedule_id);
+
+        LocalDateTime startTime = circleScheduleDto.getStart_time();
+        LocalDateTime currentTime = LocalDateTime.now();
+        
+        Boolean check = true;
+        if(startTime.isAfter(currentTime)){ // 일정시작일이 현재시간보다 이후일때 실행 곧, 지금시간은 일정시작일보다 이전이라는뜻 // 일정신청가능
+        
+        }else if(startTime.isBefore(currentTime)){ // 일정시작일이 현재시간보다 이전일때 실행 // 일정신청 불가
+            check = false;
+        }else{ // 같을때 실행 // 일정신청불가
+            check = false;
+        }
+        
+        responseDto.setData(check);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleScheduleAttendanceByUserId
+    @RequestMapping("circleScheduleApplyByUserId")
+        public RestResponseDto circleScheduleApplyByUserId(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        // 일정리스트에 담을내용들
+        responseDto.setData(circleService.circleScheduleApplyByUserId(user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    
 
     // RESTAPI 양식
     /*
@@ -869,6 +1094,6 @@ public class CircleRestController {
         
         return responseDto;
     }
-     */
+    */
 
 }

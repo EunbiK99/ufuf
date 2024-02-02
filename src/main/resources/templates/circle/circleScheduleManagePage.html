@@ -217,10 +217,11 @@
                 editable: true,
                 selectable: true,
                 expandRows: false,
-                dayMaxEventRows: true,
+                dayMaxEventRows: 2, // 날짜별 이벤트 행의 개수 설정 가능
                 locale: 'ko',
                 selectLongPressDelay: 300,
                 aspectRatio: 0.8,
+                
             });
 
             calendar.render();
@@ -256,7 +257,7 @@
         // 일정등록 누를시 로케이션 // 동아리번호 + 세션유저번호 = 동아리회원번호
         const scheduleApply = () => {
 
-            // !!! 여기서 검증하나 해야함 ==> 직책이 M이거나 동아리회원번호 정보가 없을경우에 alert같은걸 하나띄우면 될듯 그리고 return;
+            
 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
@@ -265,36 +266,14 @@
             location.href = "./circleScheduleApplyPage?circle_id=" + circle_id;
 
         }
+
         function goBack() {
             window.history.go(-1);
         }
-        // 모달로 일정 가져와서 등록
-        // 검증 1 => 인원수가 꽉찼을시 불가 / 검증 2 => 일정 시작일되면 일정신청을 못하게 막아야함
-        // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
-        // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
-
-        // 맨마지막 - 순서 %% 검증(이미신청함,일정시작일이후,인원이 꽉 찼을시) ==> 결제완료 ==> 일정신청 테이블 INSERT  
-        const circleScheduleApply = (circle_schedule_id) => {
-
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const circle_id = urlParams.get("circle_id");
-
-            console.log(circle_schedule_id);
-
-            fetch("./circleScheduleApplyInsert?circle_id=" + circle_id + "&circle_schedule_id=" + circle_schedule_id)
-            .then(response => response.json())
-            .then(response => {
-
-                location.href = "./circleScheduleManagePage?circle_id=" + circle_id;
-
-            })
-
-        }
 
         // 검증1 ==> 일정신청을 했는가?
-        const circleScheduleApplyCheck = (circle_schedule_id) => {
-
+        const circleScheduleApplyCheck = (eventData) => {
+            const circle_schedule_id = eventData.circle_schedule_id;
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const circle_id = urlParams.get("circle_id");
@@ -310,13 +289,63 @@
 
                 }
 
-                circleScheduleApply(circle_schedule_id);
+                //circleScheduleApply(circle_schedule_id); ==> 마지막
+                circleSchedulePeopleCheck(eventData); // 검증2로 넘어가자.
 
 
 
             })
 
-        }// ★★★이거다음에 인원수 체크!
+        }
+        
+        // 검증2 ==> 인원수가 전부다 채워졌을경우 ==> 이건 일정 신청이 마지막에 들어간다는 전제하에 넣은 함수
+        const circleSchedulePeopleCheck = (eventData) => {
+
+            const circle_schedule_id = eventData.circle_schedule_id;
+            const url = "./circleSchedulePeopleCheck?circle_schedule_id=" + circle_schedule_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data === false){
+                    
+                    alert("신청인원이 가득 찼습니다.")
+                    return ;
+
+                }
+
+                circleScheduleStartTimeCheck(eventData)
+
+            })
+
+        }
+        
+        // 검증3 ==> 일정시작일이 지나면 신청을 못함
+        // 참고) 이건나중에 그냥 버튼막는느낌으로 가도됨!! 모달생성될때 바로 실행되면됨
+        const circleScheduleStartTimeCheck = (eventData) => {
+
+            const circle_schedule_id = eventData.circle_schedule_id;
+            const url = "./circleScheduleStartTimeCheck?circle_schedule_id=" + circle_schedule_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                if(response.data === false){
+
+                    alert("일정신청일이 지났습니다.")
+                    return ;
+                }
+                // 이제 여기서부터 카카오페이 인증 드가자~ itemget
+                itemPkget(eventData);
+            
+
+            })
+
+        }
+        
+        // 검증이 끝나고 나서 결제페이지로 이동해서 결제를 완료시킨다음 그 다음에 마지막 해야되는게 scheduleapplication테이블에 삽입이 되야된다는 것이다.
         
         // 모달띄우기 함수
         // ★★★여기서 정보를 가지고 와서 지도를 표시해야됨★★★
@@ -357,7 +386,7 @@
             const sinchung = ScheduleModal.querySelector(".sinchung");
             //sinchung.setAttribute("onclick","circleScheduleApplyCheck("+ eventData.circle_schedule_id +")");
             const eventDataString = JSON.stringify(eventData);
-            sinchung.setAttribute("onclick", `itemPkget(${eventDataString})`);
+            sinchung.setAttribute("onclick", `circleScheduleApplyCheck(${eventDataString})`);
             // 여기가 &일정신청버튼
             const mapboot = document.querySelector("#map");
             mapboot.innerHTML = "";
@@ -397,7 +426,8 @@
             modal.show();
 
         }
-        // itemPk를 얻기위한 코드 ==> 이 itemPk를 이용해서 order정보 insert
+        // itemPk를 얻기위한 코드 ==> 이 itemPk를 이용해서 order정보 insert 검증끝나고 실행 상품pk를 가져오는거
+        // 여기는 맞음
         const itemPkget = (eventData) => {
             
             const circle_schedule_id = eventData.circle_schedule_id;
@@ -409,18 +439,19 @@
             .then(response => {
 
                 const itemid = response.data;
-                eventData.itemid = itemid; //event객체에 itemid를 넣음
+                eventData.itemid = itemid; //itemid
                 orderInfoInsert(eventData);
                 console.log(eventData);
 
             })
 
         }
-        // 여기선 이제 주문정보 insert & scheduleid를 보내서 동아리 맴버정보찾고 유저정보 찾아오자
         
+        // 상품pk를 가져오고 그다음..
+        // 여기선 이제 주문정보 insert & scheduleid를 보내서 동아리 맴버정보찾고 유저정보 찾아오자
         const orderInfoInsert = (eventData) => {
         
-
+            // 여기서 주문정보가 이상하게 들어감.. 
             const url = "./orderInfoInsert?item_id=" + eventData.itemid + "&circle_schedule_id=" + eventData.circle_schedule_id;
             fetch(url)
             .then(response => response.json())
@@ -437,12 +468,38 @@
                 
             })
             
-        } 
+        }
 
+        // 모달로 일정 가져와서 등록
+        // 검증 1 => 인원수가 꽉찼을시 불가 / 검증 2 => 일정 시작일되면 일정신청을 못하게 막아야함
+        // ★★★(해야될것)중간에 검증 한번들어가야함 !!!!!!!!!!!!!!!!!!!!!===> 이거 검증 한번 더해야됨 내가 지금 일정신청하는곳에 인원수가 5명인데 이미 5명 꽉차면 못들어가게
+        // 생각해보니 검증또있음.. ==> 마감일 지나면 일정신청 불가임 disabled 걸어야함
+
+        // 사실 이게 마지막 작업이 되어야함 결제완료 후에 후에 후에 ㅇㅋ? // 이것만 동아리번호랑 schedule_id번호 두개 가져와서 insert 시키면 되긴 함
+        // const circleScheduleApply = (circle_schedule_id) => {
+
+        // const queryString = window.location.search;
+        // const urlParams = new URLSearchParams(queryString);
+        // const circle_id = urlParams.get("circle_id");
+
+        // console.log(circle_schedule_id);
+        
+        // fetch("./circleScheduleApplyInsert?circle_id=" + circle_id + "&circle_schedule_id=" + circle_schedule_id)
+        // .then(response => response.json())
+        // .then(response => {
+
+        //     location.href = "./circleScheduleManagePage?circle_id=" + circle_id;
+
+        // })
+
+        // }
 
         // 결제 요청 페이지 들어갈때 테이블 insert를 해주어야함
         // circle_schedule_id 넘겨준이유 ==> 일정정보 담으려면 필요함
         const kakaoPayment = (eventData) => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
             
             // !! 이값이용해서 상품
             const circle_schedule_id = eventData.circle_schedule_id;
@@ -455,10 +512,12 @@
             eventData.cid = "TC0ONETIME";
             eventData.item_name = "ufuf일정회비";
             eventData.total_amount = Math.floor(eventData.schedule_fee/eventData.participation);
-            eventData.approval_url = `https://localhost:8888/circle/circlePaymentSuccess?partner_order_id=${eventData.order_id}`;
+            // 일정 신청 완료가 되었을때 동아리pk랑 스케쥴pk 보내서 insert시키면 될듯
+            eventData.approval_url = `https://localhost:8888/circle/circlePaymentSuccess?partner_order_id=${eventData.order_id}&circle_id=${circle_id}&circle_schedule_id=${circle_schedule_id}`;
             eventData.fail_url = `https://localhost:8888/circle/circlePaymentFail?partner_order_id=${eventData.order_id}`;
             eventData.cancel_url = `https://localhost:8888/circle/circlePaymentCancel?partner_order_id=${eventData.order_id}`;
             console.log(eventData);
+
 
             const requestData = new URLSearchParams({
                 "cid": eventData.cid,
@@ -504,7 +563,7 @@
 
         // 카카오페이 결제요청정보 insert
         const kakaoPaymentReqInsert = (eventData) => {
-
+        
             const url = "./kakaoPaymentReqInsert";
             const sendData = {
                 "cid": eventData.cid,
@@ -545,7 +604,8 @@
 
             const sendData = {
                 tid: data.tid,
-                next_redirect_mobile_url: data.next_redirect_mobile_url
+                next_redirect_mobile_url: data.next_redirect_mobile_url,
+                created_at: data.created_at
             }
 
             fetch(url,{
@@ -589,7 +649,7 @@
             .then(response => response.json())
             .then(response => {
 
-                
+
 
             })
             
@@ -681,7 +741,7 @@
         
 
 
-        // 일정등록할수있는지 여부를 판단 아닐경우 disabled
+        // 일정등록할수있는지 여부를 판단 아닐경우 disabled ==> 일정등록할 수 있는 검증 
         const circleScheduleRegister = () =>{
 
             const queryString = window.location.search;
@@ -696,7 +756,7 @@
 
                     const registerS = document.querySelector("#registerS");
                     registerS.setAttribute("disabled","");
-
+                    
                 }
 
             })
@@ -738,6 +798,12 @@
             margin : 0 auto;
             padding : 0;
             border : none;    
+        }
+        #fc-dom-1{
+            padding-left: 1em;
+        }
+        .fc-button-group{
+            padding-right: 1em;
         }
 
 
@@ -792,6 +858,9 @@
         .fc-event:active {
             background-color: initial;
             color: initial;
+        }
+        #calendar{
+            padding-top: 1em;
         }
     </style>
 </head>
