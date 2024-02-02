@@ -30,7 +30,23 @@
             })
 
         }
+        // 이 페이지에 도달했을 때 주문상태가 주문완료로 바뀌어야함// 왜안됨?
+        const orderStatusChange = (reqValue) => {
+
+            const order_id = reqValue.partner_order_id;
+            console.log(order_id);
+            const url = "./orderStatusChange?order_id=" + order_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                
+                console.log("성공");
+
+            })
+
+        }
         
+
         
         // 카카오 승인 요청
         const kakaoApprovalReq = (reqValue) => {
@@ -49,7 +65,6 @@
             console.log(sendData); // 이게 insert할 값
             const ADMIN_KEY = 'acf98a6391690d5cda02d8dd80ebff6a';
             const url = "https://kapi.kakao.com/v1/payment/approve";
-
             const dataValue = new URLSearchParams(sendData) // 응답받을값
 
             fetch(url,{
@@ -64,9 +79,9 @@
             .then(response => {
 
                 kakaoPaymentAcceptReqInsert(sendData)
-                kakaoPaymentAcceptResInsert(response)
-                
-                
+                kakaoPaymentAcceptResInsert(response)// 승인 , 승인완료 끝나고 주문상태 바꾸고 , 일정신청테이블 insertㅎㅎ..
+                orderStatusChange(reqValue) //마지막에 주문상태 바꿔줘야함
+                circleScheduleApply() // 일정신청테이블 insert
 
                 // 결제 승인 요청, 응답
                 // kakaoPaymentAcceptReqInsert(eventData, data.tid)
@@ -82,14 +97,14 @@
         // 페이 요청dto insert
         const kakaoPaymentAcceptReqInsert = (sendData) => {
             
-            const url = "kakaoPaymentAcceptReqInsert";
+            const url = "./kakaoPaymentAcceptReqInsert";
 
             fetch(url,{
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json'
                 },
-                body: sendData 
+                body: JSON.stringify(sendData)  
             })
             .then(response => response.json())
             .then(response => {
@@ -99,9 +114,9 @@
             })
 
         }
-        // 페이 응답dto insert ==> 
+        // 페이 응답dto insert ==> amount랑 card정보 둘다있음
         const kakaoPaymentAcceptResInsert = (response) => {
-            console.log(response);
+            // 여기서 amountpk랑 cardpk 찾을 값들을 넘겨준다.
             const url = "./kakaoPaymentAcceptResInsert";
             const resData = {
                 tid: response.tid,
@@ -112,11 +127,15 @@
                 approved_at: response.approved_at
             }
             
+            
             const amountInfo = response.amount
             const cardInfo = response.card_info
-            console.log(resData);
-            console.log(amountInfo);
-            console.log(cardInfo);
+            // 여기서 먼저 amountInfoInsert시켜주고 // 그다음 cardinfo
+            amountInfoInsert(amountInfo);
+            if(cardInfo != undefined){
+                cardInfoInsert(cardInfo);
+            };
+            // 그리고 마지막으로 결제승인
             fetch(url,{
                 method: 'POST',
                 headers: {
@@ -130,6 +149,77 @@
                 
 
             })
+        }
+        // amount정보 insert (얘는 무조건 값이 나옴) 
+        const amountInfoInsert = (amountInfo) => {
+
+            const amount = {
+                total: amountInfo.total,
+                point: amountInfo.point
+            } // 토탈하고 포인트만 필요함 
+            console.log(amount);
+
+            const url = "./amountInfoInsert";
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(amount)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+        // 카드정보 insert (undefined가 아닐때만)
+        const cardInfoInsert = (cardInfo) => {
+
+            const url = "./cardInfoInsert"
+            const card = {
+                bin_: cardInfo.bin,
+                card_type: cardInfo.card_type,
+                install_month: cardInfo.install_month,
+                approved_id: cardInfo.approved_id
+            }
+            console.log(card);
+            // 여기까지 card정보
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(card)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+        // 사실 마지막 작업 일정신청 테이블에 insert 되어야 함
+        
+        const circleScheduleApply = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+        const circle_schedule_id = urlParams.get("circle_schedule_id");
+
+
+        fetch("./circleScheduleApplyInsert?circle_id=" + circle_id + "&circle_schedule_id=" + circle_schedule_id)
+        .then(response => response.json())
+        .then(response => {
+
+            // 일정신청완료하고  끝 끝
+
+        })
 
         }
 

@@ -184,6 +184,78 @@
             })
         }
 
+        const circleLikeInsert = () => {
+
+            const queryString = window.location.search
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id")
+
+            const url = "./circleLikeInfoInsert?circle_id=" + circle_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                // 여기서 버튼색이 바뀌면서 onclick 이바뀌어야한다.
+
+                location.reload();
+
+            })
+
+        }
+        // 이걸로 온클릭 함수가 어떤게 들어갈지 결정
+        const circleLikeCheck = () => {
+
+            const queryString = window.location.search
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id")
+
+            const url = "./circleLikeCheck?circle_id=" + circle_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                const heartButton = document.querySelector("#heartButton")
+                const fillButton = heartButton.querySelector(".fillButton")
+                heartButton.removeAttribute("onclick");
+                fillButton.classList.remove("bi-heart");
+                fillButton.classList.remove("bi-heart-fill");
+                
+                
+                if(response.data < 1){
+
+                    heartButton.setAttribute("onclick","circleLikeInsert()")
+                    fillButton.classList.add("bi-heart")
+
+                }else{
+                    
+                    heartButton.setAttribute("onclick","circleLikeDelete()")
+                    fillButton.classList.add("bi-heart-fill")
+                }
+
+            })
+
+        }
+
+        const circleLikeDelete = () => {
+
+            const queryString = window.location.search
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id")
+
+            const url = "./circleLikeDelete?circle_id=" + circle_id;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                // 여기서 버튼색이 바뀌면서 onclick 이바뀌어야한다.
+
+                location.reload();
+
+            })
+
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
@@ -194,7 +266,7 @@
             // 로드될때 실행되어야하는 함수
             subImageList();
             circleInfo();
-            
+            circleLikeCheck();
         })
     </script>
     <style>
@@ -270,7 +342,10 @@
                         <span class="circle_content lh-base"></span>
                     </div>
                 </div>
-                <div class="row mt-3 mx-0 fixed-bottom">
+                <div class="row mt-3 mx-0 fixed-bottom"><!-- 처음에 검증 필요 만약 동아리 id랑 세션 userid 값이 둘다있으면 색칠되어있게-->
+                    <div id="heartButton" class="col-2 d-grid text-center align-items-center" style="font-size: 1.3em; color: #fb7928;">
+                        <span class="fillButton bi mx-0"></span>
+                    </div>
                     <div class="col d-grid">
                         <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
                     </div>

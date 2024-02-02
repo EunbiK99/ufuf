@@ -335,6 +335,21 @@ public class CircleController {
 
         return "circle/circlePaymentCancel";
     }
+    @RequestMapping("circleScheduleListPage")
+    public String circleScheduleListPage(){
+
+        return "circle/circleScheduleListPage";
+    }
+    @RequestMapping("circleMyLikeListPage")
+    public String circleMyLikeListPage(){
+
+        return "circle/circleMyLikeListPage";
+    }
+    @RequestMapping("circleMyVoteListPage")
+    public String circleMyVoteListPage(){
+
+        return "circle/circleMyVoteListPage";
+    }
     
     
     

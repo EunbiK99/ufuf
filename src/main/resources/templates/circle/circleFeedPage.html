@@ -419,6 +419,35 @@
             margin-bottom: 0; /* 다른 위치 클래스와 충돌 방지 */
             transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
         }
+        .card-description {
+            font-size: 20px;
+            
+            /* 추가하기 */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical; 
+            overflow: hidden;
+        }
+        .card-content__more-btn {
+            appearance: none;
+            border: 1px solid black;
+            padding: 0.5em;
+            border-radius: 0.25em;
+            cursor: pointer;
+            margin: 1rem;
+        }
+
+        .card-content__more-btn::before {
+            content: '더보기';
+        }
+
+        .card-content__more-btn:checked::before {
+            content: '닫기';
+        }
+
+        .card-description:has(+ .card-content__more-btn:checked) {
+            -webkit-line-clamp:unset
+        }
     </style>
 </head>
 <body>
@@ -553,7 +582,7 @@
                 </div>
             </div>
             <div class="row mt">
-                <div class="col boardcontent" style="font-size: 0.8em;">
+                <div class="col boardcontent card-description" style="font-size: 0.8em;">
                     
                 </div>
             </div>

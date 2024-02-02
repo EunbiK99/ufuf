@@ -16,9 +16,125 @@
         function goBack() {
             window.history.go(-1);
         }
+        // 인기 동아리 리스트 ==> 인기 동아리 리스트는 인원 0인 동아리는 안나오게끔 조정
+        const circlePopularList = () => {
+
+            // 처음에 초기화
+            document.querySelector("#listInsert").innerHTML = "";
+            const url = "./circlePopularList";
+            const circleWrapper = document.querySelector("#circleWrapper")
+            const mainTitle = circleWrapper.querySelector(".mainTitle").innerText = "인기 동아리"
+            const subTitle = circleWrapper.querySelector(".subTitle").innerText = "가장 인원이 많은 동아리"
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+                    
+                    // 동아리 리스트 생성
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(a);
+                    
+
+                }
+
+            })
+
+        }
+
+        // 등급별 동아리 리스트
+        const circleGradeList = () => {
+
+            document.querySelector("#listInsert").innerHTML = "";
+            const url = "./circleGradeList";
+            const circleWrapper = document.querySelector("#circleWrapper")
+            const mainTitle = circleWrapper.querySelector(".mainTitle").innerText = "등급별 동아리"
+            const subTitle = circleWrapper.querySelector(".subTitle").innerText = "가장 등급이 높은 동아리"
+
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                for(e of response.data){
+                    
+                    // 동아리 리스트 생성
+                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(a);
+                    
+
+                }
+
+            })
+
+        }
+
+        // 신규 동아리 리스트
         function circledNewList(){
             // 처음에 초기화
             document.querySelector("#listInsert").innerHTML = "";
+            const circleWrapper = document.querySelector("#circleWrapper")
+            const mainTitle = circleWrapper.querySelector(".mainTitle").innerText = "새로 개설된 동아리"
+            const subTitle = circleWrapper.querySelector(".subTitle").innerText = "따끈따끈한 신규 동아리"
+            
             const url = "./circleNewList";
             
             fetch(url)
@@ -107,28 +223,28 @@
     
     <div class="container-fluid">
         <div class="row">
-        <div class="col-2" onclik="circledNewList()">
+        <div class="col-2" onclick="circledNewList()">
             신규
         </div>
-        <div class="col-2">
+        <div class="col-2" onclick="circlePopularList()">
             인기
         </div>
-        <div class="col-2">
+        <div class="col-2" onclick="circleGradeList()">
             등급
         </div>        
     </div>
     </div>
-    <div class="container-fluid" style="background-color: rgb(251, 251, 251);">
+    <div id="circleWrapper" class="container-fluid" style="background-color: rgb(251, 251, 251);">
         <div class="row">
             <div class="col">
                 <div class="row align-items-center mt-2">
-                    <div class="col fw-semibold" style="font-size: 1.0em;">
-                        새로 개설된 동아리
+                    <div class="mainTitle col fw-semibold" style="font-size: 1.0em;">
+                        
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col" style="font-size: 0.9em; color: rgb(141, 141, 141);">
-                        따끈따끈한 신규 동아리
+                    <div class="subTitle col" style="font-size: 0.9em; color: rgb(141, 141, 141);">
+                        
                     </div>
                 </div>
                 <div class="row">
