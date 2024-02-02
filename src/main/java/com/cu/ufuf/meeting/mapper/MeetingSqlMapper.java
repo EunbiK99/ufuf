@@ -163,8 +163,23 @@ public interface MeetingSqlMapper {
     // * 그룹멤버PK 기준 내가 선발한 킹/퀸선발내역 셀렉트
     public List<MeetingVoteBestMemberDto> selectVoteBestMemberFromByGroupMemberId(int groupMemberIdFrom);
 
-    // * 그룹멤버PK 기준 내가 선택한 쌍방호감도 셀렉트
+    // * 그룹멤버PK 기준 '내가' 선택한 쌍방호감도 셀렉트
     public List<MeetingBothLikeDto> selectBothLikeFromByGroupMemberId(int groupMemberIdFrom);
+
+    // * 그룹멤버PK 기준 '나를' 선택한 쌍방호감도 셀렉트
+    public List<MeetingBothLikeDto> selectBothLikeToByGroupMemberId(int groupMemberIdTo);
+
+    // * 쌍방호감도 테이블 인서트
+    public void insertBothLikeDto(int groupMemberIdTo, int groupMemberIdFrom);
+
+    // * 접속유저PK기준 SNS Dto 셀렉트
+    public MeetingSNSDto selectSNSDtoByProfileId(int profileId);
+
+    // * 프로필PK기준 그룹멤버PK 셀렉트
+    public List<MeetingGroupMemberDto> selectGroupMemberDtoListByProfileId(int profileId);
+
+    // * 그룹멤버PK기준 그룹멤버Dto 셀렉트
+    public MeetingGroupMemberDto selectGroupMemberDtoByGroupMemberId(int groupMemberId);
 
 
 

@@ -24,11 +24,13 @@ import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.mission.service.MissionChatServiceImpl;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.cu.ufuf.mission.service.MissionPaymentServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,6 +48,8 @@ public class MissionMapRestController {
     private MissionMapServiceImpl missionMapService;
     @Autowired
     private MissionPaymentServiceImpl missionPaymentService;
+    @Autowired
+    private MissionChatServiceImpl MissionChatService;
 
     @PostMapping("registerMissionProcess")
     public RestResponseDto registerMissionProcess(@RequestBody MissionRegRequestDto params){
@@ -66,6 +70,7 @@ public class MissionMapRestController {
         RestResponseDto restResponseDto = new RestResponseDto();
         
         UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
         if(sessionUserInfo != null){
             restResponseDto.setData(sessionUserInfo.getUser_id());
         }else{
@@ -81,7 +86,6 @@ public class MissionMapRestController {
 
     
 
-    @ResponseBody
     @PostMapping("insertKakaoPayResInfo")
     public RestResponseDto insertKakaoPayResInfo(@RequestBody KakaoPaymentResDto params){
 
@@ -95,7 +99,6 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("saveKakaoPayAccReqInfoToSession")
     public RestResponseDto saveKakaoPayAccReqInfoToSession(@RequestBody KakaoPaymentAcceptReqDto params, HttpSession session){
 
@@ -132,8 +135,7 @@ public class MissionMapRestController {
         
         return restResponseDto;
     }
- 
-    @ResponseBody
+
     @PostMapping("insertkakaoPayAccReq")
     public RestResponseDto insertkakaoPayAccReq(@RequestBody KakaoPaymentAcceptReqDto params){
 
@@ -147,7 +149,6 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("insertKakaoPayAccRes")
     public RestResponseDto insertKakaoPayAccRes(@RequestBody GetKakaoPaymentAcceptResDto params){
 
@@ -161,39 +162,30 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("getOrderMissionInfo")
     public RestResponseDto getOrderMissionInfo(@RequestBody String order_id){
 
         RestResponseDto restResponseDto = new RestResponseDto();
-        
+
         try {
-            if (order_id != null && !order_id.isEmpty()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(order_id);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(order_id);
+    
+            String orderId = jsonNode.get("order_id").asText();
+    
+            restResponseDto.setData(missionMapService.selectMissionByOrderId(orderId));
+            restResponseDto.setResult("Success");
 
-                // mission_id 필드가 존재하는지 확인
-                if (jsonNode.has("order_id")) {
-                    
-                    String orderId = jsonNode.get("order_id").toString();
-                    restResponseDto.setData(missionMapService.selectMissionByOrderId(orderId));
-                    
-                } else {
-                    System.out.println("mission_id field not found in JSON.");
-                }
-            } else {
-                System.out.println("Received empty or null JSON string.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace(); // 예외 처리
-        }
-
-        restResponseDto.setResult("Success");
+        } catch (Exception e) {
+            // 예외 처리
+            e.printStackTrace();
+            restResponseDto.setResult("Error");
+        } 
         
         return restResponseDto;
     }
 
-    @RequestMapping("loadMissionList")
+    @GetMapping("loadMissionList")
     public RestResponseDto loadMissionList(){
 
         RestResponseDto restResponseDto = new RestResponseDto();
@@ -206,7 +198,40 @@ public class MissionMapRestController {
 
 
     @PostMapping("getMissionDetail")
-    public RestResponseDto getMissionDetail(@RequestBody String mission_id){
+    public RestResponseDto getMissionDetail(@RequestBody String mission_id, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        try {
+            if (mission_id != null && !mission_id.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(mission_id);
+
+                // mission_id 필드가 존재하는지 확인
+                if (jsonNode.has("mission_id")) {
+
+                    UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+                    int missionId = jsonNode.get("mission_id").asInt();
+
+                    if(sessionUserInfoDto != null){
+                        restResponseDto.setData(missionMapService.getMissionDetail(missionId, sessionUserInfoDto.getUser_id()));
+                    }else{
+                        restResponseDto.setData(missionMapService.getMissionDetail(missionId, 0));
+                    }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("applyMission")
+    public RestResponseDto applyMission(@RequestBody String mission_id, HttpSession session){
 
         RestResponseDto restResponseDto = new RestResponseDto();
 
@@ -219,18 +244,21 @@ public class MissionMapRestController {
                 if (jsonNode.has("mission_id")) {
                     // mission_id 필드 추출 및 정수로 변환
                     int missionId = jsonNode.get("mission_id").asInt();
-                    restResponseDto.setData(missionMapService.getMissionDetail(missionId));
-                    
-                } else {
-                    System.out.println("mission_id field not found in JSON.");
+
+                    UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+                    int user_id = sessionUserInfo.getUser_id();
+
+                    MissionChatRoomDto missionChatRoomDto = new MissionChatRoomDto();
+                    missionChatRoomDto.setMission_id(missionId);
+                    missionChatRoomDto.setUser_id(user_id);
+
+                    MissionChatService.applyMission(missionChatRoomDto);
                 }
-            } else {
-                System.out.println("Received empty or null JSON string.");
             }
         } catch (IOException e) {
             e.printStackTrace(); // 예외 처리
         }
-
+        
         restResponseDto.setResult("Success");
         
         return restResponseDto;
@@ -272,17 +300,7 @@ public class MissionMapRestController {
     // }
 
 
-    // @PostMapping("acceptingMission")
-    // public RestResponseDto acceptingMission(@RequestBody MissionAcceptedDto params){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-        
-    //     missionMapService.acceptingMission(params);
-        
-    //     restResponseDto.setResult("Success");
-        
-    //     return restResponseDto;
-    // }
+    
 
     // @GetMapping("loadMyAccMission")
     // public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){

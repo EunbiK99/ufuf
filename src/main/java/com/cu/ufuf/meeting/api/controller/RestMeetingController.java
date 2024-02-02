@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -496,6 +496,32 @@ public class RestMeetingController {
         meetingRestResponseDto.setData(map);
         return meetingRestResponseDto;
     }
+
+    @GetMapping("registerBothLike")
+    public MeetingRestResponseDto registerBothLike(int groupMemberIdTo, int groupMemberIdFrom){
+
+        meetingService.registerBothLike(groupMemberIdTo, groupMemberIdFrom);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("getUserMySignalToList")
+    public MeetingRestResponseDto getUserMySignalToList(@RequestBody int[] userGroupMemberIdList){
+
+        // for(int x : userGroupMemberIdList){
+        //     System.out.println("그룹멤버id : " + x);
+        // }
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getUserBothLikeInfo(userGroupMemberIdList));
+        return meetingRestResponseDto;
+    }
+
 
 
 

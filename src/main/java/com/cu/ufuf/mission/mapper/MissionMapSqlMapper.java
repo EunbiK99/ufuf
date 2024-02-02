@@ -22,7 +22,7 @@ public interface MissionMapSqlMapper {
     public MissionInfoDto selectMissionById(int mission_id);
 
     // 주문 아이디로 미션 셀렉트
-    public MissionInfoDto selectMissionByOrderId(String Order_id);
+    public MissionInfoDto selectMissionByOrderId(String order_id);
 
     // 미션 리스트 출력
     public List<MissionInfoDto> selectAllMission();
@@ -32,8 +32,8 @@ public interface MissionMapSqlMapper {
     // 미션 상태 업데이트
     public void updateStatus(@RequestParam(name="param1")int mission_id, @RequestParam(name="param2")String Status);
 
-    // 미션 채팅룸 인서트
-    public void insertMissionChatRoom(MissionChatRoomDto missionChatRoomDto);
+    // 유저가 이미 이 미션에 등록했는지 확인
+    public int isUserApplied(MissionChatRoomDto missionChatRoomDto);
 
 
 

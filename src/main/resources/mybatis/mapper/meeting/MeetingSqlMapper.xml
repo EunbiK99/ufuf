@@ -425,10 +425,42 @@ values (
     where groupMemberIdFrom = #{groupMemberIdFrom}
 </select>
 
-<!-- * 그룹멤버PK 기준 내가 선택한 쌍방호감도 셀렉트-->
+<!-- * 그룹멤버PK 기준 '내가' 선택한 쌍방호감도 셀렉트-->
 <select id="selectBothLikeFromByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingBothLikeDto">
     SELECT * from meeting_bothLike 
     where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 그룹멤버PK 기준 '나를' 선택한 쌍방호감도 셀렉트-->
+<select id="selectBothLikeToByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingBothLikeDto">
+    SELECT * from meeting_bothLike 
+    where groupMemberIdTo = #{groupMemberIdTo}
+</select>
+
+<!-- * 쌍방호감도 테이블 인서트-->
+<insert id="insertBothLikeDto">
+    insert into meeting_bothLike(groupMemberIdFrom, groupMemberIdTo) values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo}
+    )
+</insert>
+
+<!-- * 접속유저 프로필PK기준 SNS Dto셀렉트-->
+<select id="selectSNSDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingSNSDto">
+    SELECT * from meeting_sns
+    where profileid = #{profileId}
+</select>
+
+<!-- * 프로필PK 기준 자신의 확정멤버PK 리스트 셀렉트-->
+<select id="selectGroupMemberDtoListByProfileId" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember
+    where profileId = #{profileId}
+</select>
+
+<!-- * 그룹멤버PK기준 그룹멤버Dto 셀렉트-->
+<select id="selectGroupMemberDtoByGroupMemberId" resultType="com.cu.ufuf.dto.MeetingGroupMemberDto">
+    SELECT * from meeting_groupMember mgm
+    where groupMemberId  = #{groupMemberId}
 </select>
 
 

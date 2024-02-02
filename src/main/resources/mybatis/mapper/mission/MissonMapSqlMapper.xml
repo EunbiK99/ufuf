@@ -50,7 +50,7 @@
 <select id="selectMissionByOrderId" resultType="com.cu.ufuf.dto.MissionInfoDto">
     select mi.* from order_info oi 
     inner join item_info ii on oi.item_id = ii.item_id
-    inner join mission_info mi on ii.merchan_id = mi.mission_id 
+    inner join mission_info mi on ii.merchan_id = mi.mission_id
     where oi.order_id = #{order_id}
 </select>
 
@@ -75,16 +75,12 @@
     where user_id = #{user_id}
 </select>
 
-<insert id="insertMissionChatRoom">
-    insert into mission_chat_room(
-        mission_id,
-        user_id
-        )
-    VALUES(
-        #{mission_id},
-        #{user_id}
-    )
-</insert>
+<select id="isUserApplied" resultType="int">
+    select count(*) from mission_chat_room
+    where mission_id = #{mission_id} 
+    and user_id = #{user_id}
+</select> 
+
 
 
 

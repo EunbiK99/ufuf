@@ -28,13 +28,275 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
+
+    .menuMouseOver{
+        transition: background-color 0.4s, color 0.4s;
+        background-color : inherit !important;        
+    }
+
+    .menuMouseOver:hover{
+        background-color: #FF8827 !important;        
+    }
+
+    .customModal, .modalDialogCentered {
+        /* 트랜지션으로 표시 부드럽게 처리 */
+        transition: opacity 0.4s, visibility 0.4s;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .customModal {
+        /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
+        position: fixed;
+        width: 100%;
+        height: 100%;        
+        background-color: rgba(0, 0, 0, 0.5);
+        
+        /* 아래 CSS 모달 화면 중앙에 위치*/
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .modalDialogCentered {
+        /* 아래 CSS 모달 컨텐츠 표시*/
+        position: absolute;
+        width: 80%;
+        height: auto;
+        overflow-x: scroll;
+        background-color: rgba(255,255,255);
+        
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+    }    
+
+    .active {
+        /* 액티브 토글로 출력-비출력 처리 */
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    .userImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <script th:inline="javascript">
 let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
-let userType = /*[[${session.userType}]]*/;
-let meetingProfileExist = /*[[${session.meetingProfileExist}]]*/;
-let meetingProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
+let userType = /*[[${userType}]]*/;
+let meetingProfileExist = /*[[${meetingProfileExist}]]*/;
+let meetingProfileInfo = /*[[${meetingProfileInfo}]]*/;
+let userSNSDto = /*[[${userSNSDto}]]*/;
+let groupMemberDtoList = /*[[${groupMemberDtoList}]]*/;
+
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('userType: ', userType);
+console.log('meetingProfileExist: ', meetingProfileExist);
+console.log('meetingProfileInfo: ', meetingProfileInfo);
+console.log('userSNSDto: ', userSNSDto);
+console.log('groupMemberDtoList: ', groupMemberDtoList);
+
+function mySignalBothModalCSR(){
+    const userGroupMemberIdList = [];
+    
+    for(e of groupMemberDtoList){
+        userGroupMemberIdList.push(e.meetingGroupMemberDto.groupMemberId);
+    }    
+    console.log('userGroupMemberIdList: ', userGroupMemberIdList);
+
+    fetch("./api/getUserMySignalToList", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(userGroupMemberIdList)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const userBothLikeDataList = response.data;
+        console.log('userBothLikeDataList: ', userBothLikeDataList);
+
+        const userSignalBothListCol = document.getElementById("userSignalBothListCol");
+        userSignalBothListCol.innerHTML = "";
+
+        for(list of userBothLikeDataList){
+            if(list.length > 0){
+                for(e of list){
+                    if(e.meLikeGroupMemberProfileDto){
+                        const userSignalBothWrapperRow = document.querySelector("#templete #userSignalBothWrapperRow").cloneNode(true);
+
+                        const userSignalBothImage = userSignalBothWrapperRow.querySelector("#userSignalBothImage");
+                        userSignalBothImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.meLikeGroupMemberProfileDto.profileImg}`);
+
+                        const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
+                        userSignalBothNickname.innerText = e.meLikeGroupMemberProfileDto.profileNickname;
+
+                        userSignalBothListCol.appendChild(userSignalBothWrapperRow);
+                    }                    
+                }                
+            }
+        }
+    });
+}
+
+function showMySignalBothModal(){ 
+    mySignalBothModalCSR();
+    const mySignalBothModal = document.getElementById("mySignalBothModal");
+    mySignalBothModal.classList.add('active');
+    const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
+    mySignalBothModalDialog.classList.add('active');
+}
+
+function closeMySignalBothModal(){
+    const mySignalBothModal = document.getElementById("mySignalBothModal");
+    mySignalBothModal.classList.remove('active');
+    const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
+    mySignalBothModalDialog.classList.remove('active');
+}
+
+function mySignalToModalCSR(){
+    
+    const userGroupMemberIdList = [];
+    
+    for(e of groupMemberDtoList){
+        userGroupMemberIdList.push(e.meetingGroupMemberDto.groupMemberId);
+    }    
+    console.log('userGroupMemberIdList: ', userGroupMemberIdList);
+
+    fetch("./api/getUserMySignalToList", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(userGroupMemberIdList)
+    })
+    .then(response => response.json())
+    .then(response => {
+        const userBothLikeDataList = response.data;
+        console.log('userBothLikeDataList: ', userBothLikeDataList);
+        
+        const userSignalToListCol = document.getElementById("userSignalToListCol");
+        userSignalToListCol.innerText = "";
+        
+        for(list of userBothLikeDataList){
+            for(e of list){
+                const userSignalToWrapperRow = document.querySelector("#templete #userSignalToWrapperRow").cloneNode(true);
+
+                const userSignalToImage = userSignalToWrapperRow.querySelector("#userSignalToImage");
+                userSignalToImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
+
+                const userSignalToNickname = userSignalToWrapperRow.querySelector("#userSignalToNickname");
+                userSignalToNickname.innerText = e.targetProfileDto.profileNickname;
+
+                const userSignalToRegdate = userSignalToWrapperRow.querySelector("#userSignalToRegdate");
+                const dateValue = e.targetProfileDto.regdate;
+                userSignalToRegdate.innerText = dateValue[0] + '년 ' + dateValue[1] + '월 ' + dateValue[2] + '일';
+
+                userSignalToListCol.appendChild(userSignalToWrapperRow);
+            }            
+        }
+    });
+}
+
+function showMySignalToModal(){ 
+    mySignalToModalCSR();
+    const mySignalToModal = document.getElementById("mySignalToModal");
+    mySignalToModal.classList.add('active');
+    const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");
+    mySignalToModalDialog.classList.add('active');
+}
+
+function closeMySignalToModal(){
+    const mySignalToModal = document.getElementById("mySignalToModal");
+    mySignalToModal.classList.remove('active');
+    const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");
+    mySignalToModalDialog.classList.remove('active');
+}
+
+function changeMenuColor(target){    
+    target.classList.add("menuMouseOver");
+}
+
+function restoreMenuColor(target){    
+    target.classList.remove("menuMouseOver");
+}
+
+function userProfileCSR(){
+    const userSNSUrl = document.getElementById("userSNSUrl");
+    userSNSUrl.innerText = userSNSDto.snsURL;
+
+    const userProfileImage = document.getElementById("userProfileImage");
+    userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
+
+    const userNickname = document.getElementById("userNickname")
+    userNickname.innerText = meetingProfileInfo.profileNickname;
+
+    const userGender = document.getElementById("userGender");
+    if(sessionUserInfo.gender === "M"){
+        const maleIcon = document.createElement("i");
+        maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+        userGender.appendChild(maleIcon);
+    }
+    else{
+        const femaleIcon = document.createElement("i");
+        femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");
+        userGender.appendChild(femaleIcon);        
+    }
+
+    const userUniversity = document.getElementById("userUniversity")
+    userUniversity.innerText = sessionUserInfo.university;
+    
+    const userUniversityDepartment = document.getElementById("userUniversityDepartment")
+    userUniversityDepartment.innerText = sessionUserInfo.department;
+
+    const userProfileComment = document.getElementById("userProfileComment")
+    userProfileComment.innerText = meetingProfileInfo.profileComment;
+
+    let mySignalToCount = 0;
+    const mySignalTo = document.getElementById("mySignalTo");
+    mySignalTo.innerText = mySignalToCount
+
+    let mySignalBothCount = 0;
+    const mySignalBoth = document.getElementById("mySignalBoth");
+    mySignalBoth.innerText = mySignalBothCount;
+
+    for(e of groupMemberDtoList){
+        for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+            if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
+            mySignalToCount++;
+            mySignalTo.innerText = mySignalToCount;
+            }
+        }
+        if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
+            for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
+                for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                    if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
+                        mySignalBothCount++;
+                        mySignalBoth.innerText = mySignalBothCount;
+                    }                    
+                }                
+            }
+        }        
+    }
+}
+
 
 function moveMyApplyGroup(){
     if(meetingProfileExist === "Y"){
@@ -84,8 +346,8 @@ function checkUserType(){
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    checkUserType()
-    
+    checkUserType();
+    userProfileCSR();
 });
 </script>
 <body class="pt-5 pb-5">
@@ -133,41 +395,165 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
         <div id="loginUserRow" class="row d-none">
             <div class="col">
-                <div class="row mt-3">
+
+                <div class="row">
+                    <div class="col mx-1 border border-black rounded">
+                        
+                        <div class="row border-bottom border-black justify-content-between rounded-top" style="background-color: #FF8827;">
+                            <div class="col-auto align-self-center">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">My Meeting Profile</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="row">
+                                    <div class="col-auto btn">
+                                        <span class="fw-bold">
+                                            <i class="bi bi-gear"></i>
+                                            수정
+                                        </span>                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="profileInnerBody" class="row">
+                            <div class="col">
+
+                                <div class="row my-3 mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-auto ps-0 pe-1 align-self-center">
+                                                <span class="fs-5 fw-bold">
+                                                    <i class="bi bi-house-heart"></i>
+                                                </span>
+                                            </div>
+                                            <div class="col-auto px-0 align-self-center">                                                
+                                                <span class="fw-bold">ufuf.com/</span>
+                                            </div>
+                                            <div class="col-auto px-0 border-bottom border-2 align-self-center" style="border-color: #FF8827 !important;">
+                                                <span id="userSNSUrl" class="fw-bold">유저SNS주소</span>                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-6 me-1 border border-black rounded">
+                                                <div class="row my-2">
+                                                    <div class="col">
+                                                        <img id="userProfileImage" class="img-fluid" style="width: 18.75em; aspect-ratio:3/4;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span id="userNickname" class="fw-bold"></span>
+                                                                <span id="userGender"></span>
+                                                            </div>
+                                                        </div>                                                        
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <span id="userUniversity"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <span id="userUniversityDepartment"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-auto btn py-0" onclick="showMySignalToModal()">
+                                                                <span class="fs-3">
+                                                                    <i class="bi bi-activity" style="color: #FF8827;"></i>
+                                                                     : 
+                                                                </span>                                                                
+                                                                <span id="mySignalTo" class="fw-bold fs-3"></span>
+                                                                <span>명</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-auto btn py-0" onclick="showMySignalBothModal()">
+                                                                <span class="fs-3">
+                                                                    <i class="bi bi-heart-pulse-fill fs-3 text-danger"></i>
+                                                                     :
+                                                                </span>
+                                                                <span id="mySignalBoth" class="fs-3 fw-bold"></span>
+                                                                <span>명</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row my-3 mx-1">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col ps-0">
+                                                <span class="fw-bold">Comment</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col border border-2 rounded" style="border-color: #FF8827 !important;">
+                                                <div class="row mt-2">
+                                                    <div class="col">
+                                                        <p id="userProfileComment" style="height: 5em;"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>                
+
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3">미팅프로필</button>
+                            <div class="col btn text-start" onclick="moveMyRecruitGroup()">
+                                <span class="fw-bold fs-3">내가 모집한 미팅</span>                                
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3" onclick="moveMyRecruitGroup()">내가 모집한 미팅</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</span>                                
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3">My Signal</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col">
-                                <button class="btn fw-bold fs-3">결제 정보</button>
+                            <div class="col btn text-start">
+                                <span class="fw-bold fs-3">결제 정보</span>
                             </div>
                         </div>
                     </div>
@@ -259,7 +645,156 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
+<!--/* 내가 보낸 시그널 리스트 모달 */-->
+<div id="mySignalToModal" class="customModal" tabindex="-1">
+    <div id="mySignalToModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col">
+                            <span id="" class="modal-title fw-bold fs-4">Send Signal List</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeMySignalToModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
 
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col">
+                    <div class="row">
+                        <div id="userSignalToListCol" class="col">
+                            
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="row modal-footer">                                
+                <div class="col btn" role="button" onclick="closeMySignalToModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* 매칭된 시그널 리스트 모달 */-->
+<div id="mySignalBothModal" class="customModal" tabindex="-1">
+    <div id="mySignalBothModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col">
+                            <span id="" class="modal-title fw-bold fs-4">Match Signal List</span>
+                        </div>                    
+                        <div class="col-auto">
+                            <button type="button" onclick="closeMySignalBothModal()" class="btn btn-close"></button>                            
+                        </div>                
+                    </div>                    
+                </div>                
+            </div>
+
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col" style="height:12em;">
+                    <div class="row">
+                        <div id="userSignalBothListCol" class="col">
+                            
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="row modal-footer">                                
+                <div class="col btn" role="button" onclick="closeMySignalBothModal()">
+                    <div class="row mt-2 mb-2">                         
+                        <div class="col text-center">
+                            <span>닫기</span>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
+
+    <div id="userSignalToWrapperRow" class="row my-2 mx-1 border rounded shadowBox">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="row mt-1">
+                                <div class="col-auto">
+                                    <div class="userImageBox">
+                                        <img id="userSignalToImage" class="img-fluid userImage">
+                                    </div>                                            
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <span id="userSignalToNickname" class="fs-6 fw-bold"></span>
+                            <span class="">님께</span>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col text-end pe-1">
+                                    <span style="font-size: 0.8em;">
+                                        <span id="userSignalToRegdate" class="fw-bold"></span>
+                                        보냄
+                                    </span>                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    <div id="userSignalBothWrapperRow" class="row my-2 mx-1 border rounded shadowBox">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="row my-1">
+                        <div class="col-auto">
+                            <div class="row mt-1">
+                                <div class="col-auto">
+                                    <div class="userImageBox">
+                                        <img id="userSignalBothImage" class="img-fluid userImage">
+                                    </div>                                            
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto align-self-center">
+                            <span id="userSignalBothNickname" class="fw-bold"></span>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto me-1 align-self-center">
+                    <div class="row">
+                        <div class="col btn" style="background-color: #FF8827;">
+                            <span id="userSignalBothChatButton" class="fw-bold">Chat</span>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

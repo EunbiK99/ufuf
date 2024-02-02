@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
+import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/meeting/*")
@@ -88,24 +91,32 @@ public class MeetingController {
         
         UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-        if(sessionUserInfo == null){            
-            session.setAttribute("userType", "guest");
+        if(sessionUserInfo == null){
+            model.addAttribute("userType", "guest");
             return "./meeting/myPage";
         }else{
-            session.setAttribute("userType", "user");
-            session.setAttribute("sessionUserInfo", sessionUserInfo);
+            model.addAttribute("userType", "user");
             
             int user_id = sessionUserInfo.getUser_id();        
             int profileCheckValue = meetingService.checkExistMeetingProfile(user_id);
             System.out.println(profileCheckValue);            
 
-            if(profileCheckValue > 0){                
-                session.setAttribute("meetingProfileExist", "Y");
-                session.setAttribute("meetingProfileInfo", meetingService.getMeetingProfileByUserId(user_id));
+            if(profileCheckValue > 0){
+                
+                MeetingProfileDto meetingProfileDto = meetingService.getMeetingProfileByUserId(user_id);
+                
+                int profileId = meetingProfileDto.getProfileid();
+                
+                MeetingSNSDto userSNSDto = meetingService.getSNSDtoByProfileId(profileId);
+                
+                model.addAttribute("meetingProfileExist", "Y");
+                model.addAttribute("meetingProfileInfo", meetingProfileDto);
+                model.addAttribute("userSNSDto", userSNSDto);
+                model.addAttribute("groupMemberDtoList", meetingService.getGroupMemberDtoListByProfileId(profileId));
                 return "./meeting/myPage";
             }
             else{
-                session.setAttribute("meetingProfileExist", "N");
+                model.addAttribute("meetingProfileExist", "N");
                 return "./meeting/myPage";
             }
         }        
@@ -181,11 +192,19 @@ public class MeetingController {
         
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         UserInfoDto userInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int profileId = meetingProfileDto.getProfileid();
+
+        MeetingGroupMemberDto meetingGroupMemberDto = meetingService.getGroupMemberDtoByGroupIdAndProfileId(groupId, profileId);
+        int groupMemberId = meetingGroupMemberDto.getGroupMemberId();
+
+        Map<String, Object> userReviewData = meetingService.getUserReviewDataAll(groupMemberId);
         
         session.setAttribute("meetingProfileDto", meetingProfileDto);
         session.setAttribute("userInfoDto", userInfoDto);
 
         model.addAttribute("groupDetailInfo", meetingService.getGroupDetailInfo(groupId));
+        model.addAttribute("meetingGroupMemberDto", meetingGroupMemberDto);
+        model.addAttribute("userReviewData", userReviewData);
 
         return "./meeting/groupReviewPage";
     }

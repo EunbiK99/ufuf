@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
+import com.cu.ufuf.dto.MissionChatDto;
+import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
@@ -23,7 +25,7 @@ import java.time.LocalDateTime;
 public class MissionMapServiceImpl {
 
     @Autowired
-    private MissionMapSqlMapper missionMapsqlMapper;
+    private MissionMapSqlMapper missionMapSqlMapper;
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
     @Autowired
@@ -32,7 +34,7 @@ public class MissionMapServiceImpl {
     // 미션 등록
     public KakaoPaymentReqDto registerMissionProcess(MissionRegRequestDto missionRegRequestDto){
 
-        missionMapsqlMapper.insertMission(missionRegRequestDto.getMissionInfoDto());
+        missionMapSqlMapper.insertMission(missionRegRequestDto.getMissionInfoDto());
         MissionInfoDto missionInfoDto = missionRegRequestDto.getMissionInfoDto();
         int missionId = missionInfoDto.getMission_id();
         int userId = missionInfoDto.getUser_id();
@@ -43,7 +45,7 @@ public class MissionMapServiceImpl {
         
         for(MissionCourseDto missionCourseDto : courseList){
             missionCourseDto.setMission_id(missionId);
-            missionMapsqlMapper.insertMissionCourse(missionCourseDto);
+            missionMapSqlMapper.insertMissionCourse(missionCourseDto);
             int reward = missionCourseDto.getReward();
             totalReward = totalReward + reward;
         }
@@ -79,8 +81,8 @@ public class MissionMapServiceImpl {
 
     }
 
-    public MissionInfoDto selectMissionByOrderId(String Order_id){
-        return missionMapsqlMapper.selectMissionByOrderId(Order_id);
+    public MissionInfoDto selectMissionByOrderId(String order_id){
+        return missionMapSqlMapper.selectMissionByOrderId(order_id);
     }
 
     // 미션 전체 리스트 출력
@@ -88,7 +90,7 @@ public class MissionMapServiceImpl {
         
         List<Map<String, Object>> missionInfoList = new ArrayList<>();
 
-        List<MissionInfoDto> missionDtoList = missionMapsqlMapper.selectAllMission();
+        List<MissionInfoDto> missionDtoList = missionMapSqlMapper.selectAllMission();
         for(MissionInfoDto missionInfoDto : missionDtoList){
             int mission_id = missionInfoDto.getMission_id();
             int user_id = missionInfoDto.getUser_id();
@@ -96,8 +98,8 @@ public class MissionMapServiceImpl {
             Map<String, Object> missionInfo = new HashMap();
 
             missionInfo.put("missionInfoDto", missionInfoDto);
-            missionInfo.put("missionCourseList", missionMapsqlMapper.selectCourseByMission(mission_id));
-            missionInfo.put("userInfoDto", missionMapsqlMapper.selectUserById(user_id));
+            missionInfo.put("missionCourseList", missionMapSqlMapper.selectCourseByMission(mission_id));
+            missionInfo.put("userInfoDto", missionMapSqlMapper.selectUserById(user_id));
 
             missionInfoList.add(missionInfo);
         }
@@ -106,21 +108,27 @@ public class MissionMapServiceImpl {
     }
 
     // 미션 상세 출력
-    public Map<String, Object> getMissionDetail(int mission_id){
+    public Map<String, Object> getMissionDetail(int mission_id, int user_id){
 
         Map<String, Object> missionDetail = new HashMap<>();
 
-        MissionInfoDto missionInfoDto = missionMapsqlMapper.selectMissionById(mission_id);
+        MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionById(mission_id);
 
-        int user_id = missionInfoDto.getUser_id();
+        int missionUser_id = missionInfoDto.getUser_id();
+
+        MissionChatRoomDto missionChatRoomDto = new MissionChatRoomDto();
+        missionChatRoomDto.setMission_id(mission_id);
+        missionChatRoomDto.setUser_id(user_id);
 
         missionDetail.put("missionInfoDto", missionInfoDto);
-        missionDetail.put("missionCourseList", missionMapsqlMapper.selectCourseByMission(mission_id));
-        missionDetail.put("userInfoDto", missionMapsqlMapper.selectUserById(user_id));
+        missionDetail.put("missionCourseList", missionMapSqlMapper.selectCourseByMission(mission_id));
+        missionDetail.put("userInfoDto", missionMapSqlMapper.selectUserById(missionUser_id));
+        missionDetail.put("isUserApplied", missionMapSqlMapper.isUserApplied(missionChatRoomDto));
 
         return missionDetail;
     }
 
+    
 
 
 

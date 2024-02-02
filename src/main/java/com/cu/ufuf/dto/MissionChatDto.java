@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class MissionChatDto {
     private int chat_id;
-	private int chat_room_pk;
+	private int chat_room_id;
 	private int chat_category_id;
 	private int user_id;
 	private String message;
