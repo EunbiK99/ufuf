@@ -646,6 +646,12 @@
     </script>
 
     <script>
+
+        
+        
+
+           
+
         function goBack() {
             window.history.go(-1);
         }
@@ -660,6 +666,9 @@
             // 체크인 날짜와 체크아웃 날짜
             const checkInDate = moment(document.getElementById("check_in_day").innerText).format("YYYY-MM-DD");
             const checkOutDate = moment(document.getElementById("check_out_day").innerText).format("YYYY-MM-DD");
+
+
+
 
             // 폼에 데이터 추가
             const form = document.getElementById("reservationSubmit");
@@ -682,9 +691,11 @@
             form.appendChild(hiddenCheckInDate);
             form.appendChild(hiddenCheckOutDate);
 
-            // 폼 서브밋
             form.submit();
+
         }
+
+
     </script>
 </head>
 
@@ -771,7 +782,7 @@
                     <div class="fixed-bottom bg-white">
                         <div class="row text-center pb-2 border-top border-secondery-subtle">
                             <div class="col d-grid mx-2 mt-2 mb-4">
-                                <input onclick="reservationFormSubmit()" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="예약하기">
+                                <input onclick="reservationFormSubmit()" type="button" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="예약하기">
                             </div>
                         </div>
                     </div>
