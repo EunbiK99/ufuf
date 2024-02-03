@@ -209,6 +209,12 @@ public class MeetingController {
         return "./meeting/groupReviewPage";
     }
 
+    @RequestMapping("chatListPage")
+    public String chatListPage(HttpSession session, Model model){        
+        return "./meeting/chatListPage";
+    }
+
+
     
     
 

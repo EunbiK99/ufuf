@@ -113,6 +113,36 @@ console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
 console.log('groupMemberDtoList: ', groupMemberDtoList);
 
+function createChatRoom(target){
+    const profileId = meetingProfileInfo.profileid;
+    const targetProfileId = target.getAttribute("profileId");
+    console.log('profileId: ', profileId);
+    console.log('targetProfileId: ', targetProfileId);
+    
+    const userSignalBothWrapperRow = target.closest("#userSignalBothWrapperRow");
+    const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
+    const targetProfileNickname = userSignalBothNickname.innerText;
+    console.log('targetProfileNickname: ', targetProfileNickname);
+
+    return;
+
+    fetch("./api/createChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
+    .then(response => response.json())
+    .then(response => {
+        const result = response.result;
+        if(result === "success"){            
+            const confirmValue = confirm(`${targetProfileNickname} 과의 채팅이 생성되었습니다. 이동하시겠습니까?`);
+            if(confirmValue){
+                return;
+                // window.location.href="";
+            }
+            else{
+                return;
+            }
+        }
+    });
+}
+
 function mySignalBothModalCSR(){
     const userGroupMemberIdList = [];
     
@@ -147,6 +177,11 @@ function mySignalBothModalCSR(){
 
                         const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
                         userSignalBothNickname.innerText = e.meLikeGroupMemberProfileDto.profileNickname;
+
+                        const createChatButton = userSignalBothWrapperRow.querySelector("#userSignalBothChatButton").closest("div");
+                        console.log('createChatButton: ', createChatButton);
+                        createChatButton.setAttribute("profileId", e.meLikeGroupMemberProfileDto.profileid);
+                        createChatButton.setAttribute("onclick", "createChatRoom(this)");
 
                         userSignalBothListCol.appendChild(userSignalBothWrapperRow);
                     }                    
@@ -614,7 +649,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
