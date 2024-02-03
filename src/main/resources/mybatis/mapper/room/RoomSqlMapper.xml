@@ -390,8 +390,8 @@
     </select>
 
     <insert id="kakaoPaymentResInsert">
-        INSERT into kakao_payment_res(tid, next_redirect_mobile_url) values(
-            #{tid}, #{next_redirect_mobile_url}
+        INSERT into kakao_payment_res(tid, next_redirect_mobile_url,created_at) values(
+            #{tid}, #{next_redirect_mobile_url},#{created_at}
         )
     </insert>
 
@@ -406,5 +406,25 @@
             #{tid}, #{amount}, #{card_info}, #{partner_order_id}, #{partner_user_id}, #{aid}, #{payment_method_type}, #{approved_at}
         )
     </insert>
+
+    <insert id="amountInfoInsert">
+        INSERT into amount(total, `point`) values(
+            #{total}, #{point}
+        )
+    </insert>
+    <insert id="cardInfoInsert">
+        INSERT into card_info(bin_, card_type, install_month, approved_id) values(
+            #{bin_}, #{card_type}, #{install_month}, #{approved_id}
+        )
+    </insert>
+    <select id="cardIdMax" resultType="int">
+        select max(card_id) from card_info
+    </select>
+    <select id="amountIdMax" resultType="int">
+        select max(amount_id) from amount
+    </select>
+    <update id="orderInfoStatusByOrderId">
+        UPDATE order_info set status='결제완료' where order_id = #{order_id}
+    </update>
     
 </mapper>

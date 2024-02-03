@@ -656,6 +656,7 @@
             window.history.go(-1);
         }
         function reservationFormSubmit() {
+            const form = document.getElementById("reservationSubmit");
             // 인원수
             const guestCount = document.getElementById("guestCount").value;
             if (guestCount === '') {
@@ -667,11 +668,8 @@
             const checkInDate = moment(document.getElementById("check_in_day").innerText).format("YYYY-MM-DD");
             const checkOutDate = moment(document.getElementById("check_out_day").innerText).format("YYYY-MM-DD");
 
-
-
-
             // 폼에 데이터 추가
-            const form = document.getElementById("reservationSubmit");
+            
             const hiddenGuestCount = document.createElement("input");
             hiddenGuestCount.type = "hidden";
             hiddenGuestCount.name = "guest_count";

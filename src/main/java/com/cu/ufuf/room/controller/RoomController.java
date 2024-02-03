@@ -1,6 +1,7 @@
 package com.cu.ufuf.room.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -179,13 +181,21 @@ public class RoomController {
 
 	//예약 값 넘기는거
 	@RequestMapping("roomReservationProcess")
-	public String roomReservationProcess(@RequestParam(name = "guest_count", required = false, defaultValue = "1") int guestCount, HttpSession session, RoomGuestDto roomGuestDto) {
+	public String roomReservationProcess(@RequestParam(name = "guest_count", required = false, defaultValue = "1") int guestCount, 
+				HttpSession session, 
+				RoomGuestDto roomGuestDto,
+				@RequestParam("start_reservation_schedule") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startReservationSchedule,
+				@RequestParam("end_reservation_schedule") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endReservationSchedule
+			){
 		
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
 		int userPk = sessionUserInfo.getUser_id();
 		
 		roomGuestDto.setUser_id(userPk);
 		roomGuestDto.setGuest_count(guestCount);
+
+		roomGuestDto.setStart_reservation_schedule(startReservationSchedule);
+		roomGuestDto.setEnd_reservation_schedule(endReservationSchedule);
 		
 		roomService.roomReservation(roomGuestDto);
 
