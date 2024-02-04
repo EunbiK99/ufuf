@@ -14,7 +14,9 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingBothLikeDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
 import com.cu.ufuf.dto.MeetingChatRoomDto;
+import com.cu.ufuf.dto.MeetingChatRoomUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -311,15 +313,15 @@ public class MeetingServiceImpl {
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
 		
-        // // 집 IP
-        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        // 집 IP
+        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // 학원 IP
-        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -578,9 +580,35 @@ public class MeetingServiceImpl {
         meetingChatRoomDto.setChatRoomTitle(targetProfileNickname);
 
         meetingSqlMapper.insertChatRoomDto(meetingChatRoomDto);
-        
+
+        MeetingChatRoomUserDto meetingChatRoomUserDto = new MeetingChatRoomUserDto();
+        meetingChatRoomUserDto.setChatRoomId(chatRoomPk);
+        meetingChatRoomUserDto.setProfileId(profileId);
+
+        meetingSqlMapper.insertChatRoomUserDto(meetingChatRoomUserDto);
     }
 
+    // * 대상프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트(추후에 채팅정보까지 같이 묶게될듯?)
+    public Map<String, Object> getChatRoomDtoByProfileNickname(int targetProfileId){
+        
+        Map<String, Object> chatRoomData = new HashMap<>();
+        
+        MeetingProfileDto targetProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(targetProfileId);
+        
+        String targetProfileNickname = targetProfileDto.getProfileNickname();
+        
+        MeetingChatRoomDto meetingChatRoomDto = meetingSqlMapper.selectChatRoomDtoByProfileNickname(targetProfileNickname);
+        
+        int chatRoomId = meetingChatRoomDto.getChatRoomId();
+
+        List<MeetingChatMessageDto> meetingChatMessageDtoList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+
+
+        chatRoomData.put("meetingChatRoomDto", meetingChatRoomDto);
+        chatRoomData.put("targetProfileDto", targetProfileDto);
+        chatRoomData.put("meetingChatMessageDtoList", meetingChatMessageDtoList);
+
+        return chatRoomData;
     }
 
 

@@ -124,8 +124,6 @@ function createChatRoom(target){
     const targetProfileNickname = userSignalBothNickname.innerText;
     console.log('targetProfileNickname: ', targetProfileNickname);
 
-    return;
-
     fetch("./api/createChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
     .then(response => response.json())
     .then(response => {
@@ -133,10 +131,13 @@ function createChatRoom(target){
         if(result === "success"){            
             const confirmValue = confirm(`${targetProfileNickname} 과의 채팅이 생성되었습니다. 이동하시겠습니까?`);
             if(confirmValue){
+                const chatRoomData = response.data;
+                console.log('chatRoomData: ', chatRoomData);
                 return;
-                // window.location.href="";
+
             }
             else{
+            alert("오류 발생");
                 return;
             }
         }
