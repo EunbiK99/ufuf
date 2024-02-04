@@ -1,18 +1,26 @@
 package com.cu.ufuf.mission.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.dto.MissionChatDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.mission.component.ParseJson;
 import com.cu.ufuf.mission.service.MissionChatServiceImpl;
+import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,6 +32,10 @@ public class MissionChatRestController {
 
     @Autowired
     MissionChatServiceImpl missionChatService;
+    @Autowired
+    MissionMapServiceImpl missionMapServiceImpl;
+    @Autowired
+    ParseJson parseJson;
 
     @GetMapping("loadChatList")
     public RestResponseDto loadChatList(HttpSession session){
@@ -112,7 +124,7 @@ public class MissionChatRestController {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(); // 예외 처리
+            e.printStackTrace();
         }
         return restResponseDto;
     }
@@ -126,7 +138,94 @@ public class MissionChatRestController {
 
         params.setUser_id(sessionUserInfoDto.getUser_id());
 
-        missionChatService.insertChat(params);
+        int chat_id = missionChatService.insertChat(params);
+        
+        restResponseDto.setData(chat_id);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("sendImg")
+    public RestResponseDto sendImg(@RequestParam(name="sendImg") MultipartFile sendImg, 
+        @RequestParam(name="chat_room_id") int chat_room_id,
+        HttpSession session) {
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        MissionChatDto missionChatDto = new MissionChatDto();
+
+        if(sendImg != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/chatImg";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = sendImg.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				sendImg.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            missionChatDto.setMessage(todayPath + fileName);
+		}
+
+        missionChatDto.setChat_room_id(chat_room_id);
+        missionChatDto.setChat_category_id(2);
+        missionChatDto.setUser_id(sessionUserInfoDto.getUser_id());
+        missionChatDto.setIs_read("N");
+
+        int chat_id = missionChatService.insertChat(missionChatDto);
+        
+        restResponseDto.setData(chat_id);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("updateReadStatus")
+    public RestResponseDto updateReadStatus(@RequestBody String chat_room_id, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+        UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+        missionChatService.updateReadStatus(chatRoomId, sessionUserInfoDto.getUser_id());
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("accMissionPlayer")
+    public RestResponseDto accMissionPlayer(@RequestBody String chat_room_id, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+        UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+        missionMapServiceImpl.accMissionPlayer(chatRoomId, sessionUserInfoDto.getUser_id());
+
+        restResponseDto.setResult("Success");
         
         return restResponseDto;
     }

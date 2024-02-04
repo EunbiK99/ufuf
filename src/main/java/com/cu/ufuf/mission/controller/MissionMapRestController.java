@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
@@ -26,10 +27,12 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionProcessDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.mission.component.ParseJson;
 import com.cu.ufuf.mission.service.MissionChatServiceImpl;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.cu.ufuf.mission.service.MissionPaymentServiceImpl;
@@ -50,6 +53,8 @@ public class MissionMapRestController {
     private MissionPaymentServiceImpl missionPaymentService;
     @Autowired
     private MissionChatServiceImpl MissionChatService;
+    @Autowired
+    private ParseJson parseJson;
 
     @PostMapping("registerMissionProcess")
     public RestResponseDto registerMissionProcess(@RequestBody MissionRegRequestDto params){
@@ -264,215 +269,124 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyPlayMission")
+    public RestResponseDto loadMyPlayMission(HttpSession session){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
 
-    // @PostMapping("getItemAndOrderInfo")
-    // public RestResponseDto getItemAndOrderInfo(@RequestBody String mission_id){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     try {
-    //         if (mission_id != null && !mission_id.isEmpty()) {
-    //             ObjectMapper objectMapper = new ObjectMapper();
-    //             JsonNode jsonNode = objectMapper.readTree(mission_id);
-
-    //             // mission_id 필드가 존재하는지 확인
-    //             if (jsonNode.has("mission_id")) {
-    //                 // mission_id 필드 추출 및 정수로 변환
-    //                 int missionId = jsonNode.get("mission_id").asInt();
-
-    //                 missionMapService.getItemAndOrderInfo(missionId);
-    //                 restResponseDto.setData(missionMapService.getItemAndOrderInfo(missionId));
-                    
-    //             } else {
-    //                 System.out.println("mission_id field not found in JSON.");
-    //             }
-    //         } else {
-    //             System.out.println("Received empty or null JSON string.");
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace(); // 예외 처리
-    //     }
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-    //     restResponseDto.setResult("Success");
+        restResponseDto.setData(missionMapService.getMyPlayMissionList(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
         
-    //     return restResponseDto;
-    // }
+        return restResponseDto;
+    }
+
+    @GetMapping("loadMyResMission")
+    public RestResponseDto loadMyResMission(HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        restResponseDto.setData(missionMapService.getmyResMissionList(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("loadResMissionInfoInRecruiting")
+    public RestResponseDto loadResMissionInfoInRecruiting(@RequestBody String mission_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int missionId = parseJson.toInt("mission_id", mission_id);
 
 
     
-
-    // @GetMapping("loadMyAccMission")
-    // public RestResponseDto loadMyAccMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
-
-    //     int user_id = sessionUser.getUser_id();
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     restResponseDto.setData(missionMapService.getMyAccMission(user_id));
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
-
-    // @GetMapping("loadMyResMission")
-    // public RestResponseDto loadMyResMission(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
-
-    //     int user_id = sessionUser.getUser_id();
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     restResponseDto.setData(missionMapService.getMyResMission(user_id));
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
-
-
-    // @PostMapping("uploadCompleteMission")
-    // public RestResponseDto uploadCompleteImg(@RequestParam(name="complete_img") MultipartFile complete_img,
-    //         @RequestParam(name="mission_accepted_id") int mission_accepted_id)
-    //     {
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     MissionCompleteDto missionCompleteDto = new MissionCompleteDto();
-
-    //     if(complete_img != null) {
-				
-	// 		String rootPath = "C:/uploadFiles/ufuf/missionComplete";
-			
-	// 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
-	// 		String todayPath = sdf.format(new Date());
-			
-	// 		File todayFolderForCreate = new File(rootPath + todayPath);
-				
-	// 		if(!todayFolderForCreate.exists()) {
-	// 			todayFolderForCreate.mkdirs();
-	// 		}
-			
-	// 		String originalFileName = complete_img.getOriginalFilename();
-			
-	// 		String uuid = UUID.randomUUID().toString();
-	// 		long currentTime = System.currentTimeMillis();
-	// 		String fileName = uuid + "_" + currentTime;
-			
-	// 		String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
-	// 		fileName += ext;
-			
-	// 		try {
-	// 			complete_img.transferTo(new File(rootPath + todayPath + fileName));
-	// 		}catch(Exception e) {
-	// 			e.printStackTrace();
-	// 		}
-			
-    //         missionCompleteDto.setComplete_img(todayPath + fileName);
-	// 	}
-
-    //     missionCompleteDto.setMission_accepted_id(mission_accepted_id);
-    //     missionMapService.insertMissionComplete(missionCompleteDto);
+        restResponseDto.setData(missionMapService.getMyResMissionInfoInRecruiting(missionId));
+        restResponseDto.setResult("Success");
         
-    //     restResponseDto.setResult("Success");
-        
-    //     return restResponseDto;
-    // }
+        return restResponseDto;
+    }
 
-    // @GetMapping("loadMyNotification")
-    // public RestResponseDto loadMyNotification(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
+    @PostMapping("loadMyResMissionInProgress")
+    public RestResponseDto loadMyResMissionInProgress(@RequestBody String chat_room_id){
 
-    //     int user_id = sessionUser.getUser_id();
+        RestResponseDto restResponseDto = new RestResponseDto();
 
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     restResponseDto.setData(missionMapService.getNotificationList(user_id));
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
-
-    // @GetMapping("isExistNotification")
-    // public RestResponseDto isExistNotification(@SessionAttribute("sessionUserInfo") UserInfoDto sessionUser){
-
-    //     int user_id = sessionUser.getUser_id();
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     restResponseDto.setData(missionMapService.isExistNotification(user_id));
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
-
-
-    // @PostMapping("updateNotifReadStatus")
-    // public RestResponseDto updateNotifReadStatus(@RequestBody String mission_notification_id){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     try {
-    //         if (mission_notification_id != null && !mission_notification_id.isEmpty()) {
-    //             ObjectMapper objectMapper = new ObjectMapper();
-    //             JsonNode jsonNode = objectMapper.readTree(mission_notification_id);
-
-    //             // mission_id 필드가 존재하는지 확인
-    //             if (jsonNode.has("mission_notification_id")) {
-    //                 int notifyId = jsonNode.get("notifyId").asInt();
-    //                 missionMapService.updateNotifReadStatus(notifyId);
-    //             } else {
-    //                 System.out.println("mission_notification_id field not found in JSON.");
-    //             }
-    //         } else {
-    //             System.out.println("Received empty or null JSON string.");
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace(); // 예외 처리
-    //     }
-
-    //     restResponseDto.setResult("Success");
-        
-    //     return restResponseDto;
-    // }
-
-
-    // @PostMapping("getMissionProcessInfo")
-    // public RestResponseDto getMissionProcessInfo(@RequestBody String mission_id){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     try {
-    //         if (mission_id != null && !mission_id.isEmpty()) {
-    //             ObjectMapper objectMapper = new ObjectMapper();
-    //             JsonNode jsonNode = objectMapper.readTree(mission_id);
-
-    //             // mission_id 필드가 존재하는지 확인
-    //             if (jsonNode.has("mission_id")) {
-    //                 // mission_id 필드 추출 및 정수로 변환
-    //                 int missionId = jsonNode.get("mission_id").asInt();
-    //                 restResponseDto.setData(missionMapService.getMissionProcessInfo(missionId));
-                    
-    //             } else {
-    //                 System.out.println("mission_id field not found in JSON.");
-    //             }
-    //         } else {
-    //             System.out.println("Received empty or null JSON string.");
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace(); // 예외 처리
-    //     }
-
-    //     restResponseDto.setResult("Success");
-        
-    //     return restResponseDto;
-    // }
-
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
     
+        restResponseDto.setData(missionMapService.loadMyResMissionInProgress(chatRoomId));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
+    @PostMapping("submitMissionComplete")
+    public RestResponseDto submitMissionComplete(MultipartHttpServletRequest request,
+                                        @RequestParam("complete_img") MultipartFile complete_img,
+                                        @RequestParam("complete_comment") String complete_comment,
+                                        @RequestParam("mission_course_id") int mission_course_id,
+                                        @RequestParam("chat_room_id") int chat_room_id){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
+        MissionProcessDto missionProcessDto = new MissionProcessDto();
 
+        if(complete_img != null) {
+				
+			String rootPath = "C:/uploadFiles/ufuf/completeImg";
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
+			String todayPath = sdf.format(new Date());
+			
+			File todayFolderForCreate = new File(rootPath + todayPath);
+				
+			if(!todayFolderForCreate.exists()) {
+				todayFolderForCreate.mkdirs();
+			}
+			
+			String originalFileName = complete_img.getOriginalFilename();
+			
+			String uuid = UUID.randomUUID().toString();
+			long currentTime = System.currentTimeMillis();
+			String fileName = uuid + "_" + currentTime;
+			
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			fileName += ext;
+			
+			try {
+				complete_img.transferTo(new File(rootPath + todayPath + fileName));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+            missionProcessDto.setComplete_img(todayPath + fileName);
+		}
 
+        missionProcessDto.setComplete_comment(complete_comment);
+        missionProcessDto.setChat_room_id(chat_room_id);
+        missionProcessDto.setMission_course_id(mission_course_id);
 
+        missionMapService.insertMissionProcess(missionProcessDto);
 
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
+    @PostMapping("giveup")
+    public RestResponseDto giveup(@RequestBody String chat_room_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+    
+        missionMapService.giveup(chatRoomId);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 

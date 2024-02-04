@@ -36,6 +36,6 @@ public interface MissionChatSqlMapper {
     public MissionChatRoomDto selectChatRoomByChatRoom(int chat_room_id);
 
     // 읽음표시 업데이트
-    public void updateReadStatus(int chat_room_id, int user_id);
+    public void updateReadStatus(@RequestParam(name="param1")int chat_room_id, @RequestParam(name="param2")int user_id);
 
 } 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionProcessDto;
 import com.cu.ufuf.dto.UserInfoDto;
 
 
@@ -35,44 +36,32 @@ public interface MissionMapSqlMapper {
     // 유저가 이미 이 미션에 등록했는지 확인
     public int isUserApplied(MissionChatRoomDto missionChatRoomDto);
 
-
+    // 내가 등록한 미션 리스트
+    public List<MissionInfoDto> selectMyResMission(int user_id);
 
 
     // 유저 셀렉트
     public UserInfoDto selectUserById(int user_id);
 
+    // 미션 유저 수락하기
+    public void updateAccStatus(int chat_room_id);
 
+    // 미션 코스 완료
+    public void insertMissionProcess(MissionProcessDto missionProcessDto);
+    // 코스 완료 카운트
+    public int countCompleteCourse(int chat_room_id);
+    // 코스 달성률 퍼센테이지
+    public int countProgressPercent(int mission_id);
+    // 코스 달성 리스트
+    public MissionProcessDto selectMissionProcessByChatRoomId(int mission_course_id);
+    // 챗룸아이디로 코스 전체 갯수
+    public int countTotalCourseByChatRoomId(int chat_room_id);
 
+    // 내가 수행하는 미션(내가 신청한 미션룸)
+    public List<MissionChatRoomDto> selectMyPlayMission(int user_id);
 
+    // 미션 포기
+    public void updateGiveup(int chat_room_id);
 
-
-    
-//     
-//     public MissionAcceptedDto selectAccMissionByAccId(int mission_accepted_id);
-//     public MissionAcceptedDto selectMissionAccInfoByMissionId(int mission_id);
-
-//     public UserInfoDto selectUserById(int user_id);
-
-//     public OrderInfoDto getOrderInfoByMissionId(int mission_id);
-//     public ItemInfoDto getItemInfo(int item_id);
-
-//     public OrderInfoDto getOrderInfo(String order_id);
-
-//     public void insertMissionAcc(MissionAcceptedDto missionAcceptedDto);
-
-//     public List<MissionAcceptedDto> selectMyAccMission(int user_id);
-
-//     public List<MissionInfoDto> selectMissionListByUserId(int user_id);
-//     public int[] getMissionNotAcc(int user_id);
-
-//     public void insertMissionComplete(MissionCompleteDto missionCompleteDto);
-
-//     public int getMissionIdByMissionAccId(int mission_accepted_id);
-    
-//     public void insertNotification(MissionNotificationDto missionNotificationDto);
-//     public List<MissionNotificationDto> selectNotifcationByUser(int user_id);
-//     public MissionNotificationCategoryDto selectNotifcationCategory(int mission_notification_id);
-//     public int isExistNotification(int user_id);
-//     public void updateNotifReadStatus(int mission_notification_id);
 
 }

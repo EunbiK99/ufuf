@@ -1,5 +1,7 @@
 package com.cu.ufuf.mission.controller;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,11 @@ public class MissionMapController {
         return "mission/map";
     }
 
+    @RequestMapping("myMission")
+    public String myMission(HttpSession session){
+        return "mission/myMission";
+    }
+
     @RequestMapping("missionRegistration")
     public String missionRegistration(HttpSession session, Model model){
 
@@ -36,6 +43,11 @@ public class MissionMapController {
         model.addAttribute("sessionUserInfo", sessionUserInfo);
 
         return "mission/missionRegistration";
+    }
+
+    @RequestMapping("missionProcess")
+    public String missionProcess(HttpSession session, @RequestParam(required = false) Optional<Integer> chat_room_id, @RequestParam(required = false) Optional<Integer> mission_id){
+        return "mission/missionProcess";
     }
 
     @RequestMapping("test1")

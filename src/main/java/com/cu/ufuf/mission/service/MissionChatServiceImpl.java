@@ -182,9 +182,17 @@ public class MissionChatServiceImpl {
         return chatInfoList;
     }
 
-    public void insertChat(MissionChatDto missionChatDto){
+    public int insertChat(MissionChatDto missionChatDto){
         missionChatSqlMapper.insertChat(missionChatDto);
+        return missionChatDto.getChat_id();
     }
+
+    public int insertImgChat(MissionChatDto missionChatDto){
+        missionChatSqlMapper.insertChat(missionChatDto);
+        return missionChatDto.getChat_id();
+    }
+
+    
 
 
     

@@ -10,13 +10,17 @@ import com.cu.ufuf.dto.MissionChatDto;
 import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
+import com.cu.ufuf.dto.MissionProcessDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
 
 import com.cu.ufuf.dto.OrderInfoDto;
+import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
+import com.cu.ufuf.mission.mapper.MissionChatSqlMapper;
 import com.cu.ufuf.mission.mapper.MissionMapSqlMapper;
 
 import java.util.*;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
@@ -28,6 +32,8 @@ public class MissionMapServiceImpl {
     private MissionMapSqlMapper missionMapSqlMapper;
     @Autowired
     private MerchanSqlMapper merchanSqlMapper;
+    @Autowired
+    private MissionChatSqlMapper missionChatSqlMapper;
     @Autowired
     private MissionPaymentServiceImpl missionPaymentService;
 
@@ -128,10 +134,186 @@ public class MissionMapServiceImpl {
         return missionDetail;
     }
 
-    
+    public void accMissionPlayer(int chat_room_id, int user_id){
+
+        missionMapSqlMapper.updateAccStatus(chat_room_id);
+
+        MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
+        int mission_id = missionInfoDto.getMission_id();
+
+        MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id);
+        int player_id = missionChatRoomDto.getUser_id();
+        UserInfoDto playerDto = missionMapSqlMapper.selectUserById(player_id);
+        UserInfoDto senderDto = missionMapSqlMapper.selectUserById(user_id);
+
+        List<MissionCourseDto> missionCourseDtoList = missionMapSqlMapper.selectCourseByMission(mission_id);
+        MissionCourseDto firstMissionCourse = missionCourseDtoList.get(0);
+
+        BigDecimal lat = firstMissionCourse.getLat();
+        BigDecimal lng = firstMissionCourse.getLng();
+        String senerName = senderDto.getName();
+        String playerName = playerDto.getName();
+        String title = missionInfoDto.getTitle();
+
+        String text = String.format("""
+            <div class="row">
+                <div class="col px-0">
+                    <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 14.85rem; height: 8rem;" onload="loadMap(%f, %f)">
+                    </div>
+                </div>
+            </div>
+            <div class="row py-3">
+                <div class="col">
+                    <div class="row">
+                        <div class="col" style="word-wrap: break-word;">
+                            ^alert!^%s님께서 "%s" 미션의 플레이어로 %s님을 수락하셨습니다. 
+                            지금부터 제한시간 카운트다운이 시작됩니다!<br> 
+                            ^alert!^
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col missionDetailBtn d-grid"></div>
+                    </div>
+                </div>    
+            </div>
+            """, lat, lng, senerName, title, playerName);
+     
+        MissionChatDto missionChatDto = new MissionChatDto();
+        missionChatDto.setChat_room_id(chat_room_id);
+        missionChatDto.setChat_category_id(3);
+        missionChatDto.setUser_id(user_id);
+        missionChatDto.setMessage(text);
+        missionChatDto.setIs_read("N");
+
+        missionChatSqlMapper.insertChat(missionChatDto);
+
+        missionMapSqlMapper.updateStatus(mission_id, "진행중");
+    }
+
+    public void insertMissionProcess(MissionProcessDto missionProcessDto){
+        missionMapSqlMapper.insertMissionProcess(missionProcessDto);
+        updateStatusToAllComplete(missionProcessDto.getChat_room_id());
+    }
+
+    // 모든 미션 완료시 미션상태 업데이트
+    public void updateStatusToAllComplete(int chat_room_id){
+
+        int countCompleteCourse = missionMapSqlMapper.countCompleteCourse(chat_room_id);
+        int countTotalCourse = missionMapSqlMapper.countTotalCourseByChatRoomId(chat_room_id);
+
+        MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
+
+        if(countCompleteCourse == countTotalCourse){
+            missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션종료");
+        }
+    }
 
 
+    // 채팅에서 미션 진행보기 누르면 나오는 창
+    public Map<String, Object> getMissionProgress(int chat_room_id){
 
+        Map<String, Object> missionProgress = new HashMap<>();
+
+        MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
+
+        missionProgress.put("missionInfoDto", missionInfoDto);
+
+        return missionProgress;
+    }
+
+    public List<Map<String, Object>> getMyPlayMissionList(int user_id){
+
+        List<Map<String, Object>> playMissionList = new ArrayList<>();
+
+        List<MissionChatRoomDto> missionChatRoomList = missionMapSqlMapper.selectMyPlayMission(user_id);
+
+        for(MissionChatRoomDto missionChatRoomDto : missionChatRoomList){
+
+            Map<String, Object> myPlayMission = new HashMap<>();
+
+            int mission_id = missionChatRoomDto.getMission_id();
+
+            myPlayMission.put("missionChatRoomDto", missionChatRoomDto);
+            myPlayMission.put("missionInfoDto", missionMapSqlMapper.selectMissionById(mission_id));
+            myPlayMission.put("progressPercent", missionMapSqlMapper.countProgressPercent(mission_id));
+            myPlayMission.put("countChatRoom", missionChatSqlMapper.countChatRoomByMission(mission_id));
+
+            playMissionList.add(myPlayMission);
+        }
+        return playMissionList;
+    }
+
+    public List<Map<String, Object>> getmyResMissionList(int user_id){
+
+        List<Map<String, Object>> myResMissionList = new ArrayList<>();
+
+        List<MissionInfoDto> myResMissionDtoList = missionMapSqlMapper.selectMyResMission(user_id);
+
+        for(MissionInfoDto missionInfoDto : myResMissionDtoList){
+
+            Map<String, Object> myResMission = new HashMap<>();
+
+            myResMission.put("missionInfoDto", missionInfoDto);
+            myResMission.put("missionChatRoomDto", missionChatSqlMapper.selectChatRoomListByMission(missionInfoDto.getMission_id()));
+            myResMission.put("progressPercent", missionMapSqlMapper.countProgressPercent(missionInfoDto.getMission_id()));
+
+            myResMissionList.add(myResMission);
+        }
+        return myResMissionList;
+    }
+
+    public Map<String, Object> getMyResMissionInfoInRecruiting(int mission_id){
+
+        Map<String, Object> missionInfo = new HashMap<>();
+
+        MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionById(mission_id);
+
+        missionInfo.put("missionInfoDto", missionInfoDto);
+        missionInfo.put("missionCourseList", missionMapSqlMapper.selectCourseByMission(mission_id));
+        missionInfo.put("missionChatRoomList", missionChatSqlMapper.selectChatRoomListByMission(mission_id));
+
+        return missionInfo;
+    }
+
+    public Map<String, Object> loadMyResMissionInProgress(int chat_room_id){
+
+        Map<String, Object> missionInfo = new HashMap<>();
+
+        MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id);
+        int mission_id = missionChatRoomDto.getMission_id();
+
+        List<MissionCourseDto> MissionCourseList = missionMapSqlMapper.selectCourseByMission(mission_id);
+
+        List<Map<String, Object>> courseInfoList = new ArrayList<>();
+
+        for(MissionCourseDto missionCourseDto : MissionCourseList){
+            
+            Map<String, Object> courseInfo = new HashMap<>();
+
+            int course_id = missionCourseDto.getMission_course_id();
+            
+            courseInfo.put("missionCourseDto", missionCourseDto);
+            courseInfo.put("missionProcessDto", missionMapSqlMapper.selectMissionProcessByChatRoomId(course_id));
+            
+            courseInfoList.add(courseInfo);
+        }
+
+        missionInfo.put("missionChatRoomDto", missionChatRoomDto);
+        missionInfo.put("missionInfoDto", missionChatSqlMapper.selectMissionByChatRoom(chat_room_id));
+        missionInfo.put("courseInfoList", courseInfoList);
+        missionInfo.put("progressPercent", missionMapSqlMapper.countProgressPercent(mission_id));
+        missionInfo.put("countCompleteCourse", missionMapSqlMapper.countCompleteCourse(chat_room_id));
+
+        return missionInfo;
+    }
+
+    public void giveup(int chat_room_id){
+
+        missionMapSqlMapper.updateGiveup(chat_room_id);
+        
+        MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
+        missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션종료");
+    }
 
 
 

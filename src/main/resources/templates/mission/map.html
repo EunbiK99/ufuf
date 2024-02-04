@@ -20,10 +20,11 @@
     var goalMarker;
     var map;
     var missionMarker = [];
+   
 
     var imageSrc = relativePath + "/public/image/mission/free-icon-flag-5216262.png", // 마커이미지의 주소입니다    
     imageSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
-    imageOption = {offset: new kakao.maps.Point(24, 30)};
+    imageOption = {offset: new kakao.maps.Point(15, 30)};
 
     var goalImg = relativePath + "/public/image/mission/free-icon-goal-5230487.png", // 마커이미지의 주소입니다    
     goalImgSize = new kakao.maps.Size(36, 36), // 마커이미지의 크기입니다
@@ -313,6 +314,24 @@
                 userName.innerText = mission.userInfoDto.name;
                 userProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + mission.userInfoDto.profile_img);
 
+                var linePath = [];
+
+                for (let i = 0; i < mission.missionCourseList.length; i++) {
+                    const course = mission.missionCourseList[i];
+                    linePath.push(new kakao.maps.LatLng(course.lat, course.lng));
+                }
+                
+                // 지도에 표시할 선을 생성합니다
+                var polyline = new kakao.maps.Polyline({
+                    path: linePath,
+                    strokeWeight: 3,
+                    strokeColor: 'orange',
+                    strokeOpacity: 0.7,
+                    strokeStyle: 'solid'
+                });
+
+                polyline.setMap(map);
+
                 var sum = 0;
 
                 for (let i = 0; i < mission.missionCourseList.length; i++) {
@@ -416,15 +435,19 @@
                     .then(sessionUserPk => {
 
                         if(mission.isUserApplied == 0){
-                            if(sessionUserPk === mission.userInfoDto.user_id){
+
+                            missionApplyModalBtn.classList.remove("disabled");
+
+                            if(sessionUserPk == mission.userInfoDto.user_id){
                                 missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.9rem;"></i><span style="font-size: 0.93rem;">미션 삭제</span>`;
                             }else if(sessionUserPk == 0){
+                                missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9em;"></i><span class="" style="font-size: 0.93em;">미션신청</span>`;
                                 missionApplyModalBtn.onclick = function(){
                                     alert("로그인 후 이용 가능합니다."); 
                                 };
                             }else{
+                                missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9em;"></i><span class="" style="font-size: 0.93em;">미션신청</span>`;
                                 missionApplyModalBtn.onclick = function(){
-                                    missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9rem;"></i><span class="" style="font-size: 0.93rem;">미션신청</span>`;
                                     openMissionApplyModal(mission.missionInfoDto.mission_id);
                                 };
                             }
@@ -492,12 +515,52 @@
             .then(response => {
 
                 loadMisisonDetail(mission_id);
-
                 closeMissionApplyModal();
-
         });
 
     }
+
+    function loadResMisisonHandler(){
+        const myMissionBox = document.getElementById("myMissionBox");
+        myMissionBox.classList.remove("d-none");
+
+        const myResMissionDetailBox = document.getElementById("myResMissionDetailBox");
+        myResMissionDetailBox.classList.add("d-none");
+
+        loadMyResMission();
+    }
+
+    function loadAppMisisonHandler(){
+
+        const myMissionBox = document.getElementById("myMissionBox");
+        myMissionBox.classList.remove("d-none");
+
+        const myAppMissionDetailBox = document.getElementById("myAppMissionDetailBox");
+        myAppMissionDetailBox.classList.add("d-none");
+
+        loadMyAppMission();
+    }
+
+    // 마이 미션
+    function loadMyMission(){
+
+        const shut = document.querySelectorAll(".shut");
+        shut.classList.add("d-none");
+
+        const MyMissionList = document.getElementById("MyMissionList");
+        MyMissionList.classList.remove("d-none"); 
+
+        const mapContainer = document.getElementById("map");
+        mapContainer.style.height = "20.85rem";
+
+        const findMyLocation = document.getElementById("findMyLocation");
+        findMyLocation.classList.add("button-slide-up");
+
+        loadMyPlayMission();
+    }
+
+
+
 
     function test() {
         const mapContainer = document.getElementById("map");
@@ -576,6 +639,15 @@
         margin: 0 auto;
         left: 0;
         right: 0;
+    }
+
+    .word {
+        width: 1rem;
+        font-size: 1rem;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
 
@@ -659,7 +731,7 @@
                         </div>
 
                         <!-- 미션 리스트 -->
-                        <div id="showMissionList" class="row border-top d-none" style="height:17.3rem; box-shadow: inset 0 -2rem 1.5rem -2.5rem #cacaca;">
+                        <div id="showMissionList" class="shut row border-top d-none" style="height:17.3rem; box-shadow: inset 0 -2rem 1.5rem -2.5rem #cacaca;">
                             <div class="col">
                                 <div class="row py-2 border-bottom">
                                     <div class="col text-end align-self-center text-secondary" style="font-size: 0.95rem;">
@@ -686,7 +758,7 @@
                                     <div class="row" style="padding-top: 0.6em; padding-bottom: 0.1em;">
                                         <div class="col">
                                             <div class="row mx-2">
-                                                <div class="col d-flex align-self-center ps-1">
+                                                <div class="col d-flex align-self-center ps-0">
                                                     <span class="text-body-tertiary d-flex align-self-center" onclick="loadMissionList()">
                                                         <i class="bi bi-chevron-left align-self-center" style="font-size: 0.9em;"></i>
                                                     </span>
@@ -695,14 +767,14 @@
                                             </div>   
                                         </div>
                                     </div>
-                                    <div class="row mx-2" style="margin-top: 0.07em;">
+                                    <div class="row ms-3 me-1" style="margin-top: 0.07em;">
                                         <div class="col text-start d-flex align-self-center justify-content-start" style="overflow: hidden;">
                                             <img class="userProfileImg img-fluid rounded-circle me-2  d-flex align-self-center" 
                                                 style="height: 1.13em; width: 1.13em; object-fit: cover; border-radius: 50%;">
                                             <span class="userName d-flex align-self-center"
                                                 style="color: #818181; font-weight: 500; font-size: 0.90em;"></span>
                                         </div>
-                                        <div class="createdAt col text-end" style="color: #818181; font-size: 0.90em;">
+                                        <div class="createdAt col text-end align-self-center" style="color: #818181; font-size: 0.80em;">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -758,6 +830,7 @@
                                 
                             </div>
                         </div>
+
 
 
 
@@ -890,6 +963,31 @@
                     <div class="col text-body-tertiary" style="font-size: 0.8em;">
                         <i class="bi bi-exclamation-octagon me-2"></i>미션 등록자가 신청을 수락하면 채팅으로 알림을 보내드리며, 즉시 제한시간 카운트다운이 시작됩니다.
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 내가 수락한미션 출력 -->
+<div id="myPlayMissionListTemplete" class="d-none">
+    <div class="myPlayMissionWrapper row border-bottom py-2">
+        <div class="col">
+            <div class="row pe-1">
+                <div class="title col align-self-center fw-semibold text-start" style="font-size: 1.1em;">
+                    
+                </div>
+                <div class="col-3 d-flex align-self-center justify-content-end ps-0">
+                    <span class="status text-white rounded-4 justify-content-end px-2" style="font-size: 0.8em; background-color: #FF8827;"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="detail col text-body-tertiary align-self-center word" style="font-size: 0.83em;">
+                    
+                </div>
+                <div class="col-4 text-end align-self-center">
+                    <span class="reward fw-bold" style="font-size: 1.05em; color: #9c9c9c; letter-spacing: 0.04em;">10000</span>
+                    <span style="color: #bbbbbb;"> 원</span>
                 </div>
             </div>
         </div>

@@ -69,10 +69,10 @@
     </select>
 
     <update id="updateReadStatus">
-        update from mission_chat
-        set is_read = "Y"
-        where chat_room_id = #{chat_room_id}
-        and user_id != ${user_id}
+        update mission_chat
+        set is_read = 'Y'
+        where chat_room_id = #{param1}
+        and user_id != ${param2}
     </update>
 
     <select id="selectChatListByChatRoom" resultType="com.cu.ufuf.dto.MissionChatDto">

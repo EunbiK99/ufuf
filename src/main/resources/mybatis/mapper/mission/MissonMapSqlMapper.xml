@@ -79,13 +79,73 @@
     select count(*) from mission_chat_room
     where mission_id = #{mission_id} 
     and user_id = #{user_id}
-</select> 
+</select>
 
+<select id="selectMyResMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    select * from mission_info
+    where user_id = #{user_id}
+</select>
 
+<update id="updateAccStatus">
+    update mission_chat_room
+    set accept_at = now()
+    where chat_room_id = #{chat_room_id}
+</update>
 
+<insert id="insertMissionProcess">
+    <selectKey keyProperty="mission_complete_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID() AS mission_complete_id
+    </selectKey>
+    insert into mission_process(
+        mission_course_id,
+        chat_room_id,
+        complete_comment,
+        complete_img
+        )
+    VALUES(
+        #{mission_course_id},
+        #{chat_room_id},
+        #{complete_comment},
+        #{complete_img}
+    )
+</insert>
 
+<select id="selectMissionProcessByChatRoomId" resultType="com.cu.ufuf.dto.MissionProcessDto">
+    select * from mission_process
+    where mission_course_id = #{mission_course_id}
+</select>
 
+<select id="countCompleteCourse" resultType="int">
+    select count(*) from mission_process
+    where chat_room_id = #{chat_room_id}
+</select>
 
+<select id="selectMyPlayMission" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+    SELECT *
+    FROM mission_chat_room
+    WHERE user_id = 5 AND accept_at IS NOT NULL
+    order by accept_at desc
+</select>
+
+<select id="countProgressPercent" resultType="int">
+    SELECT 
+    (COUNT(*) / (SELECT COUNT(*) FROM mission_course WHERE mission_id = #{mission_id})) * 100 AS percentage
+    FROM mission_process
+    WHERE 
+    mission_course_id IN (SELECT mission_course_id FROM mission_course WHERE mission_id = #{mission_id})
+</select>
+
+<update id="updateGiveup">
+    update mission_chat_room
+    set giveup_at = now()
+    where chat_room_id = #{chat_room_id}
+</update>
+
+<select id="countTotalCourseByChatRoomId" resultType="int">
+    select COUNT(*) from mission_chat_room mcr 
+    inner join mission_course mc on mcr.mission_id = mc.mission_id
+    where mcr.chat_room_id = #{chat_room_id}
+</select>
 
 
 
