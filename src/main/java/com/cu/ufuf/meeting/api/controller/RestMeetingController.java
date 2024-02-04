@@ -522,6 +522,21 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @GetMapping("createChatRoom")
+    public MeetingRestResponseDto createChatRoom(int profileId, int targetProfileId){
+
+        meetingService.registerChatRoom(profileId, targetProfileId);
+        
+        // 채팅방 생성 이후 다른 서비스 호출로 알람? 메세지? 보내주는거 구현?
+        // targetProfileId 사용
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getChatRoomDtoByProfileNickname(targetProfileId));
+        return meetingRestResponseDto;
+    }
+
 
 
 

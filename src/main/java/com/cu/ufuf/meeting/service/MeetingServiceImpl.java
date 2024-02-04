@@ -14,6 +14,9 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingBothLikeDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
+import com.cu.ufuf.dto.MeetingChatRoomDto;
+import com.cu.ufuf.dto.MeetingChatRoomUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -559,6 +562,53 @@ public class MeetingServiceImpl {
             userLikeDataList.add(mapList);
         }        
         return userLikeDataList;
+    }
+
+
+
+    // * 새 채팅방 생성
+    public void registerChatRoom(int profileId, int targetProfileId){
+
+        int chatRoomPk = meetingSqlMapper.createChatRoomPk();
+        
+        MeetingChatRoomDto meetingChatRoomDto = new MeetingChatRoomDto();
+        meetingChatRoomDto.setChatRoomId(chatRoomPk);
+        
+        MeetingProfileDto targetMeetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(targetProfileId);
+        String targetProfileNickname = targetMeetingProfileDto.getProfileNickname();
+        
+        meetingChatRoomDto.setChatRoomTitle(targetProfileNickname);
+
+        meetingSqlMapper.insertChatRoomDto(meetingChatRoomDto);
+
+        MeetingChatRoomUserDto meetingChatRoomUserDto = new MeetingChatRoomUserDto();
+        meetingChatRoomUserDto.setChatRoomId(chatRoomPk);
+        meetingChatRoomUserDto.setProfileId(profileId);
+
+        meetingSqlMapper.insertChatRoomUserDto(meetingChatRoomUserDto);
+    }
+
+    // * 대상프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트(추후에 채팅정보까지 같이 묶게될듯?)
+    public Map<String, Object> getChatRoomDtoByProfileNickname(int targetProfileId){
+        
+        Map<String, Object> chatRoomData = new HashMap<>();
+        
+        MeetingProfileDto targetProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(targetProfileId);
+        
+        String targetProfileNickname = targetProfileDto.getProfileNickname();
+        
+        MeetingChatRoomDto meetingChatRoomDto = meetingSqlMapper.selectChatRoomDtoByProfileNickname(targetProfileNickname);
+        
+        int chatRoomId = meetingChatRoomDto.getChatRoomId();
+
+        List<MeetingChatMessageDto> meetingChatMessageDtoList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+
+
+        chatRoomData.put("meetingChatRoomDto", meetingChatRoomDto);
+        chatRoomData.put("targetProfileDto", targetProfileDto);
+        chatRoomData.put("meetingChatMessageDtoList", meetingChatMessageDtoList);
+
+        return chatRoomData;
     }
 
 

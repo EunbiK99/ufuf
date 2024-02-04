@@ -39,6 +39,21 @@
 let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
 let meetingProfileExist;
 
+function moveChatListPage(){
+    if(meetingProfileExist === "Y"){
+        window.location.href="./chatListPage";
+    }
+    else{
+        let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+        if(result){
+            window.location.href="./registerProfile";
+        }
+        else{
+            return;
+        }
+    }
+}
+
 function moveRegisterProfilePage(){
     let userType = /*[[${session.userType}]]*/;
     
@@ -311,7 +326,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             </div>
                                         </div>                                        
                                     </div>
-                                    <div class="col text-center mx-1 mt-1">
+                                    <div class="col text-center mx-1 mt-1" onclick="moveChatListPage()">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                

@@ -355,35 +355,17 @@
 
         <!--인기 게스트하우스(기간 내 찜 수로 할 예정)-->
         <div class="row"></div>
-
-        <!-- Modal -->
-        <div class="modal fade pt-0" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered pt-0">
-                <div class="modal-content">
-                    <div class="modal-header pt-0 mt-0">
-                        <div class="modal-title fw-bold" id="exampleModalLabel" style="font-size: 1.2em;">더보기</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body pb-0">
-                        <div class="row ">
-                            <a href="./myRoomListPage" style="color: black; text-decoration: none;">내가 올린 게스트하우스</a>
-                        </div>
-                        <div class="row mt-2">
-                            <a href="./myRoomReservationListPage" style="color: black; text-decoration: none;">예약내역</a>
-                        </div>
-                        <div class="row mt-2">
-                            <a href="./myInterestRoomListPage" style="color: black; text-decoration: none;">나의 관심 게스트하우스</a>
-                        </div>
-                        <div class="row mt-2">
-                            <a href="./roomRegisterPage" style="color: black; text-decoration: none;">게스트하우스 등록</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <!--푸터에 안가려지라고 여백용-->
         <div class="row p-5 mb-4"></div>
+
+        <div style="position: fixed; right: 2.3em; bottom: 7.5em; z-index: 1000;">
+            <div class="row">
+                <div class="col">
+                    <a class="btn rounded-circle shadow" href="./roomRegisterPage" style="background-color: #FF8827;"><i class="fs-4 bi bi-plus-lg text-white"></i></a> 
+                </div>
+            </div>
+        </div>
 
 
         <!--푸터(임시)-->
@@ -399,10 +381,10 @@
                 </div>
                 <div class="col">
                     <div class="row text-center mt-2">
-                        <a href="./roomReservationListPage" style=" text-decoration: none;"><i class="fs-5 bi bi-clipboard-check text-secondary"></i></a> 
+                        <a href="./myRoomReservationListPage" style=" text-decoration: none;"><i class="fs-5 bi bi-clipboard-check text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
-                        <div class="col">계약</div>
+                        <div class="col">MY예약</div>
                     </div>
                 </div>
 
@@ -413,19 +395,19 @@
 
                 <div class="col">
                     <div class="row text-center mt-2">
-                        <a href="#" style=" text-decoration: none;"><i class="fs-5 bi bi-chat-dots text-secondary"></i></a> 
+                        <a href="./myInterestRoomListPage" style=" text-decoration: none;"><i class="fs-5 bi bi-heart text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
-                        <div class="col">채팅</div>
+                        <div class="col">찜 목록</div>
                     </div>
                 </div>
                 <div class="col me-2">
-                    <div class="row text-center mt-2">
+                    <div class="row text-center pt-1">
                         <!--임시로 방 글쓰기 페이지로 이어짐니다-->
-                        <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fs-5 bi bi-three-dots text-secondary"></i></a> 
+                        <a href="./myRoomListPage" style=" text-decoration: none;"><i class="fs-4 pt-0 bi bi-houses text-secondary"></i></a> 
                     </div>
                     <div class="row text-secondary text-center mt-1" style="font-size: 0.8em;">
-                        <div class="col">더보기</div>
+                        <div class="col">호스트</div>
                     </div>
                 </div>
             </div>

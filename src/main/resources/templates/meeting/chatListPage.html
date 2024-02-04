@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>타이틀</title>
+    <title>유니talk</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -13,13 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;        
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;        
     }
 
     * .titleWord{
@@ -28,75 +30,75 @@
         /* font-family: 'Square Peg', cursive; */
         /* font-family: 'Tangerine', cursive; */
     }
-    </style>
-</head>
-<script th:inline="javascript">
-let tid = /*[[${session.tid}]]*/
 
-function kakaoPaymentAcceptRequestProcess(){
-    const curruntURL = new URL(window.location.href);
-    console.log('curruntURL: ', curruntURL);
-
-    const URLparams = curruntURL.searchParams;
-    console.log('URLparams: ', URLparams);
-
-    let pg_token = URLparams.get('pg_token');
-    console.log('pg_token: ', pg_token);
-
-    let userId = URLparams.get('userId');
-    console.log('userId: ', userId);
-    let orderId = URLparams.get('orderId');
-    console.log('orderId: ', orderId);
-
-    console.log("tid : ", tid);
-
-    const kakaoPaymentApproveReqDto = {
-        tid : tid,
-        partner_order_id : orderId,
-        partner_user_id : userId,
-        pg_token : pg_token
+    .userChatImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 40%;
+        overflow: hidden;
     }
 
-    fetch("./api/kakaoPaymentAcceptRequestProcess", {
-        method : "POST",
-        headers : {
-            "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(kakaoPaymentApproveReqDto)
-    })
-    .then(response => response.json())
-    .then(response => {
-        const responseData = response.data
-        console.log('responseData: ', responseData);
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        let groupId = responseData.item_name.substring(12);
-        console.log('groupId: ', groupId);
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
 
-        const userId = responseData.partner_user_id;
-        console.log('userId: ', userId);
+    /* #chatRoomOffCanvas {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100%;        
+        transition: right 0.3s ease-in-out;
+        z-index: 10;
+    }
 
-        changePaymentStatus(groupId, userId)
+    #chatRoomOffCanvas.show {
+        right: 0;
+    } */
+    </style>
+</head>
 
+<script th:inline="javascript">
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
+let sessionUserProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
 
-    });
+console.log('sessionUserProfileInfo: ', sessionUserProfileInfo);
+console.log('sessionUserInfo: ', sessionUserInfo);
+
+function showChatRoomOffCanvas(chatRoomID){
+    // const chatRoomOffCanvas = document.getElementById("chatRoomOffCanvas");
+    // chatRoomOffCanvas.classList.add("show");
+
+    const myOffcanvas = bootstrap.Offcanvas.getOrCreateInstance('#myOffcanvas')
+    console.log('myOffcanvas: ', myOffcanvas);
+    myOffcanvas.show();
 }
 
-function changePaymentStatus(groupId, userId){    
-    
-    console.log('groupId: ', groupId);    
-    console.log('userId: ', userId);
+function closeChatRoomOffCanvas(){
+    const myOffcanvas = bootstrap.Offcanvas.getOrCreateInstance('#myOffcanvas')
+    console.log('myOffcanvas: ', myOffcanvas);
+    myOffcanvas.hide();
+}
 
-    fetch("./api/changePaymentStatus?groupId=" + groupId + "&userId=" + userId)
-    .then(response => response.json())
-    .then(response => {
-        const result = response.result;
-        console.log('result: ', result);
-    });
+// 나중에 채팅방 목록 가져오는것으로 이름 변경
+function sessionUserInfoCSR(){
+    const userProfileImage = document.getElementById("userProfileImage");
+    userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${sessionUserProfileInfo.profileImg}`);
+
+    const userProfileNickname = document.getElementById("userProfileNickname");
+    userProfileNickname.innerText = sessionUserProfileInfo.profileNickname;
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    kakaoPaymentAcceptRequestProcess();
-})
+    sessionUserInfoCSR();
+});
 
 </script>
 
@@ -127,40 +129,30 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row">
             <div class="col">
                 
-                <div class="row text-center">
+                <div class="row mt-3 mb-2">
                     <div class="col">
-                        <div class="row mt-5">
+                        
+                        <div class="row">
                             <div class="col">
-                                <img class="img-fluid" src="/public/image/circle/success.png">
+                                <span class="fs-4 fw-bold">Uni Talk</span>
                             </div>
                         </div>
-                        <div class="row mt-5">
-                            <div class="col" style="font-size: 1.3em;">
-                                결제를 성공하였습니다.
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
-                                결제가 정상적으로 완료되었습니다.
-                            </div>
-                        </div>
-                        <div class="row mt-1">
-                            <div class="col" style="font-size: 1.1em; color: rgb(96, 96, 96);">
-                                결제내역을 확인해 주세요!
-                            </div>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col d-grid">
-                                <button onclick="window.location.href='../meeting/mainPage'" class="btn" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col d-grid"><!-- 여기는 마이페이지에 있는 내 일정내역 결제한거 확인하는 페이지로 이동시켜야함,-->
-                                <button onclick="" class="btn" style="background-color: #fb7928; color: white;">일정내역 확인하러가기</button>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
+
+                <div class="row mt-4">
+                    <div id="chatListWrapperCol" class="col">                       
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <button class="btn" onclick="showChatRoomOffCanvas()">offcavas</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -170,7 +162,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row">
                     <div class="col">
                         <div class="row justify-content-around">
-                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -182,7 +174,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -194,14 +186,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./chatListPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -213,7 +205,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-2 mx-1" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -233,6 +225,85 @@ document.addEventListener("DOMContentLoaded", ()=>{
     </div>
 
 
+<!--/* 채팅방 오프캔버스 */-->
+<!-- <div id="chatRoomOffCanvas">
+    <div class="row">
+        <div class="col">
+            <h5 class="offcanvas-title">Offcanvas Title</h5>
+            <button type="button" class="close" id="closeButton" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-body">
+                <p>This is the offcanvas content.</p>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="myOffcanvas" style="width: 100%;">
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Offcanvas Title</h5>
+            <button type="button" class="btn" onclick="closeChatRoomOffCanvas()">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-body">
+                <p>이 부분은 오프캔버스 내용입니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* templete */-->
+<div id="templete" class="d-none">
+    
+    <div id="chatListRow" class="row my-1">
+        <div class="col">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="userChatImageBox">
+                                <img id="userProfileImage" class="img-fluid userImage">
+                            </div>                                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto align-self-center ps-0">
+                    <div class="row justify-content-between">
+                        <div class="col-auto">
+                            <span id="userProfileNickname" class="fw-bold"></span>
+                        </div>                                            
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span id="userLastMessage" class="">123</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row">
+                <div class="col-auto">
+                    <span id="lastMesaggeTime">1월 31일</span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

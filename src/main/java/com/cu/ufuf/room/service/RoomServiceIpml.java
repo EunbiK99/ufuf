@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
@@ -433,5 +435,26 @@ public class RoomServiceIpml {
     public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
 
         roomSqlMapper.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
+    }
+
+     public int cardIdMax(){
+        
+        return roomSqlMapper.cardIdMax();
+    }
+    public int amountIdMax(){
+        
+        return roomSqlMapper.amountIdMax();
+    }public void amountInfoInsert(AmountDto amountDto){
+        
+        roomSqlMapper.amountInfoInsert(amountDto);
+    }
+    public void cardInfoInsert(CardInfoDto cardInfoDto){
+
+        roomSqlMapper.cardInfoInsert(cardInfoDto);
+    }
+
+ public void orderInfoStatusByOrderId(String order_id){
+
+    roomSqlMapper.orderInfoStatusByOrderId(order_id);
     }
 }

@@ -10,6 +10,9 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingBothLikeDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
+import com.cu.ufuf.dto.MeetingChatRoomDto;
+import com.cu.ufuf.dto.MeetingChatRoomUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -180,6 +183,22 @@ public interface MeetingSqlMapper {
 
     // * 그룹멤버PK기준 그룹멤버Dto 셀렉트
     public MeetingGroupMemberDto selectGroupMemberDtoByGroupMemberId(int groupMemberId);
+
+
+    // * 채팅방 Dto 인서트
+    public void insertChatRoomDto(MeetingChatRoomDto meetingChatRoomDto);
+
+    // * 채팅방PK 생성
+    public int createChatRoomPk();
+
+    // * 채팅참여유저 Dto 인서트
+    public void insertChatRoomUserDto(MeetingChatRoomUserDto meetingChatRoomUserDto);
+
+    // * 프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트
+    public MeetingChatRoomDto selectChatRoomDtoByProfileNickname(String profileNickname);
+
+    // * 채팅방PK기준 채팅방 메세지 Dto 셀렉트
+    public List<MeetingChatMessageDto> selectChatMessageDtoByChatRoomId(int chatRoomId);
 
 
 
