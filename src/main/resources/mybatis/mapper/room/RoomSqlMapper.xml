@@ -144,10 +144,11 @@
 
     <!--예약자 방 예약 정보-->
     <select id="roomGuestSelectByRoomAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
-        SELECT * from room_guest
-        where user_id=#{user_id}
-        and room_info_id=#{room_info_id}
-        ORDER BY room_info_id DESC
+        SELECT ri.* FROM room_info ri
+        join room_guest rg on ri.room_info_id=rg.room_info_id 
+        where rg.user_id=4
+        and rg.room_info_id=19
+        order by rg.room_guest_id desc
         LIMIT 1
     </select>
 

@@ -77,7 +77,7 @@
             roomData.cid = "TC0ONETIME";
             roomData.item_name = "ufuf게스트하우스예약";
             roomData.total_amount =  roomData.reservationCharge;
-            roomData.approval_url = `https://localhost:8888/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
+            roomData.approval_url = `./room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
             roomData.fail_url = `https://localhost:8888/room/roomPaymentFail?partner_order_id=${roomData.order_id}`;
             roomData.cancel_url = `https://localhost:8888/room/roomPaymentCancel?partner_order_id=${roomData.order_id}`;
             console.log(roomData);
@@ -440,6 +440,9 @@
                 </div>
             </div>
         </div>
+
+        <!--여백-->
+        <div class="row p-5"></div>
 
         <div class="fixed-bottom bg-white">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
