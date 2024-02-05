@@ -707,7 +707,7 @@
                                                     const mapCenter = map.getCenter();
 
                                                     // 좌표 비교를 위한 오차 범위
-                                                    const tolerance = 0.00015;
+                                                    const tolerance = 0.00030;
 
                                                     const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
                                                                             Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
@@ -719,7 +719,7 @@
                                                     }
 
                                                 });
-                                            }, 10000);
+                                            }, 5000);
     
                                         }
 
