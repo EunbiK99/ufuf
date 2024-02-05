@@ -220,8 +220,8 @@ public class MeetingController {
 
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
         int profileId = meetingProfileDto.getProfileid();
-        List<MeetingChatMessageDto> chatMessageList = meetingService.getChatRoomData(chatRoomId, profileId);
-        model.addAttribute("chatMessageList", chatMessageList);
+        Map<String, Object> chatRoomData = meetingService.getChatRoomData(chatRoomId, profileId);
+        model.addAttribute("chatRoomData", chatRoomData);
 
         return "./meeting/chatRoomPage";    
     }

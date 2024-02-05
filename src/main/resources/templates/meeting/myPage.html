@@ -136,7 +136,7 @@ function createChatRoom(target){
         if(Object.keys(checkResult).length > 0){
             const confirmValue = confirm("이미 채팅방이 존재합니다. 이동하시겠습니까?");
             if(confirmValue){                                
-                window.location.href=`./chatRoomPage?chatRoomId=${checkResult.meetingChatRoomDto.chatRoomId}`;
+                window.location.href=`./chatRoomPage?chatRoomId=${checkResult.targetChatRoomDto.chatRoomId}`;
             }
             else{
                 return;
@@ -155,17 +155,16 @@ function createChatRoom(target){
                 if(confirmValue){
                     const chatRoomData = response.data;
                     console.log('chatRoomData: ', chatRoomData);
+                    return;
 
                     let roomNo = 0;
                     for(e of chatRoomData){
+                        
                         console.log('e: ', e);
-
-                        for(i of e.meetingChatRoomUserDtoList){
-                            console.log('i: ', i);
-                            if(i.profileId === profileId){
-                                roomNo = i.chatRoomId;
-                                console.log('roomNo: ', roomNo);
-                            }                        
+                        
+                        if(e.targetProfileDto.profileid === targetProfileId){
+                            roomNo = e.chatRoomDto.chatRoomId;
+                            console.log('roomNo: ', roomNo);
                         }
                     }
                     window.location.href=`./chatRoomPage?chatRoomId=${roomNo}`;
@@ -219,8 +218,7 @@ function mySignalBothModalCSR(){
                         const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
                         userSignalBothNickname.innerText = e.meLikeGroupMemberProfileDto.profileNickname;
 
-                        const createChatButton = userSignalBothWrapperRow.querySelector("#userSignalBothChatButton").closest("div");
-                        console.log('createChatButton: ', createChatButton);
+                        const createChatButton = userSignalBothWrapperRow.querySelector("#userSignalBothChatButton").closest("div");                        
                         createChatButton.setAttribute("profileId", e.meLikeGroupMemberProfileDto.profileid);
                         createChatButton.setAttribute("onclick", "createChatRoom(this)");
 

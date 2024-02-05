@@ -542,8 +542,22 @@ values (
     and profileId = #{profileId}
 </select>
 
+<!-- * 채팅메세지 테이블 인서트-->
+<insert id="insertChatMessageDto">
+    insert into meeting_chatMessage(chatRoomId, chatRoomUserId, chatComment) values(
+        #{chatRoomId},
+        #{chatRoomUserId},
+        #{chatComment}
+    )
+</insert>
 
-
+<!-- * 채팅방PK, 프로필PK기준 채팅참여유저Dto 셀렉트-->
+<select id="selectChatRoomUserDtoByProfileIdAndChatRoomId" resultType="com.cu.ufuf.dto.MeetingChatRoomUserDto">
+    SELECT * from meeting_chatRoomUser mcru 
+    where 1=1
+    and profileId = #{profileId}
+    and chatRoomId = #{chatRoomId}
+</select>
 
 
 

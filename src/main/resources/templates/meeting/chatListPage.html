@@ -107,7 +107,6 @@ function getUserChatRoomData(){
     });
 }
 
-// 나중에 채팅방 목록 가져오는것으로 이름 변경
 function chatListCSR(){
 
     const chatListWrapperCol = document.getElementById("chatListWrapperCol");
@@ -124,7 +123,7 @@ function chatListCSR(){
             chatRoomImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
     
             const chatRoomTitle = chatListRow.querySelector("#chatRoomTitle");
-            chatRoomTitle.innerText = e.chatRoomDto.chatRoomTitle;
+            chatRoomTitle.innerText = e.targetProfileDto.profileNickname;
 
             const chatRoomMessageLength = e.chatMessageList.length;
             if(chatRoomMessageLength === 0){
