@@ -38,4 +38,7 @@ public interface MissionChatSqlMapper {
     // 읽음표시 업데이트
     public void updateReadStatus(@RequestParam(name="param1")int chat_room_id, @RequestParam(name="param2")int user_id);
 
+    // 미션 아이디랑 유저 아이디로 챗룸 가져오기
+    public MissionChatRoomDto selectChatRoomByMissionAndUser(MissionChatRoomDto missionChatRoomDto);
+
 } 

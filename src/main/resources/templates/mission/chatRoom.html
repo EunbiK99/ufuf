@@ -149,6 +149,8 @@
             });
     }
 
+    let latestChatId = 0;
+
     // 채팅 로딩
     function loadChatDialogue(chat_room_id){
 
@@ -174,6 +176,8 @@
                 chatDialogueBox.innerHTML = "";
 
                 for(chat of response.data){
+
+                    // latestChatId = response.data.missionChatDto.chat_id;
 
                     if(chat.missionChatDto.user_id == sessionUser){
 

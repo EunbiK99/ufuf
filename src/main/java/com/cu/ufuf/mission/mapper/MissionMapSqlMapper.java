@@ -63,5 +63,7 @@ public interface MissionMapSqlMapper {
     // 미션 포기
     public void updateGiveup(int chat_room_id);
 
+    // 리뷰 작성 했는지 안했는지 확인
+    public int isReviewExist(int chat_room_id);
 
 }
