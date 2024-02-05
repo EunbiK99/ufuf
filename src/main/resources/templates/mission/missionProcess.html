@@ -142,7 +142,6 @@
         polyline.setMap(map);
     }
 
-
     // 현재위치로 이동하는 버튼
     function findMyLocation(){
 
@@ -161,6 +160,7 @@
         });
     }
 
+    // 내 모집중인 미션
     function loadMyRecruitingMission(mission_id){
 
         const myRecruitingMission = document.getElementById("myRecruitingMission");
@@ -204,11 +204,15 @@
                 const limitHour = document.querySelector("#myRecruitingMission .limitHour");
                 const limitMinute = document.querySelector("#myRecruitingMission .limitMinute");
                 const detail = document.getElementById("detail");
-
+                const showAppList = document.querySelector("#myRecruitingMission .showAppList");
 
                 title.innerText = mission.missionInfoDto.title;
                 countApp.innerText = (mission.missionChatRoomList).length;
                 detail.innerText = mission.missionInfoDto.detail;
+
+                showAppList.addEventListener('click', function() {
+                    loadMyMissionApplyerList(mission_id);
+                });
 
                 var limitTime = mission.missionInfoDto.limit_time;
 
@@ -294,7 +298,80 @@
             });
     }
 
-    function loadMyResMissionInProgress(chat_room_id){
+    // 내 모집중인 미션 신청자 리스트 모달에 표시내용
+    function loadMyMissionApplyerList(mission_id){
+
+        const data = {
+            mission_id: mission_id
+        }
+
+        fetch("./loadMyMissionApplyerList", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                
+                const missionAppListModal = document.getElementById("missionAppListModal");
+                const appListBox = document.getElementById("appListBox");
+                appListBox.innerHTML = "";
+
+                const countApp = document.getElementById("countApp");
+                countApp.innerText = response.data.length;
+
+                // 신청자 0명일 때 로직
+
+                for(applyer of response.data){
+
+                    const missionAppListWrapper = document.querySelector("#missionAppListTemplete .missionAppListWrapper").cloneNode(true);
+                    const userProfileImg = missionAppListWrapper.querySelector(".userProfileImg");
+                    const userName = missionAppListWrapper.querySelector(".userName");
+                    const accBtn = missionAppListWrapper.querySelector(".accBtn");
+
+                    accBtn.onclick = (function (applyer) {
+                        return function () {
+                            openRecheckAccPlayerModal(applyer);
+                            closeMissionAppListModal();
+                        };
+                    })(applyer);
+
+                    userProfileImg.setAttribute("src", "/uploadFiles/ufuf/userProfile" + applyer.userInfoDto.profile_img);
+                    userName.innerText = applyer.userInfoDto.name;
+
+                    appListBox.appendChild(missionAppListWrapper);
+                }
+            });
+
+        openMissionAppListModal();
+    }
+
+    function accMissionApplyer(chat_room_id){
+        const data = {
+            chat_room_id: chat_room_id.value
+        }
+        fetch("./accMissionApplyer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const missionAppListWrapper = document.querySelectorAll("#missionAppListTemplete .missionAppListWrapper");
+                const accBtn = missionAppListWrapper.querySelectorAll(".accBtn");
+
+                accBtn.setAttribute("disabled");
+
+                closeRecheckAccPlayerModal();
+            });
+    }
+
+    function loadMyMissionInProgress(chat_room_id){
 
         const missionInProgress = document.getElementById("missionInProgress");
         missionInProgress.classList.remove("d-none");
@@ -314,8 +391,6 @@
             .then(response => {
 
                 let mission = response.data;
-
-                console.log(mission);
 
                 if(mission.courseInfoList.length > 1){
 
@@ -344,8 +419,10 @@
 
                 if(mission.courseInfoList.length == mission.countCompleteCourse){
                     nowProcess.innerText = "미션 진행 완료";
-                }else{
+                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "진행중"){
                     nowProcess.innerText = ((mission.countCompleteCourse) + 1) + "코스 진행중";
+                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status != "진행중"){
+                    nowProcess.innerText = "미션 진행 완료";
                 }
 
                 var countdownStartDate = new Date(mission.missionChatRoomDto.accept_at);
@@ -357,35 +434,32 @@
                     // 현재 시간 구하기
                     var currentDate = new Date();
                     
-                    // 경과한 시간 계산
                     var overtime = currentDate - countdownStartDate;
                     
-                    // 남은 시간 계산
                     remainingTime = limitTimeInMilliseconds - overtime;
                     
-                    // 시간이 다 지났으면 타이머 종료
                     if (remainingTime <= 0) {
+
                         clearInterval(timerId);
-                        countdownElement.innerHTML = '미션종료';
+
                         countdownElement.style.color = "#929292";
                         countdownElement.style.fontSize = "0.9rem";
-                    } else {
-                        // 남은 시간을 분과 초로 변환
-                        var hour = Math.floor(remainingTime / (60 * 60 * 1000));
-                        var minutes = Math.ceil((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
-                        var remainingSeconds = Math.ceil((remainingTime % (60 * 1000)) / 1000);
-        
-                        if(hour < 10){
-                            limitHour.innerText = "0" + hour;
-                        }else{
-                            limitHour.innerText = hour;
+
+                        if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                            countdownElement.innerHTML = '미션실패';
+                            
+                        }else if(mission.courseInfoList.length == mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                            countdownElement.innerHTML = '미션완료';
                         }
 
-                        if(minutes < 10){
-                            limitMinute.innerText = "0" + minutes;
-                        }else{
-                            limitMinute.innerText = minutes;
-                        }
+                    } else {
+
+                        var hours = Math.floor(remainingTime / (60 * 60 * 1000));
+                        var minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
+                        var seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+
+                        limitHour.innerText = (hours < 10) ? "0" + hours : hours;
+                        limitMinute.innerText = (minutes < 10) ? "0" + minutes : minutes;
                     }
                 }, 1000);
 
@@ -412,6 +486,7 @@
 
                     const course = mission.courseInfoList[i];
 
+                    // 미션 현재 진행중&미션수행자&미션진행중
                     if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"){
 
                         const inProgressWrapper = document.querySelector("#progressTemplete .inProgressWrapper").cloneNode(true);
@@ -451,14 +526,14 @@
 
                             successBtn.onclick = function () {
                                 if(distance <= 100){
-                                    openMissionComplModal(locPosition);
+                                    openMissionComplModal();
                                 }else{
                                     alert("코스 목표지점의 100m내 거리에서만 미션 완료인증이 가능합니다.");
                                 }
                             };
 
                         });
-///////////
+
                         (function (currentLat, currentLng) {
                             var geocoder = new kakao.maps.services.Geocoder();
                             geocoder.coord2Address(currentLng, currentLat, function (result, status) {
@@ -501,7 +576,10 @@
     
                         missionCourseListBox.appendChild(inProgressWrapper);
 
-                    }else if((mission.countCompleteCourse <= i && mission.missionChatRoomDto.user_id != sessionUser) || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료") ){
+                    // 내가 등록자이고 미션 수행이 되지 않았을 경우 || 내가 미션 플레이어인데 아직 미션순서가 안왔고, 미션 진행중일 경우
+                    }else if((mission.countCompleteCourse <= i && mission.missionChatRoomDto.user_id != sessionUser) 
+                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"
+                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status === "미션종료")) ){
                         const notInProgressWrapper = document.querySelector("#progressTemplete .notInProgressWrapper").cloneNode(true);
     
                         const courseIndex = notInProgressWrapper.querySelector(".courseIndex");
@@ -509,12 +587,12 @@
                         const courseLocation = notInProgressWrapper.querySelector(".courseLocation");
                         const courseReward = notInProgressWrapper.querySelector(".courseReward");
 
-                        if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id != sessionUser){
+                        if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id != sessionUser && mission.missionInfoDto.status != "미션종료"){
                             courseIndex.style.backgroundColor = "#FF8827";
                             courseIndex.style.boxShadow = "0 0 0 0.15em #ffcf98";
 
                             courseName.classList.add("text-dark-emphasis");
-                            courseLocation.classList.add("text-body-tertiary");
+                            courseLocation.classList.add("text-body-tertiary")
                             courseReward.style.color="#b1b1b1";
 
                             courseName.addEventListener('touchstart', function() {
@@ -576,6 +654,7 @@
     
                         missionCourseListBox.appendChild(notInProgressWrapper);
 
+                        // 미션 완료된 경우
                     }else if(mission.countCompleteCourse > i){
 
                         const completeWrapper = document.querySelector("#progressTemplete .completeWrapper").cloneNode(true);
@@ -644,8 +723,11 @@
 
                 if(mission.progressPercent == 100){
 
-                    if(mission.missionInfoDto.user_id == sessionUser){
+                    if(mission.missionInfoDto.user_id == sessionUser && mission.isReviewExist == 0){
                         const reviewBtn = document.getElementById("reviewBtn");
+                        reviewBtn.addEventListener('click', function() {
+                            openWriteReviewModal();
+                        });
                         reviewBtn.classList.remove("d-none");
                     }else{
                         const viewReviewBtn = document.getElementById("viewReviewBtn");
@@ -718,12 +800,11 @@
                 complete_comment.value = "";
                 complete_img.value = "";
                 closeMissionComplModal();
-                loadMyResMissionInProgress(chat_room_id);
+                loadMyMissionInProgress(chat_room_id);
         });
     }
 
     // 미션완료 인증확인 모달
-    // 미션완료 인증 모달
     function openMissionConfirmModal(complete){
 
         const modal = bootstrap.Modal.getOrCreateInstance("#missionConfirmModal");
@@ -745,6 +826,59 @@
         modal.hide();
 	}
 
+    // 미션 신청자 리스트 모달 열기
+    function openMissionAppListModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#missionAppListModal");
+        modal.show();
+    }
+
+    // 신청자 리스트 모달 닫기
+    function closeMissionAppListModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#missionAppListModal");
+        modal.hide();
+    }
+
+    // 신청자 선정 재확인 모달
+    function openRecheckAccPlayerModal(applyer){
+
+        const modal = bootstrap.Modal.getOrCreateInstance("#recheckAccPlayerModal");
+
+        const recheckAccPlayerModal = document.getElementById("recheckAccPlayerModal");
+        const applyerName = document.querySelector("#recheckAccPlayerModal .applyerName");
+        const applyerAccBtn = document.getElementById("applyerAccBtn");
+
+        applyerName.innerText = applyer.userInfoDto.name;
+        applyerAccBtn.onclick = (function (chat_room_id) {
+            return function () {
+                accMissionApplyer(chat_room_id);
+            };
+        })(applyer.missionChatRoomDto.chat_room_id);
+
+        modal.show();
+    }
+
+    // 신청자 선정 재확인 모달 닫기
+    function closeRecheckAccPlayerModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#recheckAccPlayerModal");
+        modal.hide();
+    }
+
+    // 미션 종료 후 리뷰 작성
+    function openWriteReviewModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#writeReviewModal");
+        modal.show();
+    }
+
+    function closeWriteReviewModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#writeReviewModal");
+        modal.hide();
+    }
+
+
+
+
+
+
     // 미션 포기
     function giveup() {
 
@@ -763,7 +897,7 @@
         })
             .then(response => response.json())
             .then(response => {
-                loadMyResMissionInProgress(chat_room_id);
+                loadMyMissionInProgress(chat_room_id);
             });
     }
 
@@ -791,7 +925,7 @@
         if(mission_id != null){
             loadMyRecruitingMission(mission_id);
         }else{
-            loadMyResMissionInProgress(chat_room_id);
+            loadMyMissionInProgress(chat_room_id);
         }
 
     });
@@ -816,8 +950,8 @@
     }
 
     .form-control:focus {
-      border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
-      box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+      border-color: #d3d3d3; /* 클릭 시 테두리 색상 변경 */
+      box-shadow: 0 0 0 0.1em #e7e7e7; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
     }
 
     body { 
@@ -866,6 +1000,30 @@
         transition: top 0.8s ease;
     }
 
+    #missionConfirmModal{
+        width: 95%;
+        top: 10%;
+        left: 2.5%;
+    }
+
+    #missionAppListModal{
+        width: 95%;
+        top: 15%;
+        left: 2.5%;
+    }
+
+    #recheckAccPlayerModal{
+        width: 95%;
+        top: 30%;
+        left: 2.5%;
+    }
+
+    #writeReviewModal{
+        width: 95%;
+        top: 9%;
+        left: 2.5%;
+    }
+
 
 </style>
 
@@ -895,7 +1053,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-7 px-0 align-self-center border-bottom" style="font-size: 0.8rem; color:#757575; width: fit-content; margin-left: 0.72rem;">
+                                            <div class="col-7 showAppList px-0 align-self-center border-bottom" style="font-size: 0.85rem; color:#757575; width: fit-content; margin-left: 0.72rem;">
                                                 <span class="pe-1 align-middle">미션신청자</span>
                                                 <span class="countApp align-middle"></span>
                                                 <i class="bi bi-chevron-double-right align-self-center" style="font-size: 0.6rem;"></i>
@@ -1231,10 +1389,10 @@
             </div>
             <div class="modal-footer border-0 mb-2 d-grid">
                 <div class="gap-2 d-md-block">
-                    <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionComplModal()">
+                    <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827; font-size: 0.85rem;" onclick="closeMissionComplModal()">
                         취소
                     </button>
-                    <button id="submitMissionComplBtn" class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;">완료 인증</button>
+                    <button id="submitMissionComplBtn" class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827; font-size: 0.85rem;">완료 인증</button>
                 </div>
             </div>
         </div>
@@ -1254,8 +1412,8 @@
                             </div>
                         </div>
                         <div class="row mt-1 px-1">
-                            <div class="col border d-flex justify-content-center mx-2 py-5">
-                                <img class="img-fluid complete_img" style="height: 4.5em;">
+                            <div class="col border d-flex justify-content-center mx-2 py-3">
+                                <img class="img-fluid complete_img" style="height: 7rem;">
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -1264,14 +1422,161 @@
                             </div>
                         </div>
                         <div class="row mt-1">
-                            <div class="col complete_comment" style="font-size: 0.9rem;">
+                            <div class="col complete_comment overflow-y-sccroll" style="font-size: 0.9rem; height: auto; max-height: 5rem;">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer border-0 mb-2 d-grid">
-                <button class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;" onclick="closeMissionConfirmModal()">닫기</button>
+                <button class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827; font-size: 0.85rem;" onclick="closeMissionConfirmModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 미션 신청자 목록 모달 -->
+<div id="missionAppListModal" class="modal mx-auto">
+    <div class="modal-dialog shadow">
+        <div class="modal-content rounded-2">
+            <div class="modal-body px-4 pt-2">
+                <div class="row mt-2">
+                    <div class="col mt-1">
+                        <div class="row border-bottom pb-2">
+                            <div class="row">
+                                <div class="col fw-semibold text-secondary">
+                                    미션 신청자 목록
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col" style="font-size: 0.8rem; color: #a0a0a0;">
+                                    총 <span id="countApp"></span>명의 미션 신청자가 있습니다.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div id="appListBox" class="col overflow-y-sccroll border-bottom" style="height: 10rem;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 mb-2 d-grid pt-1">
+                <button class="btn px-3 rounded-1 py-1" type="button" style="color: #FF8827; border: 0.1rem solid #FF8827; font-size: 0.85rem;" onclick="closeMissionAppListModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="missionAppListTemplete" class="d-none">
+    <div class="missionAppListWrapper row py-2 border-bottom">
+        <div class="col-2 align-self-center">
+            <img class="userProfileImg img-fluid rounded-circle me-2 d-flex align-self-center" 
+                style="height: 1.4em; width: 1.4em; object-fit: cover; border-radius: 50%;">
+        </div>
+        <div class="userName col text-start align-self-center ps-1" style="color: #818181; font-weight: 500;">
+
+        </div>
+        <div class="col-4 d-flex align-self-center justify-content-end">
+            <button class="accBtn text-white px-2 rounded-1 py-1 justify-content-end border-0" style="background-color: #FF8827; font-size: 0.85rem;">+수락하기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 미션 신청자 수락시 재확인 모달 -->
+<div id="recheckAccPlayerModal" class="modal mx-auto">
+    <div class="modal-dialog" style="box-shadow: 0 0 3rem 3rem 5rem #666666;">
+        <div class="modal-content rounded-2">
+            <div class="modal-body pb-0 px-3">
+                <div class="row pt-3">
+                    <div class="col text-center" style="font-size: 0.9rem;">
+                        <span class="applyerName"></span><span>님을 수락하시면 다른 신청자를 더이상 받을 수 없습니다.
+                        미션 신청을 수락하시겠습니까?</span>
+                    </div>
+                </div>
+                <div class="row mt-4 mb-4">
+                    <div class="col d-grid text-center mb-1">
+                        <div class="gap-2 d-md-block">
+                            <button class="btn px-4 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeRecheckAccPlayerModal()">
+                                취소
+                            </button>
+                            <button id="applyerAccBtn" class="btn text-white px-4 rounded-1 py-1" type="button" style="background-color: #FF8827;">수락</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 미션 리뷰 작성 모달 -->
+<div id="writeReviewModal" class="modal mx-auto">
+    <div class="modal-dialog shadow">
+        <div class="modal-content rounded-2">
+            <div class="modal-body px-4 pt-2">
+                <div class="row mt-3">
+                    <div class="col">
+
+                        <div class="row border-bottom pb-2">
+                            <div class="col fw-semibold text-body" style="font-size: 1.03rem;">
+                                미션 후기 작성
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col fw-semibold text-secondary" style="font-size: 0.95rem;">
+                                미션 성공 여부
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col d-grid justify-content-center">
+                                <div class="d-flex gap-0 d-md-block fw-semibold">
+                                    <input type="radio" class="btn-check" name="options-base" id="successBtn" autocomplete="off">
+                                    <label class="btn rounded-1 border" for="successBtn" style="width: 8.82rem;">성공</label>
+                                    <input type="radio" class="btn-check" name="options-base" id="failBtn" autocomplete="off">
+                                    <label class="btn rounded-1 border" for="failBtn" style="width: 8.82rem;">실패</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col fw-semibold text-secondary" style="font-size: 0.95rem;">
+                                별점
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col text-center fs-1" style="color:#ffab67;">
+                                <i class="bi bi-star-fill px-2"></i>
+                                <i class="bi bi-star-fill px-2"></i>
+                                <i class="bi bi-star-fill px-2"></i>
+                                <i class="bi bi-star-fill px-2"></i>
+                                <i class="bi bi-star px-2"></i>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col fw-semibold text-secondary" style="font-size: 0.95rem;">
+                                후기작성
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="col">
+                                    <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 mb-2 d-grid">
+                <div class="gap-2 d-md-block">
+                    <button class="btn px-3 rounded-1 py-1" type="button" style="color: #FF8827; border: 0.1rem solid #FF8827;" onclick="closeWriteReviewModal()">닫기</button>
+                    <button class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;">작성완료</button>
+                </div>
             </div>
         </div>
     </div>

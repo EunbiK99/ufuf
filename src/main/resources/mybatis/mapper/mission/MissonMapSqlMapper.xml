@@ -123,7 +123,7 @@
 <select id="selectMyPlayMission" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
     SELECT *
     FROM mission_chat_room
-    WHERE user_id = 5 AND accept_at IS NOT NULL
+    WHERE user_id = #{user_id} AND accept_at IS NOT NULL
     order by accept_at desc
 </select>
 
@@ -145,6 +145,11 @@
     select COUNT(*) from mission_chat_room mcr 
     inner join mission_course mc on mcr.mission_id = mc.mission_id
     where mcr.chat_room_id = #{chat_room_id}
+</select>
+
+<select id="isReviewExist" resultType="int">
+    select COUNT(*) from mission_review
+    where chat_room_id = #{chat_room_id}
 </select>
 
 

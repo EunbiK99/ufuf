@@ -86,11 +86,6 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-
-
-
-    
-
     @PostMapping("insertKakaoPayResInfo")
     public RestResponseDto insertKakaoPayResInfo(@RequestBody KakaoPaymentResDto params){
 
@@ -302,8 +297,6 @@ public class MissionMapRestController {
 
         int missionId = parseJson.toInt("mission_id", mission_id);
 
-
-    
         restResponseDto.setData(missionMapService.getMyResMissionInfoInRecruiting(missionId));
         restResponseDto.setResult("Success");
         
@@ -317,7 +310,7 @@ public class MissionMapRestController {
 
         int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
     
-        restResponseDto.setData(missionMapService.loadMyResMissionInProgress(chatRoomId));
+        restResponseDto.setData(missionMapService.loadMyMissionInProgress(chatRoomId));
         restResponseDto.setResult("Success");
         
         return restResponseDto;
@@ -388,6 +381,33 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @PostMapping("loadMyMissionApplyerList")
+    public RestResponseDto loadMyMissionApplyerList(@RequestBody String mission_id){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int missionId = parseJson.toInt("mission_id", mission_id);
+        
+        restResponseDto.setData(missionMapService.getMyMissionApplyerList(missionId));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("accMissionApplyer")
+    public RestResponseDto accMissionApplyer(@RequestBody String chat_room_id, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+
+        missionMapService.accMissionApplyer(chatRoomId, sessionUserInfo.getUser_id());
+
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 
