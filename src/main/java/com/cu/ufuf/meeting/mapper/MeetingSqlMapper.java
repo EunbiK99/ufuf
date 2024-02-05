@@ -195,10 +195,28 @@ public interface MeetingSqlMapper {
     public void insertChatRoomUserDto(MeetingChatRoomUserDto meetingChatRoomUserDto);
 
     // * 프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트
-    public MeetingChatRoomDto selectChatRoomDtoByProfileNickname(String profileNickname);
+    public List<MeetingChatRoomDto> selectChatRoomDtoByProfileNickname(String profileNickname);
 
     // * 채팅방PK기준 채팅방 메세지 Dto 셀렉트
     public List<MeetingChatMessageDto> selectChatMessageDtoByChatRoomId(int chatRoomId);
+
+    // * 채팅방PK, 프로핑PK기준 채팅방 존재여부 판별
+    public int countExistChatRoomByChatRoomIdAndProfileId(int chatRoomId, int profileId);
+
+    // * 채팅방PK 기준 채팅참여유저Dto 셀렉트
+    public List<MeetingChatRoomUserDto> selectChatRoomUserDtoByChatRoomId(int chatRoomId);
+
+    // * 프로핑PK기준 채팅참여유저Dto 셀렉트
+    public List<MeetingChatRoomUserDto> selectChatRoomUserDtoByProfileId(int profileId);
+
+    // * 채팅방PK기준 채팅방Dto 셀렉트
+    public List<MeetingChatRoomDto> selectChatRoomDtoByChatRoomId(int chatRoomId);
+
+    // * 프로필닉네임기준 프로필Dto 셀렉트
+    public MeetingProfileDto selectProfileDtoByProfileNickname(String profileNickname);
+
+    // * 프로필PK, 채팅방PK기준 채팅유저인지 확인(카운트)
+    public int countChatRoomUserByChatRoomIdAndProfileId(int chatRoomId, int profileId);
 
 
 

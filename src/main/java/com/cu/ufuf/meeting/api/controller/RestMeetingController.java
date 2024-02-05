@@ -537,6 +537,28 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @GetMapping("checkExistChatRoom")
+    public MeetingRestResponseDto checkExistChatRoom(int profileId, int targetProfileId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.checkExistChatRoom(profileId, targetProfileId));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getUserChatRoomData")
+    public MeetingRestResponseDto getUserChatRoomData(int profileId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getUserChatData(profileId));
+        return meetingRestResponseDto;
+    }
+
+
+
 
 
 

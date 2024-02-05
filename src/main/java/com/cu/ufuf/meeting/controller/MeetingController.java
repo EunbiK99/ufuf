@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.MeetingChatMessageDto;
 import com.cu.ufuf.dto.MeetingGroupMemberDto;
 import com.cu.ufuf.dto.MeetingKakaoReadyResponseDto;
 import com.cu.ufuf.dto.MeetingProfileDto;
@@ -214,8 +215,14 @@ public class MeetingController {
         return "./meeting/chatListPage";
     }
 
+    @RequestMapping("chatRoomPage")
+    public String chatRoomPage(HttpSession session, Model model, int chatRoomId){
 
-    
-    
+        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+        int profileId = meetingProfileDto.getProfileid();
+        List<MeetingChatMessageDto> chatMessageList = meetingService.getChatRoomData(chatRoomId, profileId);
+        model.addAttribute("chatMessageList", chatMessageList);
 
+        return "./meeting/chatRoomPage";    
+    }
 }

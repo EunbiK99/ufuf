@@ -113,35 +113,75 @@ console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
 console.log('groupMemberDtoList: ', groupMemberDtoList);
 
+function checkExistChatRoom(profileId, targetProfileId){
+    
+    return fetch("./api/checkExistChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
+    .then(response => response.json())
+    .then(response => {
+        const checkValue = response.data;        
+        return checkValue;
+    });
+
+}
+
 function createChatRoom(target){
     const profileId = meetingProfileInfo.profileid;
     const targetProfileId = target.getAttribute("profileId");
     console.log('profileId: ', profileId);
     console.log('targetProfileId: ', targetProfileId);
     
-    const userSignalBothWrapperRow = target.closest("#userSignalBothWrapperRow");
-    const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
-    const targetProfileNickname = userSignalBothNickname.innerText;
-    console.log('targetProfileNickname: ', targetProfileNickname);
-
-    fetch("./api/createChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
-    .then(response => response.json())
-    .then(response => {
-        const result = response.result;
-        if(result === "success"){            
-            const confirmValue = confirm(`${targetProfileNickname} 과의 채팅이 생성되었습니다. 이동하시겠습니까?`);
-            if(confirmValue){
-                const chatRoomData = response.data;
-                console.log('chatRoomData: ', chatRoomData);
-                return;
-
+    checkExistChatRoom(profileId, targetProfileId)
+    .then(checkResult => {
+        console.table('checkResult: ', checkResult);        
+        if(Object.keys(checkResult).length > 0){
+            const confirmValue = confirm("이미 채팅방이 존재합니다. 이동하시겠습니까?");
+            if(confirmValue){                                
+                window.location.href=`./chatRoomPage?chatRoomId=${checkResult.meetingChatRoomDto.chatRoomId}`;
             }
             else{
-            alert("오류 발생");
                 return;
-            }
+            }                    
         }
+        else{
+            const userSignalBothWrapperRow = target.closest("#userSignalBothWrapperRow");
+            const userSignalBothNickname = userSignalBothWrapperRow.querySelector("#userSignalBothNickname");
+            const targetProfileNickname = userSignalBothNickname.innerText;
+            console.log('targetProfileNickname: ', targetProfileNickname);
+
+            fetch("./api/createChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
+            .then(response => response.json())
+            .then(response => {                
+                const confirmValue = confirm(`${targetProfileNickname} 과의 채팅이 생성되었습니다. 이동하시겠습니까?`);
+                if(confirmValue){
+                    const chatRoomData = response.data;
+                    console.log('chatRoomData: ', chatRoomData);
+
+                    let roomNo = 0;
+                    for(e of chatRoomData){
+                        console.log('e: ', e);
+
+                        for(i of e.meetingChatRoomUserDtoList){
+                            console.log('i: ', i);
+                            if(i.profileId === profileId){
+                                roomNo = i.chatRoomId;
+                                console.log('roomNo: ', roomNo);
+                            }                        
+                        }
+                    }
+                    window.location.href=`./chatRoomPage?chatRoomId=${roomNo}`;
+                }
+                else{
+                    return;
+                }                
+            });
+        }
+
     });
+    
+    return;
+
+
+    
 }
 
 function mySignalBothModalCSR(){

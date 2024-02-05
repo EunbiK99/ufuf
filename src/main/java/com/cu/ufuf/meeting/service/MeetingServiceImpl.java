@@ -313,15 +313,15 @@ public class MeetingServiceImpl {
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
 		
-        // 집 IP
-        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        // // 집 IP
+        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // // 학원 IP
-        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // 학원 IP
+        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -589,35 +589,129 @@ public class MeetingServiceImpl {
     }
 
     // * 대상프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트(추후에 채팅정보까지 같이 묶게될듯?)
-    public Map<String, Object> getChatRoomDtoByProfileNickname(int targetProfileId){
+    public List<Map<String, Object>> getChatRoomDtoByProfileNickname(int targetProfileId){
         
-        Map<String, Object> chatRoomData = new HashMap<>();
-        
+        List<Map<String, Object>> chatRoomData = new ArrayList<>();
+
         MeetingProfileDto targetProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(targetProfileId);
         
         String targetProfileNickname = targetProfileDto.getProfileNickname();
         
-        MeetingChatRoomDto meetingChatRoomDto = meetingSqlMapper.selectChatRoomDtoByProfileNickname(targetProfileNickname);
-        
-        int chatRoomId = meetingChatRoomDto.getChatRoomId();
+        List<MeetingChatRoomDto> meetingChatRoomDtoList = meetingSqlMapper.selectChatRoomDtoByProfileNickname(targetProfileNickname);
+        for(MeetingChatRoomDto meetingChatRoomDto : meetingChatRoomDtoList){
+            
+            Map<String, Object> map = new HashMap<>();
+            
+            int chatRoomId = meetingChatRoomDto.getChatRoomId();    
+            
+            List<MeetingChatMessageDto> meetingChatMessageDtoList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            List<MeetingChatRoomUserDto> meetingChatRoomUserDtoList = meetingSqlMapper.selectChatRoomUserDtoByChatRoomId(chatRoomId);
 
-        List<MeetingChatMessageDto> meetingChatMessageDtoList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
-
-
-        chatRoomData.put("meetingChatRoomDto", meetingChatRoomDto);
-        chatRoomData.put("targetProfileDto", targetProfileDto);
-        chatRoomData.put("meetingChatMessageDtoList", meetingChatMessageDtoList);
+            map.put("meetingChatRoomDto", meetingChatRoomDto);
+            map.put("targetProfileDto", targetProfileDto);
+            map.put("meetingChatMessageDtoList", meetingChatMessageDtoList);
+            map.put("meetingChatRoomUserDtoList", meetingChatRoomUserDtoList);
+            
+            chatRoomData.add(map);
+        }
 
         return chatRoomData;
+    }
+
+    // * 프로필PK, 타겟프로필PK기준 채팅방 존재유무 확인
+    public Map<String, Object> checkExistChatRoom(int profileId, int targetProfileId){
+        MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(targetProfileId);
+        String targetNickname = meetingProfileDto.getProfileNickname();
+        
+        List<MeetingChatRoomDto> list = meetingSqlMapper.selectChatRoomDtoByProfileNickname(targetNickname);        
+        
+        Map<String, Object> map = new HashMap<>();
+        for(MeetingChatRoomDto meetingChatRoomDto : list){
+            int chatRoomId = meetingChatRoomDto.getChatRoomId();
+            
+            int resultValue = meetingSqlMapper.countExistChatRoomByChatRoomIdAndProfileId(chatRoomId, profileId);
+            if(resultValue != 0){
+                map.put("meetingChatRoomDto", meetingChatRoomDto);                
+            }
+        }
+        return map;
+    }
+
+    // * 프로필PK기준 해당프로필유저가 참여중인 채팅방데이터 가져오기
+    public List<Map<String, Object>> getUserChatData(int profileId){
+
+        List<Map<String, Object>> userChatData = new ArrayList<>();
+        
+        List<MeetingChatRoomUserDto> chatRoomUserDtoList = meetingSqlMapper.selectChatRoomUserDtoByProfileId(profileId);
+        
+        for(MeetingChatRoomUserDto meetingChatRoomUserDto : chatRoomUserDtoList){
+            
+            Map<String, Object> map = new HashMap<>();
+            
+            int chatRoomId = meetingChatRoomUserDto.getChatRoomId();
+            List<MeetingChatRoomDto> chatRoomList = meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+            for(MeetingChatRoomDto meetingChatRoomDto : chatRoomList){                                
+                String targetProfileNickname = meetingChatRoomDto.getChatRoomTitle();
+                MeetingProfileDto targetProfileDto = meetingSqlMapper.selectProfileDtoByProfileNickname(targetProfileNickname);
+                map.put("targetProfileDto", targetProfileDto);
+                map.put("chatRoomDto", meetingChatRoomDto);
+            }
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            
+            map.put("chatMessageList", chatMessageList);
+            map.put("chatRoomUserDto", meetingChatRoomUserDto);
+
+            userChatData.add(map);
+        }        
+        return userChatData;
+    }
+
+    // * 프로필PK, 채팅방PK기준 채팅방유저인지 확인
+    public List<MeetingChatMessageDto> getChatRoomData(int chatRoomId, int profileId){
+        if(checkIsChatUser(chatRoomId, profileId) == "Y"){
+            System.out.println("profileId : " + profileId + " 유저는 참여중!");
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            return chatMessageList;
+        }
+        else{
+            System.out.println("profileId : " + profileId + " 유저는 미참여! 인서트함!");
+            MeetingChatRoomUserDto meetingChatRoomUserDto = new MeetingChatRoomUserDto();
+            meetingChatRoomUserDto.setChatRoomId(chatRoomId);
+            meetingChatRoomUserDto.setProfileId(profileId);
+            meetingSqlMapper.insertChatRoomUserDto(meetingChatRoomUserDto);
+
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            return chatMessageList;
+        }
     }
 
 
 
 
 
-
-
-
-
+    private String checkIsChatUser(int chatRoomId, int profileId){
+        int resultValue = meetingSqlMapper.countChatRoomUserByChatRoomIdAndProfileId(chatRoomId, profileId);
+        if(resultValue > 0){
+            return "Y";            
+        }
+        else{
+            return "N";
+        }
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
