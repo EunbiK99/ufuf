@@ -866,6 +866,7 @@
     // 미션 종료 후 리뷰 작성
     function openWriteReviewModal(){
         const modal = bootstrap.Modal.getOrCreateInstance("#writeReviewModal");
+        isSuccess();
         modal.show();
     }
 
@@ -901,18 +902,106 @@
             });
     }
 
-    // 별점
-    function rate(event) {
-        const ratingContainer = document.getElementById('rating');
-        const selectedRatingElement = document.getElementById('selectedRating');
+    function star1(){
 
-        if (event.target.tagName === 'SPAN') {
-            const selectedRating = event.target.getAttribute('data-value');
-            selectedRatingElement.textContent = `선택한 별점: ${selectedRating}`;
-            
-            // 여기에서 선택한 별점(`selectedRating`)을 활용하면 됩니다.
-            // 예를 들어, 서버로 전송하거나 다른 동작을 수행할 수 있습니다.
+        const rating = document.getElementById("rating");
+        const star1 = rating.querySelector("#star1");
+
+        star1.classList.replace("bi-star", "bi-star-fill");
+
+        for(let i = 2; i <= 5; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star-fill", "bi-star");
         }
+
+        rating.value = "1";
+    }
+
+    function star2(){
+
+        const rating = document.getElementById("rating");
+
+        for(let i = 1; i <= 2; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star", "bi-star-fill");
+        }
+
+        for(let i = 3; i <= 5; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star-fill", "bi-star");
+        }
+
+        rating.value = "2";
+    }
+
+    function star3(){
+
+        const rating = document.getElementById("rating");
+
+        for(let i = 1; i <= 3; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star", "bi-star-fill");
+        }
+
+        for(let i = 4; i <= 5; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star-fill", "bi-star");
+        }
+
+        rating.value = "3";
+    }
+
+    function star4(){
+
+        const rating = document.getElementById("rating");
+
+        for(let i = 1; i <= 4; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star", "bi-star-fill");
+        }
+
+        rating.querySelector(`#star5`).classList.replace("bi-star-fill", "bi-star");
+
+        rating.value = "4";
+    }
+
+    function star5(){
+
+        const rating = document.getElementById("rating");
+
+        for(let i = 1; i <= 5; i++){
+            rating.querySelector(`#star${i}`).classList.replace("bi-star", "bi-star-fill");
+        }
+
+        rating.value = "5";
+    }
+
+    // 미션 실패
+    function isSuccess(){
+
+        const writeReviewModal = document.getElementById("writeReviewModal");
+        const successBtn = writeReviewModal.querySelector("#successBtn");
+        const failBtn = writeReviewModal.querySelector("#failBtn");
+        const success = writeReviewModal.querySelector("#success");
+        const fail = writeReviewModal.querySelector("#fail");
+
+        successBtn.addEventListener("click", () => {
+
+            success.setAttribute("checked");
+
+            successBtn.classList.remove("border");
+            successBtn.style.border = "0.1rem soild #FF8827";
+            successBtn.style.color = "#FF8827";
+
+            failBtn.style.border = ""; 
+            failBtn.style.color = ""; 
+
+            if(fail.hasAttribute("checked")){
+                fail.removeAttribute("checked");
+            }
+        });
+
+        failBtn.addEventListener("click", () => {
+            fail.setAttribute("checked");
+            if(success.hasAttribute("checked")){
+                success.removeAttribute("checked");
+            }
+        });
+
     }
 
 
@@ -945,6 +1034,8 @@
     });
 
 </script>
+
+    
 
 <style>
 
@@ -1545,13 +1636,11 @@
                             </div>
                         </div>
                         <div class="row mt-2">
-                            <div class="col d-grid justify-content-center">
-                                <div class="d-flex gap-0 d-md-block fw-semibold">
-                                    <input type="radio" class="btn-check" name="options-base" id="success" autocomplete="off">
-                                    <label class="btn rounded-1 border" for="success" style="width: 8.82rem;">성공</label>
-                                    <input type="radio" class="btn-check" name="options-base" id="fail" autocomplete="off">
-                                    <label class="btn rounded-1 border" for="fail" style="width: 8.82rem;">실패</label>
-                                </div>
+                            <div class="col d-flex justify-content-center"> 
+                                <input type="radio" class="btn-check" name="options-base" id="success" autocomplete="off">성공
+                                <label class="btn rounded-1 rounded-end-0 border" for="success" id="successBtn" style="width: 50%;">성공</label>
+                                <input type="radio" class="btn-check" name="options-base" id="fail" autocomplete="off">
+                                <label class="btn rounded-1 rounded-start-0 border" for="fail" id="failBtn" style="width: 50%;">실패</label>
                             </div>
                         </div>
 
@@ -1562,12 +1651,12 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col text-center fs-1" style="color:#ffab67;">
-                                <div id="rating" onclick="rate(event)">
-                                    <i class="bi bi-star px-2" data-value="1"></i>
-                                    <i class="bi bi-star px-2" data-value="2"></i>
-                                    <i class="bi bi-star px-2" data-value="3"></i>
-                                    <i class="bi bi-star px-2" data-value="4"></i>
-                                    <i class="bi bi-star px-2" data-value="5"></i>
+                                <div id="rating">
+                                    <i id="star1" class="bi bi-star px-2" onclick="star1()"></i>
+                                    <i id="star2" class="bi bi-star px-2" onclick="star2()"></i>
+                                    <i id="star3" class="bi bi-star px-2" onclick="star3()"></i>
+                                    <i id="star4" class="bi bi-star px-2" onclick="star4()"></i>
+                                    <i id="star5" class="bi bi-star px-2" onclick="star5()"></i>
                                 </div>
                             </div>
                         </div>
@@ -1579,7 +1668,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em;"></textarea>
+                                <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em; background-color: #f7f7f7"></textarea>
                             </div>
                         </div>
                         
