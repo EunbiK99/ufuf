@@ -14,7 +14,9 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingBothLikeDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
 import com.cu.ufuf.dto.MeetingChatRoomDto;
+import com.cu.ufuf.dto.MeetingChatRoomUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -311,15 +313,15 @@ public class MeetingServiceImpl {
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
 		
-        // // 집 IP
-        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        // 집 IP
+        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // 학원 IP
-        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -578,18 +580,175 @@ public class MeetingServiceImpl {
         meetingChatRoomDto.setChatRoomTitle(targetProfileNickname);
 
         meetingSqlMapper.insertChatRoomDto(meetingChatRoomDto);
+
+        MeetingChatRoomUserDto sessionUserChatRoomUserDto = new MeetingChatRoomUserDto();
+        sessionUserChatRoomUserDto.setChatRoomId(chatRoomPk);
+        sessionUserChatRoomUserDto.setProfileId(profileId);
+        meetingSqlMapper.insertChatRoomUserDto(sessionUserChatRoomUserDto);
+
+        MeetingChatRoomUserDto targetUserChatRoomUserDto = new MeetingChatRoomUserDto();
+        targetUserChatRoomUserDto.setChatRoomId(chatRoomPk);
+        targetUserChatRoomUserDto.setProfileId(targetProfileId);
+        meetingSqlMapper.insertChatRoomUserDto(targetUserChatRoomUserDto);
+    }
+
+    // * 프로필PK, 타겟프로필PK기준 채팅방 존재유무 확인
+    public Map<String, Object> checkExistChatRoom(int profileId, int targetProfileId){
         
+        Map<String, Object> map = new HashMap<>();
+
+        List<MeetingChatRoomUserDto> sessionUserChatRoomUserDtolist = meetingSqlMapper.selectChatRoomUserDtoByProfileId(profileId);
+        
+        for(MeetingChatRoomUserDto sessionUserChatRoomUserDto : sessionUserChatRoomUserDtolist){
+            
+            int chatRoomId = sessionUserChatRoomUserDto.getChatRoomId();
+            
+            List<MeetingChatRoomUserDto> memberChatRoomUserDtoList = meetingSqlMapper.selectChatRoomUserDtoByChatRoomId(chatRoomId);
+            
+            for(MeetingChatRoomUserDto memberChatRoomUserDto : memberChatRoomUserDtoList){
+                if(memberChatRoomUserDto.getProfileId() == targetProfileId){
+                    int targetChatRoomId = memberChatRoomUserDto.getChatRoomId();
+                    MeetingChatRoomDto targetChatRoomDto = meetingSqlMapper.selectChatRoomDtoByChatRoomId(targetChatRoomId);
+
+                    map.put("targetChatRoomDto", targetChatRoomDto);
+                }
+            }
+        }
+        return map;
     }
 
+    // * 프로필PK기준 해당프로필유저가 참여중인 채팅방데이터 가져오기
+    public List<Map<String, Object>> getUserChatData(int profileId){
+
+        List<Map<String, Object>> userChatData = new ArrayList<>();
+        
+        List<MeetingChatRoomUserDto> sessionUserChatRoomUserDolList = meetingSqlMapper.selectChatRoomUserDtoByProfileId(profileId);
+        
+        for(MeetingChatRoomUserDto sessionUserChatRoomUserDto : sessionUserChatRoomUserDolList){
+            
+            Map<String, Object> map = new HashMap<>();
+            
+            int chatRoomId = sessionUserChatRoomUserDto.getChatRoomId();
+            MeetingChatRoomDto chatRoomDto = meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+            List<MeetingChatRoomUserDto> chatRoomUserDtoList = meetingSqlMapper.selectChatRoomUserDtoByChatRoomId(chatRoomId);
+            for(MeetingChatRoomUserDto chatRoomMemberDto : chatRoomUserDtoList){
+                int chatRoomMemberProfileId = chatRoomMemberDto.getProfileId();
+                if(chatRoomMemberProfileId != profileId){
+                    MeetingProfileDto targetProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(chatRoomMemberProfileId);                    
+                    map.put("targetProfileDto", targetProfileDto);
+                    map.put("targetChatRoomUserDto", chatRoomMemberDto);
+                }
+            }
+            map.put("chatRoomDto", chatRoomDto);
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            map.put("chatMessageList", chatMessageList);
+            
+            userChatData.add(map);
+        }
+                
+        return userChatData;
+    }
+
+    
+    public Map<String, Object> getChatRoomData(int chatRoomId, int profileId){
+        if(checkIsChatUser(chatRoomId, profileId) == "Y"){
+            
+            Map<String, Object> map = new HashMap<>();
+            
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+
+            Map<String, Object> chatUserProfileMap = getChatUserProfileList(chatRoomId, profileId);
+
+            MeetingChatRoomDto meetingChatRoomDto = meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+
+            MeetingChatRoomUserDto sessionUserChatRoomUserDto = meetingSqlMapper.selectChatRoomUserDtoByProfileIdAndChatRoomId(profileId, chatRoomId);
+            
+            map.put("chatMessageList", chatMessageList);
+            map.put("chatUserProfileMap", chatUserProfileMap);
+            map.put("chatRoomDto", meetingChatRoomDto);
+            map.put("chatRoomUserDto", sessionUserChatRoomUserDto);
+
+            return map;
+        }
+        else{
+            // 현재 로직에서 해당 코드에 걸리는 경우가 있는지 생각해봐야함...            
+            MeetingChatRoomUserDto meetingChatRoomUserDto = new MeetingChatRoomUserDto();
+            meetingChatRoomUserDto.setChatRoomId(chatRoomId);
+            meetingChatRoomUserDto.setProfileId(profileId);
+            meetingSqlMapper.insertChatRoomUserDto(meetingChatRoomUserDto);
+
+            Map<String, Object> map = new HashMap<>();            
+
+            List<MeetingChatMessageDto> chatMessageList = meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+            Map<String, Object> chatUserProfileMap = getChatUserProfileList(chatRoomId, profileId);
+            MeetingChatRoomDto meetingChatRoomDto = meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+            MeetingChatRoomUserDto sessionUserChatRoomUserDto = meetingSqlMapper.selectChatRoomUserDtoByProfileIdAndChatRoomId(profileId, chatRoomId);
+
+            map.put("chatMessageList", chatMessageList);
+            map.put("chatUserProfileMap", chatUserProfileMap);
+            map.put("chatRoomDto", meetingChatRoomDto);
+            map.put("chatRoomUserDto", sessionUserChatRoomUserDto);
+            return map;
+        }
+    }
+
+    // * 채팅방PK기준 채팅메세지 리스트 가져오기
+    public List<MeetingChatMessageDto> getChatMessageList(int chatRoomId){
+        return meetingSqlMapper.selectChatMessageDtoByChatRoomId(chatRoomId);
+    }
+
+    // * 채팅메세지 입력(등록)
+    public void registerChatMessage(MeetingChatMessageDto meetingChatMessageDto){
+        meetingSqlMapper.insertChatMessageDto(meetingChatMessageDto);
     }
 
 
 
 
+    // * 프로필PK, 채팅방PK기준 채팅방유저인지 확인
+    private String checkIsChatUser(int chatRoomId, int profileId){
+        int resultValue = meetingSqlMapper.countChatRoomUserByChatRoomIdAndProfileId(chatRoomId, profileId);
+        if(resultValue > 0){
+            return "Y";            
+        }
+        else{
+            return "N";
+        }
+    }
 
+    // * 채팅방PK기준 채팅참여유저Dto, 채팅프로필Dto 매핑
+    private Map<String, Object> getChatUserProfileList(int chatRoomId, int profileId){
 
-
-
-
+        List<MeetingChatRoomUserDto> chatRoomUserDtoList = meetingSqlMapper.selectChatRoomUserDtoByChatRoomId(chatRoomId);
+        
+        Map<String, Object> map = new HashMap<>();
+        for(MeetingChatRoomUserDto meetingChatRoomUserDto : chatRoomUserDtoList){
+            int chatRoomUserProfileId = meetingChatRoomUserDto.getProfileId();
+            if(chatRoomUserProfileId == profileId){
+                MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(chatRoomUserProfileId);
+                map.put("sessionUserChatRoomUserDto", meetingProfileDto);
+            }
+            else{
+                MeetingProfileDto meetingProfileDto = meetingSqlMapper.selectMeetingProfileByProfileId(chatRoomUserProfileId);
+                map.put("targetUserChatRoomUserDto", meetingProfileDto);
+            }            
+        }        
+        return map;
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

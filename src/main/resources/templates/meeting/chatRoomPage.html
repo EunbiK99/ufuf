@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>채팅방</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <style>
+    *{
+        /* font-family: 'Dongle', sans-serif; */
+        /* font-family: 'Gowun Dodum', sans-serif; */
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;        
+    }
+
+    * .titleWord{
+        font-family: 'Carattere', cursive;
+        /* font-family: 'Italianno', cursive; */
+        /* font-family: 'Square Peg', cursive; */
+        /* font-family: 'Tangerine', cursive; */
+    }
+
+    .userChatImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 40%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+    </style>
+</head>
+<script th:inline="javascript">
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
+let sessionUserProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
+let chatRoomData = /*[[${chatRoomData}]]*/
+
+console.log('sessionUserProfileInfo: ', sessionUserProfileInfo);
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('chatRoomData: ', chatRoomData);
+
+function registerChatMessage(textValue){
+    console.log('textValue: ', textValue);        
+
+    const chatMessageDto = {
+        chatRoomId : chatRoomData.chatRoomDto.chatRoomId,
+        chatRoomUserId : chatRoomData.chatRoomUserDto.chatRoomUserId,
+        chatComment : textValue        
+    };
+    console.log('chatMessageDto: ', chatMessageDto);
+
+    fetch("./api/registerChatMessage", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(chatMessageDto)
+    })
+    .then(response => response.json())
+    .then(response => {        
+        chatMessageCSR();
+    });
+}
+
+function getChatMessageEnter(event){
+    if(event.keyCode === 13){
+        const inputChatMessage = document.getElementById("chatMessageInput");
+        const inputChatMessageValue = inputChatMessage.value;
+        console.log('inputChatMessageValue: ', inputChatMessageValue);
+        registerChatMessage(inputChatMessageValue);
+        inputChatMessage.value = "";
+    }
+}
+
+function getChatMessage(event){
+    const inputChatMessage = document.getElementById("chatMessageInput");
+    const inputChatMessageValue = inputChatMessage.value;
+    console.log('inputChatMessageValue: ', inputChatMessageValue);
+    registerChatMessage(inputChatMessageValue);
+    inputChatMessage.value = "";
+
+    
+
+}
+
+function getChatMessageData(chatRoomId){
+    return fetch("./api/getChatMessageData?chatRoomId=" + chatRoomId)
+    .then(response => response.json())
+    .then(response => {
+        const chatMessageData = response.data;        
+        return chatMessageData;
+    });
+}
+
+function chatMessageCSR(){
+    const chatRoomId = chatRoomData.chatRoomDto.chatRoomId;
+    getChatMessageData(chatRoomId)
+    .then(chatMessageData => {
+        console.log('chatMessageData: ', chatMessageData);
+        const chatMessageWrapperCol = document.getElementById("chatMessageWrapperCol");
+        chatMessageWrapperCol.innerHTML = "";
+        if(chatMessageData.length > 0){
+            for(e of chatMessageData){
+                if(e.chatRoomUserId === chatRoomData.chatRoomUserDto.chatRoomUserId){
+                    const userChatMessageRow = document.querySelector("#templete #userChatMessageRow").cloneNode(true);
+
+                    const userChatMessageSenderImage = userChatMessageRow.querySelector("#userChatMessageSenderImage");
+                    userChatMessageSenderImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${sessionUserProfileInfo.profileImg}`);
+
+                    const userChatMessageSenderNickname = userChatMessageRow.querySelector("#userChatMessageSenderNickname");
+                    userChatMessageSenderNickname.innerText = sessionUserProfileInfo.profileNickname;
+
+                    const userChatMessageText = userChatMessageRow.querySelector("#userChatMessageText");
+                    userChatMessageText.innerText = e.chatComment;
+
+                    chatMessageWrapperCol.appendChild(userChatMessageRow);
+                }
+                else{
+                    const targetChatMessageRow = document.querySelector("#templete #targetChatMessageRow").cloneNode(true);
+
+                    const targetChatMessageSenderImage = targetChatMessageRow.querySelector("#targetChatMessageSenderImage");
+                    targetChatMessageSenderImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${chatRoomData.chatUserProfileMap.targetUserChatRoomUserDto.profileImg}`);
+
+                    const targetChatMessageSenderNickname = targetChatMessageRow.querySelector("#targetChatMessageSenderNickname");
+                    targetChatMessageSenderNickname.innerText = chatRoomData.chatUserProfileMap.targetUserChatRoomUserDto.profileNickname;
+
+                    const targetChatMessageText = targetChatMessageRow.querySelector("#targetChatMessageText");
+                    targetChatMessageText.innerText = e.chatComment;
+
+                    chatMessageWrapperCol.appendChild(targetChatMessageRow);
+                }
+            }
+        }
+        else{
+            const chatMessageWrapperCol = document.getElementById("chatMessageWrapperCol");
+            chatMessageWrapperCol.innerHTML = "";
+            const notExistMessageRow = document.querySelector("#templete #notExistMessageRow").cloneNode(true);
+            const notExistMessageText = notExistMessageRow.querySelector("#notExistMessageText");
+            notExistMessageText.innerText = "아직 주고받은 대화가 없어요. 먼저 인사해보세요 :)";
+
+            chatMessageWrapperCol.appendChild(notExistMessageRow);
+        }
+    });
+}
+
+
+function chatRoomMainCSR(){
+    const chatRoomTitle = document.getElementById("chatRoomTitle");
+    
+    chatRoomTitle.innerText = chatRoomData.chatUserProfileMap.targetUserChatRoomUserDto.profileNickname;
+    
+        
+}
+
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    
+    chatRoomMainCSR();
+    chatMessageCSR();
+
+});
+
+
+</script>
+
+
+<body class="pt-2 pb-2">
+    <div class="container-fluid">
+        
+        <!--/* 임시 탑 에어리어 
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 mx-1 justify-content-between">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        */-->
+        
+        
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-between">
+                            <div class="col-auto align-self-center btn py-0" onclick="window.location.href='./chatListPage'">
+                                <span class="fs-5"><i class="bi bi-chevron-left"></i></span>
+                            </div>
+                            <div class="col-auto align-self-center">
+                                <span id="chatRoomTitle" class="fs-5 fw-bold"></span>
+                            </div>
+                            <div class="col-auto align-self-center ps-0">
+                                <div class="row justify-content-around">
+                                    <div class="col-auto ps-0">
+                                        <span class="fs-5 fw-bold"><i class="bi bi-search"></i></span>                                        
+                                    </div>
+                                    <div class="col-auto ps-0">
+                                        <span class="fs-5 fw-bold"><i class="bi bi-list"></i></span>                                        
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="row my-2">
+                            <div id="chatMessageWrapperCol" class="col">                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row fixed-bottom">
+                    <div class="col">
+                        <div class="row mb-2">
+                            <div class="col-auto flex-fill">
+                                <div class="row">
+                                    <div class="col mx-1">
+                                        <input id="chatMessageInput" type="text" class="form-control border rounded" onkeyup="getChatMessageEnter(event)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto me-3">
+                                <div class="row" onclick="getChatMessage()">
+                                    <div class="col btn btn-warning">
+                                        <span>전송!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--/* footer 
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fw-bold titleWord">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+        */-->
+    </div>
+
+<!--/* templete */-->
+<div id="templete" class="d-none">
+
+    <div id="targetChatMessageRow" class="row my-3">
+        <div class="col">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="userChatImageBox">
+                                <img id="targetChatMessageSenderImage" class="img-fluid userImage">
+                            </div>                                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto align-self-center ps-0">
+                    <div class="row justify-content-between">
+                        <div class="col-auto">
+                            <span id="targetChatMessageSenderNickname" class="fw-bold" style="font-size: 0.8em;"></span>
+                        </div>                                            
+                    </div>
+                    <div class="row">
+                        <div class="col border rounded-4 border-0 bg-body-tertiary">
+                            <span id="targetChatMessageText" class=""></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row">
+                <div class="col-auto">
+                    <span id="targetChatMessageSenderLastMessage"></span>
+                </div>
+            </div>
+        </div>        
+    </div>
+    
+    <div id="userChatMessageRow" class="row my-3">
+        <div class="col-auto">
+            <div class="row">
+                <div class="col-auto">
+                    <span id="userChatMessageSenderLastMessage"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row justify-content-end">
+                <div class="col-auto align-self-center ps-0">
+                    <div class="row justify-content-between">
+                        <div class="col-auto">
+                            <span id="userChatMessageSenderNickname" class="fw-bold" style="font-size: 0.8em;"></span>
+                        </div>                                            
+                    </div>
+                    <div class="row">
+                        <div class="col border rounded-4 border-0 bg-warning-subtle">
+                            <span id="userChatMessageText" class=""></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="userChatImageBox">
+                                <img id="userChatMessageSenderImage" class="img-fluid userImage">
+                            </div>                                            
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>                
+    </div>
+
+    <div id="notExistMessageRow" class="row mt-4">
+        <div class="col text-center align-self-center">
+            <span id="notExistMessageText" style="font-size: 0.8em;"></span>
+        </div>
+    </div>
+
+</div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

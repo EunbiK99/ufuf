@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -525,26 +526,67 @@ public class RestMeetingController {
     @GetMapping("createChatRoom")
     public MeetingRestResponseDto createChatRoom(int profileId, int targetProfileId){
 
-        meetingService.registerChatRoom(profileId, targetProfileId);        
+        meetingService.registerChatRoom(profileId, targetProfileId);
+        
         // 채팅방 생성 이후 다른 서비스 호출로 알람? 메세지? 보내주는거 구현?
         // targetProfileId 사용
-
-
-
-
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
-        meetingRestResponseDto.setData(1);
+        meetingRestResponseDto.setData(meetingService.getUserChatData(profileId));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("checkExistChatRoom")
+    public MeetingRestResponseDto checkExistChatRoom(int profileId, int targetProfileId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.checkExistChatRoom(profileId, targetProfileId));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getUserChatRoomData")
+    public MeetingRestResponseDto getUserChatRoomData(int profileId){
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getUserChatData(profileId));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getChatMessageData")
+    public MeetingRestResponseDto getChatMessageData(int chatRoomId){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getChatMessageList(chatRoomId));
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("registerChatMessage")
+    public MeetingRestResponseDto registerChatMessage(@RequestBody MeetingChatMessageDto params){
+
+        System.out.println(params.getChatRoomId());
+        System.out.println(params.getChatRoomUserId());
+        System.out.println(params.getChatComment());
+        
+        meetingService.registerChatMessage(params);
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        
         return meetingRestResponseDto;
     }
 
 
-
-
     
-    
+    // 템플릿 코드
     public MeetingRestResponseDto templete(){
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();

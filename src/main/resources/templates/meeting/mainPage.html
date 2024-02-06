@@ -98,6 +98,7 @@ function moveCreateNewGroupPage(){
 
 function checkMeetingProfile(){
     const sessionUserId = sessionUserInfo.user_id;
+    
     fetch("./api/checkMeetingProfile?user_id=" + sessionUserId)
     .then(response => response.json())
     .then(response => {
