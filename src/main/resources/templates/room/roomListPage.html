@@ -29,8 +29,21 @@
             "Segoe UI Symbol", 
             sans-serif;
         }
+
+        #peopleCount::-webkit-slider-thumb {
+        background-color: #FF8827; /* 웹킷 브라우저용 슬라이더 썸(thumb) 배경색 */
+        }
+
+        #peopleCount::-moz-range-thumb {
+            background-color: #FF8827; /* 파이어폭스 브라우저용 슬라이더 썸(thumb) 배경색 */
+        }
+
+        #peopleCount::-ms-thumb {
+            background-color: #FF8827; /* IE 브라우저용 슬라이더 썸(thumb) 배경색 */
+        }
     </style>
     <script>
+       
         function goBack() {
             window.history.go(-1);
         }
@@ -72,6 +85,8 @@
                     a.setAttribute("href", "./roomDetailPage?room_info_id=" +e.roomInfoDto.room_info_id);
                     a.setAttribute("style", "text-decoration: none; color: black;");
                     a.appendChild(roomList);
+
+                    
                     
 
                     // 본문에 붙이는 코드(리스트들)
@@ -129,18 +144,10 @@
             
         })
     </script>
-    <style>
-        *{
-        /* font-family: 'Dongle', sans-serif; */
-        /*font-family: 'Gowun Dodum', sans-serif;*/
-        /* font-family: 'Quicksand', sans-serif; */
-         font-family: 'Noto Sans KR', sans-serif;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="background-color: rgb(241, 241, 241);">
         <!-- 탑부분(검색, 필터)-->
         <div class="row pb-2 px-2 pt-1 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <div class="col">
@@ -213,7 +220,7 @@
                     
                 </div>
                 <div class="modal-footer">
-                  <button onclick="roomList()" class="btn btn-primary">필터 적용</button>
+                  <button onclick="roomList()" class="btn text-white" style="background-color: #FF8827;">필터 적용</button>
                 </div>
               </div>
             </div>
@@ -225,7 +232,7 @@
 
         <div id="roomListBox" class="row"></div>
 
-        <div id="roomList" class="row d-none border border-secondery-subtle rounded mx-2 mt-3 mb-2">
+        <div id="roomList" class="row d-none border border-secondery-subtle rounded mx-2 mt-3 mb-2 bg-white">
             <div class="col">
                         
                 <div class="row">
@@ -239,7 +246,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col ms-3 p-0 text-truncate" style="max-width: 320px;"><a class="text-secondary text-start py-0 roomLocation" style="color: black; text-decoration: none;">주소</a></div>
+                    <div class="col ms-3 p-0 text-truncate text-secondary" style="max-width: 16em;"><a class="text-secondary text-start py-0 roomLocation" style="color: black; text-decoration: none;">주소</a></div>
                     
                 </div>
 
@@ -252,7 +259,7 @@
         </div>
 
         <!--여백-->
-        <div class="row p-5"></div>
+        <div class="row p-4"></div>
         
     </div>
 

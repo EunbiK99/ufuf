@@ -78,6 +78,7 @@
 
             roomData.reservationCharge="[[${reservationInfo.totalCost}]]"
             roomData.scheduleCount="[[${reservationInfo.reservationDuration}]]"
+            roomData.guestId="[[${reservationInfo.roomGuestDto.room_guest_id}]]"
 
             // 결제 요청 페이지 들어갈때 테이블 insert를 해주어야함
             // circle_schedule_id 넘겨준이유 ==> 일정정보 담으려면 필요함
@@ -94,9 +95,9 @@
             roomData.cid = "TC0ONETIME";
             roomData.item_name = "ufuf게스트하우스예약";
             roomData.total_amount =  roomData.reservationCharge;
-            roomData.approval_url = `./room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
-            roomData.fail_url = `https://localhost:8888/room/roomPaymentFail?partner_order_id=${roomData.order_id}`;
-            roomData.cancel_url = `https://localhost:8888/room/roomPaymentCancel?partner_order_id=${roomData.order_id}`;
+            roomData.approval_url = `https://localhost:8888/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
+            roomData.fail_url = `https://localhost:8888/room/roomPaymentFail?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
+            roomData.cancel_url = `https://localhost:8888/room/roomPaymentCancel?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
             console.log(roomData);
 
             const requestData = new URLSearchParams({

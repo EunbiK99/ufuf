@@ -46,6 +46,22 @@
             font-style: normal;
         }
 
+        #carouselExampleIndicators {
+        overflow: hidden; /* 캐러셀 영역에서 넘치는 부분 감춤 */
+        }
+
+        .carousel-inner {
+            display: flex;
+            width: 108%; /* 이미지 아이템들을 총 너비의 300%로 설정하여 여백 없앰 */
+            transition: transform 0.5s ease; /* 이미지 전환 시 부드럽게 애니메이션 효과를 주기 위한 설정 */
+            transform: translateX(-4%);
+        }
+
+        .carousel-item {
+            width: 100%; /* 각 이미지 아이템의 너비를 100%로 설정 */
+            flex: 0 0 auto; /* flex 속성을 설정하여 이미지 크기를 변경하지 않음 */
+        }
+
     
     </style>
 
@@ -172,7 +188,7 @@
 <body>
     <div class="container">
         <!-- 탑부분(뒤로가기, 좋아요, 공유)-->
-        <div class="fixed-top row pb-1 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
+        <div class="fixed-top row pb-1 bg-white border-bottom" style="position: fixed; top: 0; width: 104%; z-index: 1000;">
             <div class="col">
                 <div class="row pt-2 ps-1">
                     <!--뒤로가기-->
@@ -182,8 +198,7 @@
 
                     <div class="col"></div>
 
-                    <!--나중에 기능 추가-->
-                    <div class="col-2 ps-0 pt-2 pb-2 pe-0 me-0">
+                    <div class="col-2 ps-0 pt-2 pb-2 pe-3">
                         <div class="row">
                             <div class="col-6 text-end text-secondary" id="totalCountBox"></div>
                             <div class="col ms-0 ps-0">
@@ -192,16 +207,12 @@
                         </div>
                         
                     </div>
-                    <div class="col-1 ps-0 pt-2 pb-2 pe-0">
-                        <a class="text-secondary" href="#" style="text-decoration: none;"><i class="fi fi-rr-arrow-up-right-from-square"></i></a> 
-                        
-                    </div>
                 </div>
             </div>
         </div>
 
         <!--여백-->
-        <div class="row p-4 mt-2"></div>
+        <div class="row p-4 mt-1"></div>
 
         <!--이미지 캐러셀-->
         <div class="row p-0">
@@ -213,17 +224,17 @@
                 </div>
                 <div class="carousel-inner" style="margin: 0%; padding: 0%;">
                   <div class="carousel-item active">
-                    <img th:src="@{/public/image/room/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
+                    <img th:src="@{/public/image/room/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 120%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                   <div class="carousel-item" th:each="image : ${roomDetail.roomImageDto}">
                     <img th:src="@{/public/image/room/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                 </div>
-                <button class="carousel-control-prev px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <button class="carousel-control-prev px-0 ms-2" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon p-0" aria-hidden="true"></span>
                   <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <button class="carousel-control-next px-0 me-2" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
                   <span class="carousel-control-next-icon" aria-hidden="true"></span>
                   <span class="visually-hidden">Next</span>
                 </button>
@@ -235,7 +246,7 @@
 
             <div class="col mx-3">
                 <!--제목-->
-                <div class="row fw-bold mt-3" th:text="${roomDetail.roomInfoDto.title}" style="font-size: 1.2em;">
+                <div class="row fw-bold mt-3" th:text="${roomDetail.roomInfoDto.title}" style="font-size: 1.1em;">
                 </div>
                 <!--주소-->
                 <div class="row mt-2" th:text="${roomDetail.roomInfoDto.location}" style="font-size: 0.8em;"></div>
@@ -254,7 +265,7 @@
 
         <div class="row pt-3 border-top border-secondery-subtle">
             <div class="col">
-                <div class="row mx-1 fw-bold" style="font-size: 1.1em;">공간 기본 정보</div>
+                <div class="row mx-1 fw-bold" style="font-size: 1em;">공간 기본 정보</div>
             </div>
         </div>
 
@@ -303,13 +314,13 @@
         <!--숙소 설명-->
         <div class="row pb-4 border-bottom border-secondery-subtle">
             <div class="col">
-                <div class="row fw-bold mx-2 mt-3" style="font-size: 1.1em;">숙소 설명</div>
-                <div class="row mx-2 mt-2" style="white-space: pre-line;" th:utext="${#strings.replace(roomDetail.roomInfoDto.content, '\n', '<br />')}"></div>
+                <div class="row fw-bold mx-2 mt-3" style="font-size: 1em;">숙소 설명</div>
+                <div class="row mx-2 mt-2" style="white-space: pre-line; font-size: 0.9em;" th:utext="${#strings.replace(roomDetail.roomInfoDto.content, '\n', '<br />')}"></div>
             </div>
         </div>
 
 
-        <div class="row mx-1 mt-4 mb-3 fw-bold" style="font-size: 1.1em;">숙소 기본 옵션</div>
+        <div class="row mx-1 mt-4 mb-3 fw-bold" style="font-size: 1em;">숙소 기본 옵션</div>
 
         <div class="row ms-4 me-1 pt-1 pb-3 pe-0 ps-0">
             <div class="col-3 mt-3 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
@@ -437,7 +448,7 @@
             </div>
         </div>
 
-        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">오시는 길</div>
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1em;">오시는 길</div>
 
         <!--주소(지도)-->
         <div class="row">
@@ -470,7 +481,7 @@
         
 
         <!--리뷰-->
-        <div class="row pt-3 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1.1em;">
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-2" style="font-size: 1.1em;">
             <div class="col-2 me-0 pe-0">리뷰</div>
             <div class="col" th:text="${roomDetail.roomReviewCount}"></div>
         </div>

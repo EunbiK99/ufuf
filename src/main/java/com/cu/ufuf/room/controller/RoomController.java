@@ -425,7 +425,7 @@ public class RoomController {
 	@RequestMapping("deleteRoomInfoProcess")
 	public String deleteRoomInfoProcess( @RequestParam("room_info_id")int room_info_id){
 		roomService.deleteRoomInfo(room_info_id);
-		return "redirect:./roomListPage";
+		return "redirect:./myRoomListPage";
 	}
 
 	//지도로 방 찾는 페이지?
