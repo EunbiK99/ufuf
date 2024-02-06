@@ -50,18 +50,25 @@ function getMyRecruitMeetingList(){
         for(e of myMeetingGroupList){
             
             const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
-            myMeetingGroupListRow.setAttribute("groupId", e.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.groupId}`);
+            myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
+            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
             
             const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.groupImage}`);
+            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
 
             const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
-            myMeetingGroupTitle.innerText = e.groupTitle;
+            myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
+
+            const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
+            myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
+
+            const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
+            const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
+            myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
 
             const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-            const orginalRegdate = e.regdate;
-            const newRegdate = orginalRegdate[0] + "-" + orginalRegdate[1] + "-" + orginalRegdate[2] + "-  " + orginalRegdate[3] + ":" + orginalRegdate[4] + ":" + orginalRegdate[5];
+            const orginalRegdate = e.meetingGroupDto.regdate;
+            const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
             myMeetingGroupRegdate.innerText = newRegdate;
 
             myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
@@ -197,21 +204,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="myMeetingGroupListRow" class="row my-2 border border-black rounded shadowBox">
-        <div class="col my-1">
-            <div class="row">
+    <div id="myMeetingGroupListRow" class="row mb-3 border border-2 border-secondery-subtle rounded shadowBox">
+        <div class="col">
+            <div class="row my-2">
                 <div class="col-auto">
                     <img id="myMeetingGroupImage" style="width: 5em; height: 5em; border-radius: 10%;">
                 </div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col">
+                    <div class="row border-bottom me-1 pb-1">
+                        <div class="col-auto ps-0">
                             <span id="myMeetingGroupTitle" class="fw-bold"></span>
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="col-auto ps-0">
+                            <span id="myMeetingGroupRegdate" class="text-secondary" style="font-size:0.8em"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="myMeetingGroupRegdate"></span>
+                        <div class="col-auto ps-0 pt-0" style="font-size:0.8em">
+                            <span id="myMeetingGroupCurruntHeadCount" class="text-danger fw-bold"></span>
+                            <span>/</span>
+                            <span id="myMeetingGroupMaxHeadCount"></span>
+                            <span><i class="bi bi-person-fill"></i></span>
                         </div>
                     </div>
                 </div>

@@ -4,7 +4,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -289,13 +291,25 @@ public class RestMeetingController {
         MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileDto");
         
         int profileId = meetingProfileDto.getProfileid();
-
+        List<Map<String, Object>> list = new ArrayList<>();
+        
         List<MeetingGroupDto> myMeetingGroupDtoList = meetingService.getMeetingGroupListByProfilePk(profileId);
+        
+        for(MeetingGroupDto myMeetingGroupDto : myMeetingGroupDtoList){
+            Map<String, Object> map = new HashMap<>();
+            int meetingGroupId = myMeetingGroupDto.getGroupId();
+            List<Map<String, Object>> groupMemberList = meetingService.getGroupMemberListForAJAX(meetingGroupId);
+
+            map.put("meetingGroupDto", myMeetingGroupDto);
+            map.put("groupMemberList", groupMemberList);
+
+            list.add(map);
+        }
 
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
-        meetingRestResponseDto.setData(myMeetingGroupDtoList);
+        meetingRestResponseDto.setData(list);
         return meetingRestResponseDto;
     }
 

@@ -736,6 +736,11 @@ public class MeetingServiceImpl {
         return map;
     }
 
+    // * 채팅방PK기준 채팅방Dto 셀렉트
+    public MeetingChatRoomDto getChatRoomDto(int chatRoomId){
+        return meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+    }
+
 }
 
 
