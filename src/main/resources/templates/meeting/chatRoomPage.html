@@ -59,6 +59,33 @@ console.log('sessionUserProfileInfo: ', sessionUserProfileInfo);
 console.log('sessionUserInfo: ', sessionUserInfo);
 console.log('chatRoomData: ', chatRoomData);
 
+function enterRoom(socket){
+    let enterMessage={"type" : "ENTER","roomId":/*[[${chatRoomData.chatRoomDto.chatRoomId}]]*/,"sender":"chee","msg":""}; //sender는  글쓸때 수정하자.
+    socket.send(JSON.stringify(enterMessage));
+    }
+    let socket = new WebSocket("wss://172.30.1.8:8888/ws/chat");
+
+    socket.onopen = function (e) {
+        console.log('open server!')
+        enterRoom(socket);
+    };
+    socket.onclose=function(e){
+        console.log('disconnet');
+    }
+
+    socket.onerror = function (e){
+        console.log(e);
+}
+
+//메세지 수신했을 때 이벤트.
+socket.onmessage = function (e) {
+    console.log(e.data);
+    let chatMessageWrapperCol = document.querySelector('#chatMessageWrapperCol');
+    let newMessage = document.createElement('div');
+    newMessage.innerText = e.data;
+    chatMessageWrapperCol.appendChild(newMessage);
+}
+
 function registerChatMessage(textValue){
     console.log('textValue: ', textValue);        
 
@@ -79,13 +106,16 @@ function registerChatMessage(textValue){
     .then(response => response.json())
     .then(response => {        
         chatMessageCSR();
-    });
+    });    
 }
 
 function getChatMessageEnter(event){
     if(event.keyCode === 13){
         const inputChatMessage = document.getElementById("chatMessageInput");
         const inputChatMessageValue = inputChatMessage.value;
+        if(inputChatMessageValue.trim() === ""){
+        return;
+        }
         console.log('inputChatMessageValue: ', inputChatMessageValue);
         registerChatMessage(inputChatMessageValue);
         inputChatMessage.value = "";
@@ -95,12 +125,12 @@ function getChatMessageEnter(event){
 function getChatMessage(event){
     const inputChatMessage = document.getElementById("chatMessageInput");
     const inputChatMessageValue = inputChatMessage.value;
+    if(inputChatMessageValue.trim() === ""){
+        return;
+    }
     console.log('inputChatMessageValue: ', inputChatMessageValue);
     registerChatMessage(inputChatMessageValue);
     inputChatMessage.value = "";
-
-    
-
 }
 
 function getChatMessageData(chatRoomId){
@@ -160,6 +190,11 @@ function chatMessageCSR(){
 
             chatMessageWrapperCol.appendChild(notExistMessageRow);
         }
+    })
+    .catch(error => console.error('메시지 가져오기 실패:', error))
+    .finally(() => {
+        // 일정 시간마다 재귀 호출
+        setTimeout(chatMessageCSR, 5000); // 5초마다 업데이트
     });
 }
 
@@ -184,7 +219,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 </script>
 
 
-<body class="pt-2 pb-2">
+<body class="pt-5 pb-5">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 
@@ -213,7 +248,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row">
             <div class="col">
 
-                <div class="row">
+                <div class="row fixed-top" style="height: 3.3em; background-color:white;">
                     <div class="col">
                         <div class="row justify-content-between">
                             <div class="col-auto align-self-center btn py-0" onclick="window.location.href='./chatListPage'">
@@ -240,14 +275,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row">
                     <div class="col">
                         <div class="row my-2">
-                            <div id="chatMessageWrapperCol" class="col">                                
+                            <div id="chatMessageWrapperCol" class="col overflow-y-scroll" style="height: 100%;">                                
 
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row fixed-bottom">
+                <div class="row fixed-bottom" style="height:3.4em;  background-color: antiquewhite;">
                     <div class="col">
                         <div class="row mb-2">
                             <div class="col-auto flex-fill">
