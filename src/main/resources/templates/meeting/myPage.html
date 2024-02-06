@@ -12,21 +12,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;        
-    }
-
-    * .titleWord{
-        font-family: 'Carattere', cursive;
-        /* font-family: 'Italianno', cursive; */
-        /* font-family: 'Square Peg', cursive; */
-        /* font-family: 'Tangerine', cursive; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;
     }
 
     .menuMouseOver{
@@ -431,18 +425,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 mx-1 justify-content-between">
-                    <div class="col">
+                    <div class="col ps-0">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
                             </div>                            
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
                     </div>
                 </div>
             </div>
@@ -477,14 +471,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto align-self-center">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fs-5 fw-bold">My Meeting Profile</span>
+                                        <span class="fs-5 fw-bold text-white">My Meeting Profile</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="row">
                                     <div class="col-auto btn">
-                                        <span class="fw-bold">
+                                        <span class="fw-bold text-white">
                                             <i class="bi bi-gear"></i>
                                             수정
                                         </span>                                        
@@ -506,8 +500,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             <div class="col-auto px-0 align-self-center">                                                
                                                 <span class="fw-bold">ufuf.com/</span>
                                             </div>
-                                            <div class="col-auto px-0 border-bottom border-2 align-self-center" style="border-color: #FF8827 !important;">
-                                                <span id="userSNSUrl" class="fw-bold">유저SNS주소</span>                                                
+                                            <div class="col-auto px-0 align-self-center" >
+                                                <span id="userSNSUrl" class="fw-bold border-bottom border-2" style="border-color: #FF8827 !important;">유저SNS주소</span>
                                             </div>
                                         </div>
                                     </div>
@@ -577,7 +571,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col border border-2 rounded" style="border-color: #FF8827 !important;">
+                                            <div class="col border border-2 rounded">
                                                 <div class="row mt-2">
                                                     <div class="col">
                                                         <p id="userProfileComment" style="height: 5em;"></p>
@@ -665,7 +659,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Find</span>
+                                        <span class="">Find</span>
                                     </div>
                                 </div>
                             </div>
@@ -677,7 +671,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Make</span>
+                                        <span class="">Make</span>
                                     </div>
                                 </div>
                             </div>
@@ -696,7 +690,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Chat</span>
+                                        <span class="">Chat</span>
                                     </div>
                                 </div>
                             </div>
@@ -708,7 +702,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">My</span>
+                                        <span class="">My</span>
                                     </div>
                                 </div>
                             </div>
