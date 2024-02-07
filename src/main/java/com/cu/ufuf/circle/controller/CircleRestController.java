@@ -1334,6 +1334,20 @@ public class CircleRestController {
         
         return responseDto;
     }
+    //circleJoinCheck 가입신청체크
+    @RequestMapping("circleJoinCheck")
+        public RestResponseDto circleJoinCheck(HttpSession session, @RequestParam("circle_id") int circle_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        responseDto.setData(circleService.circlejoinApplyPossibleCheck(circle_id, user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
 
     // RESTAPI 양식 
     /*

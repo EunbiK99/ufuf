@@ -275,6 +275,26 @@
             })
 
         }
+        const circleJoinCheck = () => {
+
+            const queryString = window.location.search
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id")
+
+            $.ajax({
+                url: `./circleJoinCheck?circle_id=${circle_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    if(response.data > 0){
+                        $("#joincheck").attr("disabled","")
+                    }
+                    
+
+                }
+            })
+
+        }
 
         window.addEventListener("DOMContentLoaded", () => {
             const queryString = window.location.search;
@@ -287,6 +307,7 @@
             subImageList();
             circleInfo();
             circleLikeCheck();
+            circleJoinCheck();
         })
     </script>
     <style>
@@ -384,7 +405,7 @@
                 <span class="fillButton bi mx-0"></span>
             </div>
             <div class="col d-grid">
-                <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
+                <button id="joincheck" class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
             </div>
         </div>
     </div>

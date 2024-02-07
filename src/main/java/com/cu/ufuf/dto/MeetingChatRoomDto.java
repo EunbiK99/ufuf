@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class MeetingChatRoomDto {
-
+    
     private int chatRoomId ;
     private String chatRoomTitle;
     private Set<WebSocketSession> sessions = new HashSet<>();

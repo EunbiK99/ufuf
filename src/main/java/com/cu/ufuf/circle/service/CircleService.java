@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.checkerframework.checker.units.qual.degrees;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
@@ -977,6 +975,10 @@ public class CircleService {
         }
 
         return list;
+    }
+    public int circlejoinApplyPossibleCheck(int circle_id, int user_id){
+
+        return circleSqlMapper.circlejoinApplyPossibleCheck(circle_id, user_id);
     }
     
 }

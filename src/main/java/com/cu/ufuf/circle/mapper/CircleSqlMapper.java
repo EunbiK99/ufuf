@@ -254,4 +254,7 @@ public interface CircleSqlMapper {
     // 그냥 투표수 토탈가져오게함 && 두번째껀 한항목당 투표수가져오기
     public int circleVoteTotalCount(int circle_vote_id);
     public int circleVoteCompleteCount(int vote_option_id);
+
+    // 동아리 가입신청 체크
+    public int circlejoinApplyPossibleCheck(@Param("circle_id") int circle_id, @Param("user_id") int user_id);
 }
