@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script>
 
         function goBack() {
@@ -39,6 +40,9 @@
                     const circlecategory = Wrapper.querySelector(".circlecategory");
                     circlecategory.innerHTML = "";
                     circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlemiddlecategory = Wrapper.querySelector(".circlemiddlecategory");
+                    circlemiddlecategory.innerHTML = "";
+                    circlemiddlecategory.innerText = e.circleMiddleCategoryDto.category_name;
                     const circlename = Wrapper.querySelector(".circlename");
                     circlename.innerHTML = "";
                     circlename.innerText = e.circleDto.circle_name;
@@ -51,6 +55,21 @@
                     const circlepeople = Wrapper.querySelector(".circlepeople");
                     circlepeople.innerHTML = "";
                     circlepeople.innerText = e.circleGradeDto.circle_people;
+                    const circlegrade = Wrapper.querySelector(".circlegrade");
+                    circlegrade.innerHTML = "";
+                    circlegrade.innerText = e.circleGradeDto.grade_name;
+                    const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                    if(e.circleGradeDto.grade_name === "아이언"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                    } else if(e.circleGradeDto.grade_name === "브론즈"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                    } else if(e.circleGradeDto.grade_name === "실버"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                    } else if(e.circleGradeDto.grade_name === "골드"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                    }
 
                     // 링크태그 여기서 하나씩 잡아주어야함
                     const a = document.createElement("a");
@@ -85,11 +104,17 @@
             height: 100%;
             object-fit: cover;
         }
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 1em;
+            text-align: center;
+        }
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
     </style>
 </head>
@@ -111,14 +136,15 @@
             </div>
         </div>
     </div>
+    <th:block th:replace="~{commons/circlefragmentPage.html :: bottomNavi1}"></th:block>
     <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
         <div class="col rounded-3 mx-1" style="background-color: white;">
             <div class="row rounded-3" style="font-size: small;">
                 <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col" style="padding-top: 0.9em;">
-                            <span class="circlecategory rounded-pill py-1 px-2 text-bg-secondary fw-semibold">배찌</span>
+                    <div class="row mt-1">
+                        <div class="col align-items-center" style="padding-top: 0.9em; font-size: 0.75em;">
+                            &nbsp;<span class="circlemiddlecategory fw-semibold">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory fw-semibold">배찌</span>
                         </div>
                     </div>
                     <div class="row mt-1">
@@ -137,10 +163,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-2 pt-3">
+                    <div class="row align-items-center mt-0">
+                        <div class="col d-grid rounded-3">
+                            <img class="circlegradeimg img-fluid">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>

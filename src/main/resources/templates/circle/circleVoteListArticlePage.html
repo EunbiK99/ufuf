@@ -7,12 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 차트 js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+
      <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
      <link rel="preconnect" href="https://fonts.googleapis.com">
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script>
+        
         // 뒤로이동
         function goBack() {
             window.history.go(-1);
@@ -59,6 +64,7 @@
                         break;
                     }
                 }
+                // 
 
             const url = "./voteComplete?circle_id=" + circle_id + "&circle_vote_id=" + circle_vote_id;
             fetch(url, {
@@ -122,8 +128,9 @@
             .then(response => response.json())
             .then(response => {
                 
+                let cnt = 0;
                 for(e of response.data){
-                    
+                    cnt++;
                     const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
                     Wrapper.classList.remove("d-none");
                     const option_content = Wrapper.querySelector(".option_content");
@@ -132,6 +139,9 @@
                     option_image.setAttribute("src", "/uploadFiles/" + e.option_image);
                     const radiobutton = Wrapper.querySelector(".radiobutton"); // 라디오버튼의 value값을 여기다 줌
                     radiobutton.setAttribute("value", e.vote_option_id);
+                    radiobutton.setAttribute("id",`vbtn-radio${cnt}`)
+                    const labelbutton = Wrapper.querySelector(".labelbutton");
+                    labelbutton.setAttribute("for",`vbtn-radio${cnt}`)
                     
                  
                     const listInsert = document.querySelector("#listInsert");
@@ -143,22 +153,94 @@
             })
 
         }
+        // 차트 정보 가져올것들
+        const voteChart = () => {
 
-        
-        
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString)
+            const circle_vote_id = urlParams.get("circle_vote_id")
 
+            $.ajax({
+                url: `./voteChartInfo?circle_vote_id=${circle_vote_id}`,
+                dataType: `json`,
+                success: (response) => {
+                    // 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'
+                    
+                    // for문돌려서 해야될것이 label값과 data값이 두개만들어가면됨
+                    
+                    for (e of response.data) {
+                        console.log(e);
+                        const percent = ((e.voteCount / e.totalCount) * 100).toFixed(2);
+                        const label = `${e.circleVoteOptionDto.option_content} (${percent}%)`;
+                        myChart.data.labels.push(label); 
+                        myChart.data.datasets[0].data.push(e.voteCount);
+                    }
+                    myChart.update();
+                        
+
+                        
+
+                }
+                
+            })
+
+
+        }
+        
+        let myChart;
         // 로드됐을때 바로실행
         window.addEventListener("DOMContentLoaded", () => {
             voteInfoOne();
             voteOptionPrint();
+            
+            const ctx = document.getElementById('myChart');
+            myChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                        
+                        datasets: [{
+                            label: '# of Votes',
+                            
+                            borderWidth: 2,
+                            backgroundColor: [
+                            '#fb7928',
+                            'red',
+                            'blue'
+                            ]
+                        }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        fontColor: 'red',
+                                        font: {
+                                             // 사용하고자 하는 글꼴 이름으로 변경
+                                            size: 11 // 글꼴 크기
+                                             // 글꼴 두껍기 설정
+                                            
+                                        }
+                                        
+                                    }
+                                }
+                            },
+                            layout: {
+                                padding: {
+                                    left: 50,// 오른쪽 패딩 값을 조절하여 레이블 사이의 간격을 조정합니다.
+                                    top: 0,
+                                    bottom: 0
+                                }
+                            }
+                        }
+                        });
+                        voteChart();
         })
+        
      </script>
      <style>
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
         .pp{
             margin-left: 0.01em;
@@ -180,20 +262,29 @@
         }
             /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
         .image-container {
-            width: 10em;
+            width: 20em;
             height: 10em; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
         .responsive-img {
-            width: 10em;
+            
             height: 100%;
             object-fit: cover;
         }
          /* .self_check input[type="radio"] {
             display: none; 
         }   */
+        .labelbutton{
 
+            box-shadow: 0 0 15px rgba(185, 185, 185, 0.4); /* 그림자 효과 추가 */
+            /* 추가적인 스타일 속성을 여기에 추가할 수 있습니다. */
+        }
+        .mainContent{
+            min-height: 50em;
+        }
+        
+        
         
     </style>
 </head>
@@ -203,7 +294,7 @@
         투표제목, 투표주제, 항목내용 
     -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid" style="background-color: rgb(247,247,247); min-height: 44em;">
+    <div class="container-fluid mainContent" style="background-color: rgb(247,247,247);">
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -218,13 +309,18 @@
                                 투표 주제
                             </div>
                         </div>
-                        <div class="row mt-2">
+                        <div class="row py-0 justify-content-center">
+                            <div class="col d-grid py-0" style="height: 20em;">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
                                 중복투표는 불가!
                             </div>
                         </div>
                         <div class="row mt-1">
-                            <div id="listInsert" class="col"><!-- Wrapper가 들어갈곳-->
+                            <div id="listInsert" class="col btn-group-vertical" role="group" aria-label="Vertical radio toggle button group"><!-- Wrapper가 들어갈곳-->
                                 
                             </div>
                         </div>
@@ -232,7 +328,15 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    <!-- <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group">
+        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" checked>
+        <label class="btn btn-outline-danger" for="vbtn-radio1">Radio 1</label>
+        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off">
+        <label class="btn btn-outline-danger" for="vbtn-radio2">Radio 2</label>
+        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off">
+        <label class="btn btn-outline-danger" for="vbtn-radio3">Radio 3</label>
+        </div>     -->
     <!-- optionCheckComplete -->
     <div class="container-fluid">
         <div class="row mt-3 mx-0 fixed-bottom">
@@ -241,30 +345,29 @@
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="row d-none rounded-3">
-        <label class="labelchange self_check" for="aa">
-        <span>
+    <div id="Wrapper" class="row d-none rounded-3 mt-2">
         <div class="col rounded-3">
+            <!-- 테스트1 --><input type="radio" class="radiobutton form-check custom-radio btn-check" name="vbtn-radio" autocomplete="off">
+            <label class="labelbutton btn btn-outline-warning" style="border: 0.01em solid#f3f3f3;">
             <div class="row py-1 rounded-3 justify-content-center align-items-center">
                 <div class="col image-container rounded-3">
                     <img class="responsive-img option_image img-fluid rounded-3">
                 </div>
                 <div class="col">
                     <div class="row">
-                        <div class="col text-center">
+                        <div class="col text-center fw-semibold" style="font-size: 1.1em; color: black;">
                             <span class="option_content">항목내용</span>
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col">
-                            <input id="aa" name="aa" type="radio" class="radiobutton form-check custom-radio">
+                            <!-- <input type="radio" class="radiobutton form-check custom-radio"> -->
                         </div>
                     </div>
                 </div>
             </div>
+            </label>
         </div>
-        </span>
-        </label>
     </div>
     <!-- 버튼 꼴뵈기싫음 ==> 나중에 이거 자바스크립트로 radio d-none 처리하고 input checked 이용-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>

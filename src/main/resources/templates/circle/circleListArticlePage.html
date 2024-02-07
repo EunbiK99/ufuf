@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script>
         function goBack() {
             window.history.go(-1);
@@ -120,6 +121,25 @@
                 category_name2.innerText = e.circleMiddleCategoryDto.category_name;
                 const circleMemberCnt = Wrapper.querySelector(".circleMemberCnt"); 
                 circleMemberCnt.innerText = e.circleMemberCnt;
+                const circlegrade = Wrapper.querySelector(".circlegrade");
+                    circlegrade.innerHTML = "";
+                    circlegrade.innerText = e.circleGradeDto.grade_name;
+                    const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                    if(e.circleGradeDto.grade_name === "아이언"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                    } else if(e.circleGradeDto.grade_name === "브론즈"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                    } else if(e.circleGradeDto.grade_name === "실버"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                    } else if(e.circleGradeDto.grade_name === "골드"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                    }
+                const circlecreatedtime = Wrapper.querySelector(".circlecreatedtime")
+                const changetime = e.circleDto.application_date
+                const formattedDate = `${String(changetime[0])}.${String(changetime[1]).padStart(2, '0')}.${String(changetime[2]).padStart(2, '0')}`;
+                circlecreatedtime.innerText = `${formattedDate}개설`    
 
                 
                 // 현재 인원 / 등급 인원 
@@ -271,10 +291,7 @@
     </script>
     <style>
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
         body {
           margin: 0;
@@ -317,24 +334,40 @@
                         
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col fw-semibold"><!-- 액티비티 -->
-                        <span class="category_name2 rounded-pill px-2 py-1" style="background-color: rgb(0, 0, 0); color: white; font-size: 0.7em;"></span> <span class="category_name1 rounded-pill px-2 py-1" style="background-color: #FB8C33; color: white; font-size: 0.7em;"></span>
-                    </div>
-                </div>
-                <div class="row mt-1">
-                    <div class="col fw-semibold" style="font-size: 1.4em;">
-                        <span class="circle_name"></span>
-                    </div>
-                </div>
                 <div class="row">
-                    <div class="col align-items-top" style="color: rgb(118, 117, 117);font-size: 1em;">
-                        <span class="circle_university"></span>
+                    <div class="col">
+                        <div class="row mt-2">
+                            <div class="col fw-semibold" style="color: rgb(110, 110, 110);"><!-- 액티비티 -->
+                                <span class="category_name2" style="font-size: 0.8em;"></span>&nbsp;<span>></span>&nbsp;<span class="category_name1" style="font-size: 0.8em;"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col fw-semibold" style="font-size: 1.4em;">
+                                <span class="circle_name"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col align-items-top" style="color: rgb(118, 117, 117);font-size: 1em;">
+                                <span class="circle_university"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col" style="color: rgb(139, 139, 139);">
+                                <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="circleMemberCnt" style="color: black;"></span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circle_people" style="color: black;"></span>&nbsp;<span style="color: black;">·</span>&nbsp;<span class="circlecreatedtime"></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="row mt-1">
-                    <div class="col" style="color: rgb(139, 139, 139);">
-                        <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="circleMemberCnt" style="color: black;"></span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circle_people" style="color: black;">등급인원</span>
+                    <div class="col-2 pt-2">
+                        <div class="row align-items-center mt-0">
+                            <div class="col d-grid rounded-3">
+                                <img class="circlegradeimg img-fluid">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -342,14 +375,16 @@
                         <span class="circle_content lh-base"></span>
                     </div>
                 </div>
-                <div class="row mt-3 mx-0 fixed-bottom"><!-- 처음에 검증 필요 만약 동아리 id랑 세션 userid 값이 둘다있으면 색칠되어있게-->
-                    <div id="heartButton" class="col-2 d-grid text-center align-items-center" style="font-size: 1.3em; color: #fb7928;">
-                        <span class="fillButton bi mx-0"></span>
-                    </div>
-                    <div class="col d-grid">
-                        <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row mt-3 mx-0 fixed-bottom"><!-- 처음에 검증 필요 만약 동아리 id랑 세션 userid 값이 둘다있으면 색칠되어있게-->
+            <div id="heartButton" class="col-2 d-grid text-center align-items-center" style="font-size: 1.3em; color: #fb7928;">
+                <span class="fillButton bi mx-0"></span>
+            </div>
+            <div class="col d-grid">
+                <button class="btn fw-semibold" onclick="verificationjoinApply()" style="background-color: #fb7928;color: white;">가입 신청</button>
             </div>
         </div>
     </div>

@@ -1,11 +1,15 @@
 package com.cu.ufuf.circle.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.checkerframework.checker.units.qual.degrees;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import com.cu.ufuf.circle.mapper.CircleSqlMapper;
@@ -13,6 +17,7 @@ import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleBoardImageDto;
+import com.cu.ufuf.dto.CircleBoardLikeDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
@@ -30,6 +35,8 @@ import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
@@ -83,11 +90,14 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
             int circle_small_category_id = e.getCircle_small_category_id();
             CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
             int circle_grade_id = e.getCircle_grade_id();
             CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
             int circle_id = e.getCircle_id();
             int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
 
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
             map.put("circleMemberCnt", circleMemberCnt);
             map.put("circleGradeDto", circleGradeDto);
             map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -115,11 +125,14 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
             int circle_small_category_id = e.getCircle_small_category_id();
             CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
             int circle_grade_id = e.getCircle_grade_id();
             CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
             int circle_id = e.getCircle_id();
             int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
 
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
             map.put("circleMemberCnt", circleMemberCnt);
             map.put("circleGradeDto", circleGradeDto);
             map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -150,10 +163,13 @@ public class CircleService {
             CircleDto e = circleSqlMapper.circleInfoByCircleId(circle_id);
             int circle_small_category_id = e.getCircle_small_category_id();
             CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
             int circle_grade_id = e.getCircle_grade_id();
             CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
             int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
 
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
             map.put("circleMemberCnt", circleMemberCnt);
             map.put("circleGradeDto", circleGradeDto);
             map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -179,11 +195,14 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
             int circle_small_category_id = e.getCircle_small_category_id();
             CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
             int circle_grade_id = e.getCircle_grade_id();
             CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
             int circle_id = e.getCircle_id();
             int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
 
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
             map.put("circleMemberCnt", circleMemberCnt);
             map.put("circleGradeDto", circleGradeDto);
             map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -221,11 +240,11 @@ public class CircleService {
         int userId = circleDto.getUser_id();
         UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(userId);
 
-        map.put("userInfoDto", userInfoDto);
-        map.put("circleMemberCnt", circleMemberCnt);
-        map.put("circleDto", circleDto);
+        map.put("userInfoDto", userInfoDto); //개설자 이름 개설자 프로필 사진
+        map.put("circleMemberCnt", circleMemberCnt); // 인원수
+        map.put("circleDto", circleDto); //개설 날짜
         map.put("circleSmallCategoryDto", circleSmallCategoryDto);
-        map.put("circleGradeDto", circleGradeDto);
+        map.put("circleGradeDto", circleGradeDto); // 등급명 가져오기.. ㅎㅎ; 게시물작성수기준이 있음
         map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
 
         
@@ -662,10 +681,13 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
             int circle_small_category_id = e.getCircle_small_category_id();
             CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
             int circle_grade_id = e.getCircle_grade_id();
             CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
             int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
 
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
             map.put("circleMemberCnt", circleMemberCnt);
             map.put("circleGradeDto", circleGradeDto);
             map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -747,10 +769,10 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
             
             int circle_schedule_id = circleScheduleApplyDto.getCircle_schedule_id(); // 일정pk값을가져옴
-            System.out.println(circle_schedule_id);
+            
             ItemInfoDto itemInfoDto = circleSqlMapper.itemInfoByCircleScheduleId(circle_schedule_id);
             int item_id = itemInfoDto.getItem_id();
-            System.out.println(item_id);
+            
             OrderInfoDto orderInfoDto = circleSqlMapper.orderInfoByItemId(item_id);
             String order_id = orderInfoDto.getOrder_id();
             KakaoPaymentReqDto kakaoPaymentReqDto = circleSqlMapper.kakaoPaymentReqInfoByItemId(order_id);
@@ -776,7 +798,185 @@ public class CircleService {
         return list;
 
     }
-    
 
+    public void kakakPaymentCancleReqInsert(KakaoPaymentCancelReqDto kakaoPaymentCancelReqDto){
+
+        circleSqlMapper.kakakPaymentCancleReqInsert(kakaoPaymentCancelReqDto);
+    }
+    public void kakakPaymentCancleResInsert(KakaoPaymentCancelResDto kakaoPaymentCancelResDto){
+
+        circleSqlMapper.kakakPaymentCancleResInsert(kakaoPaymentCancelResDto);
+    }
+    public void paymentCancelStatusChangeOrderInfoStatus(String order_id){
+        
+        circleSqlMapper.paymentCancelStatusChangeOrderInfoStatus(order_id);
+    }
+    public void scheduleApplicationTableDelete(int circle_schedule_application_id){
+
+        circleSqlMapper.scheduleApplicationTableDelete(circle_schedule_application_id);
+    }
+    public List<Map<String, Object>> voteThreeNewList(){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        
+        List<CircleVoteDto> circleVoteDtos = circleSqlMapper.voteThreeNewList();
+        // 투표글을 가져온다
+        for(CircleVoteDto circleVoteDto : circleVoteDtos){
+            
+            Map<String, Object> map = new HashMap<>();
+
+            int circle_vote_id = circleVoteDto.getCircle_vote_id();
+            List<CircleVoteOptionDto> circleVoteOptionDtos = circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circle_vote_id);
+            // 항목여러개를 가져온다 vote숫자만가져올거니까 항목여러개일때 반복문돌려서 투표한 숫자만 가져옴 
+            int count = 0;
+            for(CircleVoteOptionDto circleVoteOptionDto : circleVoteOptionDtos){
+
+                int vote_option_id = circleVoteOptionDto.getVote_option_id();
+                count += circleSqlMapper.circleVoteCompleteCntByVoteOptionId(vote_option_id);
+                
+            }
+            // 그 관련된 동아리 가입페이지로 이동시키려면 여기서 동아리 정보도 넣어야함
+            int circle_id = circleSqlMapper.circleIdGetByCircleVoteId(circle_vote_id);
+
+            map.put("circle_id", circle_id);
+            map.put("voteCnt", count); // 투표숫자하고
+            map.put("circleVoteDto", circleVoteDto); // 글정보만 들어가면 될듯요?
+            
+            
+            list.add(map);
+
+        }
+
+
+        return list;
+    }
+    public int circleScheduleApplicationMaxIdByCircleMemId(int circle_member_id){
+
+        return circleSqlMapper.circleScheduleApplicationMaxIdByCircleMemId(circle_member_id);
+    }
+    public void circleScheduleAttenDanceInfoInfoInsert(CircleScheduleAttendanceDto circleScheduleAttendanceDto){
+        
+        circleSqlMapper.circleScheduleAttenDanceInfoInfoInsert(circleScheduleAttendanceDto);
+    }
+    //circleScheduleListAllByCircleMemberId
+    public List<Map<String, Object>> circleAttendanceList(int circle_id, int user_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+
+        List<CircleScheduleDto> circleScheduleDtos = circleSqlMapper.circleScheduleListAllByCircleMemberId(circle_member_id);
+        for(CircleScheduleDto circleScheduleDto : circleScheduleDtos){
+
+            Map<String, Object> map = new HashMap<>();
+            // 여기서 뽑아낼건.. 동아리 리스트만뽑고 출석부 인원까지만 뽑아내자..
+            int circle_schedule_id =  circleScheduleDto.getCircle_schedule_id();
+            int applyCnt = circleSqlMapper.circleScheduleApplicationPeopleCntByCircleScheduleId(circle_schedule_id);
+            LocalDateTime dataTime = circleScheduleDto.getEnd_time();
+            System.out.println("일정종료시간:" + dataTime);
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            System.out.println("현재시간:" + currentDateTime);
+
+            // 현재시간과 일정종료시간 차이 날짜 계산
+            long daysUntilEnd = ChronoUnit.DAYS.between(currentDateTime, dataTime);
+
+            // 음수일때는 일정종료일이 지난거
+            if (daysUntilEnd < 0) {
+                continue;
+            } 
+            else if(daysUntilEnd < 2){
+                map.put("circleScheduleDto", circleScheduleDto);
+                map.put("applyCnt", applyCnt);
+
+                list.add(map);
+            } // 2일미만일때만 출력시킬거임 (일정종료일 지난지 1일 23시간 59분 59초까지)
+
+            
+        }
+
+        return list;
+    }
+
+    public List<Map<String, Object>> circleAttendanceApplicationList(int circle_schedule_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        
+        List<CircleScheduleApplyDto> circleScheduleApplyDtos = circleSqlMapper.circleScheduleApplicationListOrderByDesc(circle_schedule_id);
+        
+        for(CircleScheduleApplyDto circleScheduleApplyDto : circleScheduleApplyDtos){
+            
+            Map<String, Object> map = new HashMap<>();
+
+            int circle_schedule_application_id = circleScheduleApplyDto.getCircle_schedule_application_id();
+            CircleScheduleAttendanceDto circleScheduleAttendanceDto = circleSqlMapper.circleScheduleAttendanceInfoByCircleScheduleApplicationId(circle_schedule_application_id);
+            int circle_member_id = circleScheduleApplyDto.getCircle_member_id();
+            CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByCircleMemberId(circle_member_id);
+            int user_id = circleMemberDto.getUser_id();
+            UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+            
+            
+            
+            // 일정신청 하나에 일정출석 하나
+            // 여기서 버튼체크를 위해서 하나 넣을까 생각중.
+            map.put("userInfoDto", userInfoDto);
+            map.put("circleMemberDto", circleMemberDto);
+            map.put("circleScheduleApplyDto", circleScheduleApplyDto);
+            map.put("circleScheduleAttendanceDto", circleScheduleAttendanceDto);
+
+            list.add(map);
+            
+
+        }
+        
+
+        return list;
+    }
+    
+    public void circleAttendanceChangeY(int circle_schedule_application_id){
+        
+        circleSqlMapper.circleAttendanceChangeY(circle_schedule_application_id);
+    }
+    public void circleAttendanceChangeN(int circle_schedule_application_id){
+        
+        circleSqlMapper.circleAttendanceChangeN(circle_schedule_application_id);
+    }
+    public void circleBoardLikeInsert(CircleBoardLikeDto circleBoardLikeDto){
+
+        circleSqlMapper.circleBoardLikeInsert(circleBoardLikeDto);
+    }
+    public void circleBoardLikeDelete(CircleBoardLikeDto circleBoardLikeDto){
+
+        circleSqlMapper.circleBoardLikeDelete(circleBoardLikeDto);
+    }
+    public Boolean circleBoardLikeCheck(CircleBoardLikeDto circleBoardLikeDto){
+        
+        return circleSqlMapper.circleBoardLikeCheck(circleBoardLikeDto);
+    }
+    public List<Map<String, Object>> voteChartInfo(int circle_vote_id){
+        // 단일 하나의 값이니까 리스트가 나올수없음 걍 map으로 하면될듯
+        
+        List<Map<String, Object>> list = new ArrayList<>();
+        CircleVoteDto circleVoteDto = circleSqlMapper.circleVoteInfoByCircleVoteId(circle_vote_id); // voteinfo
+        List<CircleVoteOptionDto> circleVoteOptionDtos = circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circle_vote_id); //항목리스트
+        
+        for(CircleVoteOptionDto circleVoteOptionDto : circleVoteOptionDtos){
+            Map<String, Object> map = new HashMap<>();
+             
+            int vote_option_id = circleVoteOptionDto.getVote_option_id();
+            int voteCount = circleSqlMapper.circleVoteCompleteCount(vote_option_id);
+
+            // vote옵션하나당 투표한수만 넣으면 될거같음
+            int totalCount = circleSqlMapper.circleVoteTotalCount(circle_vote_id);
+            map.put("voteCount", voteCount);
+            map.put("circleVoteOptionDto", circleVoteOptionDto);
+            map.put("totalCount", totalCount);
+            
+            list.add(map);
+        }
+
+        return list;
+    }
     
 }

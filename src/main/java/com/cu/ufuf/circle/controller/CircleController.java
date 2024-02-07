@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 
 
 @Controller
@@ -350,6 +352,12 @@ public class CircleController {
 
         return "circle/circleMyVoteListPage";
     }
+    @RequestMapping("circleVotePopularPage")
+    public String circleVotePopularPage(){
+
+        return "circle/circleVotePopularPage";
+    }
+    
     
     
     

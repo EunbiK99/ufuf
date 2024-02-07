@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -46,7 +47,7 @@
             .then(response => {
                 
                 for(e of response.data){
-
+                    console.log(e);
                     // 동아리 리스트 생성
                     const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
                     Wrapper.classList.remove("d-none");
@@ -56,6 +57,9 @@
                     const circlecategory = Wrapper.querySelector(".circlecategory");
                     circlecategory.innerHTML = "";
                     circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlemiddlecategory = Wrapper.querySelector(".circlemiddlecategory");
+                    circlemiddlecategory.innerHTML = "";
+                    circlemiddlecategory.innerText = e.circleMiddleCategoryDto.category_name;
                     const circlename = Wrapper.querySelector(".circlename");
                     circlename.innerHTML = "";
                     circlename.innerText = e.circleDto.circle_name;
@@ -68,6 +72,21 @@
                     const circlepeople = Wrapper.querySelector(".circlepeople");
                     circlepeople.innerHTML = "";
                     circlepeople.innerText = e.circleGradeDto.circle_people;
+                    const circlegrade = Wrapper.querySelector(".circlegrade");
+                    circlegrade.innerHTML = "";
+                    circlegrade.innerText = e.circleGradeDto.grade_name;
+                    const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                    if(e.circleGradeDto.grade_name === "아이언"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                    } else if(e.circleGradeDto.grade_name === "브론즈"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                    } else if(e.circleGradeDto.grade_name === "실버"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                    } else if(e.circleGradeDto.grade_name === "골드"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                    }
 
                     // 링크태그 여기서 하나씩 잡아주어야함
                     const a = document.createElement("a");
@@ -129,7 +148,7 @@
             .then(response => {
 
                 for(e of response.data){
-
+                    
                     const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
                     Wrapper.classList.remove("d-none");
                     const circlemainimage = Wrapper.querySelector(".circlemainimage");
@@ -150,6 +169,8 @@
                     const circlepeople = Wrapper.querySelector(".circlepeople");
                     circlepeople.innerHTML = "";
                     circlepeople.innerText = e.circleGradeDto.circle_people;
+                    
+                    
 
                     // 링크태그 여기서 하나씩 잡아주어야함
                     const a = document.createElement("a");
@@ -169,6 +190,106 @@
 
         }
 
+        const accessDeniedVote = () => {
+
+            const boardDeleteModal = document.querySelector("#voteCheckModal");
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#voteCheckModal");
+            modal.show();
+
+        }
+
+        const voteThreeNewList = () => {
+
+            $.ajax({
+                url:"./voteThreeNewList",
+                dataType: "json",
+                success: (response) => {
+                    console.log(response);
+                    
+                    for(e of response.data){
+                        
+                        const voteWrapper = document.querySelector("#voteWrapper .pp").cloneNode(true);
+
+                        $(voteWrapper).find(".vote_title")
+                        .text(e.circleVoteDto.vote_title)
+                        $(voteWrapper).find(".vote_theme")
+                        .text(e.circleVoteDto.vote_theme)
+
+                        //vote_end타입은 변환
+                        const dateArray  = e.circleVoteDto.vote_end_time;
+                        const aa = new Date(...dateArray);
+                        const year = aa.getFullYear();
+                        const month = (aa.getMonth() + 1).toString().padStart(2, '0');
+                        const day = aa.getDate().toString().padStart(2, '0');
+                        const hour = aa.getHours().toString().padStart(2, '0');
+                        const min = aa.getMinutes().toString().padStart(2, '0');
+                        const formattedDate = year + '-' + month + '-' + day + ' ' + hour + "시" + min + "분";
+
+                        $(voteWrapper).find(".vote_end_time")
+                        .text(formattedDate)
+                        $(voteWrapper).find(".voteCnt")
+                        .text(e.voteCnt)
+                        
+                        $(voteWrapper).attr("onclick","locationJoin(" + e.circle_id + "," + e.circleVoteDto.circle_vote_id +")")
+                        
+                        
+                        $("#voteListInsert").append(voteWrapper)
+                        
+                        
+                    }
+                
+                }
+                
+            })
+
+        }
+        const locationJoin = (circle_id, circle_vote_id) => {
+
+            console.log(circle_id);
+            console.log(circle_vote_id);
+            //동아리 가입확인 먼저해야됨
+
+            $.ajax({
+                url: "./circleJoinCheckVoteAssociation?circle_id=" + circle_id,
+                datatype: "json",
+                success: (response) => {
+                    // 가입되어있을시 바로이동
+                    // 가입안되어있을시 동아리에 가입해야한다고 모달창띄우면서 확인 클릭시 이동 아니면 알림창뜨고 10초뒤 이동
+                    if(response.data === true){
+                        location.href = `./circleVoteListArticlePage?circle_id=${circle_id}&circle_vote_id=${circle_vote_id}`;
+                    }else{ 
+                        InvitationToJoin(circle_id)
+                    }
+                    
+                }
+            })
+
+
+            // location.href = "circleListArticlePage?circle_id=" + circle_id;
+
+        }
+        
+        const InvitationToJoin = (circle_id) => {
+
+            $("#invitationModal").find(".invitationButton")
+            .attr("onclick","locationMove("+ circle_id +")")
+        
+            const modal = bootstrap.Modal.getOrCreateInstance("#invitationModal");
+            modal.show();
+
+            setTimeout(() => {
+                location.href = "circleListArticlePage?circle_id=" + circle_id;
+            }, 1000)
+            
+
+        }
+        const locationMove = (circle_id) => {
+
+             location.href = "circleListArticlePage?circle_id=" + circle_id;
+
+        }
+
         // 모달 외부 클릭 시 닫기
         window.onclick = function (event) {
             var modal = document.getElementById('myModal');
@@ -179,6 +300,7 @@
         window.addEventListener("DOMContentLoaded", () =>{
             smallCategoryList();
             circleInfoHotThree();
+            voteThreeNewList();
         })
     </script>
     <style>
@@ -244,15 +366,20 @@
         }
 
         .content {
-        min-height: 100em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+        min-height: 80.5em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
         height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
         overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        }
+        .shadow-box {
+        background-color: #ffffff;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+        }
+        .pp{
+            margin-left: 0.01em;
+            margin-right: 0.01em;
         }
         
     </style>
@@ -261,11 +388,15 @@
 <body>
     <div class="container-fluid">
         <div class="row mt-2 align-items-center">
-            <div class="col-2">
+            <div class="col-2" onclick="(() => {
+                location.href = './circleMainPage'
+            })()">
                 <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
             </div>
-            <div class="col-6 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;">
-                ufuf
+            <div class="col-6 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;" onclick="(() => {
+                location.href = './circleMainPage'
+            })()">
+                ufuf                                                                                     
             </div>
             <div class="col-2" style="text-align: right;">
                 <a href="#" style="text-decoration: none; color: black;"><i class="bi bi-bell fs-1"></i></a>
@@ -304,13 +435,14 @@
                         </div>
                     </div>
                 </div>
-                <div id="subWrapper" class="row mt-2 align-items-center me-1">
+                <div id="subWrapper" class="row align-items-center me-1">
                     <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
                         <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;<span class="subname1">핫한 동아리</span>
                     </div>
                     <div class="col-1">
                         <a href="./circleListPage" style="text-decoration: none; color: black;">+</a>
                     </div>
+                    <!-- 가장 많이 투표한 투표리스트 10개만 뽑아서 리스트 페이지 만들면될듯 그리고 들어가려고하면 동아리에 가입해야한다고 나와야함-->
                 </div>
                 <div class="row">
                     <div id="deleteList" class="col">
@@ -319,54 +451,34 @@
                                 
                             </div>
                         </div>
-                        <div class="row mt-2 align-items-center me-1">
-                            <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
-                                <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;인기있는 동아리 게시글
+                        <div class="row">
+                            <div class="col d-grid px-0">
+                                <img src="/public/image/circle/middlebanner.jpg" class="img-fluid" style="width: 120%;">
                             </div>
-                            <div class="col-1">
-                                <a href="#" style="text-decoration: none; color: black;">+</a>
+                        </div>
+                        <div class="row align-items-center me-1">
+                            <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
+                                <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;따끈한 투표글
+                            </div>
+                            <div class="col-1" onclick="accessDeniedVote()">
+                                +
                             </div>
                         </div>
                         <div class="row mt-2 ">
-                            <div class="col">
-                                <div class="row mx-1 border rounded-3">
-                                    <div class="col-3 text-center">
-                                        인원이 많은
-                                    </div>
-                                    <div class="col text-center">
-                                        글 (3개정도?)
-                                    </div>
-                                </div>
+                            <div id="voteListInsert" class="col"><!-- 이쪽에 들어가야함.. 투표글 리스트 3개정도-->
+                                
                             </div>
                         </div>
-                        <div class="row fixed-bottom mx-0 align-items-center">
-                            <div class="button col py-0 text-center fs-1">
-                                <i class="bi bi-house-door-fill"></i>
-                            </div>
-                            <div class="button col py-0 text-center fs-1">
-                                <i class="bi bi-messenger"></i>
-                            </div>
-                            <div class="col-2 px-0 d-grid">
-                                <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button>
-                            </div>
-                            <div class="button col py-0 text-center fs-1" onclick="(() => {
-                                location.href = './myCircleListPage'
-                            })()">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                            <div class="button col py-0 text-center fs-1" onclick="(() => {
-                                location.href = './circleMyPage'
-                            })()">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-    <!-- 모달 -->
+    <th:block th:replace="~{commons/circlefragmentPage.html :: bottomNavi1}"></th:block>
+    
+
+    <!-- 중앙 +모달 -->
     <div class="modal" id="myModal">
         <div class="modal-dialog modal-sm modal-dialog-bottom pt-0"> <!-- 또는 modal-sm -->
             <div class="modal-content px-0 py-0">
@@ -398,14 +510,15 @@
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
+    <!-- 동아리 클론노드..-->
+    <div id="Wrapper" class="row mt-2 mb-1 d-none rounded-3">
         <div class="col rounded-3 mx-1" style="background-color: white;">
             <div class="row rounded-3" style="font-size: small;">
                 <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
                     <div class="row mt-1">
-                        <div class="col" style="padding-top: 0.9em; font-size: 0.7em;">
-                            <span class="circlecategory rounded-pill py-1 px-2 fw-semibold" style="background-color: rgb(130, 130, 130); color: white;">배찌</span>
+                        <div class="col align-items-center" style="padding-top: 0.9em; font-size: 0.75em;">
+                            &nbsp;<span class="circlemiddlecategory fw-semibold">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory fw-semibold">배찌</span>
                         </div>
                     </div>
                     <div class="row mt-1">
@@ -424,9 +537,101 @@
                         </div>
                     </div>
                 </div>
+                <!-- 이미지가 들어가야 이쁜가?-->
+                <div class="col-2 pt-3">
+                    <div class="row align-items-center mt-0">
+                        <div class="col d-grid rounded-3">
+                            <img class="circlegradeimg img-fluid">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- 투표글 이동하기 막는 모달(동아리에 가입을 해야 볼 수 있음)-->
+    <div id="voteCheckWrapper d-none">
+        <div id="voteCheckModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">투표글 이동</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            투표글을 더 보려면 동아리에 가입하셔야 합니다.
+                        </div>
+                    </div>
+                </div>    
+                <div class="modal-footer" style="text-decoration-line: none;">
+                    <button type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;" onclick="(() => {
+                        location.href = './circleListPage'
+                    })()">동아리 가입</button>
+                    <button type="button" class="btn btn-secondary fw-semibold" style="color: #fb7928; background-color: white; border-color: #fb7928;" onclick="(() => {
+                        location.href = './myCircleListPage'
+                    })()">내 동아리</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 이건.. 투표글 클론노드.. -->
+        <div id="voteWrapper" class="col d-none">
+            <div class="row pp">
+                <div class="col">
+                    <div class="row my-1 rounded-3 shadow-box" style="background-color: white;">
+                        <div class="col py-2 px-3">
+                            <div class="row mb-0">
+                                <div class="vote_title col pb-0" style="font-size: 1.2em;">
+                                    글제목
+                                </div>
+                            </div>
+                            <div class="row mt-0">
+                                <div class="vote_theme col pt-0" style="font-size: 1.08em; color: rgb(102, 102, 102);">
+                                    투표주제
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-5">
+                                    <span class="voteCnt fw-semibold" style="color: #ff9e62;"></span><span style="font-size: 0.8em;">명 참여</span>
+                                </div>
+                                <div class="col text-end">
+                                    <span class="vote_end_time" style="text-align: end; font-size: 0.8em;">마감 ㅇ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- -->
+        <div id="invitationWrapper" class="col">
+            <div id="invitationModal" class="modal" tabindex="-1" style="border: none;">
+                <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                  <div class="modal-content px-0 py-0">
+                    <div class="modal-header">
+                      <h5 class="modal-title">동아리 가입</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                동아리 가입페이지로 이동합니다.
+                            </div>
+                        </div>
+                    </div>    
+                    <div class="modal-footer" style="text-decoration-line: none;">
+                        <button type="button" class="invitationButton btn fw-semibold " style="background-color: #fb7928;color: white;">확인</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>

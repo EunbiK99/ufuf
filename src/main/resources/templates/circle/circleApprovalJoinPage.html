@@ -12,6 +12,7 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script>
         function goBack() {
             window.history.go(-1);
@@ -43,7 +44,7 @@
                         const gender = UserInfoOne.querySelector(".gender").innerText = "여";
                     }
                     const joinSubmit = UserInfoOne.querySelector(".joinSubmit");
-                    joinSubmit.setAttribute("onclick","joinSubmit(" + e.circleJoinApplyDto.circle_join_apply_id + ")");
+                    joinSubmit.setAttribute("onclick","joinSubmit(" + e.circleJoinApplyDto.circle_join_apply_id + "," + e.userInfoDto.user_id + ")");
 
                     const listInsert = document.querySelector("#listInsert")
                     listInsert.appendChild(UserInfoOne);
@@ -52,13 +53,13 @@
 
             })
         }
-        const joinSubmit = (circle_join_apply_id) => {
+        const joinSubmit = (circle_join_apply_id, user_id) => {
 
             const queryString = window.location.search;
             const urlParam = new URLSearchParams(queryString);
             const circle_id = urlParam.get("circle_id");
             
-            fetch("./approvalJoin?circle_id=" + circle_id + "&circle_join_apply_id=" + circle_join_apply_id)
+            fetch("./approvalJoin?circle_id=" + circle_id + "&circle_join_apply_id=" + circle_join_apply_id + "&user_id=" + user_id)
             .then(response => response.json())
             .then(response => {
 
@@ -81,10 +82,7 @@
 
      <style>
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
     </style>
 </head>

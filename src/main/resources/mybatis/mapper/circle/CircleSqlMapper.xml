@@ -299,9 +299,76 @@
     <select id="circleScheduleApplyPeopleCount" resultType="int">
         SELECT count(*) from circle_schedule_application WHERE circle_schedule_id = #{circle_schedule_id}
     </select>
+    <insert id="kakakPaymentCancleReqInsert">
+        INSERT into kakao_payment_cancel_req(cid,tid,cancel_amount,cancel_tax_free_amount) values(
+            #{cid},#{tid},#{cancel_amount},#{cancel_tax_free_amount}
+        )
+    </insert>
+    <insert id="kakakPaymentCancleResInsert">
+        INSERT into kakao_payment_cancel_res(partner_order_id,partner_user_id,tid,payment_method_type,approved_cancel_amount,canceled_at,aid) values(
+            #{partner_order_id},#{partner_user_id},#{tid},#{payment_method_type},#{approved_cancel_amount},#{canceled_at},#{aid}
+        )
+    </insert>
+    <update id="paymentCancelStatusChangeOrderInfoStatus">
+        UPDATE order_info SET status = '환불완료' WHERE order_id = #{order_id}
+    </update>
+    <delete id="scheduleApplicationTableDelete">
+        DELETE from circle_schedule_application WHERE circle_schedule_application_id = #{circle_schedule_application_id}
+    </delete>
+    <select id="voteThreeNewList" resultType="com.cu.ufuf.dto.CircleVoteDto">
+        SELECT * from circle_vote order by circle_vote_id desc limit 3
+    </select>
+    <select id="circleIdGetByCircleVoteId" resultType="int">
+        SELECT circle_id  from circle_member 
+        WHERE circle_member_id = (SELECT circle_member_id  from circle_vote where circle_vote_id = #{circle_vote_id})
+    </select>
+    <select id="circleScheduleApplicationMaxIdByCircleMemId" resultType="int">
+        SELECT max(circle_schedule_application_id) from circle_schedule_application WHERE circle_member_id = #{circle_member_id}
+    </select>
+    <select id="circleScheduleApplicationPeopleCntByCircleScheduleId" resultType="int">
+        SELECT count(*) from circle_schedule_application WHERE circle_schedule_id = #{circle_schedule_id}
+    </select>
+    <select id="circleScheduleApplicationListOrderByDesc" resultType="com.cu.ufuf.dto.CircleScheduleApplyDto">
+        SELECT * from circle_schedule_application 
+        WHERE circle_schedule_id = #{circle_schedule_id} 
+        order by circle_schedule_application_id desc
+    </select>
+    <select id="circleScheduleAttendanceInfoByCircleScheduleApplicationId" resultType="com.cu.ufuf.dto.CircleScheduleAttendanceDto">
+        SELECT * from circle_schedule_attendance 
+        WHERE circle_schedule_application_id = #{circle_schedule_application_id}
+    </select>
+    <update id="circleAttendanceChangeY">
+        update circle_schedule_attendance set attendance = 'Y' where circle_schedule_application_id = #{circle_schedule_application_id}
+    </update>
+    <select id="circleMemberInfoByCircleMemberId" resultType="com.cu.ufuf.dto.CircleMemberDto">
+        select * from circle_member where circle_member_id = #{circle_member_id}
+    </select>
+    <update id="circleAttendanceChangeN">
+        update circle_schedule_attendance set attendance = 'N' where circle_schedule_application_id = #{circle_schedule_application_id}
+    </update>
+    <insert id="circleBoardLikeInsert">
+        INSERT into circle_board_like(circle_board_id,circle_member_id) values(
+            #{circle_board_id},#{circle_member_id}
+        )
+    </insert>
+    <delete id="circleBoardLikeDelete">
+        DELETE from circle_board_like 
+        WHERE circle_board_id = #{circle_board_id} and circle_member_id = #{circle_member_id}
+    </delete>
+    <select id="circleBoardLikeCheck" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT * from circle_board_like 
+        WHERE circle_board_id = #{circle_board_id} AND circle_member_id = #{circle_member_id}) as boo from dual
+    </select>
+    <select id="circleVoteTotalCount" resultType="int">
+        SELECT count(*) from circle_vote_complete 
+        WHERE vote_option_id 
+        IN (SELECT vote_option_id from circle_vote_option WHERE  circle_vote_id = #{circle_vote_id})
+    </select>
+    <select id="circleVoteCompleteCount" resultType="int">
+        SELECT count(*) from circle_vote_complete WHERE vote_option_id = #{vote_option_id}
+    </select>
     
-
-
+    
 
 
 </mapper>

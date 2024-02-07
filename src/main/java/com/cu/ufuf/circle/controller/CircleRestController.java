@@ -21,6 +21,7 @@ import com.cu.ufuf.circle.service.CircleService;
 import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.CircleBoardDto;
+import com.cu.ufuf.dto.CircleBoardLikeDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
 import com.cu.ufuf.dto.CircleLikeDto;
@@ -28,6 +29,7 @@ import com.cu.ufuf.dto.CircleMemberDto;
 import com.cu.ufuf.dto.CircleMiddleCategoryDto;
 import com.cu.ufuf.dto.CircleNoticeImageDto;
 import com.cu.ufuf.dto.CircleScheduleApplyDto;
+import com.cu.ufuf.dto.CircleScheduleAttendanceDto;
 import com.cu.ufuf.dto.CircleScheduleDto;
 import com.cu.ufuf.dto.CircleSmallCategoryDto;
 import com.cu.ufuf.dto.CircleVoteCompleteDto;
@@ -35,11 +37,14 @@ import com.cu.ufuf.dto.CircleVoteDto;
 import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.dto.circleStringDataDto;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -565,6 +570,16 @@ public class CircleRestController {
         circleScheduleApplyDto.setCircle_schedule_id(circle_schedule_id);
 
         circleService.circleScheduleApplicationInfoInsert(circleScheduleApplyDto);
+        
+        // 여기서 이제 max값 받아와서 일정 출석부 insert시켜주면됨 ==> 이러면 일정출석부도 insert 완료
+        // 밑에 받아올때 파라미터로 동아리 맴버번호 보내는 이유 ==> 혹시라도 동시에 다른사람이랑 하면 꼬일까봐..
+        int maxValue = circleService.circleScheduleApplicationMaxIdByCircleMemId(circle_member_id);
+        
+        CircleScheduleAttendanceDto circleScheduleAttendanceDto = new CircleScheduleAttendanceDto();
+        circleScheduleAttendanceDto.setCircle_schedule_application_id(maxValue);
+        circleScheduleAttendanceDto.setAttendance("N");
+        
+        circleService.circleScheduleAttenDanceInfoInfoInsert(circleScheduleAttendanceDto);
 
         responseDto.setResult("success");
 
@@ -644,23 +659,21 @@ public class CircleRestController {
     // approvalJoin
     @RequestMapping("approvalJoin")
     public RestResponseDto approvalJoin(@RequestParam("circle_id") int circle_id,
-            @RequestParam("circle_join_apply_id") int circle_join_apply_id, HttpSession session) {
+            @RequestParam("circle_join_apply_id") int circle_join_apply_id, @RequestParam("user_id") int user_id) {
 
         RestResponseDto responseDto = new RestResponseDto();
-        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
-        int user_id = userInfoDto.getUser_id();
 
         // 가입신청 Y로바꿔줌
         circleService.circleJoinApplyCompleteUpdateByCircleJoinApplyId(circle_join_apply_id);
         // 그리고 회원정보 넣어주기 M으로
         CircleMemberDto circleMemberDto = new CircleMemberDto();
         circleMemberDto.setCircle_id(circle_id);
+        // 헐이거 가입해시켜주는애 세션으로 하면안됨..
         circleMemberDto.setUser_id(user_id);
         circleMemberDto.setCircle_position("M");
 
         circleService.cirlceMemberinfoInsert(circleMemberDto);
 
-        responseDto.setData(null);
         responseDto.setResult("success");
 
         return responseDto;
@@ -792,8 +805,7 @@ public class CircleRestController {
         orderInfoDto.setItem_id(item_id);
         orderInfoDto.setUser_id(user_id);
         orderInfoDto.setStatus("READY");
-        orderInfoDto.setOrder_id(orderNumber);
-        System.out.println(orderNumber);
+        orderInfoDto.setOrder_id(orderNumber);        
 
         // insert
         circleService.orderInfoInsert(orderInfoDto);
@@ -1079,10 +1091,251 @@ public class CircleRestController {
         
         return responseDto;
     }
+    // kakakPaymentCancleReqInsert
+    @RequestMapping("kakakPaymentCancleReqInsert")
+        public RestResponseDto kakakPaymentCancleReqInsert(@RequestBody KakaoPaymentCancelReqDto kakaoPaymentCancelReqDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
 
-    
+        circleService.kakakPaymentCancleReqInsert(kakaoPaymentCancelReqDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // kakakPaymentCancleResInsert
+    @RequestMapping("kakakPaymentCancleResInsert")
+    public RestResponseDto kakakPaymentCancleResInsert(@RequestBody KakaoPaymentCancelResDto kakaoPaymentCancelResDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.kakakPaymentCancleResInsert(kakaoPaymentCancelResDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // paymentCancelStatusChange
+    @RequestMapping("paymentCancelStatusChange")
+        public RestResponseDto paymentCancelStatusChange(@RequestParam("order_id") String order_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.paymentCancelStatusChangeOrderInfoStatus(order_id);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // scheduleApplicationTableDelete
+    @RequestMapping("scheduleApplicationTableDelete")
+        public RestResponseDto scheduleApplicationTableDelete(@RequestParam("circle_schedule_application_id") int circle_schedule_application_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.scheduleApplicationTableDelete(circle_schedule_application_id);
 
-    // RESTAPI 양식
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // votePopularList
+    @RequestMapping("votePopularList")
+        public RestResponseDto votePopularList(){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //voteThreeNewList
+    @RequestMapping("voteThreeNewList")
+        public RestResponseDto voteThreeNewList(){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        responseDto.setData(circleService.voteThreeNewList());
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleJoinCheckVoteAssociation 이거 투표글 확인하면서 만약 동아리
+    @RequestMapping("circleJoinCheckVoteAssociation")
+        public RestResponseDto circleJoinCheckVoteAssociation(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        Boolean check;
+        if(circleMemberDto == null){
+            check = false;
+        }else{
+            check = true;
+        }
+        
+        responseDto.setData(check);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 일정출석부 insert 관해서 넣어보겠슴.. 이건 거의 날짜기준이라고 봐도 무방함
+    // 이건 일정번호기준으로 여러명의 일정신청테이블이 있고 일정신청에따른 일정 출석부 테이블이 있다.. 일정이 갑자기 철회되지 않는이상..
+    // 잠깐.. 이거 할필요가 있나..? ==> 일정 신청이되면 자동으로 일정출석부를 같이 insert시켜주면 되잖아...
+    @RequestMapping("circleAttendanceList")
+        public RestResponseDto circleAttendanceList(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        // 이렇게하면 내 동아리맴버 번호가 나오고 내가 작성한 일정을 찾아오면됨 (차피 일정작성은 P,A권한만 쓸 수 있으니까 따로제약안걸어도될듯?)
+        
+        // 일정리스트 나옴 근데 한가지 안한게 있음.. ==> 일정종료일 기준으로 생각해야할듯..? 지금 여기서 서버에서 조정을해서 가져갈지 자바스크립트로 조정을 할지?
+        // 일정이 종료되고나서 2일동안은 출석을 할 수 있게끔 풀어놓는.. 시스템느낌으로 할거같음
+        responseDto.setData(circleService.circleAttendanceList(circle_id, user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 일정신청+일정출석부 엮으면됨 ==> 이건 그 일정리스트를 클릭했을때 circle_schedule_id를 보내고 신청or출석부 리스트를 가져온다.
+    // 이거 누가신청했는지 동아리 맴버도 엮어서 유저정보를 가져온다.
+    @RequestMapping("circleAttendanceApplicationList")
+        public RestResponseDto circleAttendanceApplicationList(@RequestParam("circle_schedule_id") int circle_schedule_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        
+        responseDto.setData(circleService.circleAttendanceApplicationList(circle_schedule_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 다음에 해야할건 이제 출석부 update ==> N => Y로 바꿈
+    @RequestMapping("circleAttendanceChangeY")
+        public RestResponseDto circleAttendanceChangeY(@RequestParam("circle_schedule_application_id") int circle_schedule_application_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleAttendanceChangeY(circle_schedule_application_id);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 그리고 출석부 버튼을 바꾸는 검증같은게 있어야할거임..
+    //circleAttendanceChangeN
+    @RequestMapping("circleAttendanceChangeN")
+        public RestResponseDto circleAttendanceChangeN(@RequestParam("circle_schedule_application_id") int circle_schedule_application_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleAttendanceChangeN(circle_schedule_application_id);
+        
+        responseDto.setResult("success");
+        
+        return responseDto; 
+    }
+    // getMyInfoSelect
+    @RequestMapping("getMyInfoSelect")
+        public RestResponseDto getMyInfoSelect(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        responseDto.setData(null);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleBoardLikeInsert
+    @RequestMapping("circleBoardLikeInsert")
+        public RestResponseDto circleBoardLikeInsert(@RequestParam("circle_id") int circle_id, @RequestParam("circle_board_id") int circle_board_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        CircleBoardLikeDto circleBoardLikeDto = new CircleBoardLikeDto();
+        circleBoardLikeDto.setCircle_board_id(circle_board_id);
+        circleBoardLikeDto.setCircle_member_id(circle_member_id);
+
+        circleService.circleBoardLikeInsert(circleBoardLikeDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleBoardLikeCheck
+    @RequestMapping("circleBoardLikeCheck")
+        public RestResponseDto circleBoardLikeCheck(@RequestParam("circle_id") int circle_id, @RequestParam("circle_board_id") int circle_board_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        CircleBoardLikeDto circleBoardLikeDto = new CircleBoardLikeDto();
+        circleBoardLikeDto.setCircle_board_id(circle_board_id);
+        circleBoardLikeDto.setCircle_member_id(circle_member_id);
+        
+        // 여기서 이제 체크 이번엔 리턴값 Boolean을 받아올거임
+        Boolean check = circleService.circleBoardLikeCheck(circleBoardLikeDto);
+
+        responseDto.setData(check);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleBoardLikeDelete
+    @RequestMapping("circleBoardLikeDelete")
+        public RestResponseDto circleBoardLikeDelete(@RequestParam("circle_id") int circle_id, @RequestParam("circle_board_id") int circle_board_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        CircleBoardLikeDto circleBoardLikeDto = new CircleBoardLikeDto();
+        circleBoardLikeDto.setCircle_board_id(circle_board_id);
+        circleBoardLikeDto.setCircle_member_id(circle_member_id);
+
+        circleService.circleBoardLikeDelete(circleBoardLikeDto);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //voteChartInfo
+    @RequestMapping("voteChartInfo")
+        public RestResponseDto voteChartInfo(@RequestParam("circle_vote_id") int circle_vote_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.voteChartInfo(circle_vote_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    // RESTAPI 양식 
     /*
     @RequestMapping("asdfasdfasdf")
         public RestResponseDto asdfasdfasdfasdf(){

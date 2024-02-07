@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <script>
         // 캘린더..
@@ -762,6 +762,136 @@
             })
 
         }
+        // 리스트 뽑아낼거임 circleAttendance 여기 아직 수정안된부분 해야됨
+        const circleAttendanceList = () => {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_id = urlParams.get("circle_id");
+
+            // ajax 요청응답
+            $.ajax({
+                url: `./circleAttendanceList?circle_id=${circle_id}`,
+                dataType: "json",
+                success: (response) => {
+                    console.log(response.data);
+                    
+                    for(e of response.data){
+
+                        // 이정도까지 하고 출석버튼
+                        const listWrapper = $("#listWrapper").clone(true)
+                        listWrapper.removeClass("d-none");
+                        listWrapper.find(".scheduletitle").text(e.circleScheduleDto.schedule_title)
+                        listWrapper.find(".scheduleaddress").text(e.circleScheduleDto.schedule_address)
+                        listWrapper.find(".participation2").text(`${e.circleScheduleDto.participation}명`)
+                        listWrapper.find(".attendanceCheck").attr("onclick",`attendanceModal(${e.circleScheduleDto.circle_schedule_id})`)
+
+                        $("#scheduleListInsert").append(listWrapper)
+
+                    }
+
+                    
+
+                }
+            })
+
+        }
+
+        const attendanceModal = (circle_schedule_id) => {
+            
+            $.ajax({
+                url: `./circleAttendanceApplicationList?circle_schedule_id=${circle_schedule_id}`,
+                dataType: "json",
+                success: (response) => {
+
+                    // 리스팅시키고 모달 보여줌
+                    if(response.data.length === 0){
+
+                        $("#attendanceInfoInsert").text("일정신청한 인원이 없습니다.")
+                            
+                    }
+                     
+                    for(e of response.data){
+
+                        // 유저이름이름이랑 그냥참여 했는지 안했는지만 체크되면됨
+                        // 값만있는경우 []이고 키값은 {}인가봄
+                        
+                        const attendanceNode = $("#attendanceNode").clone(true)
+                        attendanceNode.removeClass("d-none")
+                        attendanceNode.find(".username").text(e.userInfoDto.name)
+                        // 근데 이 버튼은 만약 출석체크를 했을때 버튼은 출석취소로 나와야함 
+                        
+                        // N 일때 버튼 주황 Y알때 버튼 레드 어차피 service에서 2일 지나면 사라지게만듬
+                        if(e.circleScheduleAttendanceDto.attendance === 'N'){
+                            const node = $("<button>").addClass(["btn", "fw-semibold", "attendanceCheck"]).css(
+                                {
+                                    'background-color': "#fb7928",
+                                    "color": "white"
+                                }
+                            )
+                            .text("참여")
+                            .attr("onclick", `circleAttendanceChangeY(${e.circleScheduleApplyDto.circle_schedule_application_id})`)
+                            attendanceNode.find(".userButton").append(node)
+                        }else{
+                            const node = $("<button>").addClass(["btn", "fw-semibold", "attendanceCheck"]).css(
+                                {
+                                    'background-color': "red",
+                                    "color": "white"
+                                }
+                            )
+                            .text("불참")
+                            .attr("onclick", `circleAttendanceChangeN(${e.circleScheduleApplyDto.circle_schedule_application_id})`)
+                            attendanceNode.find(".userButton").append(node)
+                        }
+
+                        
+                        
+                        $("#attendanceInfoInsert").append(attendanceNode)
+                        
+
+                    }
+
+
+                }
+            })
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#attendanceModal");
+            modal.show();
+
+        }
+        
+        const circleAttendanceChangeN = (circle_schedule_application_id) => {
+
+            $.ajax({
+                url: `./circleAttendanceChangeN?circle_schedule_application_id=${circle_schedule_application_id}`,
+                dataType: "json",
+                success: (response) => {
+
+                    location.reload(); // 리로드를 시켜야 다시 출석체크가 되었는지 안되었는지 확인이 가능함.
+
+                }
+            })
+
+        }
+        
+        const circleAttendanceChangeY = (circle_schedule_application_id) => {
+            
+            // method 안적으면 걍 get방식
+            $.ajax({
+                url: `./circleAttendanceChangeY?circle_schedule_application_id=${circle_schedule_application_id}`,
+                dataType: "json",
+                success: (response) => {
+
+                    location.reload();
+
+                }
+            })
+
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            circleAttendanceList();
+        })
         
 
 
@@ -794,10 +924,10 @@
         }
         html, body {
             width: 100%;
-            height: 100%;
+            height: 120%;
             margin : 0 auto;
             padding : 0;
-            border : none;    
+            border : none;   
         }
         #fc-dom-1{
             padding-left: 1em;
@@ -810,12 +940,7 @@
         /* [컨테이너 크기 설정] */
         
         *{
-            /* font-family: 'Dongle', sans-serif; */
-            font-family: 'Gowun Dodum', sans-serif;
-            /* font-family: 'Quicksand', sans-serif; */
-            /* font-family: 'Noto Sans KR', sans-serif; */
-            /* font-family: 'IBM Plex Sans KR', sans-serif; */
-            /* font-family: 'Nanum Gothic Coding', monospace; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
         .fc {
             font-family: 'Arial', sans-serif;
@@ -869,6 +994,13 @@
     <div class="container-fluid d-grid">
         <div class="row">
             <div id="calendar" class="col py-2 px-0">
+
+            </div>
+        </div>
+        <!-- 생각을 해보자.. 일정출석부는 일정 마감일이 지나고 나서 이틀정도 기한을 준다고 했고 출석부는 일정등록을 한 본인만 출석체크를 할 수 있다.
+             일정시작일 기준으로 일정출석부는 생길것이고 일정출석부가 보이는 기간은 일정마감일 기준으로 2일동안 근데 여기서 일정 출석부가 보여야 하는건 등록한사람만 -->
+        <div class="row">
+            <div id="scheduleListInsert" class="col">
 
             </div>
         </div>
@@ -926,7 +1058,7 @@
                 </div>
                 <div class="row">
                     <div class="col px-0"><!-- 일정에 주소좌표가 들어갈 예정 --> 
-                        <div id="map" style="width: 100%; height: 17em;"></div>
+                        <div id="map" style="width: 100%; height: 17.7em;"></div>
                     </div>
                 </div>
             </div>
@@ -938,6 +1070,64 @@
         </div>
       </div>
     </div>
+    <div id="listWrapper" class="row d-none mt-2">
+        <div class="col">
+            <div class="row">
+                <div class="col scheduletitle fw-semibold" style="font-size: 1.2em;">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col scheduleaddress fw-semibold" style="font-size: 0.9em; color: rgb(153, 153, 153);">
+                    
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col participation2">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-4 d-grid">
+            <button type="button" class="btn fw-semibold attendanceCheck" style="background-color: #fb7928;color: white;">출석체크</button>
+        </div>
+    </div>
+    <div id="attendanceWrapper d-none">
+        <div id="attendanceModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">일정 출석부</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="attendanceInfoInsert" class="col">
+                            <!-- 리스팅 되어야할 곳 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-decoration-line: none;">
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!-- 여기는 이제 일정 출석부에 추가해야할 클론노드 -->
+    <div id="attendanceNode" class="row d-none">
+        <div class="col">
+            <div class="row">
+                <div class="col username fw-semibold">
+
+                </div>
+            </div>
+        </div>
+        <div class="col d-grid userButton">
+            
+        </div>
+    </div>
+    <!-- 또 출석체크 누르면 모달창 만들어야 함 -->
     <!-- 라이브러리 쓰려면 라이브러리 추가한거사용하면됨 7319aff03174c9825e5552818af66d19 -->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf&libraries=services"></script>

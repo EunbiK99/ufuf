@@ -11,6 +11,7 @@ import com.cu.ufuf.dto.AmountDto;
 import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.CircleBoardDto;
 import com.cu.ufuf.dto.CircleBoardImageDto;
+import com.cu.ufuf.dto.CircleBoardLikeDto;
 import com.cu.ufuf.dto.CircleDto;
 import com.cu.ufuf.dto.CircleGradeDto;
 import com.cu.ufuf.dto.CircleJoinApplyDto;
@@ -28,6 +29,8 @@ import com.cu.ufuf.dto.CircleVoteOptionDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
@@ -215,4 +218,40 @@ public interface CircleSqlMapper {
 
     // 일정신청한 인원
     public int circleScheduleApplyPeopleCount(int circle_schedule_id);
+
+    // 카카오페이취소요청 insert && 취소응답 insert
+    public void kakakPaymentCancleReqInsert(KakaoPaymentCancelReqDto kakaoPaymentCancelReqDto);
+    public void kakakPaymentCancleResInsert(KakaoPaymentCancelResDto kakaoPaymentCancelResDto);
+
+    // 결제취소후 상태변경 && 일정신청 테이블에서 삭제 결제취소된 내용들
+    public void paymentCancelStatusChangeOrderInfoStatus(String order_id);
+    public void scheduleApplicationTableDelete(int circle_schedule_application_id);
+    
+    // 메인쪽에서 최근에 올라온 투표글 3개 리스트출력 && 동아리id 찾아오기 투표글id로
+    public List<CircleVoteDto> voteThreeNewList();
+    public int circleIdGetByCircleVoteId(int circle_vote_id);
+
+    // 출석부에쓸 일정신청테이블 max값 가져오기 && 일정신청개수 가져오기
+    public int circleScheduleApplicationMaxIdByCircleMemId(int circle_member_id);
+    public int circleScheduleApplicationPeopleCntByCircleScheduleId(int circle_schedule_id);
+
+    // 일정신청리스트 뽑아오기 && 무조건 하나밖에나올수 밖에없는 scheduleAttendanceInfo
+    public List<CircleScheduleApplyDto> circleScheduleApplicationListOrderByDesc(int circle_schedule_id);
+    public CircleScheduleAttendanceDto circleScheduleAttendanceInfoByCircleScheduleApplicationId(int circle_schedule_application_id);
+    
+    // 일정출석부 출석체크
+    public void circleAttendanceChangeY(int circle_schedule_application_id);
+    public void circleAttendanceChangeN(int circle_schedule_application_id);
+
+    // 맴버정보 by memberid
+    public CircleMemberDto circleMemberInfoByCircleMemberId(int circle_member_id);
+
+    // 동아리 게시글 좋아요 insert // 좋아요취소 // 좋아요 체크
+    public void circleBoardLikeInsert(CircleBoardLikeDto circleBoardLikeDto);
+    public void circleBoardLikeDelete(CircleBoardLikeDto circleBoardLikeDto);
+    public Boolean circleBoardLikeCheck(CircleBoardLikeDto circleBoardLikeDto);
+
+    // 그냥 투표수 토탈가져오게함 && 두번째껀 한항목당 투표수가져오기
+    public int circleVoteTotalCount(int circle_vote_id);
+    public int circleVoteCompleteCount(int vote_option_id);
 }

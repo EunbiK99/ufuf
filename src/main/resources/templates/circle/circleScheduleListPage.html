@@ -12,6 +12,7 @@
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script>
         function goBack() {
             window.history.go(-1);
@@ -38,11 +39,11 @@
                     const formattedDate = `${String(changetime[0]).slice(-2)}.${String(changetime[1]).padStart(2, '0')}.${String(changetime[2]).padStart(2, '0')}`;
                     const ordertime = paymentList.querySelector(".ordertime").innerText =  formattedDate
                     
-                    paymentList.addEventListener("click", function() {
-                        paymentHistoryPlusModal(e);
-                    });
+                    paymentList.setAttribute("onclick",`paymentHistoryPlusModal(${JSON.stringify(e)})`)
+
                     const listInsert = document.querySelector("#listInsert");
                     listInsert.appendChild(paymentList);
+                    
 
                 }
 
@@ -123,7 +124,7 @@
 
         const kakaoPaymentCancel = (element) => {
 
-            console.log(element);
+            
             
 
             //옛날 카카오 디벨롭 링크라는데.. 
@@ -149,7 +150,7 @@
                 cancel_tax_free_amount: element.kakaoPaymentReqDto.tax_free_amount
 
             }
-
+            
             fetch(API_URL, {
                 method: 'POST',
                 headers: {
@@ -161,10 +162,25 @@
                 .then(response => response.json())
                 .then(data => {
                     
-                    //여기서 함수 3개정도 호출
+                    //여기서 함수 3개정도 호출 //아까는 떳음 지금 테스트 했는데 취소 한번떠서 결제한금액 초과한다고 뜨는듯
+                    const resData = {
+                        partner_order_id: data.partner_order_id,
+                        partner_user_id: data.partner_user_id,
+                        tid: data.tid,
+                        payment_method_type: data.payment_method_type,
+                        approved_cancel_amount: data.approved_cancel_amount,
+                        canceled_at: data.canceled_at,
+                        aid: data.aid
+                    }
+                    // 일단 응답받는거 확인하긴함 에러나면 무조건 위에 JSON 형식에서 버그일듯
+                    // 지금 dfdfa 1666원 결제취소누르면 에러뜸 왜냐면.. 데이터베이스 테스트안하고 한번눌러봄..
                     
-                    
+                    kakakPaymentCancleResInsert(resData)// object여서 변환해주고 넣음 
+                    kakakPaymentCancleReqInsert(sendData) // object가 아니여서 가능
+                    paymentCancelStatusChange(element.orderInfoDto.order_id) // 주문번호pk 로 변경
+                    scheduleApplicationTableDelete(element.circleScheduleApplyDto.circle_schedule_application_id) // 신청번호pk로 삭제
 
+                    // 마지막은 물론 페이지 리로드 or 결제 취소 완료되었다는 홈페이지로 리다이렉트
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -173,10 +189,89 @@
         }
         
         // 결제취소요청테이블 insert
-        
-        
+        const kakakPaymentCancleReqInsert = (sendData) => {
 
+            console.log(sendData);
+            const url = "./kakakPaymentCancleReqInsert";
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
         // 결제취소응답테이블 insert
+        const kakakPaymentCancleResInsert = (resData) => {
+
+            console.log(resData);
+
+            const url = "./kakakPaymentCancleResInsert";
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(resData)
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                
+
+            })
+
+        }
+
+         // 결제완료 => 환불완료 status바꾸기
+        const paymentCancelStatusChange = (order_id) => {
+
+            const url = "./paymentCancelStatusChange?order_id=" + order_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+            
+                
+
+            })
+
+        }
+
+        // 일정신청테이블에서 삭제
+        const scheduleApplicationTableDelete = (circle_schedule_application_id) => {
+
+            const url = "./scheduleApplicationTableDelete?circle_schedule_application_id=" + circle_schedule_application_id;
+            fetch(url)
+            .then(response => response.json())
+            .then(response => {
+
+                paymentCancelCompleteModal() // 모달창으로 닫기가있고, 6초뒤에 페이지가 리로드 되게 해놓음
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 6000);
+            })
+
+        }
+
+        // 완료된 모달창
+        const paymentCancelCompleteModal = () => {
+
+        const paymentCancelCompleteModal = document.querySelector("#paymentCancelCompleteModal");
+
+        const modal = bootstrap.Modal.getOrCreateInstance("#paymentCancelCompleteModal");
+        modal.show();
+
+
+
+        }
 
         // 결제취소가 되면 status ==> 결제취소 바꿔야하고
         // 일정신청테이블 스케줄pk랑 동아리맴버pk이용해서 일정신청삭제해야함..
@@ -189,10 +284,7 @@
      </script>
      <style>
         *{
-        /* font-family: 'Dongle', sans-serif; */
-        font-family: 'Gowun Dodum', sans-serif;
-        /* font-family: 'Quicksand', sans-serif; */
-        /* font-family: 'Noto Sans KR', sans-serif; */
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
         .shadow {
         background-color: #ffffff; /* 요소의 배경색을 지정 */
@@ -227,7 +319,7 @@
     </div>
     <!-- 여기는 리스트 페이지 -->
     <div id="Wrapper" class="d-none">
-        <div class="paymentList row shadow py-2" style="border: 0.001em solid rgb(238, 238, 238); border-radius: 0.5em;margin-left: 0.05em;margin-right: 0.05em;">
+        <div class="paymentList row shadow py-2 mt-1" style="border: 0.001em solid rgb(238, 238, 238); border-radius: 0.5em;margin-left: 0.05em;margin-right: 0.05em;">
             <div class="col">
                 <div class="row">
                     <div class="title col" style="font-size: 1em;">
@@ -295,7 +387,7 @@
                             일정내용:
                         </div>
                         <div class="col Scontent text-end">
-
+                            
                         </div>
                     </div>
                     <div class="row mt-1 align-items-center">
@@ -354,6 +446,28 @@
             </div>
           </div>
         </div>
+        <div id="Wrapper d-none">
+            <div id="paymentCancelCompleteModal" class="modal" tabindex="-1" style="border: none;">
+                <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                  <div class="modal-content px-0 py-0">
+                    <div class="modal-header">
+                      <h5 class="modal-title">결제 취소 완료</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                결제취소가 완료되었습니다.
+                            </div>
+                        </div>
+                    </div>    
+                    <div class="modal-footer" style="text-decoration-line: none;">
+                      <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
     <!-- 결제취소 했을때 환불이 진행되어야하고 마지막에 일정신청리스트에서 삭제되어야함.-->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf&libraries=services"></script>
