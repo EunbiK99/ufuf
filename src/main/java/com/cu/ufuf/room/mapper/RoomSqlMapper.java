@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
@@ -157,6 +159,16 @@ public interface RoomSqlMapper {
     public void kakaoPaymentAcceptReqInsert(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
     public void kakaoPaymentAcceptResInsert(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
 
+    // 카카오페이 Amount
+    public void amountInfoInsert(AmountDto amountDto);
+    public void cardInfoInsert(CardInfoDto cardInfoDto);
+
+    // Max값 추출
+    public int cardIdMax();
+    public int amountIdMax();
+
+    // orderInfo 업데이트 '결제완료'
+    public void orderInfoStatusByOrderId(String order_id);
 
 
 

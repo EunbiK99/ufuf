@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cu.ufuf.dto.AmountDto;
+import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.InterestRoomDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
@@ -185,8 +188,8 @@ public class RoomRestController {
 	}
 
 	// orderInfoInsert
-    @RequestMapping("orderInfoInsert")
-        public RestResponseDto orderInfoInsert(@RequestParam("item_id") int item_id, @RequestParam("room_info_id") int room_info_id, HttpSession session){
+    @RequestMapping("roomOrderInfoInsert")
+        public RestResponseDto roomOrderInfoInsert(@RequestParam("item_id") int item_id, @RequestParam("room_info_id") int room_info_id, HttpSession session){
         
         RestResponseDto responseDto = new RestResponseDto();
 		
@@ -200,7 +203,7 @@ public class RoomRestController {
         
         // 주문번호 생성
         // MI + 상품코드 + 주문이 발생한 연도 + 주문이 발생한 월 + 주문이 발생한 날짜 + UUID(substring(0, 10))
-        String orderNumber = "CC" + item_id;
+        String orderNumber = "RM" + item_id;
 
         // 현재 날짜 정보 가져오기
         
@@ -243,16 +246,15 @@ public class RoomRestController {
 	//kakaoPaymentInfoInsert 결제요청
     @RequestMapping("kakaoPaymentReqInsert")
       public RestResponseDto kakaoPaymentReqInsert(@RequestBody KakaoPaymentReqDto kakaoPaymentReqDto){
-      
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
 		roomService.kakaoPaymentReqInsert(kakaoPaymentReqDto);
 
-      RestResponseDto responseDto = new RestResponseDto();
-
+        responseDto.setResult("success");
       
+        return responseDto;
       
-      responseDto.setResult("success");
-      
-      return responseDto;
     }
     //kakaoPaymentResInsert 결제준비응답
     @RequestMapping("kakaoPaymentResInsert")
@@ -266,6 +268,36 @@ public class RoomRestController {
       
       return responseDto;
     }
+
+    // kakaoPaymentAcceptReqInsert  요청값 insert
+    @RequestMapping("kakaoPaymentAcceptReqInsert")
+        public RestResponseDto kakaoPaymentAcceptReqInsert(@RequestBody KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        roomService.kakaoPaymentAcceptReqInsert(kakaoPaymentAcceptReqDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // 승인응답테이블 ==> 여기서 amount는 서버에서 dto로 응답받음 insert시키고 max값 받아서 insert시켜야됨 (amount먼저)
+    @RequestMapping("kakaoPaymentAcceptResInsert") 
+        public RestResponseDto kakaoPaymentAcceptResInsert(@RequestBody KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        // 여기서 amountpk랑 cardpk받아서 insert 시켜야함
+        kakaoPaymentAcceptResDto.setAmount(roomService.amountIdMax());
+        kakaoPaymentAcceptResDto.setCard_info(roomService.cardIdMax());
+        
+        // 이거 승인 완료시간이 이상함??? 21시 몇분 이렇게 나옴 => 난 12시에 함 !!!!!!
+        roomService.kakaoPaymentAcceptResInsert(kakaoPaymentAcceptResDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
 
 	// 세션값에 cid tid partner user_id, order_id 저장
     @RequestMapping("sessionPaymentInfoRestore")
@@ -288,6 +320,43 @@ public class RoomRestController {
         KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto =(KakaoPaymentAcceptReqDto)session.getAttribute("kakaoPaymentAcceptReqValue");
         
         responseDto.setData(kakaoPaymentAcceptReqDto);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+
+    //amountInfoInsert
+    @RequestMapping("amountInfoInsert")
+        public RestResponseDto amountInfoInsert(@RequestBody AmountDto amountDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        roomService.amountInfoInsert(amountDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // cardInfoInsert
+    @RequestMapping("cardInfoInsert")
+        public RestResponseDto cardInfoInsert(@RequestBody CardInfoDto cardInfoDto){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        roomService.cardInfoInsert(cardInfoDto);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //orderStatusChange
+    @RequestMapping("orderStatusChange")
+        public RestResponseDto orderStatusChange(@RequestParam("order_id") String order_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        roomService.orderInfoStatusByOrderId(order_id);
+        
         responseDto.setResult("success");
         
         return responseDto;

@@ -10,6 +10,9 @@ import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.MeetingApplyUserDto;
 import com.cu.ufuf.dto.MeetingBothLikeDto;
+import com.cu.ufuf.dto.MeetingChatMessageDto;
+import com.cu.ufuf.dto.MeetingChatRoomDto;
+import com.cu.ufuf.dto.MeetingChatRoomUserDto;
 import com.cu.ufuf.dto.MeetingFirstLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingGroupDto;
 import com.cu.ufuf.dto.MeetingGroupFirstLocationCategoryDto;
@@ -180,6 +183,46 @@ public interface MeetingSqlMapper {
 
     // * 그룹멤버PK기준 그룹멤버Dto 셀렉트
     public MeetingGroupMemberDto selectGroupMemberDtoByGroupMemberId(int groupMemberId);
+
+
+    // * 채팅방 Dto 인서트
+    public void insertChatRoomDto(MeetingChatRoomDto meetingChatRoomDto);
+
+    // * 채팅방PK 생성
+    public int createChatRoomPk();
+
+    // * 채팅참여유저 Dto 인서트
+    public void insertChatRoomUserDto(MeetingChatRoomUserDto meetingChatRoomUserDto);
+
+    // * 프로필PK기준 채팅방제목이 해당프로필 닉네임인 방 셀렉트
+    public List<MeetingChatRoomDto> selectChatRoomDtoByProfileNickname(String profileNickname);
+
+    // * 채팅방PK기준 채팅방 메세지 Dto 셀렉트
+    public List<MeetingChatMessageDto> selectChatMessageDtoByChatRoomId(int chatRoomId);
+
+    // * 채팅방PK, 프로핑PK기준 채팅방 존재여부 판별
+    public int countExistChatRoomByChatRoomIdAndProfileId(int chatRoomId, int profileId);
+
+    // * 채팅방PK 기준 채팅참여유저Dto 셀렉트
+    public List<MeetingChatRoomUserDto> selectChatRoomUserDtoByChatRoomId(int chatRoomId);
+
+    // * 프로핑PK기준 채팅참여유저Dto 셀렉트
+    public List<MeetingChatRoomUserDto> selectChatRoomUserDtoByProfileId(int profileId);
+
+    // * 채팅방PK기준 채팅방Dto 셀렉트
+    public MeetingChatRoomDto selectChatRoomDtoByChatRoomId(int chatRoomId);
+
+    // * 프로필닉네임기준 프로필Dto 셀렉트
+    public MeetingProfileDto selectProfileDtoByProfileNickname(String profileNickname);
+
+    // * 프로필PK, 채팅방PK기준 채팅유저인지 확인(카운트)
+    public int countChatRoomUserByChatRoomIdAndProfileId(int chatRoomId, int profileId);
+
+    // * 채팅메세지 테이블 인서트
+    public void insertChatMessageDto(MeetingChatMessageDto meetingChatMessageDto);
+
+    // * 채팅방PK, 프로필PK로 채팅참여유저Dto 셀렉트
+    public MeetingChatRoomUserDto selectChatRoomUserDtoByProfileIdAndChatRoomId(int profileId, int chatRoomId);
 
 
 

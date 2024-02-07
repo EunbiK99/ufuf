@@ -11,8 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">    
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
@@ -22,13 +21,6 @@
         /* font-family: 'Quicksand', sans-serif; */
         /* font-family: 'Noto Sans KR', sans-serif; */
         font-family: 'Pretendard Variable', Pretendard, Roboto;
-    }
-
-    * .titleWord{
-        font-family: 'Carattere', cursive;
-        /* font-family: 'Italianno', cursive; */
-        /* font-family: 'Square Peg', cursive; */
-        /* font-family: 'Tangerine', cursive; */
     }
 
     .userImageBox{
@@ -234,7 +226,7 @@ function makeDetailPage(){
         if(sessionUserMeetingProfileDto.profileid === e.groupMemberProfileDto.profileid){
             groupMemberListRow.classList.add("fw-bold");
             const meBadge = document.createElement("span");
-            meBadge.setAttribute("class", "badge text-bg-warning");
+            meBadge.setAttribute("class", "badge text-bg-warning px-1 ms-1");
             meBadge.innerText = "Me";
             groupMemberNickname.appendChild(meBadge);
 
@@ -267,18 +259,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 mx-1 justify-content-between">
-                    <div class="col">
+                    <div class="col ps-0">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
                             </div>                            
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
                     </div>
                 </div>
             </div>
@@ -293,7 +285,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto" onclick="window.history.back()">
                                 <span><i class="bi bi-chevron-left"></i></span>                                
                             </div>
-                            <div class="col">
+                            <div class="col-auto ps-0">
                                 <span class="fw-bold">내가 참여중인 미팅</span>
                             </div>                            
                         </div>
@@ -301,11 +293,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
 
                 <div class="row mt-2">
-                    <div class="col mx-1 border border-black rounded">
+                    <div class="col mx-2 border border-black rounded">
                         
                         <div class="row border-bottom border-black rounded-top justify-content-between" style="background-color: #FF8827;">
                             <div class="col-auto my-1">
-                                <span id="groupTitle" class="fs-4 fw-bold"></span>
+                                <span id="groupTitle" class="fs-4 fw-bold text-white"></span>
                             </div>
                             <div id="meetingDoneCol" class="col-auto align-self-center">
                             </div>
@@ -313,14 +305,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
                         <div class="row my-2">
                             <div class="col">
-                                <div class="row">
+                                <div class="row my-1">
                                     <div class="col-auto">
                                         <div class="userImageBox">
                                             <img id="groupLeaderImage" class="userImage">
                                         </div>
                                     </div>
                                     <div class="col-auto align-self-center px-0">
-                                        <span id="groupLeaderNickname" class="fs-5"></span>
+                                        <span id="groupLeaderNickname" class="fs-5 fw-bold"></span>
                                     </div>
                                     <div class="col align-self-center">
                                         <span>님이 방장이에요 :)</span>
@@ -329,8 +321,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
 
-                        <div class="row my-2 mt-2">
-                            <div class="col">
+                        <div class="row mb-3 mt-3">
+                            <div class="col mx-1">
                                 <div class="row">
                                     <div class="col">
                                         <span class="fw-bold fs-5">방장 Comment</span>
@@ -348,8 +340,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>                            
                         </div>
 
-                        <div class="row my-2">
-                            <div class="col">
+                        <div class="row mb-3 mt-3">
+                            <div class="col mx-1">
                                 <div class="row">
                                     <div class="col">
                                         <span class="fw-bold fs-5">참가신청List</span>
@@ -372,8 +364,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div> 
                         </div>
 
-                        <div class="row my-2">
-                            <div class="col">
+                        <div class="row mb-3 mt-3">
+                            <div class="col mx-1">
                                 <div class="row">
                                     <div class="col">
                                         <span class="fw-bold fs-5">확정멤버List</span>
@@ -403,7 +395,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col">
                                 <div class="row justify-content-center">
                                     <div class="col-4 btn" role="button" style="background-color: #FF8827;" onclick="moveToReviewPage()">
-                                        <span class="fw-bold">리뷰 남기기</span>
+                                        <span class="fw-bold text-white">리뷰 남기기</span>
                                     </div>
                                 </div>
 
@@ -430,7 +422,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Find</span>
+                                        <span class="">Find</span>
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +434,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Make</span>
+                                        <span class="">Make</span>
                                     </div>
                                 </div>
                             </div>
@@ -453,7 +445,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -461,7 +453,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Chat</span>
+                                        <span class="">Chat</span>
                                     </div>
                                 </div>
                             </div>
@@ -473,7 +465,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">My</span>
+                                        <span class="">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -490,7 +482,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     <div id="applyUserListRow" class="row my-2 py-1">
         <div class="col">
             <div class="row shadowBox mx-2 py-1 listBackground">
-                <div class="col-5 align-self-center">
+                <div class="col-6 align-self-center">
                     <span id="applyUserNickname"></span>
                 </div>
                 <!-- <div class="col">
@@ -506,7 +498,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     <div id="groupMemberListRow" class="row my-2 py-1">
         <div class="col">
             <div class="row shadowBox mx-2 py-1 listBackground">
-                <div class="col-5">
+                <div class="col-6">
                     <span id="groupMemberNickname"></span>
                 </div>
                 <!-- <div class="col">

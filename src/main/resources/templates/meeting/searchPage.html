@@ -12,21 +12,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;
-    }
-
-    * .titleWord{
-        font-family: 'Carattere', cursive;
-        /* font-family: 'Italianno', cursive; */
-        /* font-family: 'Square Peg', cursive; */
-        /* font-family: 'Tangerine', cursive; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;
     }
 
     .custom-button-color{
@@ -83,8 +78,9 @@
         /* 아래 CSS 모달 컨텐츠 표시*/
         position: absolute;
         width: 80%;
-        height: auto;
+        height: 80%;
         background-color: rgba(255,255,255);
+        overflow-y: scroll;
         
         top: 50%;
         left: 50%;
@@ -235,7 +231,7 @@ function getGroupDetailInfo(groupId){
 
         const meetingDateDetail = groupDetailModal.querySelector("#meetingDateDetail");
         const meetingDate = groupDetailInfo.meetingGroupDto.groupMeetingDate;
-        const dateDetail = meetingDate[0] + '년 ' + meetingDate[1] + '월 ' + meetingDate[2] + '일  ' + meetingDate[3] + '시 ' + meetingDate[4] + '분';
+        const dateDetail = meetingDate[0] + '년 ' + meetingDate[1] + '월 ' + meetingDate[2] + '일  ' + meetingDate[3] + ':' + meetingDate[4];
         meetingDateDetail.innerText = dateDetail;
 
         const meetingLocationDetail = groupDetailModal.querySelector("#meetingLocationDetail");
@@ -451,18 +447,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 mx-1 justify-content-between">
-                    <div class="col">
+                    <div class="col ps-0">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
                             </div>                            
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
                     </div>
                 </div>
             </div>
@@ -514,7 +510,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Find</span>
+                                        <span class="">Find</span>
                                     </div>
                                 </div>
                             </div>
@@ -526,7 +522,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Make</span>
+                                        <span class="">Make</span>
                                     </div>
                                 </div>
                             </div>
@@ -537,7 +533,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -545,7 +541,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Chat</span>
+                                        <span class="">Chat</span>
                                     </div>
                                 </div>
                             </div>
@@ -557,7 +553,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">My</span>
+                                        <span class="">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -641,21 +637,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             </div>
 
             <div class="row modal-body mt-2">
-                <div class="col">
-                    <div class="row border-bottom">
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">                                    
-                                    <span id="meetingDateDetail" class="fs-5"></span>
-                                </div>                                
-                            </div>
-                            <div class="row mt-2 mb-2">
-                                <div class="col">
-                                    <span id="meetingLocationDetail" class="fs-5"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col">                    
                     <div class="row mt-2">
                         <div class="col">
                             <div class="row mb-2">
@@ -673,7 +655,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                     <div class="row mt-2 border-bottom">
                         <div class="col">
                             <div class="row">
@@ -681,9 +663,33 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <span id="groupContentDetail"></span>
                                 </div>
                             </div>
-                            <div class="row mb-2 mt-2">
+                            <div class="row mb-3 mt-2">
                                 <div id="groupTagWrapper" class="col">
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row border-bottom">
+                        <div class="col">
+                            <div class="row my-3">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <span>장소</span>
+                                        </div>
+                                        <div class="col-auto ps-0">                                            
+                                            <span id="meetingLocationDetail" class="fw-bold"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <span>주최일</span>                                    
+                                        </div>
+                                        <div class="col-auto ps-0">
+                                            <span id="meetingDateDetail" class="fw-bold"></span>                                            
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

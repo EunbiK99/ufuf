@@ -12,21 +12,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; */
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;        
-    }
-
-    * .titleWord{
-        font-family: 'Carattere', cursive;
-        /* font-family: 'Italianno', cursive; */
-        /* font-family: 'Square Peg', cursive; */
-        /* font-family: 'Tangerine', cursive; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;
     }
 
     .shadowBox{        
@@ -50,18 +44,25 @@ function getMyRecruitMeetingList(){
         for(e of myMeetingGroupList){
             
             const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
-            myMeetingGroupListRow.setAttribute("groupId", e.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.groupId}`);
+            myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
+            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
             
             const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.groupImage}`);
+            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
 
             const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
-            myMeetingGroupTitle.innerText = e.groupTitle;
+            myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
+
+            const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
+            myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
+
+            const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
+            const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
+            myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
 
             const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-            const orginalRegdate = e.regdate;
-            const newRegdate = orginalRegdate[0] + "-" + orginalRegdate[1] + "-" + orginalRegdate[2] + "-  " + orginalRegdate[3] + ":" + orginalRegdate[4] + ":" + orginalRegdate[5];
+            const orginalRegdate = e.meetingGroupDto.regdate;
+            const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
             myMeetingGroupRegdate.innerText = newRegdate;
 
             myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
@@ -83,18 +84,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 mx-1 justify-content-between">
-                    <div class="col">
+                    <div class="col ps-0">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
                             </div>                            
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
                     </div>
                 </div>
             </div>
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto" onclick="window.history.back()">
                                 <span><i class="bi bi-chevron-left"></i></span>                                
                             </div>
-                            <div class="col">
+                            <div class="col-auto ps-0">
                                 <span class="fs-3 fw-bold">내가 모집중인 미팅 List</span>
                             </div>
                         </div>
@@ -140,7 +141,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Find</span>
+                                        <span class="">Find</span>
                                     </div>
                                 </div>
                             </div>
@@ -152,7 +153,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Make</span>
+                                        <span class="">Make</span>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +164,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -171,7 +172,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">Chat</span>
+                                        <span class="">Chat</span>
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +184,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fw-bold titleWord">My</span>
+                                        <span class="">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -197,21 +198,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="myMeetingGroupListRow" class="row my-2 border border-black rounded shadowBox">
-        <div class="col my-1">
-            <div class="row">
+    <div id="myMeetingGroupListRow" class="row mb-3 border border-2 border-secondery-subtle rounded shadowBox">
+        <div class="col">
+            <div class="row my-2">
                 <div class="col-auto">
                     <img id="myMeetingGroupImage" style="width: 5em; height: 5em; border-radius: 10%;">
                 </div>
                 <div class="col">
-                    <div class="row">
-                        <div class="col">
+                    <div class="row border-bottom me-1 pb-1">
+                        <div class="col-auto ps-0">
                             <span id="myMeetingGroupTitle" class="fw-bold"></span>
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="col-auto ps-0">
+                            <span id="myMeetingGroupRegdate" class="text-secondary" style="font-size:0.8em"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="myMeetingGroupRegdate"></span>
+                        <div class="col-auto ps-0 pt-0" style="font-size:0.8em">
+                            <span id="myMeetingGroupCurruntHeadCount" class="text-danger fw-bold"></span>
+                            <span>/</span>
+                            <span id="myMeetingGroupMaxHeadCount"></span>
+                            <span><i class="bi bi-person-fill"></i></span>
                         </div>
                     </div>
                 </div>

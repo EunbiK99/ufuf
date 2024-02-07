@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>유니talk</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!--/* 구글폰트(Quicksand, Dongle, Gowun Dodum, Noto Sans Korean) */-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <style>
+    *{
+        /* font-family: 'Dongle', sans-serif; */
+        /* font-family: 'Gowun Dodum', sans-serif; */
+        /* font-family: 'Quicksand', sans-serif; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;        
+    }    
+
+    .userChatImageBox{
+        width: 3em;
+        height: 3em; 
+        border-radius: 40%;
+        overflow: hidden;
+    }
+
+    .userImage{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+
+    /* #chatRoomOffCanvas {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100%;        
+        transition: right 0.3s ease-in-out;
+        z-index: 10;
+    }
+
+    #chatRoomOffCanvas.show {
+        right: 0;
+    } */
+
+
+    </style>
+</head>
+
+<script th:inline="javascript">
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
+let sessionUserProfileInfo = /*[[${session.meetingProfileInfo}]]*/;
+
+console.log('sessionUserProfileInfo: ', sessionUserProfileInfo);
+console.log('sessionUserInfo: ', sessionUserInfo);
+
+
+
+/* function showChatRoomOffCanvas(chatRoomID){
+    // const chatRoomOffCanvas = document.getElementById("chatRoomOffCanvas");
+    // chatRoomOffCanvas.classList.add("show");
+
+    const myOffcanvas = bootstrap.Offcanvas.getOrCreateInstance('#myOffcanvas')
+    console.log('myOffcanvas: ', myOffcanvas);
+    myOffcanvas.show();
+}
+
+function closeChatRoomOffCanvas(){
+    const myOffcanvas = bootstrap.Offcanvas.getOrCreateInstance('#myOffcanvas')
+    console.log('myOffcanvas: ', myOffcanvas);
+    myOffcanvas.hide();
+}
+*/
+
+function moveChatRoom(chatRoomId){
+    console.log('chatRoomId: ', chatRoomId);
+    window.location.href = "./chatRoomPage?chatRoomId=" + chatRoomId;
+}
+
+function getUserChatRoomData(){
+    const userProfileId = sessionUserProfileInfo.profileid;    
+    return fetch("./api/getUserChatRoomData?profileId=" + userProfileId)
+    .then(response => response.json())
+    .then(response => {
+        const chatRoomData = response.data;
+        return chatRoomData;
+    });
+}
+
+function chatListCSR(){
+
+    const chatListWrapperCol = document.getElementById("chatListWrapperCol");
+    chatListWrapperCol.innerHTML = "";
+
+    getUserChatRoomData()
+    .then(chatRoomData => {
+        console.log('chatRoomData: ', chatRoomData);
+        for(e of chatRoomData){
+            const chatListRow = document.querySelector("#templete #chatListRow").cloneNode(true);
+            chatListRow.setAttribute("chatRoomId", e.chatRoomDto.chatRoomId);
+    
+            const chatRoomImage = chatListRow.querySelector("#chatRoomImage");
+            chatRoomImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
+    
+            const chatRoomTitle = chatListRow.querySelector("#chatRoomTitle");
+            chatRoomTitle.innerText = e.targetProfileDto.profileNickname;
+
+            const chatRoomMessageLength = e.chatMessageList.length;
+            if(chatRoomMessageLength === 0){
+                const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
+                chatRoomLastMessage.innerText = '대화내용이 없습니다.';
+            }
+            else{
+                const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
+                chatRoomLastMessage.innerText = e.chatMessageList[chatRoomMessageLength];
+            }
+            
+            chatListWrapperCol.appendChild(chatListRow);
+
+        }
+    });
+    
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    chatListCSR();
+    
+});
+
+</script>
+
+<body class="pt-5 pb-5">
+    <div class="container-fluid">
+        
+        <!--/* 임시 탑 에어리어 */-->
+        <div class="row fixed-top bg-white" style="height: 3.3em;">
+            <div class="col align-self-center">
+                <div class="row mt-1 mx-1 justify-content-between">
+                    <div class="col ps-0">
+                        <div class="row">
+                            <div class="col-auto" onclick="window.location.href='./mainPage'">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                            </div>
+                            <div class="col-auto px-0">
+                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                
+                <div class="row mt-3 mb-2">
+                    <div class="col">
+                        
+                        <div class="row">
+                            <div class="col">
+                                <span class="fs-4 fw-bold">Uni Talk</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div id="chatListWrapperCol" class="col">                       
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Find</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </div>
+
+
+<!--/* 채팅방 오프캔버스 */-->
+<!-- <div id="chatRoomOffCanvas">
+    <div class="row">
+        <div class="col">
+            <h5 class="offcanvas-title">Offcanvas Title</h5>
+            <button type="button" class="close" id="closeButton" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-body">
+                <p>This is the offcanvas content.</p>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="myOffcanvas" style="width: 100%;">
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Offcanvas Title</h5>
+            <button type="button" class="btn" onclick="closeChatRoomOffCanvas()">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="offcanvas-body">
+                <p>이 부분은 오프캔버스 내용입니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* templete */-->
+<div id="templete" class="d-none">
+    
+    <div id="chatListRow" class="row my-3" onclick="moveChatRoom(this.getAttribute('chatroomid'))">
+        <div class="col">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="userChatImageBox">
+                                <img id="chatRoomImage" class="img-fluid userImage">
+                            </div>                                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto align-self-center ps-0">
+                    <div class="row justify-content-between">
+                        <div class="col-auto">
+                            <span id="chatRoomTitle" class="fw-bold"></span>
+                        </div>                                            
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span id="chatRoomLastMessage" class=""></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="row">
+                <div class="col-auto">
+                    <span id="lastMesaggeTime">1월 31일</span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

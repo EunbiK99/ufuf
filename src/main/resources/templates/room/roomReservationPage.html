@@ -11,9 +11,24 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style type="text/css">
-       
+       *{
+            font-family: -apple-system, BlinkMacSystemFont, 
+            "Apple SD Gothic Neo", 
+            "Pretendard Variable", 
+            Pretendard, 
+            Roboto, 
+            "Noto Sans KR", 
+            "Segoe UI", 
+            "Malgun Gothic", 
+            "Apple Color Emoji", 
+            "Segoe UI Emoji", 
+            "Segoe UI Symbol", 
+            sans-serif;
+        }
 
         html {
             --blue: #ff992c;
@@ -656,6 +671,7 @@
             window.history.go(-1);
         }
         function reservationFormSubmit() {
+            const form = document.getElementById("reservationSubmit");
             // 인원수
             const guestCount = document.getElementById("guestCount").value;
             if (guestCount === '') {
@@ -667,11 +683,8 @@
             const checkInDate = moment(document.getElementById("check_in_day").innerText).format("YYYY-MM-DD");
             const checkOutDate = moment(document.getElementById("check_out_day").innerText).format("YYYY-MM-DD");
 
-
-
-
             // 폼에 데이터 추가
-            const form = document.getElementById("reservationSubmit");
+            
             const hiddenGuestCount = document.createElement("input");
             hiddenGuestCount.type = "hidden";
             hiddenGuestCount.name = "guest_count";

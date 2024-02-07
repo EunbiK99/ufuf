@@ -463,7 +463,101 @@ values (
     where groupMemberId  = #{groupMemberId}
 </select>
 
+<!-- * 채팅방 Dto 인서트-->
+<insert id="insertChatRoomDto">
+    insert into meeting_chatRoom(chatRoomId ,chatRoomTitle) values(
+        #{chatRoomId},
+        #{chatRoomTitle}
+    )
+</insert>
 
+<!-- * 프로필PK기준 채팅방DTo 셀렉트-->
+<select id="selectChatRoomDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingChatRoomDto">
+    SELECT * from meeting_chatRoom
+    where profileId = #{profileId}
+</select>
+
+<!-- * 채팅방PK 생성-->
+<select id="createChatRoomPk" resultType="int">
+    SELECT IFNULL(MAX(chatRoomId), 0) + 1  from meeting_chatRoom
+</select>
+
+<!-- * 채팅참여유저 테이블 인서트-->
+<insert id="insertChatRoomUserDto">
+    insert into meeting_chatRoomUser(chatRoomId, profileId) values(
+        #{chatRoomId},
+        #{profileId}
+    )
+</insert>
+
+<!-- * 프로필PK기준 채팅방 제목이 해당프로필닉네임인 방 셀렉트-->
+<select id="selectChatRoomDtoByProfileNickname" resultType="com.cu.ufuf.dto.MeetingChatRoomDto">
+    SELECT * from meeting_chatRoom mcr
+    where chatRoomTitle = #{profileNickname}
+</select>
+
+<!-- * 채팅방PK기준 채팅방 대화Dto 셀렉트-->
+<select id="selectChatMessageDtoByChatRoomId" resultType="com.cu.ufuf.dto.MeetingChatMessageDto">
+    SELECT * from meeting_chatMessage
+    where chatRoomId = #{chatRoomId}
+</select>
+
+<!-- * 채팅방PK 기준 채팅참여유저Dto 정보 셀렉트-->
+<select id="selectChatRoomUserDtoByChatRoomId" resultType="com.cu.ufuf.dto.MeetingChatRoomUserDto">
+    SELECT * from meeting_chatRoomUser
+    where chatRoomId = #{chatRoomId}
+</select>
+
+<!-- * 채팅방PK, 프로필PK 기준 이미 참여중인 채팅방인지 여부-->
+<select id="countExistChatRoomByChatRoomIdAndProfileId" resultType="int">
+    SELECT count(*) from meeting_chatRoomUser mcru 
+    where 1=1
+    and chatRoomId = #{chatRoomId}
+    and profileId = #{profileId}
+</select>
+
+<!-- * 프로필PK기준 채팅참여유저Dto 셀렉트-->
+<select id="selectChatRoomUserDtoByProfileId" resultType="com.cu.ufuf.dto.MeetingChatRoomUserDto">
+    SELECT * from meeting_chatRoomUser mcru 
+    where profileId = #{profileId}
+</select>
+
+<!-- * 채팅방PK기준 채팅방Dto셀렉트-->
+<select id="selectChatRoomDtoByChatRoomId" resultType="com.cu.ufuf.dto.MeetingChatRoomDto">
+    SELECT * from meeting_chatRoom mcr
+    where chatRoomId = #{chatRoomId}
+</select>
+
+<!-- * 프로필닉네임기준 프로필Dto 셀렉트-->
+<select id="selectProfileDtoByProfileNickname" resultType="com.cu.ufuf.dto.MeetingProfileDto">
+    SELECT * from meeting_profile mp
+    where profileNickname like CONCAT('%', #{profileNickname} ,'%')
+</select>
+
+<!-- * 프로필PK, 채팅방PK기준 채팅유저인지 확인(카운트)-->
+<select id="countChatRoomUserByChatRoomIdAndProfileId" resultType="int">
+    SELECT count(*) from meeting_chatRoomUser mcru 
+    where 1=1
+    and chatRoomId = #{chatRoomId}
+    and profileId = #{profileId}
+</select>
+
+<!-- * 채팅메세지 테이블 인서트-->
+<insert id="insertChatMessageDto">
+    insert into meeting_chatMessage(chatRoomId, chatRoomUserId, chatComment) values(
+        #{chatRoomId},
+        #{chatRoomUserId},
+        #{chatComment}
+    )
+</insert>
+
+<!-- * 채팅방PK, 프로필PK기준 채팅참여유저Dto 셀렉트-->
+<select id="selectChatRoomUserDtoByProfileIdAndChatRoomId" resultType="com.cu.ufuf.dto.MeetingChatRoomUserDto">
+    SELECT * from meeting_chatRoomUser mcru 
+    where 1=1
+    and profileId = #{profileId}
+    and chatRoomId = #{chatRoomId}
+</select>
 
 
 

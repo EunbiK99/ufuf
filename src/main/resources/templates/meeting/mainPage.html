@@ -11,22 +11,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carattere&family=Italianno&family=Square+Peg&family=Tangerine:wght@700&display=swap" rel="stylesheet">    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
         /* font-family: 'Gowun Dodum', sans-serif; /*
         /* font-family: 'Quicksand', sans-serif; */
-        font-family: 'Noto Sans KR', sans-serif;
-    }
-
-    * .titleWord{
-        font-family: 'Carattere', cursive;
-        /* font-family: 'Italianno', cursive; */
-        /* font-family: 'Square Peg', cursive; */
-        /* font-family: 'Tangerine', cursive; */
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'Pretendard Variable', Pretendard, Roboto;
     }
 
     .custom-border-color{
@@ -38,6 +32,21 @@
 
 let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
 let meetingProfileExist;
+
+function moveChatListPage(){
+    if(meetingProfileExist === "Y"){
+        window.location.href="./chatListPage";
+    }
+    else{
+        let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+        if(result){
+            window.location.href="./registerProfile";
+        }
+        else{
+            return;
+        }
+    }
+}
 
 function moveRegisterProfilePage(){
     let userType = /*[[${session.userType}]]*/;
@@ -83,6 +92,7 @@ function moveCreateNewGroupPage(){
 
 function checkMeetingProfile(){
     const sessionUserId = sessionUserInfo.user_id;
+    
     fetch("./api/checkMeetingProfile?user_id=" + sessionUserId)
     .then(response => response.json())
     .then(response => {
@@ -114,18 +124,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="row fixed-top bg-white" style="height: 3.3em;">
             <div class="col align-self-center">
                 <div class="row mt-1 mx-1 justify-content-between">
-                    <div class="col">
+                    <div class="col ps-0">
                         <div class="row">
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                <img src="/public/image/meeting/sakura.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
                             <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle titleWord">Uni Signal</span>
+                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
                             </div>                            
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5" style="color: #FF8827;"></i>
+                    <div class="col-auto align-self-center">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
                     </div>
                 </div>
             </div>
@@ -288,7 +298,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <span class="fw-bold titleWord">Find</span>
+                                                <span class="">Find</span>
                                             </div>
                                         </div>
                                     </div>
@@ -300,7 +310,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <span class="fw-bold titleWord">Make</span>
+                                                <span class="">Make</span>
                                             </div>
                                         </div>
                                     </div>
@@ -311,7 +321,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             </div>
                                         </div>                                        
                                     </div>
-                                    <div class="col text-center mx-1 mt-1">
+                                    <div class="col text-center mx-1 mt-1" onclick="moveChatListPage()">
                                         <div class="row">
                                             <div class="col">                                                
                                                 <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
@@ -319,7 +329,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <span class="fw-bold titleWord">Chat</span>
+                                                <span class="">Chat</span>
                                             </div>
                                         </div>
                                     </div>
@@ -331,7 +341,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <span class="fw-bold titleWord">My</span>
+                                                <span class="">My</span>
                                             </div>
                                         </div>
                                     </div>
