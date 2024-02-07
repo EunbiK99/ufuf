@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <style>
     *{
@@ -319,12 +320,12 @@ function userProfileCSR(){
     const userGender = document.getElementById("userGender");
     if(sessionUserInfo.gender === "M"){
         const maleIcon = document.createElement("i");
-        maleIcon.setAttribute("class", "bi bi-gender-male text-primary");
+        maleIcon.setAttribute("class", "fi fi-rr-mars text-primary");
         userGender.appendChild(maleIcon);
     }
     else{
         const femaleIcon = document.createElement("i");
-        femaleIcon.setAttribute("class", "bi bi-gender-female text-danger");
+        femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger");
         userGender.appendChild(femaleIcon);        
     }
 
@@ -436,7 +437,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
                     </div>
                 </div>
             </div>
@@ -471,6 +472,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto align-self-center">
                                 <div class="row">
                                     <div class="col">
+                                        <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-comment-info"></i></span>
                                         <span class="fs-5 fw-bold text-white">My Meeting Profile</span>
                                     </div>
                                 </div>
@@ -479,7 +481,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row">
                                     <div class="col-auto btn">
                                         <span class="fw-bold text-white">
-                                            <i class="bi bi-gear"></i>
+                                            <i class="fi fi-rr-pen-field"></i>
                                             수정
                                         </span>                                        
                                     </div>
@@ -494,7 +496,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         <div class="row">
                                             <div class="col-auto ps-0 pe-1 align-self-center">
                                                 <span class="fs-5 fw-bold">
-                                                    <i class="bi bi-house-heart"></i>
+                                                    <i class="fi fi-rr-house-chimney-heart"></i>
                                                 </span>
                                             </div>
                                             <div class="col-auto px-0 align-self-center">                                                
@@ -522,17 +524,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                     <div class="col">
                                                         <div class="row">
                                                             <div class="col">
+                                                                <span><i class="fi fi-rr-id-badge"></i></span>
                                                                 <span id="userNickname" class="fw-bold"></span>
                                                                 <span id="userGender"></span>
                                                             </div>
                                                         </div>                                                        
                                                         <div class="row mt-2">
                                                             <div class="col">
+                                                                <span><i class="fi fi-rr-graduation-cap"></i></span>
                                                                 <span id="userUniversity"></span>
                                                             </div>
                                                         </div>
                                                         <div class="row mt-2">
                                                             <div class="col">
+                                                                <span><i class="fi fi-rr-books"></i></span>
                                                                 <span id="userUniversityDepartment"></span>
                                                             </div>
                                                         </div>
@@ -549,7 +554,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                         <div class="row mt-2">
                                                             <div class="col-auto btn py-0" onclick="showMySignalBothModal()">
                                                                 <span class="fs-3">
-                                                                    <i class="bi bi-heart-pulse-fill fs-3 text-danger"></i>
+                                                                    <i class="fi fi-rr-comment-heart text-danger"></i>
                                                                      :
                                                                 </span>
                                                                 <span id="mySignalBoth" class="fs-3 fw-bold"></span>
@@ -567,6 +572,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col ps-0">
+                                                <span class="fw-bold"><i class="fi fi-rr-comment-dots"></i></span>
                                                 <span class="fw-bold">Comment</span>
                                             </div>
                                         </div>
@@ -626,6 +632,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                 </div>
+                <div class="p-5">
+                    
+                </div>
             </div>
         </div>
 
@@ -650,11 +659,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
-                        <div class="row justify-content-around">
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                        <div class="row justify-content-around mt-1 text-secondary">
+                            <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -663,10 +672,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -675,17 +684,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col align-self-center">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -694,10 +703,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">

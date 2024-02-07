@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <style>
     *{
@@ -106,7 +107,7 @@ function checkDuplicateSNSUrl(textValue){
 
     let inputText  = textValue;
     const inputSNSUrl = document.getElementById('inputSNSUrl');
-    const SNSUrlRow = document.getElementById('SNSUrlRow');
+    const SNSUrlCheckRow = document.getElementById('SNSUrlCheckRow');
 
     fetch('./api/checkDuplicateSNSUrl?value='+inputText)
     .then(response => response.json())
@@ -116,17 +117,17 @@ function checkDuplicateSNSUrl(textValue){
 
         if(checkedValue === 0){
             const goodCheck = document.createElement('div');
-            goodCheck.setAttribute('class', 'col-auto fs-4');
-            goodCheck.innerHTML = '<i class="bi bi-check2 text-success fw-bold"></i>'
-            SNSUrlRow.innerHTML = "";
-            SNSUrlRow.appendChild(goodCheck);
+            goodCheck.setAttribute('class', 'col-auto fs-6');
+            goodCheck.innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check2"></i> 사용 가능한 주소입니다!</span>'
+            SNSUrlCheckRow.innerHTML = "";
+            SNSUrlCheckRow.appendChild(goodCheck);
         }
         else{
             const badCheck = document.createElement('div');
-            badCheck.setAttribute('class', 'col-auto fs-4');
-            badCheck.innerHTML = '<i class="bi bi-x text-danger fw-bold"></i>'
-            SNSUrlRow.innerHTML = "";
-            SNSUrlRow.appendChild(badCheck);
+            badCheck.setAttribute('class', 'col-auto fs-6');
+            badCheck.innerHTML = '<span class="text-danger fw-bold"><i class="bi bi-x"></i> 중복된 주소입니다!</span>'
+            SNSUrlCheckRow.innerHTML = "";
+            SNSUrlCheckRow.appendChild(badCheck);
         }
     });
 }
@@ -153,31 +154,48 @@ function checkDuplicateSNSUrl(textValue){
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="row">
-            <div class="col">                
+            <div class="col">
+                
+                <div id="main01" class="row">
+                    <div class="col">                
+                        <div class="row">
+                            <div class="col">
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-auto" onclick="window.history.back()">
+                                                <span class="fs-3"><i class="bi bi-chevron-left"></i></span>                                
+                                            </div>
+                                            <div class="col-auto ps-0">                                                
+                                                <span class="fs-3 fw-bold">나의 미팅프로필 생성</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!--이걸 하나의 프로필로-->
                 <div class="row mt-3">
                     <div class="col mx-1 border border-black border-2 rounded">
 
                         <div class="row border-bottom border-2 border-black justify-content-between">
-                            <div class="col" style="background-color: #FF8827;">
+                            <div class="col border rounded-top border-0" style="background-color: #FF8827;">
                                 <div class="row my-1">
                                     <div class="col-auto">
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <a href="./mainPage" role="button" class="btn px-0 py-0">
-                                                    <i class="bi bi-arrow-left"></i>
-                                                </a>
-                                            </div>
+                                        <div class="row">                                            
                                             <div class="col-auto text-center">
-                                                <span class="fw-bold">나의 미팅 프로필</span>
+                                                <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-user-pen"></i></span>
+                                                <span class="fs-5 fw-bold text-white">My Meeting Profile</span>
                                             </div>                                     
                                         </div>                                        
                                     </div>
@@ -188,52 +206,64 @@ function checkDuplicateSNSUrl(textValue){
                         
                         <div class="row mt-2">
                             <div class="col">
-                                <div id="SNSUrlRow" class="row mt-2">
-                                    <div class="col-auto pe-0">
-                                        <span class="fw-bold itsMe fs-2">ufuf.com/</span>                                        
-                                    </div>
-                                    <div class="col-auto ps-0 fw-bold itsMe fs-2">                                        
-                                        <input id="inputSNSUrl" type="text" class="custom-input form-control border border-2 custom-border-color" placeholder="your SNS..." onchange="checkDuplicateSNSUrl(this.value)">                                        
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row mt-2">
+                                            <div class="col-auto pe-0">
+                                                <span class="fw-bold itsMe fs-2">ufuf.com/</span>                                        
+                                            </div>
+                                            <div class="col-auto ps-0 fw-bold itsMe fs-2">                                        
+                                                <input id="inputSNSUrl" type="text" class="custom-input form-control border border-2 " placeholder="your SNS..." onchange="checkDuplicateSNSUrl(this.value)">                                        
+                                            </div>
+                                        </div>
+                                        <div id="SNSUrlCheckRow" class="row">
+                                            
+                                        </div>
                                     </div>
                                 </div>
+
                                 <div class="row mt-4 mb-1 mx-1">
-                                    <div class="col-6 text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
-                                        <div class="row  d-flex align-items-center">
+                                    <div class="col-6 align-self-center text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
+                                        <div class="row justify-content-center">
                                             <div id="attachProfileImageCol" class="col-auto text-center">                                                
-                                                <img src="/public/image/meeting/needUpload.png" class="img-fluid">                                                
+                                                <span class="text-secondary" style="font-size: 6em;"><i class="fi fi-rr-add-image"></i></span>
                                             </div>
                                         </div>                                        
                                     </div>
-                                    <div class="col ms-2">
+                                    <div class="col ms-2 ps-1">
                                         <div class="row">                                            
-                                            <div class="col">
+                                            <div class="col-auto">
                                                 <span th:text="${session.sessionUserInfo.name}" class="fw-bold"></span> 님
+                                            </div>
+                                            <div class="col-auto ps-0">
+                                                <span class="text-primary" th:if="${session.sessionUserInfo.gender == 'M'}"><i class="fi fi-rr-mars"></i></span>
+                                                <span class="text-danger" th:if="${session.sessionUserInfo.gender == 'F'}"><i class="fi fi-rr-venus"></i></span>
                                             </div>
                                         </div>
 
                                         <div class="row mt-2">
                                             <div class="col-10">
-                                                <input id="inputNickname" type="text" class="custom-input border border-2 custom-border-color form-control form-control-sm" placeholder="닉네임 입력">
+                                                <input id="inputNickname" type="text" class="custom-input border border-2 form-control form-control-sm" placeholder="닉네임 입력">
                                             </div>
                                         </div>
 
                                         <div class="row mt-2">
-                                            <div class="col-auto">
-                                                <span th:if="${session.sessionUserInfo.gender == 'M'}">남</span>
-                                                <span th:if="${session.sessionUserInfo.gender == 'F'}">여</span>
-                                            </div>
+                                            
                                             <div class="col-auto">
                                                 <span th:text="${session.sessionUserInfo.birth}"></span>
                                             </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col">
+                                                <span><i class="fi fi-rr-graduation-cap"></i></span>
                                                 <span th:text="${session.sessionUserInfo.university}"></span>
                                             </div>                                            
                                         </div>
 
                                         <div class="row mt-2">
                                             <div class="col">
+                                                <span><i class="fi fi-rr-books"></i></span>
                                                 <span th:text="${session.sessionUserInfo.department}"></span>
                                             </div>
                                         </div>
@@ -252,12 +282,13 @@ function checkDuplicateSNSUrl(textValue){
                                     <div class="col">
                                         <div class="row">
                                             <div class="col">
+                                                <span class="fw-bold"><i class="fi fi-rr-comment-dots"></i></span>
                                                 <span class="fw-bold">Comment</span>
                                             </div>
                                         </div>
                                         <div class="row mt-1 mb-3">
                                             <div class="col">
-                                                <textarea id="inputComment" class="custom-input form-control border border-2 custom-border-color" rows="6"></textarea>
+                                                <textarea id="inputComment" class="custom-input form-control border border-2" rows="6"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -270,7 +301,7 @@ function checkDuplicateSNSUrl(textValue){
                             <div class="col">
                                 <div class="row mb-5 justify-content-center">
                                     <div class="col-6 text-center btn d-grid" style="background-color: #FF8827;" onclick="registerProfile()">
-                                        <span class="">Create My Profile!</span>
+                                        <span class="text-white">Create My Profile!</span>
                                     </div>
                                 </div>
                             </div>
@@ -286,11 +317,11 @@ function checkDuplicateSNSUrl(textValue){
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
-                        <div class="row justify-content-around">
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                        <div class="row justify-content-around mt-1 text-secondary">
+                            <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -299,10 +330,10 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -311,17 +342,17 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col align-self-center">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -330,10 +361,10 @@ function checkDuplicateSNSUrl(textValue){
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
