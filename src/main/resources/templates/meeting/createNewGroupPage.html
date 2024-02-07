@@ -24,6 +24,7 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">    
 
     <style>
     *{
@@ -72,22 +73,71 @@ function registerMeetingGroupProcess(){
     console.log('userMeetingId: ', userMeetingId);
 
     const groupTitle = document.getElementById('groupTitle').value;
+    if(groupTitle.trim() === ""){
+        alert("타이틀을 입력해주세요.");
+        const groupTitleElement = document.getElementById('groupTitle');
+        groupTitleElement.focus();
+        groupTitleElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     const groupContent = document.getElementById('groupContent').value;
+    if(groupContent.trim() === ""){
+        alert("참고사항을 입력 해주세요.");
+        const groupContentElement = document.getElementById('groupContent');
+        groupContentElement.focus();
+        groupContentElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     const groupHeadCount = document.getElementById('groupHeadCount').value;
     const groupMeetingDate = document.getElementById('groupMeetingDate').value;
+    if(groupMeetingDate.trim() === ""){
+        alert("미팅날짜를 선택 해주세요.");
+        const groupMeetingDateElement = document.getElementById('groupMeetingDate');
+        groupMeetingDateElement.focus();
+        groupMeetingDateElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     const groupApplyCharge = document.getElementById('groupApplyCharge').value.replace(/[^\d]/g, '');
+    if(groupApplyCharge.trim() === ""){
+        alert("참가회비를 입력 해주세요.");
+        const groupApplyChargeElement = document.getElementById('groupApplyCharge');
+        groupApplyChargeElement.focus();
+        groupApplyChargeElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     
-    const groupMeetingPlace = document.getElementById('groupMeetingPlace').value;    
+    const groupMeetingPlace = document.getElementById('groupMeetingPlace').value;
+    if(groupMeetingPlace.trim() === ""){
+        alert("미팅장소를 지정 해주세요.");
+        const groupMeetingPlaceElement = document.getElementById('groupMeetingPlace');
+        groupMeetingPlaceElement.focus();
+        groupMeetingPlaceElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     const groupMeetingPlaceArray = groupMeetingPlace.split(' ');
     const firstLocationCategory = groupMeetingPlaceArray[0];
     const secondLocationCategory = groupMeetingPlaceArray[1];
     
-    const groupApplyDate = document.getElementById('groupApplyDate').value;        
+    const groupApplyDate = document.getElementById('groupApplyDate').value;
+    if(groupApplyDate.trim() === ""){
+        alert("모집기한을 지정 해주세요.");
+        const groupApplyDateElement = document.getElementById('groupApplyDate');
+        groupApplyDateElement.focus();
+        groupApplyDateElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     const groupApplyDateArray = groupApplyDate.split(' ~ ');    
     const groupApplyStart = groupApplyDateArray[0];
     const groupApplyEnd = groupApplyDateArray[1];
     
     const inputGroupImage = document.getElementById("inputGroupImage").files[0];
+    if(!inputGroupImage){
+        alert("미팅을 대표하는 이미지를 선택 해주세요.");
+        const inputGroupImageElement = document.getElementById('inputGroupImage');
+        inputGroupImageElement.focus();
+        inputGroupImageElement.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
     
     const groupGenderOptionList = document.getElementsByName('groupGenderOption');
     const groupGenderOptionListArray = Array.from(groupGenderOptionList);
@@ -118,6 +168,13 @@ function registerMeetingGroupProcess(){
     const tagButtonList = document.getElementsByClassName("tagButton");
     const groupTag = Array.from(tagButtonList);
     const tagNameList = groupTag.map(button => button.innerText);
+    if(tagNameList.length === 0){
+        alert("미팅을 표현하는 태그를 입력 해주세요.");
+        const inputCategoryName = document.getElementById('inputCategoryName');
+        inputCategoryName.focus();
+        inputCategoryName.scrollIntoView({behavior : 'smooth', block : 'center'});
+        return;
+    }
 
     let groupData = new FormData();
     groupData.append("profileId", userMeetingId);
@@ -366,7 +423,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 
-<body class="pt-5 pb-5">
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
@@ -384,7 +441,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-ailgn-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -395,19 +452,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
                 <div id="main01" class="row">
                     <div class="col">
+
+                        <div class="row mb-2">
+                            <div class="col-auto align-self-center" onclick="window.location.href='./mainPage'">
+                                <span class=" fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>                                
+                            </div>
+                            <div class="col-auto ps-0 align-self-center">
+                                <span class="fw-bold fs-3">새 미팅 그룹 생성</span>
+                            </div>
+                        </div>                        
+                        
                         <div class="row">
-
-                            <div class="col mx-1 my-1 border border-0 rounded">
-                                
-                                <div class="row">
-                                    <div class="col-auto" onclick="window.location.href='./mainPage'">
-                                        <span class=" fs-3"><i class="bi bi-chevron-left"></i></span>                                
-                                    </div>
-                                    <div class="col-auto ps-0">
-                                        <span class="fw-bold fs-3">새 미팅 그룹 생성</span>
-                                    </div>
-                                </div>
-
+                            <div class="col mx-2 bg-white border border-0 rounded">
                                 <div class="row mt-3">
                                     <div class="col">
                                         <div class="row">
@@ -422,7 +478,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -451,7 +507,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -466,7 +522,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -481,7 +537,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -495,18 +551,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                             </div>
                                             <div class="col-auto ps-0">
                                                 <button id="plusButton" class="btn" onclick="plusMemberCount()">
-                                                    <span><i class="fi fi-rr-plus"></i></span>
+                                                    <span><i class="fi fi-rr-plus bi-ailgn-middle"></i></span>
                                                 </button>
                                             </div>
                                             <div class="col-auto ps-0">
                                                 <button id="minusButton" class="btn" onclick="minuseMemberCount()">
-                                                    <span><i class="fi fi-rr-minus"></i></span>
+                                                    <span><i class="fi fi-rr-minus bi-ailgn-middle"></i></span>
                                                 </button>
                                             </div>
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -526,7 +582,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -541,7 +597,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -556,7 +612,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row my-3">
                                     <div class="col">
                                         <div class="row">
@@ -574,14 +630,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                        
                                     </div>
                                 </div>
-
+            
                                 <div class="row">
                                     <div class="col">
                                         <div class="row">
-                                            <div class="col">
-                                                <span class="fs-5">장소</span>
+                                            <div class="col-auto">
+                                                <span class="fs-5">위치</span>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-auto">
                                                 <button class="btn btn-sm" onclick="checkMyLocation()" style="background-color: #FF8827;">
                                                     <span class="text-white">지도보기</span>
                                                 </button>
@@ -599,18 +655,24 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                         </div>                                         
                                     </div>
                                 </div>
-
-                                <div class="row mb-5">
+            
+                                <div class="row mb-2">
                                     <div class="col">
-                                        <div class="row my-2">
-                                            <div class="col d-grid">
-                                                <button class="btn btn-danger" onclick="registerMeetingGroupProcess()">미팅 그룹 생성</button>
+                                        <div class="row justify-content-center my-2">
+                                            <div class="col-8 d-grid">
+                                                <button class="btn" onclick="registerMeetingGroupProcess()" style="background-color: #FF8827;">
+                                                    <span class="fw-bold text-white">새 미팅 생성</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>                            
+                            <div class="p-4">
+
                             </div>
                         </div>
+                        
                     </div>
                 </div>
 
@@ -622,11 +684,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
-                        <div class="row justify-content-around mt-1">
+                        <div class="row justify-content-around mt-1 text-secondary">
                             <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-ailgn-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -638,12 +700,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-following bi-ailgn-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">Make</span>
+                                        <span class="" style="color: #FF8827;">Make</span>
                                     </div>
                                 </div>
                             </div>
@@ -657,7 +719,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-ailgn-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -669,7 +731,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-ailgn-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
