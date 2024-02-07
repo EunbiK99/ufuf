@@ -144,10 +144,10 @@
 
     <!--예약자 방 예약 정보-->
     <select id="roomGuestSelectByRoomAndUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
-        SELECT ri.* FROM room_info ri
+        SELECT rg.* FROM room_info ri
         join room_guest rg on ri.room_info_id=rg.room_info_id 
-        where rg.user_id=4
-        and rg.room_info_id=19
+        where rg.user_id=#{user_id}
+        and rg.room_info_id=#{room_info_id}
         order by rg.room_guest_id desc
         LIMIT 1
     </select>
@@ -156,8 +156,7 @@
 	<select id="roomSelectByRoomAndUserIdForGuest" resultType="com.cu.ufuf.dto.RoomInfoDto">
 		SELECT ri.* FROM room_info ri
         join room_guest rg on ri.room_info_id=rg.room_info_id 
-        where rg.user_id=#{user_id}
-        and rg.room_info_id=#{room_info_id}
+        where rg.room_info_id=#{room_info_id}
 	</select>
 
     <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">
@@ -427,5 +426,12 @@
     <update id="orderInfoStatusByOrderId">
         UPDATE order_info set status='결제완료' where order_id = #{order_id}
     </update>
+
+
+    <!--방별로 예약자 목록-->
+    <select id="roomReservationList" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        SELECT * from room_guest rg 
+        where rg.room_info_id=#{room_info_id}
+    </select>
     
 </mapper>

@@ -41,6 +41,42 @@
         #peopleCount::-ms-thumb {
             background-color: #FF8827; /* IE 브라우저용 슬라이더 썸(thumb) 배경색 */
         }
+
+        #scrollBtn {
+            display: none;
+            position: fixed;
+            bottom: 1.7em;
+            right: 1.7em;
+            z-index: 99;
+            font-size: 1.2em;
+            border: none;
+            outline: none;
+            background-color: white;
+            color: #FF8827;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            width: 2.6em;
+            height: 2.6em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #scrollBtn i {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #scrollBtn:hover {
+            background-color: white;
+        }
+
+        /* 활성화된 버튼에 대한 스타일 */
+        .active {
+            color: #FF8827 !important; /* 활성화된 상태의 텍스트 색상 */
+            text-decoration: underline;
+        }
     </style>
     <script>
        
@@ -143,11 +179,47 @@
             roomList();
             
         })
+
+        
+
+        // 스크롤 버튼을 페이지의 최상단으로 스크롤
+        function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // 부드러운 스크롤 적용
+        });
+        }
+
+        // 스크롤 이벤트를 통해 스크롤 버튼의 표시/숨김 제어
+        window.addEventListener('scroll', function() {
+            var scrollBtn = document.getElementById("scrollBtn");
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollBtn.style.display = "block";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        });
+
+        // 페이지 로드될 때 최신순 버튼을 활성화합니다.
+        window.onload = function() {
+            document.getElementById('latestBtn').classList.add('active');
+        }
+
+        function changeActive(element) {
+            // 현재 활성화된 버튼들의 클래스를 모두 제거합니다.
+            var activeButtons = document.querySelectorAll('.btn-link.active');
+            activeButtons.forEach(function(button) {
+                button.classList.remove('active');
+            });
+
+            // 클릭된 버튼에 활성화 클래스를 추가합니다.
+            element.classList.add('active');
+        }
     </script>
 </head>
 
-<body>
-    <div class="container" style="background-color: rgb(241, 241, 241);">
+<body style="background-color: rgb(241, 241, 241);">
+    <div class="container">
         <!-- 탑부분(검색, 필터)-->
         <div class="row pb-2 px-2 pt-1 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <div class="col">
@@ -163,13 +235,13 @@
                 </div>
 
                 <div class="row mt-3">
-                    <div class="col-1" style="max-width: 6em;">
+                    <div class="col-1 me-3" style="max-width: 6em;">
                         <button type="button" class="btn btn-outline-secondary rounded-3 mx-0" data-bs-toggle="modal" data-bs-target="#exampleModal" style="z-index: 1002;">
-                            <i class="bi bi-filter-left"></i>
+                            <i class="bi bi-sliders"></i>
                         </button>
                     </div>
 
-                    <div class="col-9 border rounded-5 border-secondary ms-5 me-1">
+                    <div class="col-9 border rounded-5 border-secondary ms-4 me-1">
                         <div class="row me-0">
                             <div class="col-9 ms-2 py-1">
                                 <input id="searchWord" name="searchWord" type="text" class="border-0 ps-2" placeholder="검색어를 입력해주세요.">
@@ -184,6 +256,8 @@
                     
                     
                 </div>
+                
+                
             </div>
         </div>
 
@@ -227,7 +301,16 @@
         </div>
         
         <!--여백-->
-        <div class="row p-5"></div>
+        <div class="row p-4 mt-4 mb-4"></div>
+
+        <div class="row ps-2 border-bottom pt-2 pb-2 bg-white">
+            <div class="col" style="font-size: 0.8em;">
+                <!-- 각 버튼에 클래스를 추가하여 클릭될 때 이벤트를 처리할 수 있도록 설정 -->
+                <span><a id="latestBtn" class="btn-link" onclick="changeActive(this)" style="color: black; text-decoration: none;">· 최신순</a></span>&nbsp;&nbsp;
+                <span><a class="btn-link" onclick="changeActive(this)" style="color: black; text-decoration: none;">· 가격 낮은순</a></span>&nbsp;&nbsp;
+                <span><a class="btn-link" onclick="changeActive(this)" style="color: black; text-decoration: none;">· 가격 높은순</a></span>
+            </div>
+        </div>
 
 
         <div id="roomListBox" class="row"></div>
@@ -252,12 +335,14 @@
 
                 <div class="row mt-1 mb-2">
                     <div class="col-2"> <a class="text-start py-0 ms-0 ps-1 roomCharge" style="color: black; text-decoration: none;">1박가격</a></div>
-                    <div class="col text-start text-secondary py-0">&nbsp;/1박</div>
+                    <div class="col text-start text-secondary py-0">&nbsp;/1박 당</div>
                 </div>
                 
             </div>
         </div>
-
+        <button onclick="scrollToTop()" id="scrollBtn" title="Go to top" class="shadow">
+            <i class="bi bi-arrow-up pb-3 pt-2"></i>
+        </button>
         <!--여백-->
         <div class="row p-4"></div>
         

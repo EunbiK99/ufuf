@@ -27,6 +27,7 @@ import com.cu.ufuf.dto.RoomInfoDto;
 import com.cu.ufuf.dto.RoomOptionDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.room.service.RoomServiceIpml;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -228,20 +229,10 @@ public class RoomController {
 	public String roomDetailPage(Model model, @RequestParam("room_info_id") int room_info_id){
 		
 		model.addAttribute("roomDetail", roomService.getRoomInfo(room_info_id));
+		model.addAttribute("currentDate", LocalDate.now());
 		return "room/roomDetailPage";
 	}
 
-	//예약(게스트 호스트 둘 다) 목록 페이지
-	@RequestMapping("roomReservationListPage")
-	public String roomReservationListPage(HttpSession session, Model model){
-		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
-		int user_id=sessionUserInfo.getUser_id();
-
-		model.addAttribute("roomList", roomService.getRoomInfoList());
-		model.addAttribute("roomReservationList", roomService.roomReservationList(user_id));
-
-		return "room/roomReservationListPage";
-	}
 
 	//예약(게스트) 상세 페이지W
 	@RequestMapping("roomReservationInfoPage")
@@ -250,6 +241,7 @@ public class RoomController {
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
 		int user_id=sessionUserInfo.getUser_id();
 		model.addAttribute("reservationInfo", roomService.getReservationInfo(user_id, room_info_id));
+		model.addAttribute("currentDate", LocalDate.now());
 
         return "room/roomReservationInfoPage";
     }
@@ -281,7 +273,7 @@ public class RoomController {
 	public String myRoomListPage(Model model){
 
 		model.addAttribute("roomList", roomService.getRoomInfoList());
-
+		model.addAttribute("currentDate", LocalDate.now());
 
 		return "room/myRoomListPage";
 	}
@@ -305,6 +297,7 @@ public class RoomController {
 		int user_id=sessionUserInfo.getUser_id();
 
 		model.addAttribute("roomReservationList", roomService.roomReservationList(user_id));
+		model.addAttribute("currentDate", LocalDate.now());
 		return "room/myRoomReservationListPage";
 	}
 
@@ -466,6 +459,15 @@ public class RoomController {
 
         return "room/roomPaymentCancel";
     }
+
+	//방별로 예약자 명단
+	@RequestMapping("roomReservationListPage")
+	public String roomReservationListPage(Model model, int room_info_id){
+
+		model.addAttribute("getRoomReservationList", roomService.getRoomReservationList(room_info_id));
+
+		return "room/roomReservationListPage";
+	}
 
 
 }

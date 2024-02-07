@@ -25,8 +25,62 @@
             "Segoe UI Symbol", 
             sans-serif;
         }
+
+        #scrollBtn {
+            display: none;
+            position: fixed;
+            bottom: 1.7em;
+            right: 1.7em;
+            z-index: 99;
+            font-size: 1.2em;
+            border: none;
+            outline: none;
+            background-color: white;
+            color: #FF8827;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            width: 2.6em;
+            height: 2.6em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #scrollBtn i {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #scrollBtn:hover {
+            background-color: white;
+        }
+
+
+
     </style>
 
+    <script>
+        
+        // 스크롤 버튼을 페이지의 최상단으로 스크롤
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // 부드러운 스크롤 적용
+            });
+        }
+
+        // 스크롤 이벤트를 통해 스크롤 버튼의 표시/숨김 제어
+        window.addEventListener('scroll', function() {
+            var scrollBtn = document.getElementById("scrollBtn");
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollBtn.style.display = "block";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        });
+
+    </script>
     
 </head>
 
@@ -36,55 +90,73 @@
          <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
            
             <!--뒤로가기-->
-            <div class="col-1">
+            <div class="col-1 pt-1">
                 <a href="./roomMainPage"><i class="bi bi-x-lg text-secondary" style="color: black; text-decoration: none;"></i></a> 
             </div>
 
             <!--무슨페이지인지 알 수 있게-->
-            <div class="col text-center fw-bold text-secondary mt-1 fs-5">MY 예약</div>
+            <div class="col text-center fw-bold text-secondary fs-5">MY 예약</div>
             <div class="col-1"></div> 
         </div>
         <!--여백-->
         <div class="row p-4 mt-4"></div>
 
 
-        <div class="row mt-3" th:each="reservation : ${roomReservationList}">
-            <div class="col-1"></div>
+        <div class="row border-bottom pb-4 mt-2" th:each="reservation : ${roomReservationList}">
             <div class="col-md-5" th:if="${reservation.roomInfoDto!=null}">
-                <div class="row mt-3 border border-secondary-subtle rounded mx-2 mt-2">
-                    <div class="col">
-                        <div class="row">
-                            <a class="p-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">
-                                <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 10em; overflow: hidden; position: relative; object-fit: cover;">
+                <div class="row mt-3 mx-3 pe-2 mt-2">
+                    <div class="col me-0" style="width: 8em;">
+                        <div class="row pe-0">
+                            <a class="ps-0 pe-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">
+                                <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid rounded" style="width: 7em; height: 7em; overflow: hidden; position: relative; object-fit: cover;">
                             </a>
                         </div>
+                    </div>
+                    <div class="col" style="width: 15em;">
+                        
                         <div class="row mt-2">
-                            <a class=" fw-bold text-start py-0 ms-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${reservation.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
+                            <div class="col">
+                                <a class="fw-bold ms-2 text-start py-0 pe-0 me-1" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${reservation.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
+                            </div>
+                             <div class="col pt-1 ms-2 text-end me-0 pe-0" style="font-size: 0.8em;">
+                                <a class=" text-secondary" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}"style="text-decoration: none;">
+                                    상세보기 &gt;
+                                </a>
+                            </div>
                         </div>
-                        <div class="row"> 
+                        <div class="row ms-2 border-bottom pb-2"> 
                             <div class="col p-0">
-                                <a class=" text-secondary text-start ps-3" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${#temporals.format(reservation.roomGuestDto.start_reservation_schedule, 'yyyy.MM.dd(E)') + '-' + #temporals.format(reservation.roomGuestDto.end_reservation_schedule, 'yyyy.MM.dd(E)')}" style="text-decoration: none;"></a>
+                                <a class=" text-secondary text-start" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${#temporals.format(reservation.roomGuestDto.start_reservation_schedule, 'yyyy.MM.dd(E)') + '-' + #temporals.format(reservation.roomGuestDto.end_reservation_schedule, 'yyyy.MM.dd(E)')}" style="text-decoration: none; font-size: 0.8em;"></a>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col d-grid" th:if="${reservation.roomReviewCount!=0}">
-                                <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2">리뷰작성완료</button>
-                            </div>
-                            <div class="col d-grid" th:if="${reservation.roomReviewCount==0}">
-                                <a class="btn my-2 text-white fw-bold" th:href="@{./guestReviewPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" style="background-color: #FF8827;">리뷰쓰기</a>
-                            </div>
-                            <div class="col d-grid">
-                                <a class="btn btn-outline-secondary my-2" th:href="@{./roomDetailPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">다시 예약하기</a>
+
+                        <div class="row mt-2">
+                            <div class="col ms-1 ps-3" style="font-size: 0.8em;">
+                                <span class=" text-secondary" th:if="${reservation.roomGuestDto.end_reservation_schedule} lt ${currentDate}">이용완료</span>
+                                <span class="fw-bold" th:if="${reservation.roomGuestDto.end_reservation_schedule} ge ${currentDate}" style="color: #FF8827;">결제 완료</span>
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </div>
+                <div class="row mt-2 px-3" th:if="${reservation.roomGuestDto.end_reservation_schedule} lt ${currentDate}">
+                    <div class="col d-grid" th:if="${reservation.roomReviewCount!=0}">
+                        <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">리뷰작성완료</button>
+                    </div>
+                    <div class="col d-grid" th:if="${reservation.roomReviewCount==0}">
+                        <a class="btn my-2 mx-0 text-white fw-bold" th:href="@{./guestReviewPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" style="background-color: #FF8827; font-size: 0.9em;">리뷰쓰기</a>
+                    </div>
+                </div>
+
+                
             </div>
-            <div class="col-md-5 offset-md-1"></div>
+
         </div>
         
-        <!--여백-->
-       <div class="row p-3"></div>
+        <button onclick="scrollToTop()" id="scrollBtn" title="Go to top" class="shadow">
+            <i class="bi bi-arrow-up pb-3 pt-2"></i>
+        </button>
 
     </div>
 

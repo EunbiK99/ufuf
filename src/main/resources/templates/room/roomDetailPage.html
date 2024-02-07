@@ -256,7 +256,7 @@
                     <div class="col-2 fw-bold py-0 ms-0 ps-0 me-1" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.room_charge, 0, 'COMMA', 0, 'POINT')}"></div>
                     <div class="col-1 ps-0 ms-0">원</div>
                     <div class="col ps-0 text-start text-secondary py-0">
-                        &nbsp;/1박
+                        &nbsp;/1박 당
                     </div>
                 </div>
             </div>
@@ -322,8 +322,8 @@
 
         <div class="row mx-1 mt-4 mb-3 fw-bold" style="font-size: 1em;">숙소 기본 옵션</div>
 
-        <div class="row ms-4 me-1 pt-1 pb-3 pe-0 ps-0">
-            <div class="col-3 mt-3 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
+        <div class="row ms-4 me-1 pb-3 pe-0 ps-0">
+            <div class="col-3 mt-2 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
                 <div class="row">
                     <div class="col" th:switch="${roomOption.room_option_category_id}">
                         <div th:case="1">
@@ -391,64 +391,60 @@
 
         <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-3 mb-1" style="font-size: 1.1em;">예약 공지</div>
         
-        <div class="row mt-3 mx-2 mb-2 text-secondary fw-bold">예약 가능일정</div>
+        <div class="row mt-3 ms-2 me-3 mb-2 text-secondary fw-bold" style="width: 90%;">예약 가능일정</div>
         <div class="row ps-2">
-            <div class="col-4 me-0 pe-0" th:text="${roomDetail.roomInfoDto.start_schedule}"></div>
-            <div class="col-1">~</div>
-            <div class="col" th:text="${roomDetail.roomInfoDto.end_schedule}"></div>
+            <div class="col">
+                <span th:text="${roomDetail.roomInfoDto.start_schedule}"></span>
+                ~
+                <span th:text="${roomDetail.roomInfoDto.end_schedule}"></span>
+            </div>
+            
         </div>
 
 
         <div class="row mx-2 mb-2 mt-3 text-secondary fw-bold">체크인 / 아웃</div>
-        <div class="row ps-2">
-            <div class="col-1 mt-1 pe-2 me-2"><i class="fi fi-rr-clock-three"></i></div>
+        <div class="row ps-1">
+            <div class="col-1 mt-1 ps-3 "><i class="fi fi-rr-clock-three"></i></div>
             <div class="col">
-                <div class="row">
-                    <div class="col-2 ps-0 pe-0">체크인</div>
-                    <div class="col ms-0 ps-0 pe-0 me-0 fw-bold" th:text="${roomDetail.roomInfoDto.checkin_time}"></div>
-                    <div class="col-1 px-0">-</div>
-                    <div class="col ps-0 pe-0 me-0">체크아웃</div>
-                    <div class="col ms-0 ps-0 fw-bold" th:text="${roomDetail.roomInfoDto.checkout_time}"></div>
-                </div>
+                    체크인&nbsp;
+                    <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkin_time}"></span>&nbsp;-&nbsp;
+                    체크아웃&nbsp;
+                    <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkout_time}"></span>
             </div>
             
         </div>
 
-        <div class="row mx-2 mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
+        <div class="row mx-1 ps-1 mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
         <div class="row ps-2">
-            <div class="col-1 mt-1 pe-1"><i class="fi fi-rr-user"></i></div>
-            <div class="col">
-                <div class="row">
-                    <div class="col-1 ms-0 pe-0 me-0 fw-bold" th:text="${roomDetail.roomInfoDto.people_count_standard}"></div>
-                    <div class="col-2 px-0">인 기준</div>
-                    <div class="col-1 pe-0 me-0">/</div>
-                    <div class="col-2 ms-0 ps-0 pe-0 me-0">최대</div>
-                    <div class="col-1 ms-0 ps-0 pe-0 me-0 fw-bold" th:text="${roomDetail.roomInfoDto.people_count_limit}"></div>
-                    <div class="col-1 ms-0 ps-0">인</div>
-                </div>
+            <div class="col-1 pt-1">
+                <i class="fi fi-rr-user"></i>
             </div>
-            
+            <div class="col-9">
+               <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_standard}"></span>
+               인 기준 / 최대 
+               <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_limit}"></span>
+               인
+            </div>
         </div>
-        <div class="row" th:if="${roomDetail.roomInfoDto.people_count_standard != roomDetail.roomInfoDto.people_count_limit}">
+        <div class="row " th:if="${roomDetail.roomInfoDto.people_count_standard != roomDetail.roomInfoDto.people_count_limit}">
             <div class="col">
-                <div class="row ps-1 mx-1 mt-3 text-secondary fw-bold">인원 추가요금</div>
+                <div class="row ms-2 mt-3 text-secondary fw-bold" style="width: 90%;">인원 추가요금</div>
                 
-                <div class="row ps-1 ms-1 mt-2">
-                    <div class="col-2 ps-0 pe-0 me-0">1인당 </div>
-                    <div class="col-2 ms-0 ps-0 pe-0 tent-end me-0 fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></div>
-                    <div class="col-1 ms-0 ps-0 pe-0 me-0">원</div>
-                    <div class="col-4 ms-0">
-                        <div class="row text-secondary">
-                            <div class="col-4 ms-0 ps-0 pe-0" style="font-size: 0.9em;">(최대</div>
-                            <div class="col-1 ms-0 ps-0 pe-0 me-0" th:text="${roomDetail.roomInfoDto.people_count_limit}" style="font-size: 0.9em;"></div>
-                            <div class="col-1 ms-0 ps-0" style="font-size: 0.9em;">인)</div>
-                        </div>
+                <div class="row mt-2 ps-1">&nbsp;
+
+                    <div class="col-9">
+                        1인당&nbsp;
+                        <span class="fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></span>
+                        원
+                        <span class="text-secondary" style="font-size: 0.9em;">(최대</span>
+                        <span class="text-secondary" th:text="${roomDetail.roomInfoDto.people_count_limit}" style="font-size: 0.9em;"></span>
+                        <span class="text-secondary" style="font-size: 0.9em;">인)</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-4" style="font-size: 1em;">오시는 길</div>
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-4 mb-4" style="font-size: 1em;">오시는 길</div>
 
         <!--주소(지도)-->
         <div class="row">
@@ -474,24 +470,27 @@
 
 
         <!--주소-->
-        <div class="row mx-2 mt-3 p-0">
+        <div class="row mx-2 mt-4 p-0">
             <div class="col-1 p-0"><i class="bi bi-geo-alt"></i></div>
-            <div class="col ps-0 ms-0" th:text="${roomDetail.roomInfoDto.location}"></div>
+            <div class="col-10 ps-0 ms-0" th:text="${roomDetail.roomInfoDto.location}"></div>
         </div>
         
 
         <!--리뷰-->
-        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-5 mb-2" style="font-size: 1.1em;">
-            <div class="col-2 me-0 pe-0">리뷰</div>
-            <div class="col" th:text="${roomDetail.roomReviewCount}"></div>
+        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-4 mb-2" style="font-size: 1.1em;">
+            <div class="col">
+                리뷰&nbsp;
+                <span class="text-secondary" th:text="${roomDetail.roomReviewCount}"></span>
+            </div>
+            
         </div>
         
         <!--리뷰 목록-->
         <div class="row">
             <div class="col" th:if="${roomDetail.roomReviewCount!=0}">
-                <div class="row m-2 border rounded" th:each="review:${roomDetail.roomGuestReviewDto}">
-                    <div class="col ms-2 mx-2">
-                        <div class="row ms-0 ps-0 pb-2 mt-3">
+                <div class="row m-3 border rounded" th:each="review:${roomDetail.roomGuestReviewDto}">
+                    <div class="col">
+                        <div class="row mx-1 px-2 pb-2 mt-3 border-bottom">
                             <div class="col-4 ms-0 ps-0 me-0 pe-0">
                                 <span class="p-0 me-0 pe-0 m-0 text-warning" th:utext="${'&#9733;'.repeat(review.review_grade)}"></span>
                                 <span class="ps-0 ms-0 me-0 pe-0 pb-1 m-0 text-secondary" th:utext="${'&#9734;'.repeat(5 - review.review_grade)}"></span>
@@ -499,7 +498,7 @@
                             <div class="col ms-0 ps-0 pt-1 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
                             <div class="col-4 ms-0 ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
                         </div>
-                        <div class="row ps-3 mt-2 mb-3" th:text="${review.review_content}"></div>
+                        <div class="row mx-1 px-2 mt-2 mb-3" th:text="${review.review_content}"></div>
                     </div>
                 </div>
             </div>
@@ -515,8 +514,14 @@
         <!--예약하기 버튼-->
         <div class="fixed-bottom w-100 bg-white">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
-                <div class="col d-grid mx-2 mt-2 mb-4">
+                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
                     <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>
+                </div>
+                <div class="col d-grid" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
+                    <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
+                </div>
+                <div class="col d-grid" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
+                    <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
                 </div>
             </div>
         </div>

@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">    
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <style>
     *{
@@ -69,6 +70,7 @@ console.log('groupDetailInfo: ', groupDetailInfo);
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('sessionUserReviewData: ', sessionUserReviewData);
 
+/* 시그널 보내기 로직 */
 function registerBothLike(targetGroupMemberId){
     
     const groupMemberIdTo = targetGroupMemberId;
@@ -287,7 +289,7 @@ function checkExistMemberReview(){
             
             const buttonText = targetAccordionButton.children[0];
             buttonText.setAttribute("class", "fw-bold text-white")
-            buttonText.innerText = "작성완료!";
+            buttonText.innerText = "작성완료";
 
             const targetReviewComment = targetRow.querySelector(`#commentToGroupMemberId${memberReviewDto.groupMemberIdTo}`);
             targetReviewComment.setAttribute("readonly","");
@@ -307,7 +309,7 @@ function checkExistMemberReview(){
             groupMemberReviewSubmitButton.removeAttribute("onclick");
             submitButtonText.innerText = "Thanks for Review :)";            
         }
-    }
+    }    
 }
 
 async function isGroupReviewExist(){
@@ -346,6 +348,7 @@ function makeGroupMemberReviewListRow(){
         const groupReviewWrapperCol = document.getElementById("groupReviewWrapperCol");
         groupReviewWrapperCol.innerHTML = "";
         
+        
         for(e of responseData){
             if(e.groupMemberReviewDto !== null){
                 const groupReviewListRow = document.querySelector("#templete #groupReviewListRow").cloneNode(true);
@@ -361,8 +364,8 @@ function makeGroupMemberReviewListRow(){
                 const groupReviewComment = groupReviewListRow.querySelector("#groupReviewComment");
                 groupReviewComment.innerText = e.groupMemberReviewDto.groupReviewComment;
 
-                groupReviewWrapperCol.appendChild(groupReviewListRow);
-            }
+                groupReviewWrapperCol.appendChild(groupReviewListRow);            
+            }            
         }        
     });
 }
@@ -479,13 +482,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
                                 <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
-                            <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
-                            </div>                            
+                            <div class="col-auto align-self-center px-0">
+                                <span class="">Uni Signal</span>
+                            </div>                             
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                    <div class="col-auto align-self-center">
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
                     </div>
                 </div>
             </div>
@@ -598,11 +601,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
-                        <div class="row justify-content-around">
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./searchPage'">
+                        <div class="row justify-content-around mt-1 text-secondary">
+                            <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <img src="/public/image/meeting/find.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -611,10 +614,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/makeGroup.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -623,17 +626,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='../commons/mainPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./chatListPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/chat.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col align-self-center">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -642,10 +645,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1 mt-1" onclick="window.location.href='./myPage'">
+                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/myPage.png" class="img-fluid" style="width: 1.7em; height: auto;">                                                                                                
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -766,9 +769,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>                            
     </div>
 
-    
-
-
+    <div id="notExistGroupReviewRow" class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col text-center">
+                    <span>아직 작성된 리뷰가 없어요..ㅠㅠ</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <span>제일 먼저 리뷰를 작성해보세요!</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
