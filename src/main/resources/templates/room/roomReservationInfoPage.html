@@ -95,12 +95,12 @@
          <!-- 페이지 네비-->
          <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
             <!--뒤로가기-->
-            <div class="col-1">
+            <div class="col-1 pt-1">
                 <a onclick="goBack()"><i class="bi bi-x-lg text-secondary"></i></a> 
             </div>
 
             <!--무슨페이지인지 알 수 있게-->
-            <div class="col text-center fw-bold text-secondary mt-1 fs-5">예약내역</div>
+            <div class="col text-center fw-bold text-secondary pb-2 fs-5">예약내역</div>
             <div class="col-1"></div> 
         </div>
         <!--여백-->
@@ -110,8 +110,15 @@
             <img th:src="@{/public/image/room/}+${reservationInfo.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 8em; overflow: hidden; position: relative; object-fit: cover;">
         </div>
 
+        <div class="row mt-4">
+            <div class="col ms-1 ps-4" style="font-size: 0.8em;">
+                <span class="text-secondary" th:if="${reservationInfo.roomGuestDto.end_reservation_schedule} lt ${currentDate}">이용완료</span>
+                <span th:if="${reservationInfo.roomGuestDto.end_reservation_schedule} ge ${currentDate}" style="color: #FF8827;">결제 완료</span>
+            </div>
+        </div>
+
         <!--예약한 호텔 이름-->
-        <div class="row mt-4 pb-4 border-bottom border-secondery-subtle">
+        <div class="row mt-2 pb-4 border-bottom border-secondery-subtle">
             <div class="col ms-4 ps-0 fw-bold" th:text="${reservationInfo.roomInfoDto.title}" style="font-size: 1.3em;"></div>
             <div class="col-1 me-4">
                 <a th:href="@{./roomDetailPage(room_info_id=${reservationInfo.roomInfoDto.room_info_id})}">
@@ -122,13 +129,13 @@
         
 
         <!--예약기간-->
-        <div class="row mt-3 pt-3 pb-5 border-bottom border-secondery-subtle">
+        <div class="row mt-3 pt-2 pb-4 border-bottom border-secondery-subtle">
             <div class="col">
                 <div class="row">
                     <div class="col text-center text-secondary" style="font-size: 0.8em;">체크인</div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col text-center" th:text="${#temporals.format(reservationInfo.roomGuestDto.start_reservation_schedule, 'MM월 dd일(E)')}"></div>
+                    <div class="col text-center text-black" th:text="${#temporals.format(reservationInfo.roomGuestDto.start_reservation_schedule, 'MM월 dd일(E)')}"></div>
                 </div>
                 <div class="row mt-1">
                     <div class="col text-center fw-bold" th:text="${reservationInfo.roomInfoDto.checkin_time}" style="font-size: 1.2em;"></div>
@@ -154,36 +161,34 @@
             </div>
         </div>
 
-        <div class="row mt-4 ps-3 pe-1 pb-4 border-bottom border-secondery-subtle">
+        <div class="row mt-4">
 
             <!--주소(지도)-->
-            <div class="row">
-                <div class="col px-0">
-                    <div id="map" style="height:15em; width: 100%;">
-                        <script>
+            <div class="col px-0">
+                <div id="map" style="height:15em; width: 100%;">
+                    <script>
 
-                            var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                                mapOption = { 
-                                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                    level: 3 // 지도의 확대 레벨
-                                };
+                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                            mapOption = { 
+                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                level: 3 // 지도의 확대 레벨
+                            };
 
-                            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-                            map.setMinLevel(1);
-                            map.setMaxLevel(4);
+                        map.setMinLevel(1);
+                        map.setMaxLevel(4);
 
-                        </script>
-                    </div>
+                    </script>
                 </div>
             </div>
 
-
-            <!--주소-->
-            <div class="row mx-2 mt-3 p-0">
-                <div class="col-1 p-0"><i class="bi bi-geo-alt"></i></div>
-                <div class="col ps-0 ms-0" th:text="${reservationInfo.roomInfoDto.location}"></div>
-            </div>
+            
+        </div>
+        <!--주소-->
+        <div class="row ps-3 mt-3 p-0 pb-4 border-bottom border-secondery-subtle text-secondary">
+            <div class="col-1 p-0"><i class="bi bi-geo-alt"></i></div>
+            <div class="col ps-0 ms-0" th:text="${reservationInfo.roomInfoDto.location}"></div>
         </div>
 
         <!--예약자 정보-->
@@ -191,19 +196,19 @@
             <div class="col fw-bold" style="font-size: 1.1em;">예약자 정보</div>
         </div>
 
-        <div class="row mt-4 me-1 ps-3 pe-1 pb-4 border-bottom border-secondery-subtle">
+        <div class="row mt-4 ps-3 pe-3 pb-4 border-bottom border-secondery-subtle">
             <div class="col">
                 <div class="row">
                     <div class="col-2">이름</div>
                     <div class="col-7"></div>
                     <div class="col-3 text-end" th:text="${reservationInfo.userDto.name}"></div>
                 </div>
-                <div class="row mt-3">
+                <div class="row mt-2">
                     <div class="col-3">연락처</div>
                     <div class="col-4"></div>
                     <div class="col me-1 text-end" th:text="${reservationInfo.userDto.phone}"></div>
                 </div>
-                <div class="row mt-3">
+                <div class="row mt-2">
                     <div class="col-3">이메일</div>
                     <div class="col-4"></div>
                     <div class="col me-1 text-end" th:text="${reservationInfo.userDto.email}"></div>
@@ -211,34 +216,37 @@
             </div>
         </div>
 
-        <div class="row mt-4 ps-3 pb-4 border-bottom border-secondery-subtle">
-            <div class="col-5 fw-bold me-5" style="font-size: 1.1em;">결제금액 정보</div>
+        <div class="row mt-4 ps-3 pe-4 pb-4 border-bottom border-secondery-subtle">
+            <div class="col fw-bold me-5" style="font-size: 1.1em;">결제금액 정보</div>
             <div class="col ms-3 fw-bold text-end" style="font-size: 1.1em;">
-                <div class="row me-3">
-                    <div class="col-10 ps-0 ms-0 pe-0 text-end" th:text="${#numbers.formatDecimal(reservationInfo.totalCost, 0, 'COMMA', 0, 'POINT')}" style="color: #ff6a00;"></div>
-                    <div class="col-1 ms-0 ps-0" style="color: #ff6a00;">원</div>
+                <div class="row">
+                    <div class="col text-end" style="color: #ff6a00;">
+                        <span th:text="${#numbers.formatDecimal(reservationInfo.totalCost, 0, 'COMMA', 0, 'POINT')}"></span>원
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="row mt-4 ps-3" style="font-size: 0.9em;">
             <div class="col-4">기본 숙박비</div>
-            <div class="col-4"></div>
             <div class="col">
-                <div class="row me-4">
-                    <div class="col-8 text-end" th:text="${#numbers.formatDecimal(reservationInfo.standardRoomCharge, 0, 'COMMA', 0, 'POINT')}"></div>
-                    <div class="col-1">원</div>
+                <div class="row me-3">
+                    <div class="col text-end">
+                        <span th:text="${#numbers.formatDecimal(reservationInfo.standardRoomCharge, 0, 'COMMA', 0, 'POINT')}"></span>
+                        원
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4 me-1 ps-3 pb-4" style="font-size: 0.9em;">
+        <div class="row mt-3 me-1 ps-3 pb-4" style="font-size: 0.9em;">
             <div class="col-4">추가요금</div>
-            <div class="col-4"></div>
             <div class="col">
                 <div class="row">
-                    <div class="col ms-0 ps-0 text-end" th:text="${#numbers.formatDecimal(reservationInfo.extraCharge, 0, 'COMMA', 0, 'POINT')}"></div>
-                    <div class="col-1 me-4 ps-0">원</div>
+                    <div class="col text-end pe-4">
+                        <span th:text="${#numbers.formatDecimal(reservationInfo.extraCharge, 0, 'COMMA', 0, 'POINT')}"></span>
+                        원
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,7 +255,7 @@
         <!--여백-->
         <div class="row p-5 mt-3"></div>
         
-        <div class="fixed-bottom w-100 bg-white">
+        <div class="fixed-bottom w-100 bg-white" th:if="${reservationInfo.roomGuestDto.end_reservation_schedule} lt ${currentDate}">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
                 <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount!=0}">
                     <button type="button" disabled class="btn text-white fw-bold py-2 btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">리뷰작성완료</button>

@@ -56,10 +56,12 @@ public interface RoomSqlMapper {
      public RoomOptionCategoryDto roomOptionCategorySelectById(int room_option_category_id);
 
      public int roomImageCount(int room_info_id);
-     public RoomInfoDto roomSelectByRoomAndUserIdForGuest(int user_id, int room_info_id);
+     public RoomInfoDto roomSelectByRoomAndUserIdForGuest(int room_info_id);
 
-     //예약자 정보
-     public int roomGuestSelectByRoomAndUserId(RoomGuestDto roomGuestDto);
+    //예약자 정보
+
+    //방별로 예약자 리스트
+    public List<RoomGuestDto> roomReservationList(int room_info_id);
 
      //게스트 아이디로 뽑아오는거
      public List<RoomGuestDto> roomGuestSelectByGuestId(int room_guest_id);

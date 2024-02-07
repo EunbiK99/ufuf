@@ -143,6 +143,47 @@ public class RoomServiceIpml {
 		
 	}
 
+    //방별로 예약자 목록
+    public List<Map<String, Object>> getRoomReservationList(int room_info_id) {
+		
+		List<Map<String, Object>> roomReservationList=new ArrayList<>();
+		
+		List<RoomGuestDto> roomGuestDtoList=roomSqlMapper.roomReservationList(room_info_id);
+		
+		for(RoomGuestDto roomGuestDto:roomGuestDtoList) {
+			int UserPK=roomGuestDto.getUser_id();
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+
+            RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(room_info_id);
+            //몇박인지
+            int reservationDuration=roomSqlMapper.reservationDuration(UserPK, room_info_id);
+            
+            //기본 숙박비
+            int standardRoomCharge=roomSqlMapper.reservationRoomCharge(UserPK, room_info_id);
+            //추가요금
+            int extraCharge=roomSqlMapper.reservationExtraCharge(UserPK, room_info_id);
+            //총 요금
+            int totalCost=roomSqlMapper.reservationRoomCharge(UserPK, room_info_id)+roomSqlMapper.reservationExtraCharge(UserPK, room_info_id);
+
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+            map.put("roomGuestDto", roomGuestDto);
+			map.put("userDto", userDto);
+
+            map.put("reservationDuration", reservationDuration);
+            map.put("standardRoomCharge", standardRoomCharge);
+            map.put("extraCharge", extraCharge);
+            map.put("totalCost", totalCost);
+			
+			roomReservationList.add(map);
+
+			
+		}
+		
+		return roomReservationList;
+		
+	}
     
 
     public List<Map<String, Object>> getReviewList() {
@@ -233,8 +274,13 @@ public class RoomServiceIpml {
 		
 		Map<String, Object> roomMap=new HashMap<>();
 
+        
+
         RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomAndUserId(user_id, room_info_id);
-		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getUser_id(),roomGuestDto.getRoom_info_id());
+
+		UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
+        
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getRoom_info_id());
         System.out.println(roomInfoDto.getRoom_info_id());
 
         //몇박인지
@@ -247,8 +293,6 @@ public class RoomServiceIpml {
         //총 요금
         int totalCost=roomSqlMapper.reservationRoomCharge(user_id, room_info_id)+roomSqlMapper.reservationExtraCharge(user_id, room_info_id);
 
-        int UserPK=roomGuestDto.getUser_id();
-		UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
 
         int roomReviewCount=roomSqlMapper.guestRoomReviewCount(roomGuestDto.getRoom_guest_id());
 
@@ -275,8 +319,11 @@ public class RoomServiceIpml {
 		for(RoomGuestDto roomGuestDto:roomGuestDtoList) {
 
             RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectById(roomGuestDto.getRoom_info_id());
+
+
 			UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
             int roomReviewCount=roomSqlMapper.guestRoomReviewCount(roomGuestDto.getRoom_guest_id());
+           
 			
 			Map<String, Object> map=new HashMap<>();
 			map.put("roomInfoDto", roomInfoDto);
