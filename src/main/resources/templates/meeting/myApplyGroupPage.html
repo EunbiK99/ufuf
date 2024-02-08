@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
     <style>
     *{
@@ -36,6 +37,12 @@ console.log('meetingProfileInfo: ', meetingProfileInfo, typeof meetingProfileInf
 
 let memberedGroupCountValue = 0;
 let notMemberedGroupCountValue = 0;
+
+function dateConverter(dateTimedata, option){
+    const array = new Date(...dateTimedata);
+    const convertDate = Intl.DateTimeFormat('ko-KR', option).format(array);
+    return convertDate;
+}
 
 // 현재 URL주소에 사용된 파라매터값 가져와서 사용하기 예제
 function test(){
@@ -108,6 +115,23 @@ function setApplyDataList(){
                 const memberedGroupTitle = memberedGroupListRow.querySelector("#memberedGroupTitle");
                 memberedGroupTitle.innerText = e.applyGroupDto.groupTitle;
 
+                const memberedGroupMeetingdate = memberedGroupListRow.querySelector("#memberedGroupMeetingdate");
+                const dateValue = e.applyGroupDto.groupMeetingDate;
+                const array = new Date(...dateValue);                
+                const dateOption = {
+                    year : 'numeric',
+                    month : 'long',
+                    day : 'numeric',
+                    // hour : 'numeric',
+                    // minute : '2-digit',
+                    weekday : 'short'
+                    }
+                const convertDate = Intl.DateTimeFormat('ko-KR', dateOption).format(array);
+                memberedGroupMeetingdate.innerText = convertDate;
+
+                const memberedGroupMeetingPlace = memberedGroupListRow.querySelector("#memberedGroupMeetingPlace");
+                memberedGroupMeetingPlace.innerText = e.applyGroupDto.groupMeetingPlace;
+                
                 const memberedGroupMeetingStatus = memberedGroupListRow.querySelector("#memberedGroupMeetingStatus");
                 const statusValue = e.applyGroupDto.groupApplyStatus;
                 if(statusValue === "Y"){
@@ -177,7 +201,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 </script>
 
-<body class="pt-5 pb-5">
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
@@ -195,7 +219,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-align-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -208,7 +232,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row fs-3">
                             <div class="col-auto" onclick="window.history.back()">
-                                <span><i class="bi bi-chevron-left"></i></span>                                
+                                <span class=" fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>
                             </div>
                             <div class="col ps-0">
                                 <span class="fw-bold">내가 참여중인 미팅 목록</span>
@@ -219,41 +243,47 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
                 <div class="row mt-3">
                     <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <span class="fs-5 fw-bold">
-                                    선발멤버인 미팅
-                                    <span id="memberedGroupCount"></span>
-                                </span>
-                            </div>
-                        </div>
+
                         <div class="row">
                             <div class="col mx-1">
-                                <div class="row">
-                                    <div id="memberedGroupListWrapperCol" class="col">
 
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">
+                                            선발멤버인 미팅
+                                            <span id="memberedGroupCount"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div id="memberedGroupListWrapperCol" class="col">
+        
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <span class="fs-5 fw-bold">
-                                    선발대기중 미팅
-                                    <span id="notMemberedGroupCount"></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
+        
+                        <div class="row mt-3 mb-4">
                             <div class="col mx-1">
                                 <div class="row">
-                                    <div id="notMemberedGroupListWrapperCol" class="col">
-
+                                    <div class="col">
+                                        <span class="fs-5 fw-bold">
+                                            선발대기중 미팅
+                                            <span id="notMemberedGroupCount"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div id="notMemberedGroupListWrapperCol" class="col">
+        
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +303,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -285,7 +315,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -304,7 +334,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -316,12 +346,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">My</span>
+                                        <span class="" style="color: #FF8827;">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -335,29 +365,35 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
-    <div id="memberedGroupListRow" class="row my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox" onclick="moveDetailPage(this)">
-        <div class="col my-1">
-            <div class="row">
-                <div class="col-auto border border-0 rounded">
+    <div id="memberedGroupListRow" class="row my-2 border border-2 border-secondery-subtle rounded shadowBox bg-white" onclick="moveDetailPage(this)">
+        <div class="col my-1 mx-1">
+            <div class="row my-1">
+                <div class="col-auto ps-0 ms-1">
                     <img id="memberedGroupImage" style="width: 5em; height: 5em; border-radius: 10%;">
                 </div>
-                <div class="col">
-                    <div class="row justify-content-between">
+                <div class="col ms-2 ps-0">
+                    <div class="row justify-content-between border-bottom pb-1 pe-0">
                         <div class="col-auto align-self-center">
-                            <span id="memberedGroupTitle" class="fw-bold"></span>
+                            <div class="row">
+                                <div class="col-11 ps-0 align-self-center text-truncate">
+                                    <span id="memberedGroupTitle" class="fw-bold"></span>
+                                </div>
+                            </div>                                
                         </div>
-                        <div class="col-auto align-self-center">
-                            <span id="memberedGroupMeetingStatus" class="fw-bold badge">모집중</span>
+                        <div class="col-auto px-0 align-self-center">
+                            <span id="memberedGroupMeetingStatus" class="fw-bold badge"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="memberedGroupMeetingdate"></span>
+                        <div class="col-auto ps-0 align-self-center">
+                            <span class="text-secondary" style="font-size: 0.8em;"><i class="fi fi-rr-calendar-lines bi-align-middle"></i></span>
+                            <span id="memberedGroupMeetingdate" class="text-secondary" style="font-size: 0.8em;"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="memberedGroupMeetingPlace"></span>
+                        <div class="col-auto ps-0">
+                            <span class="text-secondary" style="font-size: 0.8em;"><i class="fi fi-rr-map-marker bi-align-middle"></i></span>
+                            <span id="memberedGroupMeetingPlace" class="text-secondary" style="font-size: 0.8em;"></span>
                         </div>
                     </div>
                 </div>
@@ -365,29 +401,35 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="notMemberedGroupListRow" class="row my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox" onclick="moveDetailPage(this)">
-        <div class="col my-1">
-            <div class="row">
-                <div class="col-auto border border-0 rounded">
+    <div id="notMemberedGroupListRow" class="row my-2 border border-2 border-secondery-subtle rounded shadowBox bg-white" onclick="moveDetailPage(this)">
+        <div class="col my-1 mx-1">
+            <div class="row my-1">
+                <div class="col-auto ps-0 ms-1">
                     <img id="notMemberedGroupImage" style="width: 5em; height: 5em; border-radius: 10%;" >
                 </div>
-                <div class="col">
-                    <div class="row justify-content-between">
+                <div class="col ms-2 ps-0">
+                    <div class="row justify-content-between border-bottom pb-1 pe-0">
                         <div class="col-auto align-self-center">
-                            <span id="notMemberedGroupTitle" class="fw-bold"></span>
+                            <div class="row">
+                                <div class="col-11 ps-0 align-self-center text-truncate">
+                                    <span id="notMemberedGroupTitle" class="fw-bold"></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-auto align-self-center">
-                            <span id="notMemberedGroupMeetingStatus">모집중</span>
+                        <div class="col-auto px-0 align-self-center">
+                            <span id="notMemberedGroupMeetingStatus"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="notMemberedGroupMeetingDate"></span>
+                        <div class="col-auto ps-0 align-self-center">
+                            <span class="text-secondary" style="font-size: 0.8em;"><i class="fi fi-rr-calendar-lines bi-align-middle"></i></span>
+                            <span id="notMemberedGroupMeetingDate" class="text-secondary" style="font-size: 0.8em;"></span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <span id="notMemberedGroupMeetingPlace"></span>
+                        <div class="col-auto ps-0">
+                            <span class="text-secondary" style="font-size: 0.8em;"><i class="fi fi-rr-map-marker bi-align-middle"></i></span>
+                            <span id="notMemberedGroupMeetingPlace" class="text-secondary" style="font-size: 0.8em;"></span>
                         </div>
                     </div>
                 </div>
@@ -395,9 +437,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>        
     </div>
 
-    <div class="row notExistGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox">
+    <div class="row notExistGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
         <div class="col text-center">
-            <span class="fs-4 fw-bold text-secondary">해당하는 미팅그룹이 없어요 T^T</span>
+            <div class="row">
+                <div class="col my-4">
+                    <span class="fs-4 fw-bold text-secondary">해당하는 미팅그룹이 없어요 T^T</span>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
     <style>
     *{
@@ -41,8 +42,25 @@
 
 <script th:inline="javascript">
 
-let sessionUserId = /*[[${session.sessionUserInfo.user_id}]]*/;
-console.log('sessionUserId: ', sessionUserId);
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
+console.log('sessionUserInfo: ', sessionUserInfo);
+
+function changeDateFormat(){
+    const sessionUserBirth = document.getElementById("sessionUserBirth");
+    const sessionUserBirthValue = sessionUserBirth.innerText;    
+    const dateObject = new Date(sessionUserBirthValue);
+    console.log('dateObject: ', dateObject);
+
+    sessionUserBirth.innerText = "";
+    const dateOption = {
+        year : 'numeric',
+        month : 'long',
+        day : 'numeric',        
+    };
+    const formatDate = new Intl.DateTimeFormat("ko-KR", dateOption).format(dateObject);
+    sessionUserBirth.innerText = formatDate;
+}
+
 
 
 function registerProfile(){
@@ -51,7 +69,7 @@ function registerProfile(){
     if(confirmResult){
         const formData = new FormData();
 
-        formData.append('user_id', sessionUserId);
+        formData.append('user_id', sessionUserInfo.user_id);
         formData.append('profileNickname', document.getElementById("inputNickname").value);
         formData.append('profile_Img', document.getElementById("inputProfileImageFile").files[0]);
         formData.append('profileComment', document.getElementById("inputComment").value);
@@ -132,10 +150,14 @@ function checkDuplicateSNSUrl(textValue){
     });
 }
 
+document.addEventListener("DOMContentLoaded", ()=>{
+    changeDateFormat();
+})
+
 
 </script>
 
-<body class="pt-5 pb-5">
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">
     <div class="container-fluid">
         <input id="inputProfileImageFile" type="file" class="d-none" accept="image/*">
         
@@ -154,7 +176,7 @@ function checkDuplicateSNSUrl(textValue){
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-align-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -167,11 +189,11 @@ function checkDuplicateSNSUrl(textValue){
                     <div class="col">                
                         <div class="row">
                             <div class="col">
-                                <div class="row mt-3">
+                                <div class="row mt-4">
                                     <div class="col">
                                         <div class="row">
                                             <div class="col-auto" onclick="window.history.back()">
-                                                <span class="fs-3"><i class="bi bi-chevron-left"></i></span>                                
+                                                <span class=" fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>
                                             </div>
                                             <div class="col-auto ps-0">                                                
                                                 <span class="fs-3 fw-bold">나의 미팅프로필 생성</span>
@@ -186,7 +208,7 @@ function checkDuplicateSNSUrl(textValue){
                 
                 <!--이걸 하나의 프로필로-->
                 <div class="row mt-3 mb-4">
-                    <div class="col mx-1 border border-black border-2 rounded">
+                    <div class="col mx-1 border border-black border-2 rounded bg-white">
 
                         <div class="row border-bottom border-2 border-black justify-content-between">
                             <div class="col border rounded-top border-0" style="background-color: #FF8827;">
@@ -194,7 +216,7 @@ function checkDuplicateSNSUrl(textValue){
                                     <div class="col-auto">
                                         <div class="row">                                            
                                             <div class="col-auto text-center">
-                                                <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-user-pen"></i></span>
+                                                <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-user-pen bi-align-middle"></i></span>
                                                 <span class="fs-5 fw-bold text-white">My Meeting Profile</span>
                                             </div>                                     
                                         </div>                                        
@@ -224,34 +246,37 @@ function checkDuplicateSNSUrl(textValue){
                                 </div>
 
                                 <div class="row mt-4 mb-1 mx-1">
-                                    <div class="col-6 align-self-center text-center border border-1 border-black rounded btn" role="button" onclick="attachProfileImage()">
-                                        <div class="row justify-content-center">
-                                            <div id="attachProfileImageCol" class="col-auto text-center">                                                
-                                                <span class="text-secondary" style="font-size: 6em;"><i class="fi fi-rr-add-image"></i></span>
+                                    <div class="col-6 align-self-center text-center border border-2 rounded btn" role="button" onclick="attachProfileImage()">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="row justify-content-center">
+                                                    <div id="attachProfileImageCol" class="col-auto text-center">                                                
+                                                        <span class="text-secondary" style="font-size: 6em;"><i class="fi fi-rr-add-image bi-align-middle"></i></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>                                        
                                     </div>
                                     <div class="col ms-2 ps-1">
                                         <div class="row">                                            
-                                            <div class="col-auto">
+                                            <div class="col-auto pe-1">
                                                 <span th:text="${session.sessionUserInfo.name}" class="fw-bold"></span> 님
                                             </div>
                                             <div class="col-auto ps-0">
-                                                <span class="text-primary" th:if="${session.sessionUserInfo.gender == 'M'}"><i class="fi fi-rr-mars"></i></span>
-                                                <span class="text-danger" th:if="${session.sessionUserInfo.gender == 'F'}"><i class="fi fi-rr-venus"></i></span>
+                                                <span class="text-primary" th:if="${session.sessionUserInfo.gender == 'M'}"><i class="fi fi-rr-mars bi-align-middle"></i></span>
+                                                <span class="text-danger" th:if="${session.sessionUserInfo.gender == 'F'}"><i class="fi fi-rr-venus bi-align-middle"></i></span>
                                             </div>
                                         </div>
 
                                         <div class="row mt-2">
-                                            <div class="col-10">
+                                            <div class="col-10 ps-1">
                                                 <input id="inputNickname" type="text" class="custom-input border border-2 form-control form-control-sm" placeholder="닉네임 입력">
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
-                                            
+                                        <div class="row mt-2">                                            
                                             <div class="col-auto">
-                                                <span th:text="${session.sessionUserInfo.birth}"></span>
+                                                <span id="sessionUserBirth" th:text="${session.sessionUserInfo.birth}"></span>
                                             </div>
                                         </div>
                                         <div class="row mt-2">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>타이틀</title>
+    <title>마이페이지</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -265,10 +265,13 @@ function mySignalBothModalCSR(){
         const userSignalBothListCol = document.getElementById("userSignalBothListCol");
         userSignalBothListCol.innerHTML = "";
 
+        let userBothLikeCount = 0;
+
         for(list of userBothLikeDataList){
             if(list.length > 0){
                 for(e of list){
                     if(e.meLikeGroupMemberProfileDto){
+                        userBothLikeCount++;
                         const userSignalBothWrapperRow = document.querySelector("#templete #userSignalBothWrapperRow").cloneNode(true);
 
                         const userSignalBothImage = userSignalBothWrapperRow.querySelector("#userSignalBothImage");
@@ -284,12 +287,20 @@ function mySignalBothModalCSR(){
                         userSignalBothListCol.appendChild(userSignalBothWrapperRow);
                     }                    
                 }                
-            }
+            }            
+        }
+        if(userBothLikeCount === 0){
+            const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
+            const messageSpan = noSignalMessageRow.querySelector("#messageSpan");
+            messageSpan.innerText = "아직 보낸 시그널이 없어요! 리뷰를 남기고 시그널을 보내보세요 :)"
+
+            userSignalBothListCol.appendChild(noSignalMessageRow);
         }
     });
 }
 
-function showMySignalBothModal(){ 
+function showMySignalBothModal(){
+    document.body.style.overflow = 'hidden';
     mySignalBothModalCSR();
     const mySignalBothModal = document.getElementById("mySignalBothModal");
     mySignalBothModal.classList.add('active');
@@ -298,6 +309,7 @@ function showMySignalBothModal(){
 }
 
 function closeMySignalBothModal(){
+    document.body.style.overflow = 'auto';
     const mySignalBothModal = document.getElementById("mySignalBothModal");
     mySignalBothModal.classList.remove('active');
     const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
@@ -660,7 +672,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start" onclick="moveMyRecruitGroup()">
+                            <div class="col btn text-start border border-0" onclick="moveMyRecruitGroup()">
                                 <span class="fw-bold fs-3">내가 모집한 미팅</span>                                
                             </div>
                         </div>
@@ -670,7 +682,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</span>                                
                             </div>
                         </div>
@@ -680,7 +692,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3">My Signal</span>
                             </div>
                         </div>
@@ -690,7 +702,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3">결제 정보</span>
                             </div>
                         </div>
@@ -797,7 +809,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span id="" class="modal-title fw-bold fs-4">Send Signal List</span>
+                            <span class="fw-bold fs-4"><i class="bi bi-activity" style="color: yellow;"></i></span>
+                            <span id="" class="modal-title fw-bold fs-4 text-white">내가 보낸 시그널</span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeMySignalToModal()" class="btn btn-close"></button>                            
@@ -837,7 +850,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span id="" class="modal-title fw-bold fs-4">Match Signal List</span>
+                            <span class="fw-bold fs-4"><i class="fi fi-sr-comment-heart text-danger bi-align-middle"></i></span>
+                            <span id="" class="modal-title fw-bold fs-4 text-white">매치된 시그널</span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeMySignalBothModal()" class="btn btn-close"></button>                            
@@ -847,7 +861,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
 
             <div class="row modal-body mt-2 border-bottom">
-                <div class="col" style="height:12em;">
+                <div class="col">
                     <div class="row">
                         <div id="userSignalBothListCol" class="col">
                             
@@ -930,10 +944,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col-auto me-1 align-self-center">
                     <div class="row">
                         <div class="col btn" style="background-color: #FF8827;">
-                            <span id="userSignalBothChatButton" class="fw-bold">Chat</span>
+                            <span id="userSignalBothChatButton" class="fw-bold text-white">Chat</span>
                         </div>
                     </div>
                 </div>                
+            </div>
+        </div>
+    </div>
+
+    <div id="noSignalMessageRow" class="row border rounded shadowBox my-3 mx-2">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <span class="text-secondary" id="messageSpan"></span>
+                </div>
             </div>
         </div>
     </div>

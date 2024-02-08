@@ -63,17 +63,6 @@
         opacity: 0;
         visibility: hidden;
     }
-    /*
-
-    .fixed-top {    
-        z-index: 999 !important;
-    }
-    */
-    /*
-    .fixed-bottom {
-    z-index: 999 !important;
-    }
-    */
     
     .customModal {
         /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
@@ -189,28 +178,48 @@
     </style>
 </head>
 <script th:inline="javascript">
-let sessionUserMeetingProfile = /*[[${session.meetingProfileInfo}]]*/;
+let sessionUserMeetingProfile = /*[[${session.meetingProfileInfo}]]*/
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('sessionUserMeetingProfile: ', sessionUserMeetingProfile);
+
 
 function applyCheck(groupId){
     
     const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
+    const targetModal = document.querySelector(`#groupDetailModal[groupId="${groupId}"]`);
+    const groupRecruitGender = targetModal.querySelector("#groupGenderOption").innerText;
+    const sessionUserGender = sessionUserInfo.gender;
     
-    fetch("./api/applyCheck?profileId=" + sessionUserMeetingProfileId + "&groupId=" + groupId)
-    .then(response => response.json())
-    .then(response => {
-        const checkResult = response.data;
-        console.log('checkResult: ', checkResult);
-        
-        if(checkResult === 0){
-            showApplyModal(groupId);            
-        }
-        else{
-            alert("이미 신청한 미팅입니다.");
-            closeGroupDetailModal();
+    if(groupRecruitGender === "남자만"){
+        if(sessionUserGender === "F"){
+            alert("해당 미팅은 남자만 모집중입니다");
             return;
-        }        
-    });
-    
+        }
+    }
+    else if(groupRecruitGender === "여자만"){
+        if(sessionUserGender === "M"){
+            alert("해당 미팅은 여자만 모집중입니다");
+            return;
+        }
+    }
+    else{
+        fetch("./api/applyCheck?profileId=" + sessionUserMeetingProfileId + "&groupId=" + groupId)
+        .then(response => response.json())
+        .then(response => {
+            const checkResult = response.data;
+            console.log('checkResult: ', checkResult);
+            
+            if(checkResult === 0){
+                showApplyModal(groupId);            
+            }
+            else{
+                alert("이미 신청한 미팅입니다.");
+                closeGroupDetailModal();
+                return;
+            }        
+        });
+    }
 }
 
 function registerApplyUser(groupId){        
@@ -298,6 +307,7 @@ function getGroupDetailInfo(groupId){
         console.log('tagDtoList: ', groupDetailInfo.tagDtoList);
 
         const groupDetailModal = document.getElementById('groupDetailModal');
+        groupDetailModal.setAttribute("groupId" , groupDetailInfo.meetingGroupDto.groupId);
         const meetingTitleDetail = groupDetailModal.querySelector("#meetingTitleDetail");
         meetingTitleDetail.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
 
@@ -469,65 +479,79 @@ function closeApplyModal(){
     applyModalDialog.classList.remove('active');
 }
 
-function getGroupList(){
-    fetch("./api/getGroupList")
+// 그룹리스트 정보 받아온 후에 해당 그룹의 status 변경해주는것으로 로직 변경
+
+async function groupListCSR(){
+    let groupListAll = await getGroupList();
+    console.log('groupListAll: ', groupListAll);
+
+    const groupListCol = document.getElementById("groupListCol");
+    groupListCol.innerHTML = '';
+    
+    for(e of groupListAll){
+        const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+        groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
+        const customBackground = groupListWrapper.querySelector(".custom-background");
+        customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
+        
+        const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
+        const dateValue = e.groupMeetingDate
+        const dateOption = {
+            year : 'numeric',
+            month : 'long',
+            day : 'numeric',
+            hour : 'numeric',
+            minute : '2-digit',
+            weekday : 'short'
+        }
+        const convertDate = dateConverter(dateValue, dateOption);
+        groupMeetingDate.innerText = convertDate;
+
+        const groupTitle = groupListWrapper.querySelector("#groupTitle");
+        groupTitle.innerText = e.groupTitle;
+
+        const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
+        let placeText = e.groupMeetingPlace.split(" ");
+        groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
+
+        if(e.groupApplyStatus === "Y"){
+            const applyEndBadge = document.createElement("span");
+            applyEndBadge.innerText = "모집종료";
+            applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(applyEndBadge);
+        }
+        
+        if(e.groupMeetingStatus === "Y"){
+            const meetingEndBadge = document.createElement("span");
+            meetingEndBadge.innerText = "미팅종료";
+            meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(meetingEndBadge);
+        }
+
+        groupListCol.appendChild(groupListWrapper);
+    }
+}
+
+function checkMeetingDate(groupListData){
+    // for(e of groupListData){
+
+    // }
+}
+
+async function getGroupList(){
+
+    return await fetch("./api/getGroupList")
     .then(response => response.json())
     .then(response =>{
-        const groupListAll = response.data;
-        console.log('groupListAll: ', groupListAll);
-
-        const groupListCol = document.getElementById("groupListCol");
-        groupListCol.innerHTML = '';
-        
-        for(e of groupListAll){
-            const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
-            groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
-            const customBackground = groupListWrapper.querySelector(".custom-background");
-            customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
-            
-            const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
-            const dateValue = e.groupMeetingDate
-            const dateOption = {
-                year : 'numeric',
-                month : 'long',
-                day : 'numeric',
-                hour : 'numeric',
-                minute : '2-digit',
-                weekday : 'short'
-            }
-            const convertDate = dateConverter(dateValue, dateOption);
-            groupMeetingDate.innerText = convertDate;
-
-            const groupTitle = groupListWrapper.querySelector("#groupTitle");
-            groupTitle.innerText = e.groupTitle;
-
-            const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
-            let placeText = e.groupMeetingPlace.split(" ");
-            groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
-
-            if(e.groupApplyStatus === "Y"){
-                const applyEndBadge = document.createElement("span");
-                applyEndBadge.innerText = "모집종료";
-                applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(applyEndBadge);
-            }
-            
-            if(e.groupMeetingStatus === "Y"){
-                const meetingEndBadge = document.createElement("span");
-                meetingEndBadge.innerText = "미팅종료";
-                meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(meetingEndBadge);
-            }
-
-            groupListCol.appendChild(groupListWrapper);
-        }
+        const responseData = response.data;        
+        return responseData;
     });
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    getGroupList()
+    groupListCSR();
 });
 
 
@@ -843,7 +867,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     <span>신청목록</span>
                                 </div>
                                 <div class="col-auto ps-0">
-                                    <span class="fw-bold text-primary"><i class="fi fi-sr-user bi-align-middle"></i></span>                                    
+                                    <span class="fw-bold"><i class="fi fi-sr-user bi-align-middle"></i></span>                                    
                                     <span id="applyUserCount" class="fw-bold text-primary"></span>                                    
                                 </div>
                             </div>
