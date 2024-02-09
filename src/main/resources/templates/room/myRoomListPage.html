@@ -79,7 +79,7 @@
     
 </head>
 
-<body>
+<body style="background-color: rgb(241, 241, 241);">
     <div class="container" th:if="${session.sessionUserInfo !=null}">
          <!-- 페이지 네비-->
          <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
@@ -99,7 +99,7 @@
         <div class="row mt-3">
             <div class="col-1"></div>
             <div class="col-md-5" th:each="room : ${roomList}">
-                <div class="row mt-3 border border-secondery-subtle rounded mx-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
+                <div class="row mt-3 border border-secondery-subtle rounded bg-white mx-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
                     <div class="col">
                         <div class="row pt-2 pb-3 px-1">
                             <div class="col text-secondary fw-semibold">

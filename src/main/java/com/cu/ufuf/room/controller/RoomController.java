@@ -54,9 +54,16 @@ public class RoomController {
 
 	//방 등록페이지
     @RequestMapping("roomRegisterPage")
-    public String roomRegisterPage(Model model){
+    public String roomRegisterPage(Model model, HttpSession session){
 
 		model.addAttribute("roomOptionList", roomService.getRoomOptionlist());
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 
         return "room/roomRegisterPage";
     }
@@ -172,7 +179,14 @@ public class RoomController {
 
 	//게스트 예약페이지
 	@GetMapping("roomReservationPage")
-	public String roomReservationPage(Model model, @RequestParam("room_info_id") int room_info_id){
+	public String roomReservationPage(Model model, @RequestParam("room_info_id") int room_info_id, HttpSession session){
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 		
 
 		model.addAttribute("roomInfo", roomService.getRoomInfoForReservation(room_info_id));
@@ -239,9 +253,18 @@ public class RoomController {
     public String roomReservationInfoPage(HttpSession session, Model model, @RequestParam("room_info_id") int room_info_id){
 
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 		int user_id=sessionUserInfo.getUser_id();
+
+
 		model.addAttribute("reservationInfo", roomService.getReservationInfo(user_id, room_info_id));
 		model.addAttribute("currentDate", LocalDate.now());
+
+		
 
         return "room/roomReservationInfoPage";
     }
@@ -251,6 +274,10 @@ public class RoomController {
 	public String guestReviewPage(HttpSession session, Model model, @RequestParam("room_info_id") int room_info_id){
 		
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 		int user_id=sessionUserInfo.getUser_id();
 
 		model.addAttribute("ReservationInfo", roomService.getReservationInfo(user_id, room_info_id));
@@ -270,7 +297,14 @@ public class RoomController {
 	
 	//내가 올린 방 목록
 	@RequestMapping("myRoomListPage")
-	public String myRoomListPage(Model model){
+	public String myRoomListPage(Model model, HttpSession session){
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 
 		model.addAttribute("roomList", roomService.getRoomInfoList());
 		model.addAttribute("currentDate", LocalDate.now());
@@ -281,7 +315,13 @@ public class RoomController {
 	//내가 찜한 방 목록
 	@RequestMapping("myInterestRoomListPage")
 	public String myInterestRoomListPage(HttpSession session,Model model){
+
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 		int user_id=sessionUserInfo.getUser_id();
 
 		model.addAttribute("interestRoomList", roomService.userInterestRoomList(user_id));
@@ -294,6 +334,11 @@ public class RoomController {
 	public String myRoomReservationListPage(HttpSession session, Model model){
 
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 		int user_id=sessionUserInfo.getUser_id();
 
 		model.addAttribute("roomReservationList", roomService.roomReservationList(user_id));
@@ -303,7 +348,13 @@ public class RoomController {
 
 	//올린 게스트하우스 글 수정
 	@RequestMapping("updateRoomInfoPage")
-	public String updateRoomInfoPage(Model model, @RequestParam("room_info_id") int room_info_id){
+	public String updateRoomInfoPage(Model model, @RequestParam("room_info_id") int room_info_id, HttpSession session){
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 
 		model.addAttribute("roomDetail", roomService.getRoomInfo(room_info_id));
 		model.addAttribute("roomOptionList", roomService.getRoomOptionlist());
@@ -423,7 +474,13 @@ public class RoomController {
 
 	//지도로 방 찾는 페이지?
 	@RequestMapping("roomMapPage")
-	public String roomMapPage(Model model){
+	public String roomMapPage(Model model,HttpSession session){
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 
 		model.addAttribute("roomList", roomService.getRoomInfoList());
 
@@ -462,7 +519,14 @@ public class RoomController {
 
 	//방별로 예약자 명단
 	@RequestMapping("roomReservationListPage")
-	public String roomReservationListPage(Model model, int room_info_id){
+	public String roomReservationListPage(Model model, int room_info_id, HttpSession session){
+
+		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+		if(sessionUserInfo == null) {
+			return "redirect:../login/loginPage";
+			
+		}
 
 		model.addAttribute("getRoomReservationList", roomService.getRoomReservationList(room_info_id));
 

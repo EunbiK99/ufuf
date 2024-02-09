@@ -514,13 +514,10 @@
         <!--예약하기 버튼-->
         <div class="fixed-bottom w-100 bg-white">
             <div class="row text-center pb-2 border-top border-secondery-subtle">
-                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
+                <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
                     <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>
                 </div>
-                <div class="col d-grid" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
-                    <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
-                </div>
-                <div class="col d-grid" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
+                <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
                     <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
                 </div>
             </div>
