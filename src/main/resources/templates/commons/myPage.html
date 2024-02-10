@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>마이페이지</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        *{
+            font-family: -apple-system, BlinkMacSystemFont, 
+            "Apple SD Gothic Neo", 
+            "Pretendard Variable", 
+            Pretendard, 
+            Roboto, 
+            "Noto Sans KR", 
+            "Segoe UI", 
+            "Malgun Gothic", 
+            "Apple Color Emoji", 
+            "Segoe UI Emoji", 
+            "Segoe UI Symbol", 
+            sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+         <!-- 페이지 네비-->
+         <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
+            <!--뒤로가기-->
+            <div class="col-1" onclick="window.location.href='./mainPage'">
+                <!--나중에 게스트하우스 목록페이지나 마이페이지같은데로 링크 삽입-->
+                <i class="bi bi-x-lg text-secondary"></i>
+            </div>
+
+            <!--무슨페이지인지 알 수 있게-->
+            <div class="col text-center fw-bold text-secondary mt-1 fs-5">마이페이지</div>
+            <div class="col-1"></div> 
+        </div>
+        <!--여백-->
+        <div class="row p-4 mt-4 mb-3"></div>
+
+        <div class="row mx-2">
+            <div class="col">
+                <div class="row">
+                    <div class="col fw-bold" th:text="${session.sessionUserInfo.name}"></div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col text-secondary">
+                        <span class="text-secondary" th:text="${session.sessionUserInfo.email}" style="font-size: 0.9em;"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-secondary">
+                        <span class="text-secondary" th:text="${session.sessionUserInfo.university}" style="font-size: 0.9em;"></span>/
+                        <span class="text-secondary" th:text="${session.sessionUserInfo.department}" style="font-size: 0.9em;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 pt-3 border-bottom border-top border-secondery-subtle pb-3">
+            <img src="/public/image/commons/ufuf_commercial.jpg" class="img-fluid" style="border-radius: 20%;">
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

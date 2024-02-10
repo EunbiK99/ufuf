@@ -90,7 +90,7 @@
                                         </a>
                                         <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
                                             <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>
-                                            <li><a class="dropdown-item text-secondery" href="./roomRegisterPage" style="font-size: 0.9em;">마이페이지</a></li>
+                                            <li><a class="dropdown-item text-secondery"  onclick="window.location.href='./myPage'" style="font-size: 0.9em;">마이페이지</a></li>
                                         </ul>
                                     </div>
                                 </span>
@@ -138,113 +138,160 @@
                       </div>
                 </div>
 
-                <!--여백용-->
-                <div class="row m-4"></div>
-
-                <div class="row mx-2">
-                    <div onclick="window.location.href='../mission/map'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="/public/image/commons/map_icon.png" class="img-fluid">
-                            </div>
-                            <div class="col">
-                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                        유니미션
-                                    </div>
-                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                                </div>
-                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                                    <div class="col">
-                                        의뢰를 해보고 미션도 수행해 보세요!<br>
-                                        미션을 수행하고 의뢰비를 받아가요!
-                                    </div>    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-3 mx-2" onclick="window.location.href='../meeting/mainPage'">
-                    <div class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="/public/image/commons/meeting_icon.png" class="img-fluid">
-                            </div>
-                            <div class="col">
-                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                        유니시그널
-                                    </div>
-                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                                </div>
-                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                                    <div class="col">
-                                        다들 어디서 그렇게 만나서 연애해?<br>
-                                        유니시그널에서 만나보자!
-                                    </div>    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-3 mx-2">
-                    <div class="col shadow border border-1 rounded py-2" onclick="window.location.href='../room/roomMainPage'" style="background-color: white; border-color: #ff9a47;">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="/public/image/commons/room_icon.png" class="img-fluid">
-                            </div>
-                            <div class="col">
-                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                        유니비앤비
-                                    </div>
-                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                                </div>
-                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                                    <div class="col">
-                                        잠깐 비는 내 자취방을<br>
-                                        게스트하우스로 개방해요!
-                                    </div>    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-3 mx-2">
-                    <div onclick="window.location.href='../circle/circleMainPage'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="/public/image/commons/circle_icon.png" class="img-fluid">
-                            </div>
-                            <div class="col">
-                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                        유니서클
-                                    </div>
-                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                                </div>
-                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                                    <div class="col">
-                                        우리학교 동아리를<br>
-                                        유니서클에서 편하게 일정 정리하자!
-                                    </div>    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
                 
             </div>
         </div>
+         <!--여백용-->
+         <div class="row m-4"></div>
 
-        <div class="row mt-3">
-            <div class="col text-center">
-                푸터 영역
+         <div class="row mx-2">
+             <div onclick="window.location.href='../mission/map'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                 <div class="row">
+                     <div class="col-3 mt-2 ms-2">
+                         <img src="/public/image/commons/map_icon.png" class="img-fluid">
+                     </div>
+                     <div class="col">
+                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                 유니미션
+                             </div>
+                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                         </div>
+                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                             <div class="col">
+                                 의뢰를 해보고 미션도 수행해 보세요!<br>
+                                 미션을 수행하고 의뢰비를 받아가요!
+                             </div>    
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div class="row mt-3 mx-2" onclick="window.location.href='../meeting/mainPage'">
+             <div class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                 <div class="row">
+                     <div class="col-3 mt-2 ms-2">
+                         <img src="/public/image/commons/meeting_icon.png" class="img-fluid">
+                     </div>
+                     <div class="col">
+                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                 유니시그널
+                             </div>
+                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                         </div>
+                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                             <div class="col">
+                                 다들 어디서 그렇게 만나서 연애해?<br>
+                                 유니시그널에서 만나보자!
+                             </div>    
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div class="row mt-3 mx-2">
+             <div class="col shadow border border-1 rounded py-2" onclick="window.location.href='../room/roomMainPage'" style="background-color: white; border-color: #ff9a47;">
+                 <div class="row">
+                     <div class="col-3 mt-2 ms-2">
+                         <img src="/public/image/commons/room_icon.png" class="img-fluid">
+                     </div>
+                     <div class="col">
+                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                 유니비앤비
+                             </div>
+                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                         </div>
+                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                             <div class="col">
+                                 잠깐 비는 내 자취방을<br>
+                                 게스트하우스로 개방해요!
+                             </div>    
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div class="row mt-3 mx-2">
+             <div onclick="window.location.href='../circle/circleMainPage'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                 <div class="row">
+                     <div class="col-3 mt-2 ms-2">
+                         <img src="/public/image/commons/circle_icon.png" class="img-fluid">
+                     </div>
+                     <div class="col">
+                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                 유니서클
+                             </div>
+                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                         </div>
+                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                             <div class="col">
+                                 우리학교 동아리를<br>
+                                 유니서클에서 편하게 일정 정리하자!
+                             </div>    
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+        
+            <!--여백용-->
+            <div class="row m-4 pt-4"></div>
+
+            <div class="fixed-bottom border-top bg-white ms-0 px-2" style="padding-top: 0.3rem; bottom: 0; height: 3.4rem;">
+                <div class="row mt-0 pt-0">
+                    <div class="col mt-0 ms-1" onclick="window.location.href='../mission/map'">
+                        <div class="row text-center">
+                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">미션</div>
+                        </div>
+                    </div>
+                    <div class="col" onclick="window.location.href='../meeting/mainPage'"c>
+                        <div class="row text-center">
+                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">미팅</div>
+                        </div>
+                    </div>
+    
+                    <!--홈-->
+                    <div class="col ms-1" style="padding-top: 0.02rem;">
+                        <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='./mainPage'">
+                       
+                    </div>
+    
+                    <div class="col" onclick="window.location.href='../room/roomMainPage'">
+                        <div class="row text-center">
+                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-houses text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">숙박</div>
+                        </div>
+                    </div>
+                    <div class="col me-2 mb-2" onclick="window.location.href='../circle/circleMainPage'">
+                        <div class="row text-center pt-0">
+                            <!--임시로 방 글쓰기 페이지로 이어짐니다-->
+                            <a style=" text-decoration: none; padding-top: 0rem;"><i class=" bi bi-people text-secondary" style="font-size: 1.1em;"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
+                            <div class="col">서클</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+                
+
+        
     </div>
 
 
