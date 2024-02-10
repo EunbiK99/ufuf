@@ -12,5 +12,8 @@ public class CommonsController {
         return "./commons/mainPage";
     }
 
-
+    @RequestMapping("loginRequierd")
+    public String loginRequierd(){
+        return "./commons/loginRequierd";
+    }
 }

@@ -83,6 +83,20 @@
         function goBack() {
             window.history.go(-1);
         }
+
+        
+
+        function changeActive(element) {
+            var activeButtons = document.querySelectorAll('.btn-link.active');
+            activeButtons.forEach(function(button) {
+                button.classList.remove('active');
+            });
+            element.classList.add('active');
+            roomList(); // 버튼이 클릭되었을 때 roomList 함수 호출
+        }
+
+        
+
         function roomList(){
             // 처음에 초기화
             document.querySelector("#roomListBox").innerHTML = "";
@@ -90,50 +104,70 @@
             const peopleCount = document.querySelector("#peopleCount").value;
             const startSchedule = document.querySelector("#startSchedule").value;
             const endSchedule = document.querySelector("#endSchedule").value;
-            
 
-            const url = `./getRoomListForSearch?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+            let url = "";
+
+            // 활성화된 버튼에 따라 URL을 설정합니다.
+            const activeButton = document.querySelector('.btn-link.active');
+            if (activeButton.textContent === "· 가격 높은순") {
+                url = `./getRoomListForSearchAndChargeDesc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+            } else if (activeButton.textContent === "· 가격 낮은순") {
+                url = `./getRoomListForSearchAndChargeAsc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+            } else {
+                url = `./getRoomListForSearch?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+            }
+
+            
+            
             
             fetch(url)
             .then(response => response.json())
             .then(response => {
+                const currentDate = new Date(); // 현재 날짜를 가져옵니다.
 
                 for(e of response.data){
-                    
-                    // 게스트하우스 리스트 생성
-                    const roomList = document.querySelector("#roomList").cloneNode(true);
-                    roomList.classList.remove("d-none");
-                    const roomMainImage = roomList.querySelector(".roomMainImage");
-                    roomMainImage.removeAttribute("src");
-                    roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
-                    const roomTitle = roomList.querySelector(".roomTitle");
-                    roomTitle.innerHTML = "";
-                    roomTitle.innerText = e.roomInfoDto.title;
-                    const roomLocation = roomList.querySelector(".roomLocation");
-                    roomLocation.innerHTML = "";
-                    roomLocation.innerText = e.roomInfoDto.location;
-                    const roomCharge = roomList.querySelector(".roomCharge");
-                    roomCharge.innerHTML = "";
-                    roomCharge.innerText = Number(e.roomInfoDto.room_charge).toLocaleString();
 
-                    // 링크태그 여기서 하나씩 잡아주어야함
-                    const a = document.createElement("a");
-                    a.setAttribute("href", "./roomDetailPage?room_info_id=" +e.roomInfoDto.room_info_id);
-                    a.setAttribute("style", "text-decoration: none; color: black;");
-                    a.appendChild(roomList);
+                    const endScheduleDate = new Date(e.roomInfoDto.end_schedule); // 각 요소의 end_schedule을 Date 객체로 변환합니다.
+    
+                    // 만약 end_schedule이 현재 날짜보다 이후라면 리스트에 추가하지 않습니다.
+                    if (endScheduleDate > currentDate) {
+                        // 게스트하우스 리스트 생성
+                        const roomList = document.querySelector("#roomList").cloneNode(true);
+                        roomList.classList.remove("d-none");
+                        const roomMainImage = roomList.querySelector(".roomMainImage");
+                        roomMainImage.removeAttribute("src");
+                        roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        const roomTitle = roomList.querySelector(".roomTitle");
+                        roomTitle.innerHTML = "";
+                        roomTitle.innerText = e.roomInfoDto.title;
+                        const roomLocation = roomList.querySelector(".roomLocation");
+                        roomLocation.innerHTML = "";
+                        roomLocation.innerText = e.roomInfoDto.location;
+                        const roomCharge = roomList.querySelector(".roomCharge");
+                        roomCharge.innerHTML = "";
+                        roomCharge.innerText = Number(e.roomInfoDto.room_charge).toLocaleString();
 
+                        // 링크태그 여기서 하나씩 잡아주어야함
+                        const a = document.createElement("a");
+                        a.setAttribute("href", "./roomDetailPage?room_info_id=" +e.roomInfoDto.room_info_id);
+                        a.setAttribute("style", "text-decoration: none; color: black;");
+                        a.appendChild(roomList);
+
+                        
+                        
+
+                        // 본문에 붙이는 코드(리스트들)
+                        const roomListBox = document.querySelector("#roomListBox");
+                        roomListBox.appendChild(a);
+                        if(e == null){
+                            const text = document.createElement("div");
+                            text.classList.add("col", "fw-bold", "text-center");
+                            text.textContent = "등록된 게스트하우스가 없습니다.";
+                            roomListBox.appendChild(text);
+                        }
+                    }
                     
                     
-
-                    // 본문에 붙이는 코드(리스트들)
-                    const roomListBox = document.querySelector("#roomListBox");
-                    roomListBox.appendChild(a);
-                    if(e == null){
-                        const text = document.createElement("div");
-                        text.classList.add("col", "fw-bold", "text-center");
-                        text.textContent = "등록된 게스트하우스가 없습니다.";
-                        roomListBox.appendChild(text);
-        			}
                     
 
                 }
@@ -179,6 +213,11 @@
             roomList();
             
         })
+        // 페이지 로드될 때 최신순 버튼을 활성화합니다.
+        window.onload = function() {
+            document.getElementById('latestBtn').classList.add('active');
+            roomList(); // 페이지 로드시 roomList 함수 호출
+        }
 
         
 
@@ -199,22 +238,6 @@
                 scrollBtn.style.display = "none";
             }
         });
-
-        // 페이지 로드될 때 최신순 버튼을 활성화합니다.
-        window.onload = function() {
-            document.getElementById('latestBtn').classList.add('active');
-        }
-
-        function changeActive(element) {
-            // 현재 활성화된 버튼들의 클래스를 모두 제거합니다.
-            var activeButtons = document.querySelectorAll('.btn-link.active');
-            activeButtons.forEach(function(button) {
-                button.classList.remove('active');
-            });
-
-            // 클릭된 버튼에 활성화 클래스를 추가합니다.
-            element.classList.add('active');
-        }
     </script>
 </head>
 
@@ -334,8 +357,11 @@
                 </div>
 
                 <div class="row mt-1 mb-2">
-                    <div class="col-2"> <a class="text-start py-0 ms-0 ps-1 roomCharge" style="color: black; text-decoration: none;">1박가격</a></div>
-                    <div class="col text-start text-secondary py-0">&nbsp;/1박 당</div>
+                    <div class="col">
+                        <a class="text-start py-0 ms-0 ps-1 roomCharge" style="color: black; text-decoration: none;">1박가격</a>
+                        <span class="col text-start text-secondary py-0">&nbsp;/1박 당</span>
+                    </div>
+                    
                 </div>
                 
             </div>

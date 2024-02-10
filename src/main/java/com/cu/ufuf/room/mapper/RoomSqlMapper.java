@@ -38,16 +38,39 @@ public interface RoomSqlMapper {
     //방 예약
     public void insertRoomGuestInfo(RoomGuestDto roomGuestDto);
 
-    //방 리스트뽑게 
+    //방 리스트 기본
     public List<RoomInfoDto> roomSelectAll();
+
+    //방 리스트 검색용(기본)
     public List<RoomInfoDto> roomSelectAllForSearchLocation(@Param("searchWord") String searchWord);
 
+    //방 리스트 검색용(비싼순)
+    public List<RoomInfoDto> roomSelectAllForSearchLocationAndChargeDesc(@Param("searchWord") String searchWord);
+
+    //방 리스트 검색용(싼순)
+    public List<RoomInfoDto> roomSelectAllForSearchLocationAndChargeAsc(@Param("searchWord") String searchWord);
+    
+    //방 리스트 필터 적용용(기본용)
     public List<RoomInfoDto> roomSelectFilter(@Param("searchWord") String searchWord,
                                               @Param("peopleCount") int peopleCount, 
                                               @Param("startSchedule") LocalDate startSchedule,
                                               @Param("endSchedule") LocalDate endSchedule);
 
-     public UserInfoDto selectByUserId(int user_id);
+    //방 리스트 필터 적용용(비싼순)
+    public List<RoomInfoDto> roomSelectFilterAndChargeDesc(@Param("searchWord") String searchWord,
+                                              @Param("peopleCount") int peopleCount, 
+                                              @Param("startSchedule") LocalDate startSchedule,
+                                              @Param("endSchedule") LocalDate endSchedule);
+    
+    
+    //방 리스트 필터 적용용(비싼순)
+    public List<RoomInfoDto> roomSelectFilterAndChargeAsc(@Param("searchWord") String searchWord,
+                                              @Param("peopleCount") int peopleCount, 
+                                              @Param("startSchedule") LocalDate startSchedule,
+                                              @Param("endSchedule") LocalDate endSchedule);
+
+
+    public UserInfoDto selectByUserId(int user_id);
 
      //방 상세
      public RoomInfoDto roomSelectById(int room_info_id);
