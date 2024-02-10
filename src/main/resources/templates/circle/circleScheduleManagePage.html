@@ -859,6 +859,53 @@
             modal.show();
 
         }
+
+        const circleBoardWrite = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        location.href = "./circleFeedWritePage?circle_id=" + circle_id;
+
+        }
+
+        const circleVoteWrite = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        location.href = "./circleVoteWritePage?circle_id=" + circle_id;
+
+        }
+
+        const VoteListPageMove = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        location.href = "./circleVoteListPage?circle_id=" + circle_id;
+        }
+
+        const ScheduleManageMove = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        location.href = "./circleScheduleManagePage?circle_id=" + circle_id;
+        }
+        const ScheduleWritePageMove = () => {
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        location.href = "./circleScheduleApplyPage?circle_id=" + circle_id;
+
+        }
         
         const circleAttendanceChangeN = (circle_schedule_application_id) => {
 
@@ -919,7 +966,7 @@
             left: 0;
             width: 100%;
             background-color: #ffffff;
-            padding: 1em;
+            padding: 0.4em;
             text-align: center;
         }
         html, body {
@@ -1005,10 +1052,42 @@
             </div>
         </div>
     </div>
+    <div style="position: fixed; right: 1.8em; bottom: 4.3em; z-index: 1000;">      
+        <div class="dropup-end dropup mb-3">
+            <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
+                <i class="fs-4 bi bi-plus-lg text-white"></i>
+            </button>
+            <ul class="dropdown-menu mb-2" style="z-index: 1000;">
+              <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</span></li>
+              <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</span></li>
+              <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+            </ul>
+        </div>
+    </div>
     <div class="container-fluid">
-        <div class="row mt-3 mx-0 fixed-bottom">
-            <div class="col d-grid">
-                <button id="registerS" class="btn fw-semibold" onclick="scheduleApply()" style="background-color: #fb7928;color: white;">일정 등록</button>
+        <div class="row fixed-bottom mx-0 px-0 align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196);">
+            <div class="button col py-0 text-center fs-1" onclick="ScheduleManageMove()">
+                <i class="bi bi-calendar2-date"></i>
+            </div>
+            <div class="button col py-0 ps-0 text-center fs-1">
+                <i class="bi bi-box-seam-fill" onclick="VoteListPageMove()"></i>
+            </div>
+            <div class="col-2 px-0 justify-content-center" onclick="(() => {
+                location.href='../commons/mainPage'
+            })()">
+                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 80%;">
+                <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
+                <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
+            </div>
+            <div class="button col py-0 text-center fs-1 pe-0" onclick="(() => {
+                location.href = './myCircleListPage'
+            })()">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="button col py-0 text-center fs-1" onclick="(() => {
+                location.href = './circleMyPage'
+            })()">
+                <i class="bi bi-person-circle"></i>
             </div>
         </div>
     </div>

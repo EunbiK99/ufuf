@@ -272,6 +272,39 @@
 
 
         }
+        // !!!!!!!!!!!!!!!!!!! 여기서부터 보내야할 것들 !!!!!!!!!!!!!!!!!!!!!!!
+        const scheduleIconClick = () => {
+
+            const boardDeleteModal = document.querySelector("#scheduleCheckModal");
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#scheduleCheckModal");
+            modal.show();
+
+        }
+        const accessDeniedVote = () => {
+
+            const boardDeleteModal = document.querySelector("#voteCheckModal");
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#voteCheckModal");
+            modal.show();
+
+        }   
+        // 투표글 아이콘 클릭시 ==> 동아리 가입 내동아리 들어갈 수 있는 모달 생성
+        const VoteIconClick = () => {
+
+            accessDeniedVote()
+
+        }
+        const writeNeedjoin = () => {
+
+            const modal = bootstrap.Modal.getOrCreateInstance("#writeModal");
+            modal.show();
+
+            setTimeout(() => {
+                location.href = "./circleListPage"
+            }, 10000)
+
+        }
 
         // 결제취소가 되면 status ==> 결제취소 바꿔야하고
         // 일정신청테이블 스케줄pk랑 동아리맴버pk이용해서 일정신청삭제해야함..
@@ -295,6 +328,15 @@
             세 번째 값: 그림자의 흐림 정도
             네 번째 값: 그림자의 색상과 투명도
         */
+        }
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 0.4em;
+            text-align: center;
         }
     </style>
 </head>
@@ -468,6 +510,151 @@
                 </div>
               </div>
             </div>
+            <div style="position: fixed; right: 1.8em; bottom: 4.3em; z-index: 1000;">      
+                <div class="dropup-end dropup mb-3">
+                    <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
+                        <i class="fs-4 bi bi-plus-lg text-white"></i>
+                    </button>
+                    <ul class="dropdown-menu mb-2" style="z-index: 1000;">
+                      <li><a class="dropdown-item text-secondary" href="./circleApplyPage" style="font-size: 0.9em;"> 동아리 개설하기</a></li>
+                      <li><a class="dropdown-item text-secondary" href="./circleListPage" style="font-size: 0.9em;"> 동아리 가입하기</a></li>
+                      <li onclick="writeNeedjoin()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row fixed-bottom mx-0 px-0 align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196);">
+                    <div class="button col py-0 text-center fs-1" onclick="scheduleIconClick()">
+                        <i class="bi bi-calendar2-date text-secondary"></i>
+                    </div>
+                    <div class="button col py-0 ps-0 text-center fs-1">
+                        <i class="bi bi-box-seam-fill text-secondary" onclick="VoteIconClick()"></i>
+                    </div>
+                    <div class="col-2 px-0 justify-content-center" onclick="(() => {
+                        location.href='../commons/mainPage'
+                    })()">
+                        <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 80%;">
+                        <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
+                        <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
+                    </div>
+                    <div class="button col py-0 text-center fs-1 pe-0" onclick="(() => {
+                        location.href = './myCircleListPage'
+                    })()">
+                        <i class="bi bi-people-fill text-secondary"></i>
+                    </div>
+                    <div class="button col py-0 text-center fs-1" onclick="(() => {
+                        location.href = './circleMyPage'
+                    })()">
+                        <i class="bi bi-person-circle text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="invitationWrapper" class="col">
+                <div id="invitationModal" class="modal" tabindex="-1" style="border: none;">
+                    <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                      <div class="modal-content px-0 py-0">
+                        <div class="modal-header">
+                          <h5 class="modal-title">동아리 가입</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">
+                                    동아리에 가입 해야 투표글을 볼 수 있습니다.
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    동아리 가입페이지로 이동합니다.
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="modal-footer" style="text-decoration-line: none;">
+                            <button type="button" class="invitationButton btn fw-semibold " style="background-color: #fb7928;color: white;">확인</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            <div id="scheduleCheckWrapper d-none">
+                <div id="scheduleCheckModal" class="modal" tabindex="-1" style="border: none;">
+                    <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                      <div class="modal-content px-0 py-0">
+                        <div class="modal-header">
+                          <h5 class="modal-title">일정 확인</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">
+                                    일정을 확인하려면 동아리에 가입하셔야합니다.
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="modal-footer" style="text-decoration-line: none;">
+                            <button type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;" onclick="(() => {
+                                location.href = './circleListPage'
+                            })()">동아리 가입</button>
+                            <button type="button" class="btn btn-secondary fw-semibold" style="color: #fb7928; background-color: white; border-color: #fb7928;" onclick="(() => {
+                                location.href = './myCircleListPage'
+                            })()">내 동아리</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div id="voteCheckWrapper d-none">
+                <div id="voteCheckModal" class="modal" tabindex="-1" style="border: none;">
+                    <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                      <div class="modal-content px-0 py-0">
+                        <div class="modal-header">
+                          <h5 class="modal-title">투표글 이동</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">
+                                    투표글을 더 보려면 동아리에 가입하셔야 합니다.
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="modal-footer" style="text-decoration-line: none;">
+                            <button type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;" onclick="(() => {
+                                location.href = './circleListPage'
+                            })()">동아리 가입</button>
+                            <button type="button" class="btn btn-secondary fw-semibold" style="color: #fb7928; background-color: white; border-color: #fb7928;" onclick="(() => {
+                                location.href = './myCircleListPage'
+                            })()">내 동아리</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div id="writeWrapper" class="col">
+                <div id="writeModal" class="modal" tabindex="-1" style="border: none;">
+                    <div class="modal-dialog modal-sm modal-dialog-bottom" style="padding-top: 50%;">
+                      <div class="modal-content px-0 py-0">
+                        <div class="modal-header">
+                          <h5 class="modal-title">동아리 가입</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">
+                                    동아리에 가입 해야 게시물을 작성할 수 있습니다.
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    동아리 가입페이지로 이동합니다.
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="modal-footer" style="text-decoration-line: none;">
+                            <button type="button" class="btn fw-semibold" onclick="(() => {location.href = './circleListPage'})()" style="background-color: #fb7928;color: white;">확인</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>  
     <!-- 결제취소 했을때 환불이 진행되어야하고 마지막에 일정신청리스트에서 삭제되어야함.-->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d278507abdfac919df6a68d06b328eaf&libraries=services"></script>

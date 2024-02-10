@@ -370,6 +370,15 @@
     <select id="circlejoinApplyPossibleCheck" resultType="int">
         SELECT count(*) from circle_join_apply WHERE circle_id = #{circle_id} and user_id = #{user_id}
     </select>
+    <select id="boardCntByUserId" resultType="int">
+        SELECT COUNT(*) from circle_board WHERE circle_member_id in (SELECT circle_member_id  from circle_member WHERE user_id = #{user_id})
+    </select>
+    <select id="voteCntByUserId" resultType="int">
+        SELECT COUNT(*) from circle_vote WHERE circle_member_id in (SELECT circle_member_id  from circle_member WHERE user_id = #{user_id})
+    </select>
+    <select id="scheduleCntByUserId" resultType="int">
+        SELECT COUNT(*) from circle_schedule where circle_member_id in (SELECT circle_member_id  from circle_member WHERE user_id = #{user_id})
+    </select>
     
     
 
