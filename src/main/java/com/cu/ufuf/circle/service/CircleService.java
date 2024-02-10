@@ -980,5 +980,22 @@ public class CircleService {
 
         return circleSqlMapper.circlejoinApplyPossibleCheck(circle_id, user_id);
     }
+    // 마이페이지 들어갈 내가 작성한 게시글수, 작성한 투표글수, 작성한 일정 수
+    public Map<String, Object> myPageInfo(int user_id){
+
+        Map<String, Object> map = new HashMap<>();
+
+        int boardCnt = circleSqlMapper.boardCntByUserId(user_id);
+        int voteCnt = circleSqlMapper.voteCntByUserId(user_id);
+        int scheduleCnt = circleSqlMapper.scheduleCntByUserId(user_id);
+        UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+
+        map.put("userInfoDto", userInfoDto);
+        map.put("boardCnt", boardCnt);
+        map.put("voteCnt", voteCnt);
+        map.put("scheduleCnt", scheduleCnt);
+
+        return map;
+    }
     
 }
