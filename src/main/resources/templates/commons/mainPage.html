@@ -18,15 +18,7 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
-    <script>
-
-
-
-
-
-
-    </script>
-
+    
 
     <style>
     @font-face {
@@ -44,26 +36,65 @@
         /* font-family: 'myCustomFont', sans-serif; */
         font-family: 'Pretendard Variable', Pretendard, Roboto;        
     }
+
+    
+    .dropup .btn:focus {
+            box-shadow: none; /* 포커스 시 테두리 없앰 */
+            border-color: #FF8827; /* 활성화 시 테두리 색상을 원하는 색으로 지정 */
+    }
+
+    .orange-background {
+        position: absolute; /* 화면에 고정시킵니다. */
+        top: 0; /* 화면 상단에 배치합니다. */
+        left: 0; /* 왼쪽에 배치합니다. */
+        width: 100%; /* 화면 전체 너비를 사용합니다. */
+        height: 14em; /* 원하는 높이를 지정합니다. */
+        background-color: #ff9a47; /* 주황색 배경을 지정합니다. */
+        z-index: -1; /* 다른 요소들보다 위에 나타나도록 z-index를 설정합니다. */
+    }
+
+    .carousel-indicators {
+        position: absolute;
+        bottom: -3em; /* 조절 가능한 값 */
+        left: 50%;
+        transform: translateX(-120%);
+        
+    }
     </style>
+
 </head>
 
 <body>
+    <div class="orange-background"></div>
     <div class="container-fluid">
-        
+
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row">
+        <div class="row" style="z-index: 1100;">
             <div class="col">
-                <div class="row mt-1 align-content-center">
+                <div class="row mt-2 pb-3 align-content-center">
                     <div class="col">
                         <div class="row justify-content-between">
                             <div class="col-auto">
-                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
+                                <img src="/public/image/commons/ufuf_white_logo.png" class="img-fluid" style="width: 3em; height: auto;">
                             </div>
-                            <div class="col-auto">
-                                <span class="fs-4 align-middle">ufuf</span>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-list fs-4 fw-bold"></i>
+                            <div class="col-auto mt-1">
+                                <span th:if="${session.sessionUserInfo ==null}">
+                                    <a onclick="window.location.href='../login/loginPage'" style="color: white; text-decoration: none;">로그인</a>
+                                </span>
+
+                                <span th:if="${session.sessionUserInfo !=null}">
+                                    <div class="dropdown-end">
+                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; text-decoration: none;">
+                                            <span class="text-white" th:text="|${session.sessionUserInfo.name}|"></span>
+                                            <span class="text-white"><i class="bi bi-person-circle"></i></span>
+                                        </a>
+                                        <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
+                                            <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>
+                                            <li><a class="dropdown-item text-secondery" href="./roomRegisterPage" style="font-size: 0.9em;">마이페이지</a></li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                
                             </div>
                         </div>
                     </div>
@@ -71,54 +102,141 @@
             </div>
         </div>
         
-        <div class="row">
+        <div class="row"> 
             <div class="col">
-                
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-auto text-center">
-                        <span class="fw-bold fs-1">[ 접속유저 : </span>
-                    </div>
-                    <div class="col-auto text-center">                        
-                        <span th:if="${session.sessionUserInfo != null}" th:text="|${session.sessionUserInfo.name} ]|" class="fw-bold fs-1"></span>
-                        <span th:unless="${session.sessionUserInfo != null}" class="fw-bold fs-1">로그인안됨 ]</span>
+                <!--캐러셀-->
+                <div class="row">
+                    <div id="carouselExampleIndicators" class="carousel slide">
+                        <div class="carousel-indicators">
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
+                        </div>
+                        <div class="carousel-inner">
+                          <div class="carousel-item active" data-bs-interval="10000">
+                            <img src="/public/image/commons/main_image_meeting.jpg" class="d-block w-100 img-fluid rounded-4">
+                          </div>
+                          <div class="carousel-item" data-bs-interval="10000">
+                            <img src="/public/image/commons/main_image_circle.jpg" class="d-block w-100 img-fluid rounded-4">
+                          </div>
+                          <div class="carousel-item" data-bs-interval="10000">
+                            <img src="/public/image/commons/main_image_mission.jpg" class="d-block w-100 img-fluid rounded-4">
+                          </div>
+                          <div class="carousel-item" data-bs-interval="10000">
+                            <img src="/public/image/commons/main_image_guest_house_2.jpg" class="d-block w-100 img-fluid rounded-4">
+                          </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                </div>
+
+                <!--여백용-->
+                <div class="row m-4"></div>
+
+                <div class="row mx-2">
+                    <div onclick="window.location.href='../mission/map'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="/public/image/commons/map_icon.png" class="img-fluid">
+                            </div>
+                            <div class="col">
+                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                        유니미션
+                                    </div>
+                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                                </div>
+                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                                    <div class="col">
+                                        의뢰를 해보고 미션도 수행해 보세요!<br>
+                                        미션을 수행하고 의뢰비를 받아가요!
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-6 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../login/loginPage'">
-                        <span class="fw-bold fs-1">로그인</span>
+                <div class="row mt-3 mx-2" onclick="window.location.href='../meeting/mainPage'">
+                    <div class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="/public/image/commons/meeting_icon.png" class="img-fluid">
+                            </div>
+                            <div class="col">
+                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                        유니시그널
+                                    </div>
+                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                                </div>
+                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                                    <div class="col">
+                                        다들 어디서 그렇게 만나서 연애해?<br>
+                                        유니시그널에서 만나보자!
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-5  justify-content-center">
-                    <div class="col-6 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../login/logoutProcess'">
-                        <span class="fw-bold fs-1">로그아웃</span>
+
+                <div class="row mt-3 mx-2">
+                    <div class="col shadow border border-1 rounded py-2" onclick="window.location.href='../room/roomMainPage'" style="background-color: white; border-color: #ff9a47;">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="/public/image/commons/room_icon.png" class="img-fluid">
+                            </div>
+                            <div class="col">
+                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                        유니비앤비
+                                    </div>
+                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                                </div>
+                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                                    <div class="col">
+                                        잠깐 비는 내 자취방을<br>
+                                        게스트하우스로 개방해요!
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-6 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../login/registerIdForm'">
-                        <span class="fw-bold fs-1">회원가입</span>
+
+                <div class="row mt-3 mx-2">
+                    <div onclick="window.location.href='../circle/circleMainPage'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="/public/image/commons/circle_icon.png" class="img-fluid">
+                            </div>
+                            <div class="col">
+                                <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
+                                    <div class="col ps-0 fw-bold" style="color: #ff9a47;">
+                                        유니서클
+                                    </div>
+                                    <div class="col text-end" style="color: #ff9a47;">&gt;</div>
+                                </div>
+                                <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
+                                    <div class="col">
+                                        우리학교 동아리를<br>
+                                        유니서클에서 편하게 일정 정리하자!
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-8 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../meeting/mainPage'">
-                        <span class="fw-bold fs-1">유니시그널 메인</span>
-                    </div>
-                </div>
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-10 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../circle/circleMainPage'">
-                        <span class="fw-bold fs-1">부제의 부재 써클 메인</span>
-                    </div>
-                </div>
-                <div class="row mt-5  justify-content-center">
-                    <div class="col-8 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../room/roomMainPage'">
-                        <span class="fw-bold fs-1">유니B&B 메인</span>
-                    </div>
-                </div>
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-10 text-center btn btn-white border border-2" role="button" onclick="window.location.href='../mission/map'">
-                        <span class="fw-bold fs-1">미션임파서블 메인</span>
-                    </div>
-                </div>
+                
             </div>
         </div>
 
