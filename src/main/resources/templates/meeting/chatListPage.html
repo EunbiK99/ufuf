@@ -146,7 +146,7 @@ function chatListCSR(){
 }
 
 function dateConverter(dateTimedata, option){
-    const array = new Date(...dateTimedata);
+    const array = new Date(dateTimedata[0], dateTimedata[1] - 1 , dateTimedata[2]);
     const convertDate = Intl.DateTimeFormat('ko-KR', option).format(array);
     return convertDate;
 }

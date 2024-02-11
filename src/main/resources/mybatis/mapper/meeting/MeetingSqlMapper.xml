@@ -559,6 +559,12 @@ values (
     and chatRoomId = #{chatRoomId}
 </select>
 
+<!-- * 그룹PK기준 미팅완료현황 업데이트-->
+<update id="updateMeetingStatus">
+    update meeting_group set groupMeetingStatus = "Y"
+    where groupId = #{groupId}
+</update>
+
 
 
 </mapper>

@@ -14,7 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">    
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
 
     <style>
     *{
@@ -290,7 +291,7 @@ function getGroupApplyForm(groupId){
 }
 
 function dateConverter(dateTimedata, option){
-    const array = new Date(...dateTimedata);
+    const array = new Date(dateTimedata[0], dateTimedata[1] - 1, dateTimedata[2]);
     const convertDate = Intl.DateTimeFormat('ko-KR', option).format(array);
     return convertDate;
 }
@@ -387,58 +388,71 @@ function getGroupDetailInfo(groupId){
         applyUserProfieImageListRow.innerHTML = "";
         const applyUserMapList = groupDetailInfo.applyUserMapList;
         
-        if(applyUserMapList.length === 0){
+        if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "Y"){
             const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
+            const applyUserNotExistSpan = applyUserNotExist.querySelector("#applyUserNotExistSpan");
+            applyUserNotExistSpan.innerText = "해당 미팅은 종료되었습니다."
             applyUserProfieImageListRow.appendChild(applyUserNotExist);
-            const parentCol = applyUserProfieImageListRow.closest(".col");
-            console.log('parentCol: ', parentCol);
+            const parentCol = applyUserProfieImageListRow.closest(".col");            
             parentCol.classList.remove("overflow-x-scroll");
             applyUserProfieImageListRow.removeAttribute("style");
         }
         else{
-            const parentCol = applyUserProfieImageListRow.closest(".col");
-            console.log('parentCol: ', parentCol);
-            parentCol.classList.add("overflow-x-scroll");
-            applyUserProfieImageListRow.setAttribute("style","width:200%;");
-
-            for(e of applyUserMapList){
-                const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
-                const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
-                applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`)
-                applyUserImage.setAttribute("alt", e.applyUserProfileDto.profileNickname);               
-                applyUserImage.setAttribute("title", e.applyUserProfileDto.profileNickname);               
-                
-                const applyImageNickname = applyUserImageBox.querySelector("#applyImageNickname");
-                applyImageNickname.innerText = e.applyUserProfileDto.profileNickname;
-
-                applyUserProfieImageListRow.appendChild(applyUserImageBox);
+            if(applyUserMapList.length === 0){
+                const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
+                applyUserProfieImageListRow.appendChild(applyUserNotExist);
+                const parentCol = applyUserProfieImageListRow.closest(".col");            
+                parentCol.classList.remove("overflow-x-scroll");
+                applyUserProfieImageListRow.removeAttribute("style");
             }
-        }
+            else{
+                const parentCol = applyUserProfieImageListRow.closest(".col");            
+                parentCol.classList.add("overflow-x-scroll");
+                applyUserProfieImageListRow.setAttribute("style","width:200%;");
+    
+                for(e of applyUserMapList){
+                    const applyUserImageBox = document.querySelector("#templete #applyUserImageBox").cloneNode(true);
+                    const applyUserImage = applyUserImageBox.querySelector("#applyUserImage");
+                    applyUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`)
+                    applyUserImage.setAttribute("alt", e.applyUserProfileDto.profileNickname);               
+                    applyUserImage.setAttribute("title", e.applyUserProfileDto.profileNickname);               
+                    
+                    const applyImageNickname = applyUserImageBox.querySelector("#applyImageNickname");
+                    applyImageNickname.innerText = e.applyUserProfileDto.profileNickname;
+    
+                    applyUserProfieImageListRow.appendChild(applyUserImageBox);
+                }
+            }
+        }        
 
         const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
-        console.log("sessionUserMeetingProfileId : " + sessionUserMeetingProfileId + "/ type : " + typeof sessionUserMeetingProfileId);
-        console.log("profileId : " + groupDetailInfo.meetingGroupDto.profileId + "/ type : " + typeof groupDetailInfo.meetingGroupDto.profileId);
         
         const groupApplyButton = groupDetailModal.querySelector('#groupApplyButton');
         const groupApplyButtonText = groupApplyButton.querySelector("#groupApplyButtonText");        
         
         if(groupDetailInfo.meetingGroupDto.profileId === sessionUserMeetingProfileId){            
-            groupApplyButtonText.innerText = "모집관리";
-            groupApplyButton.setAttribute("onclick", `window.location.href='./myRecruitGroupDetailPage?groupId=${groupId}'`);            
-            groupApplyButtonText.setAttribute("class", "text-primary fw-bold");
+                groupApplyButtonText.innerText = "미팅관리";
+                groupApplyButton.setAttribute("onclick", `window.location.href='./myRecruitGroupDetailPage?groupId=${groupId}'`);            
+                groupApplyButtonText.setAttribute("class", "text-primary fw-bold");
         }
         else{
-            if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
+            if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "Y"){
                 groupApplyButton.removeAttribute("onclick");                                
-                groupApplyButtonText.innerText = "모집종료";
+                groupApplyButtonText.innerText = "미팅종료";
                 groupApplyButtonText.setAttribute("class", "text-danger fw-bold")
             }
-            else{
-                groupApplyButtonText.innerText = "참가신청";
-                groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);                
-                groupApplyButtonText.setAttribute("class", "fw-bold");
+            else{        
+                if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
+                    groupApplyButton.removeAttribute("onclick");                                
+                    groupApplyButtonText.innerText = "모집종료";
+                    groupApplyButtonText.setAttribute("class", "text-danger fw-bold")
+                }
+                else{
+                    groupApplyButtonText.innerText = "참가신청";
+                    groupApplyButton.setAttribute("onclick", `applyCheck(${groupId})`);                
+                    groupApplyButtonText.setAttribute("class", "fw-bold");
+                }
             }
-            
         }
     });
 }
@@ -480,15 +494,14 @@ function closeApplyModal(){
 }
 
 // 그룹리스트 정보 받아온 후에 해당 그룹의 status 변경해주는것으로 로직 변경
-
 async function groupListCSR(){
-    let groupListAll = await getGroupList();
-    console.log('groupListAll: ', groupListAll);
+    let allcheckedData = await getGroupList();
+    console.log('allcheckedData: ', allcheckedData);
 
     const groupListCol = document.getElementById("groupListCol");
     groupListCol.innerHTML = '';
     
-    for(e of groupListAll){
+    for(e of allcheckedData){
         const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
         groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
         const customBackground = groupListWrapper.querySelector(".custom-background");
@@ -534,19 +547,97 @@ async function groupListCSR(){
     }
 }
 
-function checkMeetingDate(groupListData){
-    // for(e of groupListData){
+// 오늘날짜 기준으로 미팅모집일 지났는지 확인 및 업데이트
+async function checkApplyDate(groupListData){
+    
+    console.log('groupListData: ', groupListData);
+    
+    const updateTargetList = [];
+    
+    for(e of groupListData){
+        const date = new Date(
+            e.groupApplyEnd[0],
+            e.groupApplyEnd[1] - 1,
+            e.groupApplyEnd[2]
+        );
+        const applyEndDate = dayjs(date);
+        const today = dayjs();        
+        const diffValue = applyEndDate.diff(today, 'day');
+        console.log('diffValue: ', diffValue);
 
-    // }
+        if(applyEndDate < today){
+            updateTargetList.push(e.groupId);            
+        }
+        else{            
+            console.log(`${e.groupId}번 미팅 인원모집일 ${diffValue}일 남음`);            
+        }
+    }
+    console.log("미팅 모집현황 업데이트 대상 그룹 : " + updateTargetList);    
+    const response = await fetch('./api/updateApplyStatus', {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(updateTargetList)
+    });
+
+    const responseData = await response.json();    
+    return responseData.data;
+}
+
+// 오늘날짜 기준으로 미팅날짜 지났는지 확인하고 지났으면 업데이트
+async function checkMeetingDate(groupListData){
+    console.log('groupListData: ', groupListData);
+    const targetGroupIdList = [];
+    for(e of groupListData){
+        
+        const date = new Date(
+            e.groupMeetingDate[0],
+            e.groupMeetingDate[1] - 1, // month는 0부터 시작하므로 1을 빼줍니다.
+            e.groupMeetingDate[2]
+        );
+        const groupMeetingDate = dayjs(date);                
+        const today = dayjs();        
+        const diffValue = groupMeetingDate.diff(today, 'day');        
+        
+        if(groupMeetingDate < today){           
+            targetGroupIdList.push(e.groupId);            
+        }else{              
+            const groupId = e.groupId;
+            console.log(`${groupId}번 미팅 날짜 남음 : ${diffValue}일`);            
+        }
+    }
+    console.log("미팅현황 업데이트 대상 그룹 : " + targetGroupIdList);    
+    if(targetGroupIdList.length > 0){
+        const response = await fetch('./api/updateGroupMeetingStatus', {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify(targetGroupIdList)
+        });
+
+        const responseData = await response.json();                
+        return responseData.data;
+        
+    }
+    else{
+        console.log('groupListData: ', groupListData);
+        return groupListData;
+    }
 }
 
 async function getGroupList(){
 
     return await fetch("./api/getGroupList")
     .then(response => response.json())
-    .then(response =>{
-        const responseData = response.data;        
-        return responseData;
+    .then(async response =>{
+        const responseData = response.data;                
+        let meetingDateChecked = await checkMeetingDate(responseData);      
+
+        let allCheckedData = await checkApplyDate(meetingDateChecked);
+        console.log('allCheckedData: ', allCheckedData);
+        return allCheckedData;
     });
 }
 
@@ -735,7 +826,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     <!--/* 신청자 없을 시 안내문구 템플릿 */-->
     <div id="applyUserNotExist" class="col text-center">
-        <span class="fw-bold text-danger fs-5">아직 신청한 인원이 없습니다.</span>
+        <span id="applyUserNotExistSpan" class="fw-bold text-danger fs-5">아직 신청한 인원이 없습니다.</span>
     </div>
     
 </div>

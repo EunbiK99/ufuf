@@ -271,10 +271,10 @@ function makeGroupDetailPage(){
     const watingUserCount = document.getElementById("watingUserCount");
     watingUserCount.innerText = watingUserCountValue;
 
-    if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
+    if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "Y"){
         const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
         const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
-        noApplyProfileInfoText.innerText = " 멤버모집이 완료되었습니다 :) ";
+        noApplyProfileInfoText.innerText = "이 미팅은 종료되었습니다.";
         
         const childCol = noApplyProfileRow.children[0];        
         
@@ -284,35 +284,46 @@ function makeGroupDetailPage(){
         applyProfileListWrapperCol.appendChild(noApplyProfileRow);
     }
     else{
-        for(e of applyUserMapList){
-            if(e.applyDto.applyStatus === "N"){
-                watingUserCountValue++;
-                const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
-                const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
-                applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
-
-                const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
-                applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
-
-                const applyText = applyProfileListRow.querySelector("#applyText");
-                applyText.innerText = e.applyDto.applyComment;
-
-                const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
-                applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
-                applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
-
-                watingUserCount.innerText = watingUserCountValue;
-                
-                applyProfileListWrapperCol.appendChild(applyProfileListRow);
-            }
-        }
-        if(watingUserCountValue === 0){
+        if(groupDetailInfo.meetingGroupDto.groupApplyStatus === "Y"){
             const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
             const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
-            noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+            noApplyProfileInfoText.innerText = " 멤버모집이 완료되었습니다 :) ";
+            
             applyProfileListWrapperCol.appendChild(noApplyProfileRow);
         }
+        else{            
+            for(e of applyUserMapList){
+                if(e.applyDto.applyStatus === "N"){
+                    watingUserCountValue++;
+                    const applyProfileListRow = document.querySelector("#templete #applyProfileListRow").cloneNode(true);
+                    const applyProfileImage = applyProfileListRow.querySelector("#applyProfileImage");
+                    applyProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.applyUserProfileDto.profileImg}`);
+
+                    const applyProfileNickname = applyProfileListRow.querySelector("#applyProfileNickname");
+                    applyProfileNickname.innerText = e.applyUserProfileDto.profileNickname;
+
+                    const applyText = applyProfileListRow.querySelector("#applyText");
+                    applyText.innerText = e.applyDto.applyComment;
+
+                    const applyProfilePickButton = applyProfileListRow.querySelector("#applyProfilePickButton");
+                    applyProfilePickButton.setAttribute("onclick", "addGroupMember(this)");
+                    applyProfilePickButton.setAttribute("profileId", e.applyUserProfileDto.profileid);
+
+                    watingUserCount.innerText = watingUserCountValue;
+                    
+                    applyProfileListWrapperCol.appendChild(applyProfileListRow);
+                }
+            }
+            if(watingUserCountValue === 0){
+                const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+                const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+                noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+                applyProfileListWrapperCol.appendChild(noApplyProfileRow);
+            }
+        }
     }
+
+    
     getMeetingGroupMemberList();        
 }
 

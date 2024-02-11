@@ -598,6 +598,30 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @PostMapping("updateGroupMeetingStatus")
+    public MeetingRestResponseDto updateGroupMeetingStatus(@RequestBody int[] groupIdList){
+        for(int x : groupIdList){
+            System.out.println("groupId : " + x);
+        }
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.updateMeetingStatus(groupIdList));        
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("updateApplyStatus")
+    public MeetingRestResponseDto updateApplyStatus(@RequestBody int[] groupIdList){        
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.updateApplyStatus(groupIdList));
+        return meetingRestResponseDto;
+    }
+
+
+
 
     
     // 템플릿 코드
