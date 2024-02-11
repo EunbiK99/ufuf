@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
     <style>
     *{
@@ -190,12 +191,12 @@ function getMeetingGroupMemberList(){
             
             if(paymentStatusValue === "Y"){
                 const checkIcon = document.createElement("i");
-                checkIcon.setAttribute("class", "bi bi-check-circle text-success")
+                checkIcon.setAttribute("class", "fi fi-sr-check-circle bi-ailgn-middle text-success fw-bold")
                 checkUserPaymentStatus.appendChild(checkIcon);
             }
             else{
                 const unCheckIcon = document.createElement("i");
-                unCheckIcon.setAttribute("class", "bi bi-x-circle text-danger")
+                unCheckIcon.setAttribute("class", "fi fi-sr-do-not-enter bi-ailgn-middle text-danger fw-bold")
                 checkUserPaymentStatus.appendChild(unCheckIcon);
                 
                 const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
@@ -324,7 +325,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 </script>
 
-<body class="pt-5 pb-5">
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
@@ -342,7 +343,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-align-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -355,7 +356,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row fs-3">
                             <div class="col-auto" onclick="window.history.back()">
-                                <span><i class="bi bi-chevron-left"></i></span>                                
+                                <span class=" fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>
                             </div>
                             <div class="col-auto ps-0">
                                 <span class="fw-bold">내가 모집중인 미팅</span>
@@ -365,7 +366,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
 
                 <div class="row mt-2">
-                    <div class="col mx-1 mb-3 border border-black rounded">
+                    <div class="col mx-1 mb-3 border border-black rounded bg-white">
                         
                         <div class="row border-black border-bottom rounded-top" style="background-color: #FF8827;">
                             <div class="col my-1">
@@ -391,13 +392,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row mt-3">
                                     <div class="col">
                                         <div class="row">
-                                            <div class="col">
-                                                <span class="fs-5 fw-bold">
-                                                    참여 신청자 List
-                                                    <span>[ </span>
-                                                    <span id="watingUserCount"></span>
-                                                    <span> ]</span>
+                                            <div class="col-auto">
+                                                <span class="fw-bold">
+                                                    참여 신청자                                                    
                                                 </span>                                        
+                                            </div>
+                                            <div class="col-auto ps-0 align-self-center">
+                                                <span class="fw-bold"><i class="fi fi-sr-user bi-ailgn-middle"></i></span>
+                                                <span id="watingUserCount" class="text-primary fw-bold"></span>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -409,15 +411,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row mb-3 mt-4">
                                     <div class="col mx-1">
                                         <div class="row">
-                                            <div class="col-auto">
-                                                <span class="fs-5 fw-bold">참여 확정멤버 리스트</span>
+                                            <div class="col-auto align-self-center">
+                                                <span class="fw-bold">확정 멤버</span>
                                             </div>
-                                            <div class="col-auto">
-                                                <span class="fs-5 fw-bold">[</span>
-                                                <span class="fs-5 fw-bold curruntGroupMemberCount"></span>
-                                                <span class="fs-5 fw-bold">/</span>
-                                                <span id="recruitMemberCount" class="fs-5 fw-bold"></span>
-                                                <span class="fs-5 fw-bold">]</span>
+                                            <div class="col-auto ps-0 align-self-center">
+                                                <span class="fw-bold"><i class="fi fi-sr-user bi-ailgn-middle"></i></span>                                                
+                                                <span class="text-danger fw-bold curruntGroupMemberCount"></span>
+                                                <span class="fw-bold">/</span>
+                                                <span id="recruitMemberCount" class="fw-bold"></span>                                                
                                             </div>
                                         </div>
                                         <div class="row">
@@ -432,7 +433,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             <div class="col">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <span class="fs-5 fw-bold">미팅회비 현황</span>                                                        
+                                                        <span class="fw-bold">회비 현황</span>                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -504,7 +505,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
                     </div>                    
-                </div>                
+                </div>
+                <div class="p-2">
+                    
+                </div>
             </div>
         </div>
 
@@ -517,7 +521,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -529,7 +533,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -548,7 +552,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -560,12 +564,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">My</span>
+                                        <span class="" style="color: #FF8827;">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -657,7 +661,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     <div id="reviewPageButton" class="row my-3 mx-1 justify-content-center">        
         <div class="col-auto text-center btn" style="background-color: #FF8827;">
-            <span class="fs-5 fw-bold text-white">Go to Review Page</span>
+            <span class="fs-5 fw-bold text-white">Review Page</span>
         </div>        
     </div>
     

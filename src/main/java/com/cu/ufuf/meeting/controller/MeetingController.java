@@ -64,27 +64,39 @@ public class MeetingController {
 
     @RequestMapping("searchPage")
     public String searchPage(HttpSession session){
-        
-        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
-        
-        if(meetingProfileDto == null){
-            return "./commons/loginRequierd";
+
+        UserInfoDto sessionUser = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        if(sessionUser == null){
+            return "../commons/loginRequierd";
         }
-        else{
-            session.setAttribute("meetingProfileInfo", meetingProfileDto);
-            System.out.println(meetingProfileDto.getProfileid());
-            System.out.println(meetingProfileDto.getProfileNickname());
-            return "./meeting/searchPage";
-        }        
+        else{            
+            MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+            
+            if(meetingProfileDto == null){
+                return "./meeting/mainPage";
+            }
+            else{
+                session.setAttribute("meetingProfileInfo", meetingProfileDto);
+                // System.out.println(meetingProfileDto.getProfileid());
+                // System.out.println(meetingProfileDto.getProfileNickname());
+                return "./meeting/searchPage";
+            }
+        }
     }
 
     @RequestMapping("createNewGroupPage")
     public String createNewGroupPage(HttpSession session){
 
-        MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
-        session.setAttribute("meetingProfileDto", meetingProfileDto);
-
-        return "./meeting/createNewGroupPage";
+        UserInfoDto sessionUser = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        if(sessionUser == null){
+            return "../commons/loginRequierd";
+        }
+        else{
+            MeetingProfileDto meetingProfileDto = (MeetingProfileDto)session.getAttribute("meetingProfileInfo");
+            session.setAttribute("meetingProfileDto", meetingProfileDto);
+    
+            return "./meeting/createNewGroupPage";
+        }
     }
 
     @RequestMapping("myPage")

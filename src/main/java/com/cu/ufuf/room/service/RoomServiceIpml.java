@@ -96,6 +96,56 @@ public class RoomServiceIpml {
 		
 	}
 
+    //방 목록 필터용(비싼순)
+    public List<Map<String, Object>> getRoomInfoListForFilterAndChargeDesc(String searchWord,int peopleCount, LocalDate startSchedule, LocalDate endSchedule) {
+
+
+		List<Map<String, Object>> roomList=new ArrayList<>();
+		
+		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectFilterAndChargeDesc(searchWord, peopleCount,startSchedule,endSchedule);
+		
+		for(RoomInfoDto roomInfoDto:roomInfoDtoList) {
+			int UserPK=roomInfoDto.getUser_id();
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			
+			roomList.add(map);
+
+			
+		}
+		
+		return roomList;
+		
+	}
+
+    //방 목록 필터용(싼순)
+    public List<Map<String, Object>> getRoomInfoListForFilterAndChargeAsc(String searchWord,int peopleCount, LocalDate startSchedule, LocalDate endSchedule) {
+
+
+		List<Map<String, Object>> roomList=new ArrayList<>();
+		
+		List<RoomInfoDto> roomInfoDtoList=roomSqlMapper.roomSelectFilterAndChargeAsc(searchWord, peopleCount,startSchedule,endSchedule);
+		
+		for(RoomInfoDto roomInfoDto:roomInfoDtoList) {
+			int UserPK=roomInfoDto.getUser_id();
+			UserInfoDto userDto=roomSqlMapper.selectByUserId(UserPK);
+			
+			Map<String, Object> map=new HashMap<>();
+			map.put("roomInfoDto", roomInfoDto);
+			map.put("userDto", userDto);
+			
+			roomList.add(map);
+
+			
+		}
+		
+		return roomList;
+		
+	}
+
     //서치용 방 목록
     public List<Map<String, Object>> getRoomInfoListForSearchLocation(String searchWord) {
 		List<Map<String, Object>> roomList=new ArrayList<>();

@@ -44,7 +44,6 @@ import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
-import com.cu.ufuf.dto.circleStringDataDto;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -1344,6 +1343,20 @@ public class CircleRestController {
         int user_id = userInfoDto.getUser_id();
 
         responseDto.setData(circleService.circlejoinApplyPossibleCheck(circle_id, user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //myPageInfo
+    @RequestMapping("myPageInfo")
+        public RestResponseDto myPageInfo(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        responseDto.setData(circleService.myPageInfo(user_id));
         responseDto.setResult("success");
         
         return responseDto;

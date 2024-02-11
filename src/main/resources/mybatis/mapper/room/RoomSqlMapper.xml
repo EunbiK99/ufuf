@@ -90,6 +90,21 @@
         ORDER BY room_info_id DESC
 	</select>
 
+    <!-- 게시글 목록 보는거 서치 되는용도+가격 비싼순-->
+	<select id="roomSelectAllForSearchLocationAndChargeDesc" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT * 
+        FROM room_info
+        WHERE (title LIKE CONCAT('%', #{searchWord}, '%') or location LIKE CONCAT('%', #{searchWord}, '%'))
+        order by room_charge desc
+	</select>
+     <!-- 게시글 목록 보는거 서치 되는용도+가격 싼순-->
+	<select id="roomSelectAllForSearchLocationAndChargeAsc" resultType="com.cu.ufuf.dto.RoomInfoDto">
+		SELECT * 
+        FROM room_info
+        WHERE (title LIKE CONCAT('%', #{searchWord}, '%') or location LIKE CONCAT('%', #{searchWord}, '%'))
+        order by room_charge asc
+	</select>
+
     <!--게시글 목록 필터 걸러 오는거-->
     <select id="roomSelectFilter" resultType="com.cu.ufuf.dto.RoomInfoDto">
         SELECT * 
@@ -111,6 +126,52 @@
             ]]>
         </if>
         ORDER BY room_info_id DESC
+    </select>
+
+    <!--게시글 목록 필터 걸러 오는거+가격 비싼순-->
+    <select id="roomSelectFilterAndChargeDesc" resultType="com.cu.ufuf.dto.RoomInfoDto">
+        SELECT * 
+        FROM room_info
+        WHERE 1=1
+        <if test="searchWord != null">
+            AND title LIKE CONCAT('%', #{searchWord}, '%')
+        </if>
+        <if test="peopleCount != null">
+            AND
+            <![CDATA[
+                people_count_limit >= #{peopleCount}
+            ]]>
+        </if>
+        <if test="startSchedule != null and endSchedule != null">
+            AND 
+            <![CDATA[
+                (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
+            ]]>
+        </if>
+        order by room_charge desc
+    </select>
+
+    <!--게시글 목록 필터 걸러 오는거+가격 싼순-->
+    <select id="roomSelectFilterAndChargeAsc" resultType="com.cu.ufuf.dto.RoomInfoDto">
+        SELECT * 
+        FROM room_info
+        WHERE 1=1
+        <if test="searchWord != null">
+            AND title LIKE CONCAT('%', #{searchWord}, '%')
+        </if>
+        <if test="peopleCount != null">
+            AND
+            <![CDATA[
+                people_count_limit >= #{peopleCount}
+            ]]>
+        </if>
+        <if test="startSchedule != null and endSchedule != null">
+            AND 
+            <![CDATA[
+                (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
+            ]]>
+        </if>
+         order by room_charge asc
     </select>
 
 	<select id="selectByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">

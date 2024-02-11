@@ -168,14 +168,25 @@
                     
                     // for문돌려서 해야될것이 label값과 data값이 두개만들어가면됨
                     
-                    for (e of response.data) {
-                        console.log(e);
-                        const percent = ((e.voteCount / e.totalCount) * 100).toFixed(2);
-                        const label = `${e.circleVoteOptionDto.option_content} (${percent}%)`;
-                        myChart.data.labels.push(label); 
-                        myChart.data.datasets[0].data.push(e.voteCount);
+                    if (response.data && response.data.length > 0 && response.data[0].totalCount > 0) {
+                        // 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'
+                        
+                        // for문돌려서 해야될것이 label값과 data값이 두개만들어가면됨
+                        
+                        for (e of response.data) {
+                            console.log(e);
+                            const percent = ((e.voteCount / e.totalCount) * 100).toFixed(2);
+                            const label = `${e.circleVoteOptionDto.option_content} (${percent}%)`;
+                            myChart.data.labels.push(label); 
+                            myChart.data.datasets[0].data.push(e.voteCount);
+                        }
+                        myChart.update();
+                    } else {
+                        // totalCount 값이 없으면 차트를 숨깁니다.
+                        $('#myChart').hide(); // 차트를 감싸는 부모 요소의 ID를 여기에 넣어주세요
+                        const nothing = $("<h5>").text("아직 투표한 인원이 없습니다.")
+                        $("#hideControl").append(nothing)
                     }
-                    myChart.update();
                         
 
                         
@@ -311,7 +322,7 @@
                             </div>
                         </div>
                         <div class="row py-0 ">
-                            <div class="col-12 d-grid py-0 justify-content-center" style="height: 15em;">
+                            <div id="hideControl" class="col-12 d-grid py-0 justify-content-center align-items-center" style="height: 15em;">
                                 <canvas id="myChart"></canvas>
                             </div>
                         </div>

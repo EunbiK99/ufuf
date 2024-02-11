@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>타이틀</title>
+    <title>마이페이지</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
     <style>
     *{
@@ -108,6 +109,69 @@ console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
 console.log('groupMemberDtoList: ', groupMemberDtoList);
 
+function moveChatListPage(){
+    if(!sessionUserInfo){
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");        
+        window.location.href="../login/loginPage";
+    }
+    else{
+        if(meetingProfileExist === "Y"){
+            window.location.href="./chatListPage";
+        }
+        else{
+            let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+            if(result){
+                window.location.href="./registerProfile";
+            }
+            else{
+                return;
+            }
+        }
+    }
+}
+
+function moveSearchPage(){
+    if(!sessionUserInfo){
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");        
+        window.location.href="../login/loginPage";
+    }
+    else{
+        if(meetingProfileExist === "Y"){
+            window.location.href="./searchPage";
+        }
+        else{
+            let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+            if(result){
+                window.location.href="./registerProfile";
+            }
+            else{
+                return;
+            }
+        }
+    }
+}
+
+function moveCreateNewGroupPage(){
+    if(!sessionUserInfo){
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");        
+        window.location.href="../login/loginPage";
+    }
+    else{
+        if(meetingProfileExist === "Y"){
+            window.location.href="./createNewGroupPage";
+        }
+        else{
+            let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+            if(result){
+                window.location.href="./registerProfile";
+            }
+            else{
+                return;
+            }
+        }
+    }
+}
+
 function checkExistChatRoom(profileId, targetProfileId){
     
     return fetch("./api/checkExistChatRoom?profileId=" + profileId + "&targetProfileId=" + targetProfileId)
@@ -150,7 +214,7 @@ function createChatRoom(target){
                 if(confirmValue){
                     const chatRoomData = response.data;
                     console.log('chatRoomData: ', chatRoomData);
-                    return;
+                    
 
                     let roomNo = 0;
                     for(e of chatRoomData){
@@ -201,10 +265,13 @@ function mySignalBothModalCSR(){
         const userSignalBothListCol = document.getElementById("userSignalBothListCol");
         userSignalBothListCol.innerHTML = "";
 
+        let userBothLikeCount = 0;
+
         for(list of userBothLikeDataList){
             if(list.length > 0){
                 for(e of list){
                     if(e.meLikeGroupMemberProfileDto){
+                        userBothLikeCount++;
                         const userSignalBothWrapperRow = document.querySelector("#templete #userSignalBothWrapperRow").cloneNode(true);
 
                         const userSignalBothImage = userSignalBothWrapperRow.querySelector("#userSignalBothImage");
@@ -220,12 +287,20 @@ function mySignalBothModalCSR(){
                         userSignalBothListCol.appendChild(userSignalBothWrapperRow);
                     }                    
                 }                
-            }
+            }            
+        }
+        if(userBothLikeCount === 0){
+            const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
+            const messageSpan = noSignalMessageRow.querySelector("#messageSpan");
+            messageSpan.innerText = "아직 보낸 시그널이 없어요! 리뷰를 남기고 시그널을 보내보세요 :)"
+
+            userSignalBothListCol.appendChild(noSignalMessageRow);
         }
     });
 }
 
-function showMySignalBothModal(){ 
+function showMySignalBothModal(){
+    document.body.style.overflow = 'hidden';
     mySignalBothModalCSR();
     const mySignalBothModal = document.getElementById("mySignalBothModal");
     mySignalBothModal.classList.add('active');
@@ -234,6 +309,7 @@ function showMySignalBothModal(){
 }
 
 function closeMySignalBothModal(){
+    document.body.style.overflow = 'auto';
     const mySignalBothModal = document.getElementById("mySignalBothModal");
     mySignalBothModal.classList.remove('active');
     const mySignalBothModalDialog = document.getElementById("mySignalBothModalDialog");
@@ -320,12 +396,12 @@ function userProfileCSR(){
     const userGender = document.getElementById("userGender");
     if(sessionUserInfo.gender === "M"){
         const maleIcon = document.createElement("i");
-        maleIcon.setAttribute("class", "fi fi-rr-mars text-primary");
+        maleIcon.setAttribute("class", "fi fi-rr-mars text-primary bi-align-middle");
         userGender.appendChild(maleIcon);
     }
     else{
         const femaleIcon = document.createElement("i");
-        femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger");
+        femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger bi-align-middle");
         userGender.appendChild(femaleIcon);        
     }
 
@@ -419,7 +495,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     userProfileCSR();
 });
 </script>
-<body class="pt-5 pb-5">
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
@@ -437,7 +513,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-align-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -472,7 +548,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col-auto align-self-center">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-comment-info"></i></span>
+                                        <span class="fs-5 fw-bold text-white"><i class="fi fi-rr-comment-info bi-align-middle"></i></span>
                                         <span class="fs-5 fw-bold text-white">My Meeting Profile</span>
                                     </div>
                                 </div>
@@ -481,14 +557,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <div class="row">
                                     <div class="col-auto btn">
                                         <span class="fw-bold text-white">
-                                            <i class="fi fi-rr-pen-field"></i>
+                                            <i class="fi fi-rr-pen-field bi-align-middle"></i>
                                             수정
                                         </span>                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div id="profileInnerBody" class="row">
+                        <div id="profileInnerBody" class="row bg-white rounded-bottom">
                             <div class="col">
 
                                 <div class="row my-3 mx-1">
@@ -496,7 +572,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                         <div class="row">
                                             <div class="col-auto ps-0 pe-1 align-self-center">
                                                 <span class="fs-5 fw-bold">
-                                                    <i class="fi fi-rr-house-chimney-heart"></i>
+                                                    <i class="fi fi-rr-house-chimney-heart bi-align-middle"></i>
                                                 </span>
                                             </div>
                                             <div class="col-auto px-0 align-self-center">                                                
@@ -524,20 +600,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                     <div class="col">
                                                         <div class="row">
                                                             <div class="col">
-                                                                <span><i class="fi fi-rr-id-badge"></i></span>
+                                                                <span><i class="fi fi-rr-id-badge bi-align-middle"></i></span>
                                                                 <span id="userNickname" class="fw-bold"></span>
                                                                 <span id="userGender"></span>
                                                             </div>
                                                         </div>                                                        
                                                         <div class="row mt-2">
                                                             <div class="col">
-                                                                <span><i class="fi fi-rr-graduation-cap"></i></span>
+                                                                <span><i class="fi fi-rr-graduation-cap bi-align-middle"></i></span>
                                                                 <span id="userUniversity"></span>
                                                             </div>
                                                         </div>
                                                         <div class="row mt-2">
                                                             <div class="col">
-                                                                <span><i class="fi fi-rr-books"></i></span>
+                                                                <span><i class="fi fi-rr-books bi-align-middle"></i></span>
                                                                 <span id="userUniversityDepartment"></span>
                                                             </div>
                                                         </div>
@@ -554,7 +630,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                         <div class="row mt-2">
                                                             <div class="col-auto btn py-0" onclick="showMySignalBothModal()">
                                                                 <span class="fs-3">
-                                                                    <i class="fi fi-rr-comment-heart text-danger"></i>
+                                                                    <i class="fi fi-rr-comment-heart text-danger bi-align-middle"></i>
                                                                      :
                                                                 </span>
                                                                 <span id="mySignalBoth" class="fs-3 fw-bold"></span>
@@ -572,7 +648,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     <div class="col">
                                         <div class="row">
                                             <div class="col ps-0">
-                                                <span class="fw-bold"><i class="fi fi-rr-comment-dots"></i></span>
+                                                <span class="fw-bold"><i class="fi fi-rr-comment-dots bi-align-middle"></i></span>
                                                 <span class="fw-bold">Comment</span>
                                             </div>
                                         </div>
@@ -596,7 +672,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start" onclick="moveMyRecruitGroup()">
+                            <div class="col btn text-start border border-0" onclick="moveMyRecruitGroup()">
                                 <span class="fw-bold fs-3">내가 모집한 미팅</span>                                
                             </div>
                         </div>
@@ -606,7 +682,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3" onclick="moveMyApplyGroup()">내가 참여한 미팅</span>                                
                             </div>
                         </div>
@@ -616,7 +692,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3">My Signal</span>
                             </div>
                         </div>
@@ -626,7 +702,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
                         <div class="row">
-                            <div class="col btn text-start">
+                            <div class="col btn text-start border border-0">
                                 <span class="fw-bold fs-3">결제 정보</span>
                             </div>
                         </div>
@@ -645,7 +721,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <div class="col">
                         <div class="row">
                             <div class="col">
-                                <button class="btn fw-bold fs-3" onclick="window.location.href='../login/loginPage'">로그인</button>
+                                <button class="btn" onclick="window.location.href='../login/loginPage'">
+                                    <span class="fw-bold fs-3"><i class="fi fi-rr-input-text bi-align-middle"></i></span>
+                                    <span class="fw-bold fs-3">로그인</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -660,10 +739,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row">
                     <div class="col">
                         <div class="row justify-content-around mt-1 text-secondary">
-                            <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
+                            <div class="col text-center mx-1" onclick="moveSearchPage()">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -672,10 +751,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
+                            <div class="col text-center mx-1" onclick="moveCreateNewGroupPage()">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -691,10 +770,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>                                        
                             </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
+                            <div class="col text-center mx-1" onclick="moveChatListPage()">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -706,12 +785,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">My</span>
+                                        <span class="" style="color: #FF8827;">My</span>
                                     </div>
                                 </div>
                             </div>
@@ -730,7 +809,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span id="" class="modal-title fw-bold fs-4">Send Signal List</span>
+                            <span class="fw-bold fs-4"><i class="bi bi-activity" style="color: yellow;"></i></span>
+                            <span id="" class="modal-title fw-bold fs-4 text-white">내가 보낸 시그널</span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeMySignalToModal()" class="btn btn-close"></button>                            
@@ -770,7 +850,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
-                            <span id="" class="modal-title fw-bold fs-4">Match Signal List</span>
+                            <span class="fw-bold fs-4"><i class="fi fi-sr-comment-heart text-danger bi-align-middle"></i></span>
+                            <span id="" class="modal-title fw-bold fs-4 text-white">매치된 시그널</span>
                         </div>                    
                         <div class="col-auto">
                             <button type="button" onclick="closeMySignalBothModal()" class="btn btn-close"></button>                            
@@ -780,7 +861,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
 
             <div class="row modal-body mt-2 border-bottom">
-                <div class="col" style="height:12em;">
+                <div class="col">
                     <div class="row">
                         <div id="userSignalBothListCol" class="col">
                             
@@ -863,10 +944,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col-auto me-1 align-self-center">
                     <div class="row">
                         <div class="col btn" style="background-color: #FF8827;">
-                            <span id="userSignalBothChatButton" class="fw-bold">Chat</span>
+                            <span id="userSignalBothChatButton" class="fw-bold text-white">Chat</span>
                         </div>
                     </div>
                 </div>                
+            </div>
+        </div>
+    </div>
+
+    <div id="noSignalMessageRow" class="row border rounded shadowBox my-3 mx-2">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <span class="text-secondary" id="messageSpan"></span>
+                </div>
             </div>
         </div>
     </div>

@@ -159,6 +159,32 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
+    @RequestMapping("getRoomListForSearchAndChargeDesc")
+    public RestResponseDto getRoomListForSearchAndChargeDesc(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setResult("success");
+
+		if(searchWord !=null || peopleCount!=null || (startSchedule!=null && endSchedule!=null)){
+			restResponseDto.setData(roomService.getRoomInfoListForFilterAndChargeDesc(searchWord,peopleCount, startSchedule, endSchedule));
+		}
+		
+        return restResponseDto;
+	}
+
+    @RequestMapping("getRoomListForSearchAndChargeAsc")
+    public RestResponseDto getRoomListForSearchAndChargeAsc(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setResult("success");
+
+		if(searchWord !=null || peopleCount!=null || (startSchedule!=null && endSchedule!=null)){
+			restResponseDto.setData(roomService.getRoomInfoListForFilterAndChargeAsc(searchWord,peopleCount, startSchedule, endSchedule));
+		}
+		
+        return restResponseDto;
+	}
+
 	@RequestMapping("getRoomInfoListForSearchLocation")
 	public RestResponseDto getRoomInfoListForSearchLocation(@RequestParam(required = false) String searchWord) {
         RestResponseDto restResponseDto = new RestResponseDto();

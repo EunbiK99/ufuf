@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">    
 
     <style>
     *{
@@ -63,7 +63,7 @@
         opacity: 0;
         visibility: hidden;
     }
-
+    
     .customModal {
         /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
         position: fixed;
@@ -75,20 +75,25 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+
+        z-index: 1000;        
     }
 
 
     .modalDialogCentered {
-        /* 아래 CSS 모달 컨텐츠 표시*/
+        /* 아래 CSS 모달 컨텐츠 표시, height를 vh로 줌으로서 뷰포트 높이의 80%만 차지하게 함*/
         position: absolute;
-        width: 80%;
-        height: auto%;        
+        width: 90%;
+        max-height: 77vh;
+        overflow-y: scroll;
         background-color: rgba(255,255,255);       
         
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         display: none;
+        
+        z-index: 1001;
     }
     
 
@@ -111,6 +116,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        z-index: 1002;
     }
 
     .modalDialogCentered1 {
@@ -125,6 +131,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         display: none;
+        z-index: 1003;
     }    
 
     .active {
@@ -158,32 +165,61 @@
         left : 100%;
         top : 5%
     }
+
+    #searchInput:focus {
+    outline: none;
+    box-shadow: none;
+    }
+
+    #searchInput::placeholder {
+    font-size: 0.8em;
+    }
     
     </style>
 </head>
 <script th:inline="javascript">
-let sessionUserMeetingProfile = /*[[${session.meetingProfileInfo}]]*/;
+let sessionUserMeetingProfile = /*[[${session.meetingProfileInfo}]]*/
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
+console.log('sessionUserInfo: ', sessionUserInfo);
+console.log('sessionUserMeetingProfile: ', sessionUserMeetingProfile);
+
 
 function applyCheck(groupId){
     
     const sessionUserMeetingProfileId = sessionUserMeetingProfile.profileid;
+    const targetModal = document.querySelector(`#groupDetailModal[groupId="${groupId}"]`);
+    const groupRecruitGender = targetModal.querySelector("#groupGenderOption").innerText;
+    const sessionUserGender = sessionUserInfo.gender;
     
-    fetch("./api/applyCheck?profileId=" + sessionUserMeetingProfileId + "&groupId=" + groupId)
-    .then(response => response.json())
-    .then(response => {
-        const checkResult = response.data;
-        console.log('checkResult: ', checkResult);
-        
-        if(checkResult === 0){
-            showApplyModal(groupId);            
-        }
-        else{
-            alert("이미 신청한 미팅입니다.");
-            closeGroupDetailModal();
+    if(groupRecruitGender === "남자만"){
+        if(sessionUserGender === "F"){
+            alert("해당 미팅은 남자만 모집중입니다");
             return;
-        }        
-    });
-    
+        }
+    }
+    else if(groupRecruitGender === "여자만"){
+        if(sessionUserGender === "M"){
+            alert("해당 미팅은 여자만 모집중입니다");
+            return;
+        }
+    }
+    else{
+        fetch("./api/applyCheck?profileId=" + sessionUserMeetingProfileId + "&groupId=" + groupId)
+        .then(response => response.json())
+        .then(response => {
+            const checkResult = response.data;
+            console.log('checkResult: ', checkResult);
+            
+            if(checkResult === 0){
+                showApplyModal(groupId);            
+            }
+            else{
+                alert("이미 신청한 미팅입니다.");
+                closeGroupDetailModal();
+                return;
+            }        
+        });
+    }
 }
 
 function registerApplyUser(groupId){        
@@ -271,6 +307,7 @@ function getGroupDetailInfo(groupId){
         console.log('tagDtoList: ', groupDetailInfo.tagDtoList);
 
         const groupDetailModal = document.getElementById('groupDetailModal');
+        groupDetailModal.setAttribute("groupId" , groupDetailInfo.meetingGroupDto.groupId);
         const meetingTitleDetail = groupDetailModal.querySelector("#meetingTitleDetail");
         meetingTitleDetail.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
 
@@ -442,61 +479,84 @@ function closeApplyModal(){
     applyModalDialog.classList.remove('active');
 }
 
-function getGroupList(){
-    fetch("./api/getGroupList")
+// 그룹리스트 정보 받아온 후에 해당 그룹의 status 변경해주는것으로 로직 변경
+
+async function groupListCSR(){
+    let groupListAll = await getGroupList();
+    console.log('groupListAll: ', groupListAll);
+
+    const groupListCol = document.getElementById("groupListCol");
+    groupListCol.innerHTML = '';
+    
+    for(e of groupListAll){
+        const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+        groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
+        const customBackground = groupListWrapper.querySelector(".custom-background");
+        customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
+        
+        const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
+        const dateValue = e.groupMeetingDate
+        const dateOption = {
+            year : 'numeric',
+            month : 'long',
+            day : 'numeric',
+            hour : 'numeric',
+            minute : '2-digit',
+            weekday : 'short'
+        }
+        const convertDate = dateConverter(dateValue, dateOption);
+        groupMeetingDate.innerText = convertDate;
+
+        const groupTitle = groupListWrapper.querySelector("#groupTitle");
+        groupTitle.innerText = e.groupTitle;
+
+        const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
+        let placeText = e.groupMeetingPlace.split(" ");
+        groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
+
+        if(e.groupApplyStatus === "Y"){
+            const applyEndBadge = document.createElement("span");
+            applyEndBadge.innerText = "모집종료";
+            applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(applyEndBadge);
+        }
+        
+        if(e.groupMeetingStatus === "Y"){
+            const meetingEndBadge = document.createElement("span");
+            meetingEndBadge.innerText = "미팅종료";
+            meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(meetingEndBadge);
+        }
+
+        groupListCol.appendChild(groupListWrapper);
+    }
+}
+
+function checkMeetingDate(groupListData){
+    // for(e of groupListData){
+
+    // }
+}
+
+async function getGroupList(){
+
+    return await fetch("./api/getGroupList")
     .then(response => response.json())
     .then(response =>{
-        const groupListAll = response.data;
-        console.log('groupListAll: ', groupListAll);
-
-        const groupListCol = document.getElementById("groupListCol");
-        groupListCol.innerHTML = '';
-        
-        for(e of groupListAll){
-            const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
-            groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
-            const customBackground = groupListWrapper.querySelector(".custom-background");
-            customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
-            
-            const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
-            let dateValue = e.groupMeetingDate[0] + "년 " + e.groupMeetingDate[1] + "월 " + e.groupMeetingDate[2] + "일 " + e.groupMeetingDate[3] + "시";
-            groupMeetingDate.innerText = dateValue;
-
-            const groupTitle = groupListWrapper.querySelector("#groupTitle");
-            groupTitle.innerText = e.groupTitle;
-
-            const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
-            let placeText = e.groupMeetingPlace.split(" ");
-            groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
-
-            if(e.groupApplyStatus === "Y"){
-                const applyEndBadge = document.createElement("span");
-                applyEndBadge.innerText = "모집종료";
-                applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(applyEndBadge);
-            }
-            
-            if(e.groupMeetingStatus === "Y"){
-                const meetingEndBadge = document.createElement("span");
-                meetingEndBadge.innerText = "미팅종료";
-                meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(meetingEndBadge);
-            }
-
-            groupListCol.appendChild(groupListWrapper);
-        }
+        const responseData = response.data;        
+        return responseData;
     });
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    getGroupList()
+    groupListCSR();
 });
 
 
 </script>
-<body class="pt-5 pb-5">    
+<body class="pt-5 pb-5" style="background-color: #f5ededea;">    
     <div class="container-fluid">
         
         <!--/* 임시 탑 에어리어 */-->
@@ -508,13 +568,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col-auto" onclick="window.location.href='./mainPage'">
                                 <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2em; height: auto;">
                             </div>
-                            <div class="col-auto px-0">
-                                <span class="fw-bold fs-2 align-middle">Uni Signal</span>
-                            </div>                            
+                            <div class="col-auto align-self-center px-0">
+                                <span class="">Uni Signal</span>
+                            </div>                              
                         </div>
                     </div>
                     <div class="col-auto align-self-center">
-                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell"></i></span>
+                        <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-align-middle"></i></span>
                     </div>
                 </div>
             </div>
@@ -525,18 +585,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <div class="row my-2">
                     <div class="col">
                         <div class="row fs-3">
-                            <div class="col-auto" onclick="window.history.back()">
-                                <span><i class="bi bi-chevron-left"></i></span>                                
+                            <div class="col-auto align-self-center" onclick="window.history.back()">
+                                <span class="fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>
                             </div>
                             <div class="col">
                                 <div class="row">
-                                    <div class="col border-1 border-bottom rounded">
-                                        <div class="row">
-                                            <div class="col-9">
-                                                <input type="text" class="form-control border-0">                                        
-                                            </div>
-                                            <div class="col">
-                                                <i class="bi bi-search-heart"></i>
+                                    <div class="col">
+                                        <div class="row border border-0 rounded-5 bg-white">
+                                            <div class="col me-2">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-10 pe-0">
+                                                        <input id="searchInput" type="text" class="form-control border-0 px-0" placeholder="키워드 입력  ex. 강남">
+                                                    </div>
+                                                    <div class="col-auto align-self-center ps-0">
+                                                        <span class="text-secondary"><i class="fi fi-rr-search bi-align-middle"></i></span>
+                                                    </div>                                                    
+                                                </div>
                                             </div>
                                         </div>
                                     </div>                                    
@@ -561,19 +625,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart"></i></span>
+                                        <span class="" style="font-size: 1.2em; color:#FF8827;"><i class="fi fi-sr-search-heart bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">Find</span>
+                                        <span class="" style="color: #FF8827;">Find</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -592,7 +656,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -604,7 +668,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -625,7 +689,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
     
-    <!--/* 미팅메인 모집글 템플릿 */-->
+    <!--/* 미팅메인 모집글리스트 템플릿 */-->
     <div id="groupListWrapper" class="row background-wrapper mb-1" role="button">                
         <div class="col">
             <img class="custom-background">
@@ -678,9 +742,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 <!--/* 모집글 상세정보 모달 */-->
 <div id="groupDetailModal" class="customModal" tabindex="-1">
-    <div id="groupDetailModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+    <div id="groupDetailModalDialog" class="modal-dialog border border-0 rounded-3 modalDialogCentered">
         <div class="modal-content container-fluid rounded-2">
-            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-1" style="background-color: #FF8827;">
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
@@ -698,18 +762,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     <div class="row mt-2">
                         <div class="col">
                             <div class="row mb-2">
-                                <div class="col-3">
+                                <div class="col">
                                     <div class="row">
                                         <div class="col-auto">
                                             <div class="userImageBox" style="width: 3em; height: 3em;">
                                                 <img id="groupLeaderImage" class="userImage">
                                             </div>                                            
                                         </div>
+                                        <div class="col-auto ps-0 align-self-center">
+                                            <span id="groupLeaderNickname" class="fs-5 fw-bold"></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-auto ps-0 align-self-center">
-                                    <span id="groupLeaderNickname" class="fs-5 fw-bold"></span>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>                    
@@ -800,10 +864,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         <div class="col">
                             <div class="row">
                                 <div class="col-auto">
-                                    <span>참가신청</span>
+                                    <span>신청목록</span>
                                 </div>
                                 <div class="col-auto ps-0">
-                                    <span class="fw-bold text-primary"><i class="bi bi-person-fill"></i></span>                                    
+                                    <span class="fw-bold"><i class="fi fi-sr-user bi-align-middle"></i></span>                                    
                                     <span id="applyUserCount" class="fw-bold text-primary"></span>                                    
                                 </div>
                             </div>
@@ -823,21 +887,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 </div>                
             </div>
 
-            <div class="row modal-footer border-top">                
-                <div id="groupApplyButton" class="col border-end" type="button">
-                    <div class="row mt-2 mb-2">
-                        <div class="col text-center">
-                            <span id="groupApplyButtonText"></span>
-                        </div>                         
-                    </div>                    
-                </div>
-                <div class="col btn" role="button" onclick="closeGroupDetailModal()">
-                    <div class="row mt-2 mb-2">                         
-                        <div class="col text-center">
-                            <span>닫기</span>
+            <div class="row modal-footer border-top">
+                <div class="col">
+                    <div class="row">
+                        <div id="groupApplyButton" class="col btn border-end rounded-0">
+                            <div class="row mt-2 mb-2">
+                                <div class="col text-center">
+                                    <span id="groupApplyButtonText"></span>
+                                </div>                         
+                            </div>                    
                         </div>
-                    </div>                    
-                </div>                
+                        <div class="col btn" onclick="closeGroupDetailModal()">
+                            <div class="row mt-2 mb-2">                         
+                                <div class="col text-center">
+                                    <span>닫기</span>
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -851,6 +919,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <div class="col">
                     <div class="row my-2">
                         <div class="col">
+                            <span class="fw-bold text-white fs-4"><i class="fi fi-rr-edit bi-ailgn-middle"></i></span>
                             <span id="" class="modal-title fw-bold text-white fs-4">참가 신청서 작성</span>
                         </div>                    
                         <div class="col-auto">
@@ -885,7 +954,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <span>Apply Comment</span>
+                                    <span><i class="fi fi-rr-comment-dots bi-align-middle"></i></span>
+                                    <span>Comment</span>
                                 </div>
                             </div>
                             <div class="row mt-1 mb-3">

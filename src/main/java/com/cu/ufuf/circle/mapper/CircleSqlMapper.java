@@ -257,4 +257,9 @@ public interface CircleSqlMapper {
 
     // 동아리 가입신청 체크
     public int circlejoinApplyPossibleCheck(@Param("circle_id") int circle_id, @Param("user_id") int user_id);
+
+    // 내가쓴 board개수
+    public int boardCntByUserId(int user_id);
+    public int voteCntByUserId(int user_id);
+    public int scheduleCntByUserId(int user_id);
 }
