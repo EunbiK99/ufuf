@@ -185,7 +185,7 @@
     AND ii.merchan_id = #{mission_id}
 </select>
 
-<select id="selectPayCancelInfoByMissionId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptRes">
+<select id="selectPayCancelInfoByMissionId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptResDto">
     SELECT kar.* FROM kakao_payment_accept_res kar
     INNER JOIN (
         SELECT oi.order_id, oi.item_id AS order_item_id, ii.* FROM order_info oi
@@ -218,7 +218,7 @@
     and oi.status = "결제완료"
 </select>
 
-<select id="selectKakaoPayAccResInfoByOrderId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptRes">
+<select id="selectKakaoPayAccResInfoByOrderId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptResDto">
     select * from kakao_payment_accept_res
     where partner_order_id = #{order_id}
 </select>
