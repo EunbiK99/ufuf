@@ -1,5 +1,8 @@
 package com.cu.ufuf.mission.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +11,11 @@ import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
+import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.merchan.mapper.MerchanSqlMapper;
@@ -79,6 +85,70 @@ public class MissionPaymentServiceImpl {
 
         merchanSqlMapper.insertKakaoPayAccResInfo(kakaoPaymentAcceptResDto);
     }
+
+    public List<KakaoPaymentCancelReqDto> cancelKakaoPayment(){
+
+        List<KakaoPaymentCancelReqDto> kakaoPaymentCancelReqDtoList = new ArrayList<>();
+
+        List<OrderInfoDto> orderInfoDtoList = missionMapSqlMapper.selectOrderInfoNotYetCanceled();
+
+        if(orderInfoDtoList != null){
+
+            for(OrderInfoDto orderInfoDto : orderInfoDtoList){
+
+                String order_id = orderInfoDto.getOrder_id();
+
+                MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionByOrderId(order_id);
+                int mission_id = missionInfoDto.getMission_id();
+
+                List<MissionCourseDto> missionCourseDtoList = missionMapSqlMapper.selectCourseByMission(mission_id);
+
+                int totalReward = 0;
+                for(MissionCourseDto missionCourseDto : missionCourseDtoList){
+                    int courseReward = missionCourseDto.getReward();
+                    totalReward = totalReward + courseReward;
+                }
+
+                KakaoPaymentAcceptResDto kakaoAccResDto = missionMapSqlMapper.selectKakaoPayAccResInfoByOrderId(order_id);
+    
+                KakaoPaymentCancelReqDto kakaoPaymentCancelReqDto = new KakaoPaymentCancelReqDto();
+                kakaoPaymentCancelReqDto.setCid("TC0ONETIME");
+                kakaoPaymentCancelReqDto.setTid(kakaoAccResDto.getTid());
+                kakaoPaymentCancelReqDto.setCancel_amount(totalReward);
+                kakaoPaymentCancelReqDto.setCancel_tax_free_amount(totalReward);
+
+                kakaoPaymentCancelReqDtoList.add(kakaoPaymentCancelReqDto);
+                merchanSqlMapper.insertKakaoPayCancelReqInfo(kakaoPaymentCancelReqDto);
+            }
+
+            return kakaoPaymentCancelReqDtoList;
+
+        }else{
+            return kakaoPaymentCancelReqDtoList;
+        }
+    }
+
+    public void insertKakaoPayCancelInfo(KakaoPaymentCancelResDto kakaoPaymentCancelResDto){
+
+        merchanSqlMapper.insertKakaoPayCancelResInfo(kakaoPaymentCancelResDto);
+
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+        orderInfoDto.setOrder_id(kakaoPaymentCancelResDto.getPartner_order_id());
+        orderInfoDto.setStatus("결제취소");
+
+        merchanSqlMapper.updateOrderStatus(orderInfoDto);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

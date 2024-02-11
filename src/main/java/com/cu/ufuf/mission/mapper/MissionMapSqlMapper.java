@@ -5,11 +5,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionCourseDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionProcessDto;
+import com.cu.ufuf.dto.MissionReviewDto;
+import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.dto.UserPointDto;
 
 
 @Mapper
@@ -63,7 +67,20 @@ public interface MissionMapSqlMapper {
     // 미션 포기
     public void updateGiveup(int chat_room_id);
 
+    // 리뷰 작성
+    public void insertReview(MissionReviewDto missionReviewDto);
     // 리뷰 작성 했는지 안했는지 확인
     public int isReviewExist(int chat_room_id);
+
+    // 미션 성공시 포인트 입력
+    public void insertPoint(UserPointDto userPointDto);
+    // 미션 결과에 따른 주문상태 업데이트
+    public String selectOrderIdByMissionId(int mission_id);
+    // 시간초과로 미션 종료된 로직 가져오기
+    public List<MissionInfoDto> selectFailMissionForScheduleMethod();
+    // 환불되지 않은 미션실패 주문정보 가져오기
+    public List<OrderInfoDto> selectOrderInfoNotYetCanceled();
+    // 주문아이디로 카카오페이 취소위한 정보 가져오기
+    public KakaoPaymentAcceptResDto selectKakaoPayAccResInfoByOrderId(String order_id);
 
 }

@@ -170,5 +170,43 @@
     )
 </insert>
 
+<insert id="insertKakaoPayCancelReqInfo">
+    insert into kakao_payment_cancel_req(
+        cid, 
+        tid, 
+        cancel_amount, 
+        cancel_tax_free_amount
+        )
+    values(
+        #{cid},
+        #{tid},
+        #{cancel_amount},
+        #{cancel_tax_free_amount}
+    )
+</insert>
+
+<insert id="insertKakaoPayCancelResInfo">
+    insert into kakao_payment_cancel_res(
+        partner_order_id, 
+        partner_user_id,
+        tid, 
+        payment_method_type, 
+        approved_cancel_amount, 
+        canceled_at, 
+        aid
+        )
+    values(
+        #{partner_order_id},
+        #{partner_user_id},
+        #{tid},
+        #{payment_method_type},
+        #{approved_cancel_amount},
+        #{canceled_at},
+        #{aid}
+    )
+</insert>
+
+
+
 
 </mapper>

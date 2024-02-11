@@ -152,13 +152,76 @@
     where chat_room_id = #{chat_room_id}
 </select>
 
+<insert id="insertReview">
+    insert into mission_review(
+        chat_room_id,
+        is_success,
+        rated,
+        review
+        )
+    values(
+        chat_room_id,
+        is_success,
+        rated,
+        review
+    )
+</insert>
 
+<insert id="insertPoint">
+    insert into user_point(
+        user_id,
+        point_plus_minus
+        )
+    values(
+        #{user_id},
+        #{point_plus_minus}
+    )
+</insert>
 
+<select id="selectOrderIdByMissionId" resultType="String">
+    SELECT oi.order_id FROM order_info oi
+    INNER JOIN item_info ii ON oi.item_id = ii.item_id
+    WHERE ii.item_category_id = 1
+    AND ii.merchan_id = #{mission_id}
+</select>
 
+<select id="selectPayCancelInfoByMissionId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptRes">
+    SELECT kar.* FROM kakao_payment_accept_res kar
+    INNER JOIN (
+        SELECT oi.order_id, oi.item_id AS order_item_id, ii.* FROM order_info oi
+        INNER JOIN item_info ii ON oi.item_id = ii.item_id
+        WHERE ii.item_category_id = 1
+        AND ii.merchan_id = #{mission_id}
+    ) t1 ON t1.order_id = kar.partner_order_id
+</select>
 
+<select id="selectFailMissionForScheduleMethod" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    SELECT * FROM mission_info mi 
+    INNER JOIN mission_chat_room mcr ON mi.mission_id = mcr.mission_id
+    <![CDATA[
+    WHERE TIMESTAMPDIFF(MINUTE, mcr.accept_at, NOW()) >= mi.limit_time
+    AND status = "진행중"
+    ]]>
+</select>
 
+<select id="selectOrderInfoNotYetCanceled" resultType="com.cu.ufuf.dto.OrderInfoDto">
+    SELECT oi.* from order_info oi 
+    inner join item_info ii
+    on oi.order_id = ii.item_id
+    where ii.item_id = (
+        SELECT iii.item_id from item_info iii
+        inner join mission_info mi
+        on iii.merchan_id = mi.mission_id 
+        where iii.item_category_id = 1
+        and mi.status = "미션실패"
+        )
+    and oi.status = "결제완료"
+</select>
 
-
+<select id="selectKakaoPayAccResInfoByOrderId" resultType="com.cu.ufuf.dto.KakaoPaymentAcceptRes">
+    select * from kakao_payment_accept_res
+    where partner_order_id = #{order_id}
+</select>
 
 
 

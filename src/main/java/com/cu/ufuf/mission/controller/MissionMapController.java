@@ -50,6 +50,11 @@ public class MissionMapController {
         return "mission/missionProcess";
     }
 
+    @RequestMapping("myPage")
+    public String myPage(HttpSession session){
+        return "mission/myPage";
+    }
+
     @RequestMapping("test1")
     public String test1(){
         return "mission/test1";

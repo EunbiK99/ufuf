@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +33,7 @@ import com.cu.ufuf.dto.MissionChatRoomDto;
 import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.MissionProcessDto;
 import com.cu.ufuf.dto.MissionRegRequestDto;
+import com.cu.ufuf.dto.MissionReviewDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
@@ -394,6 +399,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    // 미션 신청자 수락
     @PostMapping("accMissionApplyer")
     public RestResponseDto accMissionApplyer(@RequestBody String chat_room_id, HttpSession session){
 
@@ -404,11 +410,24 @@ public class MissionMapRestController {
 
         missionMapService.accMissionApplyer(chatRoomId, sessionUserInfo.getUser_id());
 
+        restResponseDto.setData(chat_room_id);
         restResponseDto.setResult("Success");
         
         return restResponseDto;
     }
 
+    @PostMapping("submitReview")
+    public RestResponseDto submitReview(@RequestBody MissionReviewDto params , HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUser = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+        missionMapService.submitReview(params, sessionUser);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 
@@ -417,32 +436,7 @@ public class MissionMapRestController {
 
 
 
-    // @GetMapping("getPaymentInfo")
-    // public RestResponseDto getPaymentInfo(@RequestParam String pg_token) {
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-        
-    //     // KakaoPay API 호출을 위한 URL
-    //     String apiUrl = "https://kapi.kakao.com/v1/payment/approvals/" + pg_token;
-
-    //     // KakaoPay API 호출을 위한 RestTemplate 사용
-    //     RestTemplate restTemplate = new RestTemplate();
-
-    //     // KakaoPay API 호출에 필요한 헤더 설정 (KakaoAK: Admin Key)
-    //     HttpHeaders headers = new HttpHeaders();
-    //     headers.set("Authorization", "KakaoAK fe6556cbcccecbec99f52226077803d7");
-
-    //     // HttpEntity 생성 및 헤더 설정
-    //     HttpEntity<String> entity = new HttpEntity<>(headers);
-
-    //     // KakaoPay API 호출 및 응답 받기
-    //     ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-    //     restResponseDto.setData(response.getBody());
-
-    //     restResponseDto.setResult("Success");
-
-    //     return restResponseDto;
-    // }
+    
 
     // @ResponseBody
     // @PostMapping("upDateOrderstatus")

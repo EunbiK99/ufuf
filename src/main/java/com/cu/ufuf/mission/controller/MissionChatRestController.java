@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cu.ufuf.dto.MissionChatDto;
+import com.cu.ufuf.dto.MissionReviewDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
 import com.cu.ufuf.mission.component.ParseJson;
@@ -33,7 +34,7 @@ public class MissionChatRestController {
     @Autowired
     MissionChatServiceImpl missionChatService;
     @Autowired
-    MissionMapServiceImpl missionMapServiceImpl;
+    MissionMapServiceImpl missionMapService;
     @Autowired
     ParseJson parseJson;
 
@@ -223,12 +224,14 @@ public class MissionChatRestController {
         int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
         UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
 
-        missionMapServiceImpl.accMissionPlayer(chatRoomId, sessionUserInfoDto.getUser_id());
+        missionMapService.accMissionPlayer(chatRoomId, sessionUserInfoDto.getUser_id());
 
         restResponseDto.setResult("Success");
         
         return restResponseDto;
     }
+
+    
 
 
 
