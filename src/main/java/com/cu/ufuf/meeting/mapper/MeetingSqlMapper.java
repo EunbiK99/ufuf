@@ -224,6 +224,8 @@ public interface MeetingSqlMapper {
     // * 채팅방PK, 프로필PK로 채팅참여유저Dto 셀렉트
     public MeetingChatRoomUserDto selectChatRoomUserDtoByProfileIdAndChatRoomId(int profileId, int chatRoomId);
 
+    public void updateMeetingStatus(int groupId);
+
 
 
 }
