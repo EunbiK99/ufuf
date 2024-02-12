@@ -565,6 +565,31 @@ values (
     where groupId = #{groupId}
 </update>
 
+<!-- * 그룹PK기준 조회수 업데이트-->
+<update id="updateGroupReadCount">
+    update meeting_group set groupReadCount  = groupReadCount + 1
+    where groupId = #{groupId}
+</update>
+
+<!-- * 그룹조회수 기준 유효한(미팅신청가능 / 미팅미완료) top5 그룹ID 셀렉트-->
+<select id="selectHotMeetingGroupIdList" resultType="int">
+    SELECT groupId from meeting_group
+    where 1=1
+    and groupApplyStatus = 'N'
+    and groupMeetingStatus = 'N'
+    order by groupReadCount DESC
+    limit 5
+</select>
+
+<!-- * 모집글 등록일자 기준 유효한(미팅신청가능 / 미팅미완료) top5 그룹ID 셀렉트-->
+<select id="selectNewMeetingGroupIdList" resultType="int">
+    SELECT groupId from meeting_group
+    where 1=1
+    and groupApplyStatus = 'N'
+    and groupMeetingStatus = 'N'
+    order by regdate DESC
+    limit 5
+</select>
 
 
 </mapper>

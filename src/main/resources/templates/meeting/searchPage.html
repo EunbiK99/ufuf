@@ -184,6 +184,25 @@ let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
 console.log('sessionUserInfo: ', sessionUserInfo);
 console.log('sessionUserMeetingProfile: ', sessionUserMeetingProfile);
 
+function checkRequestGroupId(){
+    const groupId = localStorage.getItem("groupId");
+    if(groupId !== null){
+        showGroupDetailModal(groupId);
+        localStorage.removeItem("groupId");
+    }
+    else{
+        return;
+    }
+}
+
+function increaseReadCount(groupId){
+    fetch(`./api/increaseReadCount?groupId=${groupId}`)
+    .then(response => response.json())
+    .then(response => {
+        console.log(`${groupId}번 미팅글 조회수 증가`);
+    })
+}
+
 
 function applyCheck(groupId){
     
@@ -300,6 +319,8 @@ function getGroupDetailInfo(groupId){
     fetch("./api/getGroupDetailInfo?groupId=" + groupId)
     .then(response => response.json())
     .then(response =>{
+
+        increaseReadCount(groupId);
         const groupDetailInfo = response.data;
 
         console.log('groupDetailInfo: ', groupDetailInfo);
@@ -643,6 +664,7 @@ async function getGroupList(){
 
 document.addEventListener('DOMContentLoaded', ()=>{
     groupListCSR();
+    checkRequestGroupId();
 });
 
 

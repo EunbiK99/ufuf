@@ -620,6 +620,36 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @GetMapping("increaseReadCount")
+    public MeetingRestResponseDto increaseReadCount(int groupId){
+
+        meetingService.updateGroupReadCount(groupId);
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getHotMeetingList")
+    public MeetingRestResponseDto getHotMeetingList(){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getHotMeetingGroup());
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getNewMeetingList")
+    public MeetingRestResponseDto getNewMeetingList(){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getNewMeetingGroup());
+        return meetingRestResponseDto;
+    }
+
 
 
 
