@@ -160,10 +160,10 @@
         review
         )
     values(
-        chat_room_id,
-        is_success,
-        rated,
-        review
+        #{chat_room_id},
+        #{is_success},
+        #{rated},
+        #{review}
     )
 </insert>
 
@@ -223,6 +223,38 @@
     where partner_order_id = #{order_id}
 </select>
 
+<select id="countMyRegMission" resultType="int">
+    select count(*) from mission_info
+    where user_id = #{user_id}
+</select>
+
+<select id="countMyCompleteMission" resultType="int">
+    select count(*) from mission_info
+    where user_id = #{user_id}
+    and status = "미션실패" or status = "미션성공" or status = "미션종료"
+</select>
+
+<select id="countTotalPoint" resultType="int">
+    SELECT COALESCE(SUM(point_plus_minus), 0) FROM user_point
+    WHERE user_id = #{user_id}
+</select>
+
+<select id="selectReviewByUserId" resultType="com.cu.ufuf.dto.MissionReviewDto">
+    select mr.* from mission_review mr
+    inner join mission_chat_room mcr on mr.chat_room_id = mcr.chat_room_id
+    inner join mission_info mi on mcr.mission_id = mi.mission_id
+    where mi.user_id = #{user_id}
+</select>
+
+<select id="selectMissionCompleteAfter3days" resultType="com.cu.ufuf.dto.MissionInfoDto">
+    select mi.* from mission_process mp
+    inner join mission_chat_room mcr on mp.chat_room_id = mcr.chat_room_id 
+    inner join mission_info mi on mcr.mission_id = mi.mission_id 
+    where mi.status = '결과대기중'
+    <![CDATA[
+    and mp.created_at <= DATE_SUB(NOW(), INTERVAL 3 DAY)
+    ]]>
+</select>
 
 
 

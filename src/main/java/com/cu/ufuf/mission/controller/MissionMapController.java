@@ -55,9 +55,19 @@ public class MissionMapController {
         return "mission/myPage";
     }
 
-    @RequestMapping("test1")
-    public String test1(){
-        return "mission/test1";
+    @RequestMapping("missionRegisterHistory")
+    public String missionRegisterHistory(HttpSession session){
+        return "mission/missionRegisterHistory";
+    }
+
+    @RequestMapping("missionPlayHistory")
+    public String missionPlayHistory(HttpSession session){
+        return "mission/missionPlayHistory";
+    }
+
+    @RequestMapping("missionReviewHistory")
+    public String missionReviewHistory(HttpSession session){
+        return "mission/missionReviewHistory";
     }
 
 
@@ -65,6 +75,12 @@ public class MissionMapController {
 
 
 
+
+
+    @RequestMapping("test1")
+    public String test1(){
+        return "mission/test1";
+    }
 
 
 

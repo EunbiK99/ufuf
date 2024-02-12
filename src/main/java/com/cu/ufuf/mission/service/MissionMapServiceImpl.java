@@ -191,9 +191,10 @@ public class MissionMapServiceImpl {
 
         missionChatSqlMapper.insertChat(missionChatDto);
 
-        missionMapSqlMapper.updateStatus(mission_id, "진행중");
+        missionMapSqlMapper.updateStatus(mission_id, "미션진행중");
     }
 
+    // 미션 코스 완료
     public void insertMissionProcess(MissionProcessDto missionProcessDto){
         missionMapSqlMapper.insertMissionProcess(missionProcessDto);
         updateStatusToAllComplete(missionProcessDto.getChat_room_id());
@@ -208,8 +209,47 @@ public class MissionMapServiceImpl {
         MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
 
         if(countCompleteCourse == countTotalCourse){
-            missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션종료");
+            missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "결과대기중");
         }
+
+        MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id);
+        UserInfoDto userInfoDto = missionMapSqlMapper.selectUserById(missionChatRoomDto.getUser_id());
+
+        String playerName = userInfoDto.getName();
+        String title = missionInfoDto.getTitle();
+        int mission_id = missionInfoDto.getMission_id();
+
+        List<MissionCourseDto> missionCourseDtos = missionMapSqlMapper.selectCourseByMission(mission_id);
+        int lastIndex = missionCourseDtos.size()-1;
+
+        BigDecimal lat = missionCourseDtos.get(lastIndex).getLat();
+        BigDecimal lng = missionCourseDtos.get(lastIndex).getLng();
+
+        String text = String.format("""
+            <div class="row">
+                <div class="col px-0">
+                    <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 14.85rem; height: 8rem;" onload="loadMap(%f, %f)">
+                    </div>
+                </div>
+            </div>
+            <div class="row py-3">
+                <div class="col">
+                    <div class="row">
+                        <div class="col" style="word-wrap: break-word;">
+                            ^alert!^%s님께서 "%s" 미션을 완료하셨습니다.<br>
+                            아래 버튼을 클릭하시고 리뷰를 작성해주세요!<br> 
+                            ^alert!^
+                            <span class="py-1" style="font-size:0.8rem">
+                                미션 완료 후 3일내로 리뷰 작성을 하지 않으면 자동 성공처리 됩니다.
+                            <span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col missionDetailBtn d-grid"></div>
+                    </div>
+                </div>
+            </div>
+            """, lat, lng, playerName, title);
     }
 
 
@@ -401,7 +441,7 @@ public class MissionMapServiceImpl {
 
         missionChatSqlMapper.insertChat(missionChatDto);
 
-        missionMapSqlMapper.updateStatus(mission_id, "진행중");
+        missionMapSqlMapper.updateStatus(mission_id, "미션진행중");
 
     }
 
@@ -433,16 +473,18 @@ public class MissionMapServiceImpl {
                 <div class="col">
                     <div class="row">
                         <div class="col" style="word-wrap: break-word;">
-                            ^alert!^%s님께서 "%s" 미션의 리뷰를 작성완료하였습니다
+                            ^alert!^%s님께서 "%s" 미션의 리뷰를 작성완료하였습니다.<br>
                             아래 버튼을 클릭하시고 미션 결과를 확인하세요!<br> 
                             ^alert!^
-                            미션 성공시, 성공 보상 포인트가 즉시 지급되어 마이페이지에서 바로 확인하실 수 있습니다.
+                            <span class="py-1" style="font-size:0.8rem">
+                                미션 성공시, 성공 보상 포인트가 즉시 지급되어 마이페이지에서 바로 확인하실 수 있습니다.
+                            <span>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col missionDetailBtn d-grid"></div>
                     </div>
-                </div>    
+                </div>
             </div>
             """, lat, lng, senderName, title);
         
@@ -457,7 +499,7 @@ public class MissionMapServiceImpl {
 
         MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(missionReviewDto.getChat_room_id());
 
-        if(missionReviewDto.getIs_success() == "S"){
+        if(missionReviewDto.getIs_success().equals("S")){
 
             missionMapSqlMapper.updateStatus(mission_id, "미션성공");
 
@@ -504,9 +546,95 @@ public class MissionMapServiceImpl {
         }
     }
 
+    // 마이페이지 내 정보
+    public Map<String, Object> getMyPageInfo(int user_id){
 
+        Map<String, Object> myInfo = new HashMap<>();
 
+        myInfo.put("userInfoDto", missionMapSqlMapper.selectUserById(user_id));
+        myInfo.put("countMyRegMission", missionMapSqlMapper.countMyRegMission(user_id));
+        myInfo.put("countMyCompleteMission", missionMapSqlMapper.countMyCompleteMission(user_id));
 
+        return myInfo;
+    }
+
+    public int getMyPoint(int user_id){
+        return missionMapSqlMapper.countTotalPoint(user_id);
+    }
+
+    public List<Map<String, Object>> getMyregMisisonInfo(int user_id){
+
+        List<Map<String, Object>> regMissionInfoList = new ArrayList<>();
+
+        List<MissionInfoDto> myRegMissionDtoList = missionMapSqlMapper.selectMyResMission(user_id);
+
+        for(MissionInfoDto missionInfoDto : myRegMissionDtoList){
+
+            Map<String, Object> myResMission = new HashMap<>();
+
+            int mission_id = missionInfoDto.getMission_id();
+
+            List<MissionCourseDto> missionCourseList = missionMapSqlMapper.selectCourseByMission(mission_id);
+
+            int totalReward = 0;
+            for(MissionCourseDto missionCourseDto : missionCourseList){
+                int courseReward = missionCourseDto.getReward();
+                totalReward = totalReward + courseReward;
+            }
+
+            myResMission.put("missionInfoDto", missionInfoDto);
+            myResMission.put("totalReward", totalReward);
+
+            List<MissionChatRoomDto> list = missionChatSqlMapper.selectChatRoomListByMission(mission_id);
+
+            if(list != null){
+                for(MissionChatRoomDto missionChatRoomDto : list){
+                    if(missionChatRoomDto.getAccept_at() != null){
+                        myResMission.put("missionChatRoomDto", list);
+                    }
+                }
+            }
+
+            regMissionInfoList.add(myResMission);
+        }
+        return regMissionInfoList;
+    }
+
+    public List<Map<String, Object>> getMyReviewInfo(int user_id){
+
+        List<Map<String, Object>> reviewInfo = new ArrayList<>();
+
+        List<MissionReviewDto> missionReviewDtos = missionMapSqlMapper.selectReviewByUserId(user_id);
+
+        for(MissionReviewDto missionReviewDto : missionReviewDtos){
+
+            int chat_room_id = missionReviewDto.getChat_room_id();
+
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("missionReviewDto", missionReviewDto);
+            map.put("missionChatRoomDto", missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id));
+            map.put("missionInfoDto", missionChatSqlMapper.selectMissionByChatRoom(chat_room_id));
+
+            reviewInfo.add(map);
+        }
+
+        return reviewInfo;
+    }
+
+    // 3일 후 미션 성공
+    public void updateSuccessAfter3days(){
+
+        List<MissionInfoDto> missionInfoDtos = missionMapSqlMapper.selectMissionCompleteAfter3days();
+
+        if(missionInfoDtos != null){
+
+            for(MissionInfoDto missionInfoDto : missionInfoDtos){
+                missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션성공");
+            }
+        }
+
+    }
 
 
 

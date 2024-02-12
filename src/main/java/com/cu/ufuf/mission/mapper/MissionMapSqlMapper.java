@@ -83,4 +83,17 @@ public interface MissionMapSqlMapper {
     // 주문아이디로 카카오페이 취소위한 정보 가져오기
     public KakaoPaymentAcceptResDto selectKakaoPayAccResInfoByOrderId(String order_id);
 
+
+    // 내 미션들 카운트
+    public int countMyRegMission(int user_id);
+    public int countMyCompleteMission(int user_id);
+
+    // 내 포인트
+    public int countTotalPoint(int user_id);
+
+    // 내가 작성한 리뷰 
+    public List<MissionReviewDto> selectReviewByUserId(int user_id);
+
+    // 미션 완료 후 3일 지났는데 리뷰 없는거
+    public List<MissionInfoDto> selectMissionCompleteAfter3days();
 }

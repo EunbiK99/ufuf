@@ -424,7 +424,7 @@
                 }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "진행중"){
                     nowProcess.innerText = ((mission.countCompleteCourse) + 1) + "코스 진행중";
                 }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status != "진행중"){
-                    nowProcess.innerText = "미션 진행 완료";
+                    nowProcess.innerText = "미션 진행 종료";
                 }
 
                 // 진행중인 미션만 카운트다운
@@ -467,6 +467,10 @@
                             limitMinute.innerText = (minutes < 10) ? "0" + minutes : minutes;
                         }
                     }, 1000);
+                }else{
+                    countdownElement.style.color = "#929292";
+                    countdownElement.style.fontSize = "0.9rem";
+                    countdownElement.innerHTML = mission.missionInfoDto.status;
                 }
  
                 // 타이틀에 미션포기 버튼 있? 없?
@@ -495,7 +499,7 @@
                     const course = mission.courseInfoList[i];
 
                     // 미션 현재 진행중&미션수행자&미션진행중
-                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"){
+                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"){
 
                         const inProgressWrapper = document.querySelector("#progressTemplete .inProgressWrapper").cloneNode(true);
                         const courseIndex = inProgressWrapper.querySelector(".courseIndex");
@@ -586,8 +590,8 @@
 
                     // 내가 등록자이고 미션 수행이 되지 않았을 경우 || 내가 미션 플레이어인데 아직 미션순서가 안왔고, 미션 진행중일 경우
                     }else if((mission.countCompleteCourse <= i && mission.missionChatRoomDto.user_id != sessionUser) 
-                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"
-                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status === "미션종료")) ){
+                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"
+                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status != "진행중")) ){
                         const notInProgressWrapper = document.querySelector("#progressTemplete .notInProgressWrapper").cloneNode(true);
     
                         const courseIndex = notInProgressWrapper.querySelector(".courseIndex");
@@ -742,8 +746,11 @@
                         viewReviewBtn.classList.remove("d-none");
                     }
 
+                    if(mission.isReviewExist == 0){
+                        countdownElement.innerHTML = '결과대기중';
+                    }
+
                     clearInterval(timerId);
-                    countdownElement.innerHTML = '미션종료';
                     countdownElement.style.color = "#929292";
                     countdownElement.style.fontSize = "0.9rem";
                 }  
@@ -898,12 +905,10 @@
         const rating = document.getElementById("rating").value;
         const review =  document.getElementById("review").value;
 
-        console.log(review);
-
         const data = {
             chat_room_id: chat_room_id,
             is_success: isSuccess,
-            rating: rating,
+            rated: rating,
             review: review
         }
 

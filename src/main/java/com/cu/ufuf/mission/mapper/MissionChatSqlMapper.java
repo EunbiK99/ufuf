@@ -41,4 +41,7 @@ public interface MissionChatSqlMapper {
     // 미션 아이디랑 유저 아이디로 챗룸 가져오기
     public MissionChatRoomDto selectChatRoomByMissionAndUser(MissionChatRoomDto missionChatRoomDto);
 
+    // 새로운 채팅
+    public List<MissionChatDto> selectNewChat(MissionChatDto missionChatDto);
+
 } 

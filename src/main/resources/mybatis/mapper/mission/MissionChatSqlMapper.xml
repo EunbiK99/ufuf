@@ -97,6 +97,14 @@
         where mission_id = #{mission_id}
         and user_id = #{user_id}
     </select>
+
+    <select id="selectNewChat" resultType="com.cu.ufuf.dto.MissionChatDto">
+        select * from mission_chat
+        where chat_room_id = #{chat_room_id}
+        <![CDATA[
+        and chat_id > #{chat_id}
+        ]]>
+    </select>
     
 
 </mapper>

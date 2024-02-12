@@ -18,10 +18,15 @@ public class ScheduleComponent {
     MissionMapServiceImpl missionMapService;
     @Autowired
     MissionPaymentRestController missionPaymentRestController;
-
+    
     @Scheduled(cron = "0 0 0 * * *")
     public void updateFailMission() {
         missionMapService.updateMissionFail();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void updateSuccessAfter3days() {
+        missionMapService.updateSuccessAfter3days();
     }
 
     @Scheduled(cron = "0 0 12 * * *")

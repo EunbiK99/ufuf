@@ -93,12 +93,9 @@
                         detail.innerHTML = mission.missionInfoDto.detail;
                         progressPercent.innerText = mission.progressPercent + ` % 진행완료`;
     
-                        if(mission.missionChatRoomDto.accept_at != null && mission.missionChatRoomDto.giveup_at == null && mission.missionInfoDto.status === "진행중"){
-                            status.innerText = "미션진행중";
-                        }else if(mission.missionChatRoomDto.giveup_at != null){
-                            status.innerText = "미션종료";
-                        }else if(mission.missionInfoDto.status === "미션종료"){
-                            status.innerText = "미션종료";
+                        status.innerText = mission.missionInfoDto.status;
+
+                        if(mission.missionInfoDto.status != "진행중" || mission.missionInfoDto.status != "모집중"){
                             status.style.backgroundColor = "#a1a1a1";
                         }
     
@@ -183,12 +180,9 @@
                             progressPercent.innerText = mission.progressPercent + ` % 진행완료`;
                         }
 
-                        if(mission.missionInfoDto.status === "모집중"){
-                            status.innerText = "모집중";
-                        }else if(mission.missionInfoDto.status === "진행중"){
-                            status.innerText = "미션진행중";
-                        }else{
-                            status.innerText = "미션종료";
+                        status.innerText = mission.missionInfoDto.status;
+
+                        if(mission.missionInfoDto.status != "진행중" || mission.missionInfoDto.status != "모집중"){
                             status.style.backgroundColor = "#a1a1a1";
                         }
     

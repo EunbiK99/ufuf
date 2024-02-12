@@ -231,7 +231,16 @@ public class MissionChatRestController {
         return restResponseDto;
     }
 
-    
+    @PostMapping("loadNewChat")
+    public RestResponseDto loadNewChat(@RequestBody MissionChatDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionChatService.getNewChat(params));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
 

@@ -429,50 +429,64 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @GetMapping("loadMyInfo")
+    public RestResponseDto loadMyInfo(HttpSession session){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
 
-    
-
-
-
-
-    
-
-    // @ResponseBody
-    // @PostMapping("upDateOrderstatus")
-    // public RestResponseDto upDateOrderstatus(@RequestBody OrderInfoDto params){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-    
-    //     missionMapService.updateOrderStatus(params);
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-    //     restResponseDto.setData(params);
-    //     restResponseDto.setResult("Success");
+        restResponseDto.setData(missionMapService.getMyPageInfo(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
         
-    //     return restResponseDto;
-    // }
-    
+        return restResponseDto;
+    }
 
+    @GetMapping("loadMyPoint")
+    public RestResponseDto loadMyPoint(HttpSession session){
 
-    
+        RestResponseDto restResponseDto = new RestResponseDto();
 
-
-
-
-    
-
-
-    // @ResponseBody
-    // @GetMapping("getOrderInfo")
-    // public RestResponseDto getOrderInfo(String Order_id){
-
-    //     RestResponseDto restResponseDto = new RestResponseDto();
-
-    //     restResponseDto.setData(missionMapService.getOrderInfo(Order_id));
-    //     restResponseDto.setResult("Success");
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
         
-    //     return restResponseDto;
-    // }
+        restResponseDto.setData(missionMapService.getMyPoint(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @GetMapping("loadRegMissionHistory")
+    public RestResponseDto loadRegMissionHistory(HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        restResponseDto.setData(missionMapService.getMyregMisisonInfo(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+    
+    @GetMapping("loadMyReview")
+    public RestResponseDto loadMyReview(HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        restResponseDto.setData(missionMapService.getMyReviewInfo(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+
+
+
+    
+
+
 
 
 }

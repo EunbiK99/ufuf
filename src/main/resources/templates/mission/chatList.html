@@ -74,7 +74,7 @@
                         }else if(chat.missionChatRoomDto.accept_at != null && chat.missionChatRoomDto.giveup_at == null){
                             myPlayMissionChatWrapper.querySelector(".status").innerText = "미션진행중";
                         }else if(chat.missionChatRoomDto.giveup_at != null){
-                            myPlayMissionChatWrapper.querySelector(".status").innerText = "미션종료";
+                            myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
                         }
 
                         // 채팅 읽음 0이면 표시 X
@@ -191,14 +191,14 @@
 
                             myMissionPlayerWrapper.querySelector(".latestChat").innerHTML = text;
                         }
-    
+
                         myMissionPlayerWrapper.onclick = (function (chatRoomId) {
                             return function () {
                                 window.location.href = "./chatRoom?chat_room_id=" + chatRoomId;
                                 updateReadStatus(chatRoomId);
                             };
                         })(player.missionChatRoomDto.chat_room_id);
-
+    
                         myMissionPlayerBox.appendChild(myMissionPlayerWrapper);
                     }
                 } else {
@@ -384,7 +384,7 @@
                 <div class="col d-flex" style="font-size: 1.05em;">
                     <span class="title titleOver align-self-center fw-semibold"></span>
                     <span class="status align-self-center ms-2 px-1 rounded-5 justify-content-center" 
-                        style="border: 0.08em solid #FF8827; color: #FF8827; font-size: 0.73em; margin-top: 0.15em; margin-bottom: 0.15em; padding-top: 0.16em;">
+                        style="border: 0.08em solid #FF8827; color: #FF8827; font-size: 0.7em; margin-top: 0.15em; margin-bottom: 0.15em; padding-top: 0.16em;">
                     </span>
                 </div>
             </div>
