@@ -168,6 +168,17 @@
             getMyId();
             reloadTotalCount();
             
+            var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                mapOption = { 
+                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            map.setMinLevel(1);
+            map.setMaxLevel(4);
+
             
             //setInterval(reloadCommentList, 15000);
         });
@@ -451,20 +462,6 @@
         <div class="row">
             <div class="col px-0">
                 <div id="map" style="height:15em; width: 100%;">
-                    <script>
-
-                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                            mapOption = { 
-                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                level: 3 // 지도의 확대 레벨
-                            };
-
-                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                        map.setMinLevel(1);
-                        map.setMaxLevel(4);
-
-                    </script>
                 </div>
             </div>
         </div>
@@ -513,13 +510,15 @@
         <div class="row p-5 mt-3"></div>
 
         <!--예약하기 버튼-->
-        <div class="fixed-bottom w-100 bg-white">
-            <div class="row text-center pb-2 border-top border-secondery-subtle">
-                <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
-                    <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>
-                </div>
-                <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
-                    <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
+        <div class="row bg-white" style="position: fixed; bottom:0; z-index: 1000;">
+            <div class="col" style=" width: 100%;">
+                <div class="row text-center pb-2 border-top border-secondery-subtle">
+                    <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
+                        <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>
+                    </div>
+                    <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} lt ${currentDate}">
+                        <button type="button" disabled class="btn text-white fw-bold btn-secondary my-2" style="font-size: 0.9em;">기간 종료</button>
+                    </div>
                 </div>
             </div>
         </div>

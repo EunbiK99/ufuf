@@ -24,25 +24,51 @@
             var locationValues = roomLocation.split(',');
             var address = locationValues[1];
 
+         // 지도 중심으로 이동시키기
+         function panTo(moveLatLon) {
+            setTimeout(() => map.panTo(moveLatLon) , 100);
+            // map.panTo(moveLatLon);
+        }
+
         // 주소로 좌표를 검색합니다
         geocoder.addressSearch(address, function(result, status) {
-
+            
             // 정상적으로 검색이 완료됐으면 
             if (status === kakao.maps.services.Status.OK) {
-
                 var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                
 
                 // 결과값으로 받은 위치를 마커로 표시합니다
                 var marker = new kakao.maps.Marker({
-                    map: map,
                     position: coords
                 });
 
+                // 마커를 지도에 표시합니다
+                marker.setMap(map);
 
                 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                 map.setCenter(coords);
+
             } 
         });    
+
+        
+        window.addEventListener("DOMContentLoaded", () => {
+            var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+            mapOption = { 
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };
+
+            map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            map.setMinLevel(1);
+            map.setMaxLevel(4);
+            
+
+        })
+
+        
 
         
     </script>
@@ -144,8 +170,10 @@
             </div>
             <div class="col-2 mt-5">
                 <div class="row border border-0 rounded-5 fw-bold bg-warning-subtle">
-                    <div class="col-1 ms-2" th:text="${reservationInfo.reservationDuration}" style="font-size: 0.9em; color: #693f00;"></div>
-                    <div class="col-1 ps-0" style="font-size: 0.9em; color: #693f00;">박</div>
+                    <div class="col text-center">
+                        <span th:text="${reservationInfo.reservationDuration}" style="font-size: 0.9em; color: #693f00;"></span>
+                        <span style="font-size: 0.9em; color: #693f00;">박</span>
+                    </div>
                 </div>
                 
             </div>
@@ -163,27 +191,10 @@
         </div>
 
         <div class="row mt-4">
-
             <!--주소(지도)-->
-            <div class="col px-0">
-                <div id="map" style="height:15em; width: 100%;">
-                    <script>
+            <div class="col px-0" id="map" style="height:15em;">
 
-                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                            mapOption = { 
-                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                level: 3 // 지도의 확대 레벨
-                            };
-
-                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                        map.setMinLevel(1);
-                        map.setMaxLevel(4);
-
-                    </script>
-                </div>
             </div>
-
             
         </div>
         <!--주소-->
@@ -256,13 +267,15 @@
         <!--여백-->
         <div class="row p-4"></div>
         
-        <div class="fixed-bottom w-100 bg-white ms-0" th:if="${reservationInfo.roomGuestDto.end_reservation_schedule} lt ${currentDate}">
-            <div class="row text-center pb-2 border-top border-secondery-subtle">
-                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount!=0}">
-                    <button type="button" disabled class="btn text-white fw-bold py-2 btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">리뷰작성완료</button>
-                </div>
-                <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount==0}">
-                    <button type="button"  class="btn text-white fw-bold py-2" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: #FF8827;">리뷰쓰기</button>
+        <div class="row" th:if="${reservationInfo.roomGuestDto.end_reservation_schedule} lt ${currentDate}" style="position: relative; z-index: 1000;">
+            <div class="col" style="position:fixed;  bottom: 0; width: 100%;">
+                <div class="row text-center pb-2 border-top bg-white border-secondery-subtle">
+                    <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount!=0}">
+                        <button type="button" disabled class="btn text-white fw-bold py-2 btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">리뷰작성완료</button>
+                    </div>
+                    <div class="col d-grid mx-2 mt-2 mb-4" th:if="${reservationInfo.roomReviewCount==0}">
+                        <button type="button"  class="btn text-white fw-bold py-2" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: #FF8827;">리뷰쓰기</button>
+                    </div>
                 </div>
             </div>
         </div>
