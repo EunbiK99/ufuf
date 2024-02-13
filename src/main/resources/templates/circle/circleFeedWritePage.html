@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="/public/js/lockLikeMobile.js"></script>
     <script>
     //      이걸로 꼭 쿼리스트링 circle_id 값받아서 그 동아리의 게시글 등록해주면됨
              
@@ -119,14 +120,20 @@
         }
     
         .fixed-bottom {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          background-color: #ffffff;
-          padding: 1em;
-          text-align: center;
+            position: fixed;
+            bottom: 0;
+            padding: 0em;
+            left: 0;
+            background-color: #ffffff;
+            text-align: center;
         }
+        .cf {
+                transition: 0.3s;
+                height: 60em;
+                
+                
+            
+            }
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
@@ -134,7 +141,7 @@
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid">
+    <div class="container-fluid cf">
         <div class="row mt-2">
             <div class="col d-flex align-items-center">
                 게시글제목<span class="text-danger">＊</span>
@@ -170,8 +177,8 @@
                 <img id="previewImage" src="" alt="미리 보기" class="img-fluid d-none px-0">
             </div>
         </div>
-        <div class="row mt-3 mx-0 fixed-bottom">
-            <div class="col d-grid">
+        <div class="row mt-3 fixed-bottom">
+            <div class="col mx-3 py-2 d-grid">
                 <button class="btn fw-semibold" onclick="circleboardApplyComplete()" style="background-color: #fb7928;color: white;">상세이미지 등록하러가기</button>
             </div>
         </div>

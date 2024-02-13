@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="/public/js/lockLikeMobile.js"></script>
     <script>
         function goBack() {
             window.history.go(-1);
@@ -140,9 +141,7 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 100%;
             background-color: #ffffff;
-            padding: 0.4em;
             text-align: center;
         }
         .content{
@@ -193,24 +192,12 @@
             </div>
         </div>
     </div>
-    <div style="position: fixed; right: 1.8em; bottom: 4.3em; z-index: 1000;">      
-        <div class="dropup-end dropup mb-3">
-            <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
-                <i class="fs-4 bi bi-plus-lg text-white"></i>
-            </button>
-            <ul class="dropdown-menu mb-2" style="z-index: 1000;">
-              <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</span></li>
-              <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</span></li>
-              <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
-            </ul>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row fixed-bottom py-0 mx-0 px-0 align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
+    <div class="container-fluid" style="position: absolute;">
+        <div class="row fixed-bottom align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196);">
             <div class="button col py-0 text-center fs-1" onclick="ScheduleManageMove()">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date"></i>
+                        <i class="bi bi-calendar2-date" style="font-size: 0.8em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -222,7 +209,7 @@
             <div class="button col py-0 ps-0 text-center fs-1" onclick="VoteListPageMove()">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill"></i>
+                        <i class="bi bi-box-seam-fill" style="font-size: 0.8em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -234,7 +221,7 @@
             <div class="col-2 px-0 justify-content-center" onclick="(() => {
                 location.href='../commons/mainPage'
             })()">
-                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 2.5em;">
+                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 2.8em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
@@ -243,7 +230,7 @@
             })()">                    
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-people-fill"></i>
+                        <i class="bi bi-people-fill" style="font-size: 0.8em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -257,13 +244,25 @@
             })()">                    
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-person-circle"></i>
+                        <i class="bi bi-person-circle" style="font-size: 0.8em;"></i>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col" style="font-size: 0.3em;">
-                        내 동아리
+                        마이페이지
                     </div>
+                </div>
+            </div>
+            <div style="position: fixed; bottom: 10%; z-index: 1000;">      
+                <div class="dropup-end dropup mb-3 justify-content-center" style="position: relative; left: 42%;">
+                    <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
+                        <i class="fs-4 bi bi-plus-lg text-white"></i>
+                    </button>
+                    <ul class="dropdown-menu mb-2" style="z-index: 1000;">
+                      <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</span></li>
+                      <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</span></li>
+                      <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
