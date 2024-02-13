@@ -17,6 +17,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <script src="/public/js/lockLikeMobile.js"></script>
 
     
 
@@ -69,6 +70,7 @@
 
 </head>
 
+<<<<<<< Updated upstream
 <body style="z-index: -30;">
     <script src="/public/js/lockLikeMobile.js"></script>
     
@@ -76,6 +78,11 @@
         <div class="row" style="z-index: 1;">
             <div class="orange-background" style=" position: absolute;"></div>
         </div>
+=======
+<body>    
+    <div class="container-fluid">
+
+>>>>>>> Stashed changes
         <!--/* 임시 탑 에어리어 */-->
         <div id="top-navi" class="row" style="z-index: 1001; position: relative;">
             <div class="col">
@@ -87,14 +94,14 @@
                             </div>
                             <div class="col-auto mt-1">
                                 <span th:if="${session.sessionUserInfo ==null}">
-                                    <a onclick="window.location.href='../login/loginPage'" style="color: white; text-decoration: none;">로그인</a>
+                                    <a onclick="window.location.href='../login/loginPage'" style="color: #ff9a47; text-decoration: none;">로그인</a>
                                 </span>
 
                                 <span th:if="${session.sessionUserInfo !=null}">
                                     <div class="dropdown-end">
-                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; text-decoration: none;">
-                                            <span class="text-white" th:text="|${session.sessionUserInfo.name}|"></span>
-                                            <span class="text-white"><i class="bi bi-person-circle"></i></span>
+                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ff9a47; text-decoration: none;">
+                                            <span class="" th:text="|${session.sessionUserInfo.name}|" style="color: #ff9a47;"></span>
+                                            <span class="" style="color: #ff9a47;"><i class="bi bi-person-circle"></i></span>
                                         </a>
                                         <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
                                             <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>

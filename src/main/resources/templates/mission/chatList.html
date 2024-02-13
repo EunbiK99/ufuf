@@ -267,11 +267,6 @@
         box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
     }
 
-    body { 
-        position: fixed;
-        width: 100%;
-    }
-
     .word {
         width: 1rem;
         font-size: 1rem;
@@ -295,7 +290,7 @@
 </head>
 
 <body>
-
+    <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container-fluid">
         <div class="row">
             <div class="col px-0">
@@ -318,7 +313,11 @@
                 </div>
             </div>
         </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+        <div class="row">
+            <div class="col">
+                <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+            </div>
+        </div>
     </div>
 
 

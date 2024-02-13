@@ -15,6 +15,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <script src="/public/js/lockLikeMobile.js"></script>
 
     <style>
     *{
@@ -49,9 +50,9 @@
         background-color: rgba(0, 0, 0, 0.5);
         
         /* 아래 CSS 모달 화면 중앙에 위치*/
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        top: 0%;
+        left: 0%;
+        transform: translate(0%, 0%);
     }
 
     .modalDialogCentered {
@@ -291,8 +292,10 @@ function mySignalBothModalCSR(){
         }
         if(userBothLikeCount === 0){
             const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
-            const messageSpan = noSignalMessageRow.querySelector("#messageSpan");
-            messageSpan.innerText = "아직 보낸 시그널이 없어요! 리뷰를 남기고 시그널을 보내보세요 :)"
+            const messageSpan1 = noSignalMessageRow.querySelector("#messageSpan1");
+            messageSpan1.innerText = "아직 보낸 시그널이 없어요!"
+            const messageSpan2 = noSignalMessageRow.querySelector("#messageSpan2");
+            messageSpan2.innerText = "리뷰를 남기고 시그널을 보내보세요 :)"
 
             userSignalBothListCol.appendChild(noSignalMessageRow);
         }
@@ -339,23 +342,37 @@ function mySignalToModalCSR(){
         
         const userSignalToListCol = document.getElementById("userSignalToListCol");
         userSignalToListCol.innerText = "";
+
+        let userSignalToCount = 0;
         
         for(list of userBothLikeDataList){
-            for(e of list){
-                const userSignalToWrapperRow = document.querySelector("#templete #userSignalToWrapperRow").cloneNode(true);
+            if(list.length > 0){
+                for(e of list){
+                    userSignalToCount++;
+                    const userSignalToWrapperRow = document.querySelector("#templete #userSignalToWrapperRow").cloneNode(true);
+    
+                    const userSignalToImage = userSignalToWrapperRow.querySelector("#userSignalToImage");
+                    userSignalToImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
+    
+                    const userSignalToNickname = userSignalToWrapperRow.querySelector("#userSignalToNickname");
+                    userSignalToNickname.innerText = e.targetProfileDto.profileNickname;
+    
+                    const userSignalToRegdate = userSignalToWrapperRow.querySelector("#userSignalToRegdate");
+                    const dateValue = e.targetProfileDto.regdate;
+                    userSignalToRegdate.innerText = dateValue[0] + '년 ' + dateValue[1] + '월 ' + dateValue[2] + '일';
+    
+                    userSignalToListCol.appendChild(userSignalToWrapperRow);
+                }
+            }
+        }
+        if(userSignalToCount === 0){
+            const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
+            const messageSpan1 = noSignalMessageRow.querySelector("#messageSpan1");
+            messageSpan1.innerText = "아직 보낸 시그널이 없어요!"
+            const messageSpan2 = noSignalMessageRow.querySelector("#messageSpan2");
+            messageSpan2.innerText = "리뷰를 남기고 시그널을 보내보세요 :)"
 
-                const userSignalToImage = userSignalToWrapperRow.querySelector("#userSignalToImage");
-                userSignalToImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
-
-                const userSignalToNickname = userSignalToWrapperRow.querySelector("#userSignalToNickname");
-                userSignalToNickname.innerText = e.targetProfileDto.profileNickname;
-
-                const userSignalToRegdate = userSignalToWrapperRow.querySelector("#userSignalToRegdate");
-                const dateValue = e.targetProfileDto.regdate;
-                userSignalToRegdate.innerText = dateValue[0] + '년 ' + dateValue[1] + '월 ' + dateValue[2] + '일';
-
-                userSignalToListCol.appendChild(userSignalToWrapperRow);
-            }            
+            userSignalToListCol.appendChild(noSignalMessageRow);
         }
     });
 }
@@ -495,8 +512,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
     userProfileCSR();
 });
 </script>
-<body class="pt-5 pb-5" style="background-color: #f5ededea;">
-    <div class="container-fluid">
+<body>
+    <div class="container-fluid accordion pt-5 pb-5" style="background-color: #f5ededea;">
         
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
@@ -687,17 +704,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col btn text-start border border-0">
-                                <span class="fw-bold fs-3">My Signal</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div>                
 
                 <div class="row mt-3" ontouchstart="changeMenuColor(this)" ontouchend="restoreMenuColor(this)">
                     <div class="col">
@@ -732,6 +739,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
             </div>
         </div>
+        <div class="p-4"></div>
 
         <!--footer-->
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
@@ -956,7 +964,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="col">
             <div class="row justify-content-center">
                 <div class="col text-center">
-                    <span class="text-secondary" id="messageSpan"></span>
+                    <span class="text-secondary" id="messageSpan1"></span>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col text-center">
+                    <span class="text-secondary" id="messageSpan2"></span>
                 </div>
             </div>
         </div>
