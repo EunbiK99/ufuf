@@ -66,7 +66,7 @@ public class CircleRestController {
 
         return responseDto;
     }
-
+    
     @RequestMapping("circlesmallcategoryInfoByMiddleId")
     public RestResponseDto circlesmallcategoryInfoByMiddleId(
             @RequestParam(name = "circle_middle_category_id") int circle_middle_category_id) {
@@ -1364,6 +1364,7 @@ public class CircleRestController {
 
     // RESTAPI 양식 
     /*
+    --------------
     @RequestMapping("asdfasdfasdf")
         public RestResponseDto asdfasdfasdfasdf(){
         
@@ -1374,6 +1375,7 @@ public class CircleRestController {
         
         return responseDto;
     }
+    --------------
     */
 
 }
