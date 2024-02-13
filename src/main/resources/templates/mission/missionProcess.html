@@ -10,6 +10,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <script src="/public/js/lockLikeMobile.js"></script>
     
 <script>
 
@@ -293,8 +294,6 @@
 
                     missionCourseListBox.appendChild(basicCourseWrapper);
                     }
-
-
             });
     }
 
@@ -1105,6 +1104,54 @@
 
     });
 
+    window.addEventListener("DOMContentLoaded", () =>{
+
+        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                                    mapOption = { 
+                                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                        level: 3 // 지도의 확대 레벨
+                                    };
+
+                                map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                                map.setZoomable(true);
+                                map.setMinLevel(1);
+                                map.setMaxLevel(5);
+                                
+
+                                function updateNowLocation() {
+
+                                    getNowLocation(function(locPosition) {
+                                        panTo(locPosition);
+                                    });
+
+                                    setInterval(function() {
+
+                                        getNowLocation(function(locPosition) {
+
+                                            const mapCenter = map.getCenter();
+
+                                            // 좌표 비교를 위한 오차 범위
+                                            const tolerance = 0.00015;
+
+                                            const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
+                                                                    Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
+
+                                            if(isSameLocation){
+                                                panTo(locPosition);
+                                            }else{
+
+                                            }
+
+                                        });
+                                    }, 10000);
+
+                                }
+
+                                updateNowLocation();
+
+    });
+
 </script>    
 
 <style>
@@ -1129,11 +1176,6 @@
       box-shadow: 0 0 0 0.1em #e7e7e7; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
     }
 
-    body { 
-        position: fixed;
-        width: 100%;
-    }
-
     .word {
         width: 1rem;
         font-size: 1rem;
@@ -1141,12 +1183,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-    }
-
-    #map{
-        z-index: 1;
-        position: fixed;
-        bottom: 3.45rem;
     }
 
     #info {
@@ -1159,7 +1195,7 @@
     }
 
     #missionComplModal{
-        width: 95%;
+        width: 90%;
         top: 7%;
         left: 2.5%;
         overflow-wrap: break-word;
@@ -1167,55 +1203,59 @@
 
     #findMyLocation{
         z-index: 2;
-        position: fixed;
+        position: absolute;
         bottom: 4.1rem;
         /* margin: auto;
         left: 0; */
         right: 0.6em;
         box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);
         transition: top 0.8s ease;
+        height: 2.2rem; 
+        width: 2.2rem;
     }
 
     #missionConfirmModal{
-        width: 95%;
+        width: 90%;
         top: 10%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #missionAppListModal{
-        width: 95%;
+        width: 90%;
         top: 15%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #recheckAccPlayerModal{
-        width: 95%;
+        width: 90%;
         top: 30%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #writeReviewModal{
-        width: 95%;
+        width: 90%;
         top: 9%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #viewReviewModal{
-        width: 95%;
+        width: 90%;
         top: 9%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
+
 
 </style>
 
 </head>
 
 <body>
+
 
     <div class="container-fluid">
         <div class="row">
@@ -1356,76 +1396,34 @@
 
 
                 <!-- 지도 -->
-                <div class="row" style="margin-left: 0.05rem; margin-right: 0.05rem;">
+                <div class="row">
                     <div class="col px-0">
-                        <div id="map" style="height: 26.5rem; width: 100%;">
-                            <script>
-
-                                var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                                    mapOption = { 
-                                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                        level: 3 // 지도의 확대 레벨
-                                    };
-
-                                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                                map.setZoomable(true);
-                                map.setMinLevel(1);
-                                map.setMaxLevel(5);
-
-                                function updateNowLocation() {
-
-                                    getNowLocation(function(locPosition) {
-                                        panTo(locPosition);
-                                    });
-
-                                    setInterval(function() {
-
-                                        getNowLocation(function(locPosition) {
-
-                                            const mapCenter = map.getCenter();
-
-                                            // 좌표 비교를 위한 오차 범위
-                                            const tolerance = 0.00015;
-
-                                            const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
-                                                                    Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
-
-                                            if(isSameLocation){
-                                                panTo(locPosition);
-                                            }else{
-
-                                            }
-
-                                        });
-                                    }, 10000);
-
-                                }
-
-                                updateNowLocation();
-
-                            </script>
+                        <div id="map" style="height: 100vh;">
+                            
                         </div>
                     </div>
                 </div>
-
-
+                <div class="row" style="height: 2.2rem; width: 2.2rem;">
+                    <div class="col-2 px-0">
+                        <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
+                            onclick="findMyLocation()" style="border-radius: 50%; background-color: white;">
+                            <i class="bi bi-crosshair d-grid justify-content-center text-center align-self-center"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+        <div class="row">
+            <div class="col">
+                <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+            </div>
+        </div>
     </div>
+    
 
 
 
 
-<div class="row" >
-    <div class="col-2 px-0">
-        <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
-            onclick="findMyLocation()" style="height: 2.2rem; width: 2.2rem; border-radius: 50%; background-color: white;">
-            <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
-        </button>
-    </div>
-</div>
 
 <div id="progressTemplete" class="d-none">
     <div class="basicCourseWrapper row py-1">
