@@ -43,14 +43,12 @@
             border-color: #FF8827; /* 활성화 시 테두리 색상을 원하는 색으로 지정 */
     }
 
-    .orange-background {
-        position: absolute; /* 화면에 고정시킵니다. */
+    .orange-background { /* 화면에 고정시킵니다. */
         top: 0; /* 화면 상단에 배치합니다. */
         left: 0; /* 왼쪽에 배치합니다. */
         width: 100%; /* 화면 전체 너비를 사용합니다. */
         height: 14em; /* 원하는 높이를 지정합니다. */
         background-color: #ff9a47; /* 주황색 배경을 지정합니다. */
-        z-index: -1; /* 다른 요소들보다 위에 나타나도록 z-index를 설정합니다. */
     }
 
     .carousel-indicators {
@@ -61,15 +59,25 @@
         
     }
     </style>
+    <script>
+        // 주황색 배경 요소 선택
+        const orangeBackground = document.querySelector('.orange-background');
+
+        // z-index 값 설정
+        orangeBackground.style.zIndex = '1';
+    </script>
 
 </head>
 
-<body>
-    <div class="orange-background"></div>
-    <div class="container-fluid">
-
+<body style="z-index: -30;">
+    <script src="/public/js/lockLikeMobile.js"></script>
+    
+    <div class="container-fluid" style="position: relative; z-index: 100;">
+        <div class="row" style="z-index: 1;">
+            <div class="orange-background" style=" position: absolute;"></div>
+        </div>
         <!--/* 임시 탑 에어리어 */-->
-        <div class="row" style="z-index: 1100;">
+        <div id="top-navi" class="row" style="z-index: 1001; position: relative;">
             <div class="col">
                 <div class="row mt-2 pb-3 align-content-center">
                     <div class="col">
@@ -242,53 +250,57 @@
          </div>
 
         
+         
             <!--여백용-->
             <div class="row m-4 pt-4"></div>
 
-            <div class="fixed-bottom border-top bg-white ps-2" style="padding-top: 0.3rem; bottom: 0; height: 3.4rem;">
-                <div class="row mt-0 pt-0">
-                    <div class="col mt-0 ms-1" onclick="window.location.href='../mission/map'">
-                        <div class="row text-center">
-                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+            <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
+                <div class="col">
+                    <div class="row mt-0 pt-0">
+                        <div class="col mt-0 ms-1" onclick="window.location.href='../mission/map'">
+                            <div class="row text-center">
+                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+                            </div>
+                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                                <div class="col">미션</div>
+                            </div>
                         </div>
-                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                            <div class="col">미션</div>
+                        <div class="col" onclick="window.location.href='../meeting/mainPage'"c>
+                            <div class="row text-center">
+                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
+                            </div>
+                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                                <div class="col">미팅</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col" onclick="window.location.href='../meeting/mainPage'"c>
-                        <div class="row text-center">
-                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
+        
+                        <!--홈-->
+                        <div class="col ms-1" style="padding-top: 0.02rem;">
+                            <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='./mainPage'">
+                           
                         </div>
-                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                            <div class="col">미팅</div>
+        
+                        <div class="col" onclick="window.location.href='../room/roomMainPage'">
+                            <div class="row text-center">
+                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-houses text-secondary"></i></a> 
+                            </div>
+                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                                <div class="col">숙박</div>
+                            </div>
                         </div>
-                    </div>
-    
-                    <!--홈-->
-                    <div class="col ms-1" style="padding-top: 0.02rem;">
-                        <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='./mainPage'">
-                       
-                    </div>
-    
-                    <div class="col" onclick="window.location.href='../room/roomMainPage'">
-                        <div class="row text-center">
-                            <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-houses text-secondary"></i></a> 
-                        </div>
-                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                            <div class="col">숙박</div>
-                        </div>
-                    </div>
-                    <div class="col me-2 mb-2" onclick="window.location.href='../circle/circleMainPage'">
-                        <div class="row text-center pt-0">
-                            <!--임시로 방 글쓰기 페이지로 이어짐니다-->
-                            <a style=" text-decoration: none; padding-top: 0rem;"><i class=" bi bi-people text-secondary" style="font-size: 1.1em;"></i></a> 
-                        </div>
-                        <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
-                            <div class="col">서클</div>
+                        <div class="col me-2 mb-2" onclick="window.location.href='../circle/circleMainPage'">
+                            <div class="row text-center pt-0">
+                                <!--임시로 방 글쓰기 페이지로 이어짐니다-->
+                                <a style=" text-decoration: none; padding-top: 0rem;"><i class=" bi bi-people text-secondary" style="font-size: 1.1em;"></i></a> 
+                            </div>
+                            <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
+                                <div class="col">서클</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
                 
 
         

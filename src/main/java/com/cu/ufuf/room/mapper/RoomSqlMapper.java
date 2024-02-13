@@ -79,7 +79,7 @@ public interface RoomSqlMapper {
      public RoomOptionCategoryDto roomOptionCategorySelectById(int room_option_category_id);
 
      public int roomImageCount(int room_info_id);
-     public RoomInfoDto roomSelectByRoomAndUserIdForGuest(int room_info_id);
+     public RoomInfoDto roomSelectByRoomAndUserIdForGuest(int room_info_id, int room_guest_id);
 
     //예약자 정보
 
@@ -104,6 +104,9 @@ public interface RoomSqlMapper {
 
     public RoomGuestDto roomGuestSelectByRoomId(int user_id, int room_info_id);
     public RoomGuestDto roomGuestSelectByRoomAndUserId(int user_id, int room_info_id);
+
+    public int maxGuestId();
+    public RoomGuestDto selectMaxGuestIdInfo(int room_guest_id);
 
     //리뷰 등록
     public int creatGuestReviewId();
