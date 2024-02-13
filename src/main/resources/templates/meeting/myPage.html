@@ -378,6 +378,7 @@ function mySignalToModalCSR(){
 }
 
 function showMySignalToModal(){ 
+    document.body.style.overflow = 'hidden';
     mySignalToModalCSR();
     const mySignalToModal = document.getElementById("mySignalToModal");
     mySignalToModal.classList.add('active');
@@ -386,6 +387,7 @@ function showMySignalToModal(){
 }
 
 function closeMySignalToModal(){
+    document.body.style.overflow = 'auto';
     const mySignalToModal = document.getElementById("mySignalToModal");
     mySignalToModal.classList.remove('active');
     const mySignalToModalDialog = document.getElementById("mySignalToModalDialog");

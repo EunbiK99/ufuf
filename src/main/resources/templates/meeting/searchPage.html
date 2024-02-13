@@ -526,80 +526,61 @@ function closeApplyModal(){
 }
 
 // 그룹리스트 정보 받아온 후에 해당 그룹의 status 변경해주는것으로 로직 변경
-async function groupListCSR(event){
-    if(event){
-        if(event.keyCode === 13 || event.type === "click"){
-            const searchInput = document.getElementById("searchInput");
-            const searchKeyword = searchInput.value;
-            if(searchKeyword.trim() === ""){
-                alert("검색 키워드를 입력해주세요");
-                searchInput.focus();
-                return;
-            }
-            else{
-                console.log('searchKeyword: ', searchKeyword);
-            }
-        }
-    }
-    else{
+async function groupListCSR(allcheckedData){    
+    console.log('groupListCSR data: ', allcheckedData);
 
-        let allcheckedData = await getGroupList();
-        console.log('allcheckedData: ', allcheckedData);
+    const groupListCol = document.getElementById("groupListCol");
+    groupListCol.innerHTML = '';
     
-        const groupListCol = document.getElementById("groupListCol");
-        groupListCol.innerHTML = '';
+    for(e of allcheckedData){
+        const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
+        groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
+        const customBackground = groupListWrapper.querySelector(".custom-background");
+        customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
         
-        for(e of allcheckedData){
-            const groupListWrapper = document.querySelector("#templete #groupListWrapper").cloneNode(true);
-            groupListWrapper.setAttribute("onclick", `showGroupDetailModal(${e.groupId})`);
-            const customBackground = groupListWrapper.querySelector(".custom-background");
-            customBackground.setAttribute("src",`/uploadFiles/ufuf/meeting/groupImage/${e.groupImage}`);
-            
-            const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
-            const dateValue = e.groupMeetingDate
-            const dateOption = {
-                year : 'numeric',
-                month : 'long',
-                day : 'numeric',
-                hour : 'numeric',
-                minute : '2-digit',
-                weekday : 'short'
-            }
-            const convertDate = dateConverter(dateValue, dateOption);
-            groupMeetingDate.innerText = convertDate;
-    
-            const groupTitle = groupListWrapper.querySelector("#groupTitle");
-            groupTitle.innerText = e.groupTitle;
-    
-            const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
-            let placeText = e.groupMeetingPlace.split(" ");
-            groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
-    
-            if(e.groupApplyStatus === "Y"){
-                const applyEndBadge = document.createElement("span");
-                applyEndBadge.innerText = "모집종료";
-                applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(applyEndBadge);
-            }
-            
-            if(e.groupMeetingStatus === "Y"){
-                const meetingEndBadge = document.createElement("span");
-                meetingEndBadge.innerText = "미팅종료";
-                meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
-                const backgroundInnerCol = groupListWrapper.querySelector(".col");
-                backgroundInnerCol.appendChild(meetingEndBadge);
-            }
-    
-            groupListCol.appendChild(groupListWrapper);
+        const groupMeetingDate = groupListWrapper.querySelector("#groupMeetingDate");            
+        const dateValue = e.groupMeetingDate
+        const dateOption = {
+            year : 'numeric',
+            month : 'long',
+            day : 'numeric',
+            hour : 'numeric',
+            minute : '2-digit',
+            weekday : 'short'
         }
-    }
+        const convertDate = dateConverter(dateValue, dateOption);
+        groupMeetingDate.innerText = convertDate;
+
+        const groupTitle = groupListWrapper.querySelector("#groupTitle");
+        groupTitle.innerText = e.groupTitle;
+
+        const groupMeetingPlace = groupListWrapper.querySelector("#groupMeetingPlace");
+        let placeText = e.groupMeetingPlace.split(" ");
+        groupMeetingPlace.innerText = placeText[0] + " " + placeText[1];
+
+        if(e.groupApplyStatus === "Y"){
+            const applyEndBadge = document.createElement("span");
+            applyEndBadge.innerText = "모집종료";
+            applyEndBadge.setAttribute("class", "badge text-bg-danger fw-bold fs-6 applyEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(applyEndBadge);
+        }
+        
+        if(e.groupMeetingStatus === "Y"){
+            const meetingEndBadge = document.createElement("span");
+            meetingEndBadge.innerText = "미팅종료";
+            meetingEndBadge.setAttribute("class", "badge text-bg-warning fw-bold fs-6 meetingEndBadge");                
+            const backgroundInnerCol = groupListWrapper.querySelector(".col");
+            backgroundInnerCol.appendChild(meetingEndBadge);
+        }
+        groupListCol.appendChild(groupListWrapper);
+    }    
 }
 
 // 오늘날짜 기준으로 미팅모집일 지났는지 확인 및 업데이트
 async function checkApplyDate(groupListData){
     
-    console.log('groupListData: ', groupListData);
+    // console.log('groupListData: ', groupListData);
     
     const updateTargetList = [];
     
@@ -611,8 +592,7 @@ async function checkApplyDate(groupListData){
         );
         const applyEndDate = dayjs(date);
         const today = dayjs();        
-        const diffValue = applyEndDate.diff(today, 'day');
-        console.log('diffValue: ', diffValue);
+        const diffValue = applyEndDate.diff(today, 'day');        
 
         if(applyEndDate < today){
             updateTargetList.push(e.groupId);            
@@ -630,13 +610,13 @@ async function checkApplyDate(groupListData){
         body : JSON.stringify(updateTargetList)
     });
 
-    const responseData = await response.json();    
+    const responseData = await response.json();
     return responseData.data;
 }
 
 // 오늘날짜 기준으로 미팅날짜 지났는지 확인하고 지났으면 업데이트
 async function checkMeetingDate(groupListData){
-    console.log('groupListData: ', groupListData);
+    // console.log('groupListData: ', groupListData);
     const targetGroupIdList = [];
     for(e of groupListData){
         
@@ -671,27 +651,49 @@ async function checkMeetingDate(groupListData){
         
     }
     else{
-        console.log('groupListData: ', groupListData);
+        // console.log('groupListData: ', groupListData);
         return groupListData;
     }
 }
 
-async function getGroupList(){
-
-    return await fetch("./api/getGroupList")
-    .then(response => response.json())
-    .then(async response =>{
-        const responseData = response.data;                
-        let meetingDateChecked = await checkMeetingDate(responseData);      
-
-        let allCheckedData = await checkApplyDate(meetingDateChecked);
-        console.log('allCheckedData: ', allCheckedData);
-        return allCheckedData;
-    });
+async function getGroupList(event){
+    if(event){
+        if(event.keyCode === 13 || event.type === "click"){
+            const searchInput = document.getElementById("searchInput");
+            const searchKeyword = searchInput.value;
+            if(searchKeyword.trim() === ""){
+                alert("검색 키워드를 입력해주세요");
+                searchInput.focus();
+                return;
+            }
+            else{
+                console.log('searchKeyword: ', searchKeyword);
+                await fetch(`api/getGroupList?searchKeyword=${searchKeyword}`)
+                .then(async response => {
+                    const responseData = await response.json();
+                    console.log('검색결과 data: ', responseData.data);
+                    groupListCSR(responseData.data);
+                });
+            }
+        }
+    }
+    else{
+        await fetch("./api/getGroupList")
+        .then(async response => {        
+            const responseData = await response.json();                
+            
+            let meetingDateChecked = await checkMeetingDate(responseData.data);      
+    
+            let allCheckedData = await checkApplyDate(meetingDateChecked);
+            
+            console.log('전체 data: ', allCheckedData);
+            groupListCSR(allCheckedData);            
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    groupListCSR();
+    getGroupList();
     checkRequestGroupId();
 });
 
@@ -736,10 +738,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                             <div class="col me-2">
                                                 <div class="row justify-content-between">
                                                     <div class="col-10 pe-0 align-self-center">
-                                                        <input id="searchInput" type="text" class="form-control border-0 px-0" placeholder="키워드 입력  ex. 강남" onkeyup="groupListCSR(event)">
+                                                        <input id="searchInput" type="text" class="form-control border-0 px-0" placeholder="키워드 입력  ex. 강남" onkeyup="getGroupList(event)">
                                                     </div>
                                                     <div class="col-auto align-self-center ps-0">
-                                                        <span class="text-secondary"><i class="fi fi-rr-search bi-align-middle" onclick="groupListCSR(event)"></i></span>
+                                                        <span class="text-secondary"><i class="fi fi-rr-search bi-align-middle" onclick="getGroupList(event)"></i></span>
                                                     </div>                                                    
                                                 </div>
                                             </div>

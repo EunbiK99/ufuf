@@ -36,13 +36,54 @@
 
     .userImage{
         width: 100%;
-        height: 100%;
+        /* height: 100%; */
         object-fit: cover;
     }
 
     .shadowBox{        
         border: 1px solid black;        
         box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
+
+    .customModal, .modalDialogCentered {
+        /* 트랜지션으로 표시 부드럽게 처리 */
+        transition: opacity 0.4s, visibility 0.4s;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .customModal {
+        /* 아래 CSS 모달 dialog 활성화 시 백그라운드 검게 처리*/
+        position: fixed;
+        width: 100%;
+        height: 100%;        
+        background-color: rgba(0, 0, 0, 0.5);
+        
+        /* 아래 CSS 모달 화면 중앙에 위치*/
+        top: 0%;
+        left: 0%;
+        transform: translate(0%, 0%);
+    }
+
+    .modalDialogCentered {
+        /* 아래 CSS 모달 컨텐츠 표시*/
+        position: absolute;
+        width: 80%;
+        height: 34em;
+        overflow-x: scroll;
+        background-color: rgba(255,255,255);
+        
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+    }    
+
+    .active {
+        /* 액티브 토글로 출력-비출력 처리 */
+        opacity: 1;
+        visibility: visible;
+        display: block;
     }
     </style>
 </head>
@@ -53,6 +94,124 @@ let groupDetailInfo = /*[[${groupDetailInfo}]]*/;
 let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
+
+async function checkExistVoteBestMember(){
+    let sessionUserGroupId;
+    for(e of groupDetailInfo.groupMemberDataList){
+        if(e.groupMemberProfileDto.profileid === sessionUserMeetingProfileDto.profileid){
+            sessionUserGroupId = e.groupMemberDto.groupMemberId;
+        }
+    }
+    const response = await fetch(`api/checkExistVoteBestMember?groupMemberId=${sessionUserGroupId}`);
+    const responseData = await response.json();        
+    console.log('responseData: ', responseData);
+    return responseData.data;    
+}
+
+function voteBestMember(targetElement){    
+    const targetMemberCol = targetElement.closest("#voteBestMemberListCol");
+    const targetNickname = targetMemberCol.querySelector("#voteBestMemberNickname").innerText;
+    const confirmValue = confirm(`${targetNickname}님을 베스트멤버로 선정하시겠습니까?`);
+    if(confirmValue){
+        const groupMemberIdTo = targetMemberCol.getAttribute("groupMemberId");
+        console.log('groupMemberIdTo: ', groupMemberIdTo);
+        
+        let sessionUserGroupId;
+        for(e of groupDetailInfo.groupMemberDataList){
+            if(e.groupMemberProfileDto.profileid === sessionUserMeetingProfileDto.profileid){
+                sessionUserGroupId = e.groupMemberDto.groupMemberId;
+            }
+        }
+        
+        fetch(`api/voteBestMember?groupMemberIdFrom=${sessionUserGroupId}&groupMemberIdTo=${groupMemberIdTo}`)
+        .then(response => response.json())
+        .then(response => {
+            const isSuccess = response.result;
+            if(isSuccess === "success"){
+                alert("투표해주셔서 감사합니다. 리뷰페이지로 이동할게요 :)");
+                closeVoteBestMemberModal();
+                window.location.href = `./groupReviewPage?groupId=${groupDetailInfo.meetingGroupDto.groupId}`;
+            }
+            else{
+                alert("오류발생!");
+                return;
+            }
+        });
+    }
+    else{
+        return;
+    }
+}
+
+function voteBestMemberModalCSR(){
+    const memberList = groupDetailInfo.groupMemberDataList;
+
+    const voteBestMemberListWrapperRow = document.getElementById("voteBestMemberListWrapperRow");
+    voteBestMemberListWrapperRow.innerHTML = "";
+
+    for(e of memberList){
+        if(e.groupMemberProfileDto.profileid === sessionUserMeetingProfileDto.profileid){
+            continue;
+        }
+        const voteBestMemberListCol = document.querySelector("#templete #voteBestMemberListCol").cloneNode(true);
+        voteBestMemberListCol.setAttribute("groupMemberId", e.groupMemberDto.groupMemberId);
+        
+        const voteBestMemberProfileImage = voteBestMemberListCol.querySelector("#voteBestMemberProfileImage");
+        voteBestMemberProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberProfileDto.profileImg}`);
+
+        const voteBestMemberNickname = voteBestMemberListCol.querySelector("#voteBestMemberNickname");
+        voteBestMemberNickname.innerText = e.groupMemberProfileDto.profileNickname;
+
+        const voteBestMemberButton = voteBestMemberListCol.querySelector("#voteBestMemberButton");
+        voteBestMemberButton.setAttribute("onclick", "voteBestMember(this)");
+
+        voteBestMemberListWrapperRow.appendChild(voteBestMemberListCol);
+    }
+
+}
+
+async function showVoteBestMemberModal(){
+    
+    const checkVoteBestMember = await checkExistVoteBestMember();
+    console.log('checkVoteBestMember: ', checkVoteBestMember);
+    
+    if(checkVoteBestMember > 0){
+        window.location.href = `./groupReviewPage?groupId=${groupDetailInfo.meetingGroupDto.groupId}`;
+    }
+    else{
+        document.body.style.overflow = 'hidden';
+        voteBestMemberModalCSR();
+        const voteBestMemberModal = document.getElementById("voteBestMemberModal");
+        voteBestMemberModal.classList.add('active');
+        const voteBestMemberModalDialog = document.getElementById("voteBestMemberModalDialog");
+        voteBestMemberModalDialog.classList.add('active');
+    }
+}
+
+function closeVoteBestMemberModal(){
+    document.body.style.overflow = 'auto';
+    const voteBestMemberModal = document.getElementById("voteBestMemberModal");
+    voteBestMemberModal.classList.remove('active');
+    const voteBestMemberModalDialog = document.getElementById("voteBestMemberModalDialog");
+    voteBestMemberModalDialog.classList.remove('active');
+}
+
+function moveGroupReviewPage(groupId){
+    if(!groupId){
+        alert("베스트 멤버가 없었다니 아쉽네요 ;ㅅ; 그럼 리뷰페이지로 이동할게요!");
+        closeVoteBestMemberModal();
+        window.location.href = `./groupReviewPage?groupId=${groupDetailInfo.meetingGroupDto.groupId}`;
+    }
+    else{
+        const groupHeadCount = groupDetailInfo.meetingGroupDto.groupHeadCount;
+        if(groupHeadCount >= 5){            
+            showVoteBestMemberModal();
+        }
+        else{
+            window.location.href = `./groupReviewPage?groupId=${groupId}`;
+        }
+    }
+}
 
 
 /* 카카오 결제요청 전 OrderInfoDto 생성 */
@@ -280,7 +439,7 @@ function makeGroupDetailPage(){
         const childCol = noApplyProfileRow.children[0];        
         
         const reviewPageButton = document.querySelector("#templete #reviewPageButton").cloneNode(true);
-        reviewPageButton.setAttribute("onclick", `window.location.href='./groupReviewPage?groupId='+${groupDetailInfo.meetingGroupDto.groupId}`);
+        reviewPageButton.setAttribute("onclick", `moveGroupReviewPage(${groupDetailInfo.meetingGroupDto.groupId})`);
         childCol.appendChild(reviewPageButton);
         applyProfileListWrapperCol.appendChild(noApplyProfileRow);
     }
@@ -322,9 +481,7 @@ function makeGroupDetailPage(){
                 applyProfileListWrapperCol.appendChild(noApplyProfileRow);
             }
         }
-    }
-
-    
+    }    
     getMeetingGroupMemberList();        
 }
 
@@ -594,6 +751,30 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
+    
+    <div id="voteBestMemberListCol" class="col-auto my-2 mx-2 border border-0 rounded shadowBox" style="background-color: #f5ededea;">
+        <div class="row mt-2">            
+            <div class="col-auto">
+                <div class="row" style="justify-content: center;">
+                    <div id="voteBestMemberProfileImageCol" class="col">
+                        <div class="userImageBox">
+                            <img id="voteBestMemberProfileImage" class="userImage">
+                        </div>                
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <span id="voteBestMemberNickname" class="fw-bold" style="font-size: 0.8em;"></span>
+                    </div>
+                </div>
+            </div>            
+        </div>
+        <div class="row justify-content-center mb-2">
+            <div id="voteBestMemberButton" class="col-auto text-center align-self-center btn py-0" style="background-color: #FF8827;">
+                <span class="text-white">Pick!</span>
+            </div>
+        </div>
+    </div>
 
     <div id="userPaymentCheckListRow" class="row my-2">
         <div class="col">
@@ -605,7 +786,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <span id="checkUserPaymentStatus"></span>
                 </div>
                 <div id="kakaoPayButton" class="col d-none text-center btn" onclick="registerOrderProcess()">
-                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 40%; height: 90%;">
+                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 4em; height: 90%;">
                 </div>
             </div>
         </div>
@@ -697,6 +878,86 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <img src="/public/image/meeting/crown.png" style="width: 2em; height: 2em;">
     </div>
 
+</div>
+
+<!--/* 베스트멤버 선발 모달 */-->
+<div id="voteBestMemberModal" class="customModal" tabindex="-1">
+    <div id="voteBestMemberModalDialog" class="modal-dialog border border-0 rounded modalDialogCentered">
+        <div class="modal-content container-fluid rounded-2">
+            <div class="row modal-header justify-content-between border-bottom rounded-top-2" style="background-color: #FF8827;">
+                <div class="col">
+                    <div class="row my-2">
+                        <div class="col text-center">
+                            <span class="fw-bold fs-4 text-white"><i class="fi fi-sr-trophy-star bi-align-center"></i></span>
+                            <span id="" class="modal-title fw-bold fs-4 text-white"> 베스트 멤버 Award </span>
+                            <span class="fw-bold fs-4 text-white"><i class="fi fi-sr-trophy-star bi-align-center"></i></span>
+                        </div>                    
+                        <!-- <div class="col-auto">
+                            <button type="button" onclick="closeVoteBestMemberModal()" class="btn btn-close"></button>                            
+                        </div>                 -->
+                    </div>                    
+                </div>                
+            </div>
+
+            <div class="row modal-body mt-2 border-bottom">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span style="font-size: 0.9em;">멤버가 <span class="fw-bold">5명</span> 이상인 미팅은</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span class="text-warning"><i class="fi fi-sr-star bi-align-center"></i></span>
+                                    <span class="fw-bold">베스트 멤버</span>
+                                    <span class="text-warning"><i class="fi fi-sr-star bi-align-center"></i></span>                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span style="font-size: 0.9em;">투표를 할 수 있어요.</span>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col text-center">
+                                    <span style="font-size: 0.9em;">이번 미팅의 베스트 멤버를 선택해보세요!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4 mb-3">
+                        <div class="col">
+                            <div id="voteBestMemberListWrapperRow" class="row justify-content-center">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row modal-footer">
+                <div class="col">
+                    <div class="row">                        
+                        <div class="col btn" role="button" onclick="moveGroupReviewPage()">
+                            <div class="row mt-2 mb-2">                         
+                                <div class="col text-center">
+                                    <span class="text-danger">난 성격에 문제있어서</span>
+                                </div>
+                            </div>
+                            <div class="row"                    >
+                                <div class="col text-center">                                    
+                                    <span class="text-danger">아무도 뽑고싶지 않아요</span>
+                                    <span class="text-danger"><i class="fi fi-rr-face-expressionless bi-align-center"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

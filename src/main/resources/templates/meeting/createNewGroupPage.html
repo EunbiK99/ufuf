@@ -754,8 +754,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
             <div class="row bg-white border border-2 border-black rounded-3">
                 <div class="col">
                     <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between rounded-top">
-                        <div class="col-auto">
-                            <span class="fw-bold" style="font-size: 0.8em">주소</span>
+                        <div class="col-auto align-self-center">
+                            <span><i class="fi fi-rr-map-marker bi-align-center"></i></span>
+                            <span class="fw-bold" style="font-size: 0.9em">주소</span>
                         </div>
                         <div class="col-auto">
                             <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
@@ -767,8 +768,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         </div>
                     </div>
                     <div class="row mt-2 mb-2 justify-content-center">
-                        <div class="col-auto">
-                            <button class="btn btn-sm btn-primary fw-bold" onclick="setMeetingLocation()">여기로 설정!!</button>
+                        <div class="col-auto btn btn-sm btn-primary" onclick="setMeetingLocation()">
+                            <span class="fw-bold" >여기서 만나요</span>
+                            <span><i class="fi fi-rr-hand-heart bi-align-center"></i></span>
                         </div>
                     </div>
                 </div>

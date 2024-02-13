@@ -591,5 +591,29 @@ values (
     limit 5
 </select>
 
+<!-- * 모집글 키워드로 검색 -->
+<select id="selectMeetingGroupListBySearchKeyword" resultType="com.cu.ufuf.dto.MeetingGroupDto">
+    SELECT mg.* from meeting_group mg
+    inner join meeting_group_tag mgt on mgt.groupId = mg.groupId
+    inner join meeting_tag mt on mt.tagId = mgt.tagId
+    WHERE CONCAT(groupTitle, groupContent, groupMeetingPlace, tagName) LIKE CONCAT('%', #{searchKeyword}, '%')
+    group by mg.groupId
+    order by regdate DESC
+</select>
+
+<!-- * 그룹멤버PK 기준 베스트멤버선발 테이블 존재여부 확인-->
+<select id="countVoteBestMemberByGroupMemberId" resultType="int">
+    SELECT count(*) from meeting_voteBestMember mvbm
+    where groupMemberIdFrom = #{groupMemberIdFrom}
+</select>
+
+<!-- * 베스트멤버 선발 테이블 인서트-->
+<insert id="insertVoteBestMember">
+    INSERT into meeting_voteBestMember(groupMemberIdFrom, groupMemberIdTo) values(
+        #{groupMemberIdFrom},
+        #{groupMemberIdTo}
+    )
+</insert>
+
 
 </mapper>
