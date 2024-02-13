@@ -85,6 +85,7 @@
 </head>
 
 <body>
+    <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container" th:if="${session.sessionUserInfo !=null}">
          <!-- 페이지 네비-->
          <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
@@ -115,7 +116,7 @@
                     <div class="col" style="width: 15em;">
                         
                         <div class="row mt-2">
-                            <div class="col">
+                            <div class="col text-truncate" style=" max-width: 12em;">
                                 <a class="fw-bold ms-2 text-start py-0 pe-0 me-1" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}" th:text="${reservation.roomInfoDto.title}" style="color: black; text-decoration: none;"></a>
                             </div>
                              <div class="col pt-1 ms-2 text-end me-0 pe-0" style="font-size: 0.8em;">

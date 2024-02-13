@@ -186,6 +186,7 @@
 </head>
 
 <body>
+    <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container">
         <!-- 탑부분(뒤로가기, 좋아요, 공유)-->
         <div class="fixed-top row pb-1 bg-white border-bottom" style="position: fixed; top: 0; width: 104%; z-index: 1000;">
@@ -495,8 +496,8 @@
                                 <span class="p-0 me-0 pe-0 m-0 text-warning" th:utext="${'&#9733;'.repeat(review.review_grade)}"></span>
                                 <span class="ps-0 ms-0 me-0 pe-0 pb-1 m-0 text-secondary" th:utext="${'&#9734;'.repeat(5 - review.review_grade)}"></span>
                             </div>
-                            <div class="col ms-0 ps-0 pt-1 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
-                            <div class="col-4 ms-0 ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
+                            <div class="col-3 me-3 ms-0 ps-0 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
+                            <div class="col ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
                         </div>
                         <div class="row mx-1 px-2 mt-2 mb-3" th:text="${review.review_content}"></div>
                     </div>

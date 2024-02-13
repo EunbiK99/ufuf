@@ -320,18 +320,58 @@ public class RoomServiceIpml {
 		
 	}
 
+    public Map<String, Object> getReservationInfoTest(int user_id) {
+		
+		Map<String, Object> roomMap=new HashMap<>();
+
+       
+
+        RoomGuestDto roomGuestDto=roomSqlMapper.selectMaxGuestIdInfo(roomSqlMapper.maxGuestId());
+        
+
+		UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
+        
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getRoom_info_id(),roomGuestDto.getRoom_guest_id());
+
+        //몇박인지
+        int reservationDuration=roomSqlMapper.reservationDuration(user_id, roomGuestDto.getRoom_info_id());
+        
+        //기본 숙박비
+        int standardRoomCharge=roomSqlMapper.reservationRoomCharge(user_id, roomGuestDto.getRoom_info_id());
+        //추가요금
+        int extraCharge=roomSqlMapper.reservationExtraCharge(user_id, roomGuestDto.getRoom_info_id());
+        //총 요금
+        int totalCost=roomSqlMapper.reservationRoomCharge(user_id, roomGuestDto.getRoom_info_id())+roomSqlMapper.reservationExtraCharge(user_id, roomGuestDto.getRoom_info_id());
+
+
+        int roomReviewCount=roomSqlMapper.guestRoomReviewCount(roomGuestDto.getRoom_guest_id());
+
+        roomMap.put("roomInfoDto", roomInfoDto);
+        roomMap.put("userDto", userDto);
+        roomMap.put("roomGuestDto", roomGuestDto);
+        
+        roomMap.put("reservationDuration", reservationDuration);
+        roomMap.put("standardRoomCharge", standardRoomCharge);
+        roomMap.put("extraCharge", extraCharge);
+        roomMap.put("totalCost", totalCost);
+        roomMap.put("roomReviewCount", roomReviewCount);
+
+		return roomMap;
+		
+	}
+
     public Map<String, Object> getReservationInfo(int user_id,int room_info_id) {
 		
 		Map<String, Object> roomMap=new HashMap<>();
 
-        
+        System.out.println(user_id);
 
         RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomAndUserId(user_id, room_info_id);
+        
 
 		UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
         
-		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getRoom_info_id());
-        System.out.println(roomInfoDto.getRoom_info_id());
+		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getRoom_info_id(),roomGuestDto.getRoom_guest_id());
 
         //몇박인지
         int reservationDuration=roomSqlMapper.reservationDuration(user_id, room_info_id);

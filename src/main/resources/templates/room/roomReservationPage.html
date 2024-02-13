@@ -713,7 +713,7 @@
 </head>
 
 <body>
-    
+    <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container">
         <!-- 페이지 네비-->
         <div class="row border-bottom border-secondery-subtle pt-4 pb-2 bg-white" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
@@ -744,7 +744,7 @@
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 인원</div>
                     <div class="row">
                         <div class="col mx-2 me-0 mt-2">
-                            <input id="guestCount" type="number" name="guest_count" class="form-control">
+                            <input id="guestCount" type="number" name="guest_count" class="form-control" min="0">
                         </div>
                         <div class="col ms-0 mt-3 text-secondary">명</div>
                     </div>

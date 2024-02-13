@@ -210,7 +210,15 @@
         where rg.user_id=#{user_id}
         and rg.room_info_id=#{room_info_id}
         order by rg.room_guest_id desc
-        LIMIT 1
+    </select>
+
+    <select id="maxGuestId" resultType="int">
+        select max(room_guest_id) from room_guest
+    </select>
+
+    <select id="selectMaxGuestIdInfo" resultType="com.cu.ufuf.dto.RoomGuestDto">
+        select * from room_guest
+     	where room_guest_id=${room_guest_id}
     </select>
 
     <!-- 상세글 보기 -->
@@ -218,6 +226,7 @@
 		SELECT ri.* FROM room_info ri
         join room_guest rg on ri.room_info_id=rg.room_info_id 
         where rg.room_info_id=#{room_info_id}
+        and rg.room_guest_id=#{room_guest_id}
 	</select>
 
     <select id="roomGuestSelectByUserId" resultType="com.cu.ufuf.dto.RoomGuestDto">

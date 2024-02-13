@@ -13,6 +13,7 @@
      <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Gowun+Dodum&family=Quicksand:wght@300&display=swap" rel="stylesheet">
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
      <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+     <script src="/public/js/lockLikeMobile.js"></script>
      <script>
         const backHome = () => {
             location.href = "./circleMainPage"
@@ -232,11 +233,26 @@
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
+        .fixed-bottom {
+                position: fixed;
+                bottom: 0;
+                padding: 0em;
+                left: 0;
+                background-color: #ffffff;
+                text-align: center;
+            }
+            .cf {
+                transition: 0.3s;
+                height: 60em;
+                
+                
+            
+            }
     </style>
     
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid cf">
         <div class="row text-center">
             <div class="col">
                 <div class="row mt-5">
@@ -259,18 +275,22 @@
                         결제내역을 확인해 주세요!
                     </div>
                 </div>
-                <div class="row mt-5">
-                    <div class="col d-grid">
-                        <button onclick="backHome()" class="btn" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col d-grid"><!-- 여기는 마이페이지에 있는 내 일정내역 결제한거 확인하는 페이지로 이동시켜야함,-->
-                        <button onclick="(() => {
-                            location.href = './circleScheduleListPage'
-                        })()" class="btn" style="background-color: #fb7928; color: white;">일정내역 확인하러가기</button>
-                    </div>
-                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid fixed-bottom">
+        <div class="row pt-2 mx-3">
+            <div class="col d-grid">
+                <button onclick="backHome()" class="btn" style="background-color: white; color: #fb7928; border: 0.01em solid #fb7928;">홈으로 돌아가기</button>
+            </div>
+        </div>
+        <div class="row py-2 mx-3">
+            <div class="col d-grid"><!-- 여기는 마이페이지에 있는 내 일정내역 결제한거 확인하는 페이지로 이동시켜야함,-->
+                <button onclick="(() => {
+                    location.href = './circleScheduleListPage'
+                })()" class="btn" style="background-color: #fb7928; color: white;">일정내역 확인하러가기</button>
             </div>
         </div>
     </div>
