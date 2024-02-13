@@ -561,7 +561,6 @@
 
 
 
-
     window.addEventListener("DOMContentLoaded", () => {
         var mapContainer = document.getElementById("map"), // 지도를 표시할 div
             mapOption = { 
@@ -603,8 +602,9 @@
             }, 5000);
 
         }
-
+        
         updateNowLocation();
+
     });
 
 </script>
@@ -637,15 +637,7 @@
         padding-bottom: 4.3em;
     }
 
-    #findMyLocation{
-        z-index: 2;
-        position: fixed;
-        bottom: 10em;
-        /* margin: auto; */
-        left: 20em;
-        right: 2em;
-        transition: top 0.8s ease;
-    }
+
 
     .button-slide-up {
         top: 14.4em; /* 이동할 거리 설정 */
@@ -681,14 +673,15 @@
 
     body { overflow: hidden; }
     body .container-fluid { touch-action: none; }
+    body .a { touch-action: none; }
 </style>
 
 </head>
 
 <body>
 
-    <div class="container-fluid" style="position: relative; height: 100vh; overflow: hidden;">
-        <div class="row">
+    <div id="container" class="container-fluid" style="position: relative; height: 100vh; overflow: hidden;">
+        <div class="a row">
             <div class="col">
 
                 <div class="row">
@@ -818,16 +811,10 @@
                     </div>
                 </div>
                 
-                <div class="row d-flex" style="height: 2.2rem; width: 2.2rem">
-                    <div class="col justify-content-end">
-                        <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center rounded-circle" 
-                            onclick="findMyLocation()" type="button" style="height: 2.2rem; width: 2.2rem; background-color: white; box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);">
-                            <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
-                        </button>
-                    </div>
-                </div>
-
-
+             
+                
+                
+                
                 <div class="row">
                     <div class="col">
                         <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
@@ -838,9 +825,13 @@
     </div>
     
     
+    <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center rounded-circle" 
+        onclick="findMyLocation()" type="button" style="height: 2.2rem; width: 2.2rem; background-color: white; box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);">
+        <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
+    </button>
 
 
-    <div class="row z-2 shut px-2" id="startBtn">
+    <div class="row z-2 shut px-3" id="startBtn">
         <div class="col d-grid pe-1 ps-0">
             <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 shadow" 
                 style="background-color: #FF8827; font-size: 1.13rem;" onclick="loadMissionList()">
