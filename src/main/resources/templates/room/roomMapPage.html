@@ -326,9 +326,9 @@
         }
 
         .content {
-        min-height: 100em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
-        height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
-        overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
+            min-height: 100em; /* 최소한 화면 높이만큼의 높이를 유지하도록 설정 */
+            height: auto; /* 높이를 컨텐츠에 맞게 자동으로 조절 */
+            overflow-y: scroll; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
         }
 
         
@@ -348,6 +348,7 @@
 </head>
 
 <body>
+    <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container" th:if="${session.sessionUserInfo !=null}">
             <!-- 페이지 네비-->
             <div class="row pt-4 pb-3 ms-1" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
@@ -372,7 +373,7 @@
                 
             </div>
 
-            <div class="row ms-3" style="position: fixed; right: 2.3em; bottom: 12.5em; z-index: 1000;">
+            <div class="row ms-3" style="position: fixed; right: 30em; bottom: 14em; z-index: 1000;">
                 <div class="col-1 px-0 text-end">
                     <button id="findMyLocation" class="btn-sm text-secondary rounded-circle bg-white border fs-5 shadow" 
                         onclick="findMyLocation()" style="height: 2em; width: 2em;">

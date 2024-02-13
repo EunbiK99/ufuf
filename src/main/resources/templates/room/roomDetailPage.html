@@ -16,7 +16,7 @@
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c1a3fb01af622d05a21a2037b7b02bc&libraries=services"></script>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-
+    
 
     <style>
         *{
@@ -495,8 +495,8 @@
                                 <span class="p-0 me-0 pe-0 m-0 text-warning" th:utext="${'&#9733;'.repeat(review.review_grade)}"></span>
                                 <span class="ps-0 ms-0 me-0 pe-0 pb-1 m-0 text-secondary" th:utext="${'&#9734;'.repeat(5 - review.review_grade)}"></span>
                             </div>
-                            <div class="col ms-0 ps-0 pt-1 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
-                            <div class="col-4 ms-0 ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
+                            <div class="col-3 me-3 ms-0 ps-0 text-secondary" th:text="${review.review_grade}" style="font-size: 0.9em;"></div>
+                            <div class="col ps-0 text-secondary" th:text="${#temporals.format(review.created_at, 'yyyy년 MM월')}" style="font-size: 0.9em;"></div>
                         </div>
                         <div class="row mx-1 px-2 mt-2 mb-3" th:text="${review.review_content}"></div>
                     </div>
