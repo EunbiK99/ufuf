@@ -744,6 +744,10 @@
                     }else{
                         const viewReviewBtn = document.getElementById("viewReviewBtn");
                         viewReviewBtn.classList.remove("d-none");
+
+                        viewReviewBtn.addEventListener('click', function() {
+                            openViewReviewModal();
+                        });
                     }
 
                     if(mission.isReviewExist == 0){
@@ -924,6 +928,21 @@
                 closeWriteReviewModal();
             });
     }
+
+    // 작성된 리뷰 열람 모달
+    function openViewReviewModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#viewReviewModal");
+        modal.show();
+    }
+
+    function closeViewReviewModal(){
+        const modal = bootstrap.Modal.getOrCreateInstance("#viewReviewModal");
+        modal.hide();
+    }
+
+
+
+
 
     // 미션 포기
     function giveup() {
@@ -1143,6 +1162,7 @@
         width: 95%;
         top: 7%;
         left: 2.5%;
+        overflow-wrap: break-word;
     }
 
     #findMyLocation{
@@ -1160,26 +1180,36 @@
         width: 95%;
         top: 10%;
         left: 2.5%;
+        overflow-wrap: break-word;
     }
 
     #missionAppListModal{
         width: 95%;
         top: 15%;
         left: 2.5%;
+        overflow-wrap: break-word;
     }
 
     #recheckAccPlayerModal{
         width: 95%;
         top: 30%;
         left: 2.5%;
+        overflow-wrap: break-word;
     }
 
     #writeReviewModal{
         width: 95%;
         top: 9%;
         left: 2.5%;
+        overflow-wrap: break-word;
     }
 
+    #viewReviewModal{
+        width: 95%;
+        top: 9%;
+        left: 2.5%;
+        overflow-wrap: break-word;
+    }
 
 </style>
 
@@ -1735,6 +1765,74 @@
         </div>
     </div>
 </div>
+
+<!-- 미션 리뷰 열람 모달 -->
+<div id="viewReviewModal" class="modal">
+    <div class="modal-dialog shadow">
+        <div class="modal-content rounded-2">
+            <div class="modal-body px-4 pt-2">
+                <div class="row mt-3">
+                    <div class="col">
+
+                        <div class="row border-bottom pb-2">
+                            <div class="col fw-semibold text-body" style="font-size: 1.03rem;">
+                                미션 리뷰 확인
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-5 align-self-center border-end">
+                                <div class="row">
+                                    <div class="col text-center" style="font-size: 0.8rem; color: #888888;">
+                                        미션 수행 결과
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="fw-semibold text-center" style="color: #9e9e9e;"> 
+                                        "<span class="result px-2" style="color:#FF8827;">미션성공</span>"
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col align-self-center">
+                                <div class="row">
+                                    <div class="col ms-3" style="color: #9e9e9e; font-size: 0.8rem;">
+                                        <span>만족도 점수</span>
+                                        <span class="ms-1">5점</span>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col text-center" style="color:#ffab67; font-size: 1.1rem;">
+                                        <div id="rating">
+                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="review col" style="font-size:0.9em; color: #666666">
+                                sdfsdlkflkjkjlkjlkjkjlaksjdflsijflskdjflskdjfoeijlskfdkslfksldjlfjoeijfkdkj
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 mb-2 d-grid">
+                <div class="gap-2 d-md-block">
+                    <button class="btn px-3 rounded-1 py-1" type="button" style="color: #FF8827; border: 0.1rem solid #FF8827;" onclick="closeViewReviewModal()">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

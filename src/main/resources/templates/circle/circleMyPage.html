@@ -110,7 +110,7 @@
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid">
+    <div class="container-fluid mt-2">
         <div class="row">
             <div class="col text-center">
                 <span id="ufufname" class="fw-semibold" style="color: #fb7928;"></span><span>님 환영합니다</span>
@@ -128,20 +128,20 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col boardCnt">
-                                        3
+                                    <div class="col boardCnt fw-semibold" style="color: rgba(0, 68, 255, 0.92);">
+                                        
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4" style="border-right: 0.01em solid rgb(211, 211, 211); border-left: 0.01em solid rgb(211, 211, 211);">
+                            <div class="col-4" style="border-right: 0.06em solid rgb(211, 211, 211); border-left: 0.06em solid rgb(211, 211, 211);">
                                 <div class="row">
                                     <div class="col">
                                         투표글 수
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col voteCnt">
-                                        2
+                                    <div class="col voteCnt fw-semibold" style="color: rgba(0, 68, 255, 0.92);">
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -152,8 +152,8 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col scheduleCnt">
-                                        1
+                                    <div class="col scheduleCnt fw-semibold" style="color: rgba(0, 68, 255, 0.92);">
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -161,7 +161,12 @@
                     </div>
                     
                 </div>
-                <div class="row mt-3 rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row mb-3 mt-2">
+                    <div class="col d-grid px-0">
+                        <img src="/public/image/circle/add1.jpg" class="img-fluid">
+                    </div>
+                </div>
+                <div class="row rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
                     location.href = './myCircleListPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;" >
@@ -185,7 +190,7 @@
                     location.href = './circleManagerOnlyPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-person-fill-add" style="color: #fb7928;"></i> &nbsp;동아리 관리
+                        <i class="bi bi-person-fill-add" style="color: #fb7928;"></i> &nbsp;동아리 가입관리
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
@@ -196,14 +201,6 @@
                 })()">
                     <div class="col" style="font-size: 1.3em;">
                         <i class="bi bi-heart-fill" style="color: #fb7928;"></i></i> &nbsp;내가 찜한 동아리
-                    </div>
-                    <div class="col-1 text-end">
-                        <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
-                    </div>
-                </div>
-                <div class="row mt-1 rounded-3 border mx-2 px-3 py-2 align-items-center">
-                    <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-bookmark-heart-fill" style="color: #fb7928;"></i></i> &nbsp;좋아하는 게시글
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
@@ -236,29 +233,66 @@
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row fixed-bottom mx-0 px-0 align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196);">
+        <div class="row fixed-bottom py-0 mx-0 px-0 align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
             <div class="button col py-0 text-center fs-1" onclick="scheduleIconClick()">
-                <i class="bi bi-calendar2-date text-secondary"></i>
+                <div class="row">
+                    <div class="col">
+                        <i class="bi bi-calendar2-date text-secondary"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="font-size: 0.3em;">
+                        일정
+                    </div>
+                </div>
             </div>
-            <div class="button col py-0 ps-0 text-center fs-1">
-                <i class="bi bi-box-seam-fill text-secondary" onclick="VoteIconClick()"></i>
+            <div class="button col py-0 ps-0 text-center fs-1" onclick="VoteIconClick()">
+                <div class="row">
+                    <div class="col">
+                        <i class="bi bi-box-seam-fill text-secondary"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="font-size: 0.3em;">
+                        투표
+                    </div>
+                </div>
             </div>
             <div class="col-2 px-0 justify-content-center" onclick="(() => {
                 location.href='../commons/mainPage'
             })()">
-                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 80%;">
+                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 2.5em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
             <div class="button col py-0 text-center fs-1 pe-0" onclick="(() => {
                 location.href = './myCircleListPage'
             })()">
-                <i class="bi bi-people-fill text-secondary"></i>
+            <div class="row">
+                <div class="col">
+                    <i class="bi bi-people-fill text-secondary"></i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="font-size: 0.3em;">
+                    내 동아리
+                </div>
+            </div>
             </div>
             <div class="button col py-0 text-center fs-1" onclick="(() => {
                 location.href = './circleMyPage'
             })()">
-                <i class="bi bi-person-circle text-secondary"></i>
+            <div class="row">
+                <div class="col">
+                    <i class="bi bi-person-circle text-secondary"></i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="font-size: 0.3em;">
+                    마이페이지
+                </div>
+            </div>
+                
             </div>
         </div>
     </div>
