@@ -24,7 +24,8 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">    
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <script src="/public/js/lockLikeMobile.js"></script>
 
     <style>
     *{
@@ -423,8 +424,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 
-<body class="pt-5 pb-5" style="background-color: #f5ededea;">
-    <div class="container-fluid">
+<body>
+    <div class="container-fluid pt-5 pb-5" style="background-color: #f5ededea;">
         
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
@@ -656,7 +657,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
             
-                                <div class="row mb-2">
+                                <div class="row mt-3 mb-3">
                                     <div class="col">
                                         <div class="row justify-content-center my-2">
                                             <div class="col-8 d-grid">
@@ -668,7 +669,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>                            
-                            <div class="p-4">
+                            <div class="p-2">
 
                             </div>
                         </div>
@@ -677,7 +678,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 </div>
 
             </div>
-        </div>
+        </div>        
 
         <!--footer-->
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">
@@ -744,7 +745,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     </div>
                 </div>                        
             </div>
-        </div>
+        </div>        
     </div>
 
     <div id="templete" class="d-none">
@@ -752,7 +753,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div id="customOverlayWrapper" class="container">
             <div class="row bg-white border border-2 border-black rounded-3">
                 <div class="col">
-                    <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between">
+                    <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between rounded-top">
                         <div class="col-auto">
                             <span class="fw-bold" style="font-size: 0.8em">주소</span>
                         </div>
@@ -773,6 +774,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 </div>
             </div>
         </div>
+        
 
     </div>
 
