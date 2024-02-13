@@ -205,6 +205,8 @@ public class RoomController {
 		
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
 		int userPk = sessionUserInfo.getUser_id();
+
+		System.out.println(userPk);
 		
 		roomGuestDto.setUser_id(userPk);
 		roomGuestDto.setGuest_count(guestCount);
@@ -223,6 +225,8 @@ public class RoomController {
 
 		UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
 		int user_id=sessionUserInfo.getUser_id();
+
+		System.out.println(user_id);
 		model.addAttribute("reservationInfo", roomService.getReservationInfo(user_id, room_info_id));
 
 
@@ -456,8 +460,6 @@ public class RoomController {
 		roomInfoDto.setCheckin_time(checkin1+" "+checkin2);
 		roomInfoDto.setCheckout_time(checkout1+" "+checkout2);
 
-		System.out.println(roomInfoDto.getRoom_info_id());
-		
 		roomService.updateRoom(roomInfoDto, room_option_category_id);
 		roomService.updateRoomDetailImage(roomInfoDto, roomImageDtoList);
         

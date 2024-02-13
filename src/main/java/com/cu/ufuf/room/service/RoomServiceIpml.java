@@ -324,14 +324,14 @@ public class RoomServiceIpml {
 		
 		Map<String, Object> roomMap=new HashMap<>();
 
-        
+        System.out.println(user_id);
 
         RoomGuestDto roomGuestDto=roomSqlMapper.roomGuestSelectByRoomAndUserId(user_id, room_info_id);
+
 
 		UserInfoDto userDto=roomSqlMapper.selectByUserId(roomGuestDto.getUser_id());
         
 		RoomInfoDto roomInfoDto=roomSqlMapper.roomSelectByRoomAndUserIdForGuest(roomGuestDto.getRoom_info_id());
-        System.out.println(roomInfoDto.getRoom_info_id());
 
         //몇박인지
         int reservationDuration=roomSqlMapper.reservationDuration(user_id, room_info_id);
