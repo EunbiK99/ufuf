@@ -15,6 +15,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     
 
     <style>
@@ -29,12 +30,180 @@
     .custom-border-color{
         border-color: #FF8827 !important;
     }
+
+    .shadowBox{        
+        border: 1px solid black;        
+        box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <script th:inline="javascript">
 
-let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/;
+let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
 let meetingProfileExist;
+
+function moveToSearchPageAndOpenGroupModal(groupId){
+    const confirmValue = confirm("해당 미팅 상세보기로 이동할까요?");
+    if(confirmValue){
+        if(!sessionUserInfo){
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");        
+        window.location.href="../login/loginPage";
+        }
+        else{
+            if(meetingProfileExist === "Y"){
+                localStorage.setItem('groupId', groupId);
+                window.location.href='./searchPage';
+            }
+            else{
+                let result = confirm("해당 서비스를 이용하시려면 미팅 프로필을 만드셔야 해요. 프로필 생성 페이지로 이동할까요?");
+                if(result){
+                    window.location.href="./registerProfile";
+                }
+                else{
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function dateFormatter(dateValue, dateOption){    
+    const array = new Date(dateValue[0], dateValue[1] - 1, dateValue[2]);
+    const convertDate = Intl.DateTimeFormat('ko-KR', dateOption).format(array);
+    return convertDate;
+}
+
+function getNewMeetingList(){
+    return fetch('./api/getNewMeetingList')
+    .then(response => response.json())
+    .then(response => {
+        return response.data;
+    });
+}
+
+async function newMeetingListCSR(){
+    const newMeetingList = await getNewMeetingList();
+    console.log('newMeetingList: ', newMeetingList);
+    
+    const newMeetingWrapperRow = $("#newMeetingWrapperRow");
+    newMeetingWrapperRow.html("");
+    
+    for(e of newMeetingList){
+        const newMeetingListCol = $("#templete #newMeetingListCol").clone();
+        newMeetingListCol.attr('onclick', `moveToSearchPageAndOpenGroupModal(${e.meetingGroupDto.groupId})`);
+
+        const newMeetingImage = newMeetingListCol.find("#newMeetingImage");
+        newMeetingImage.attr("src", `/uploadFiles/ufuf/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
+
+        const newMeetingLocation = newMeetingListCol.find("#newMeetingLocation");
+        const locationArray = e.meetingGroupDto.groupMeetingPlace.split(" ");
+        newMeetingLocation.text(`${locationArray[0]} ${locationArray[1]}`);
+
+        const newMeetingTitle = newMeetingListCol.find("#newMeetingTitle");
+        newMeetingTitle.text(e.meetingGroupDto.groupTitle);
+
+        const newMeetingCurruntHeadCount = newMeetingListCol.find("#newMeetingCurruntHeadCount");
+        newMeetingCurruntHeadCount.text(e.applyUserMapList.length);
+
+        const newMeetingMaxHeadCount = newMeetingListCol.find("#newMeetingMaxHeadCount");
+        newMeetingMaxHeadCount.text(e.meetingGroupDto.groupHeadCount);
+
+        const newMeetingDate = newMeetingListCol.find("#newMeetingDate");
+        const meetingDateOption = {
+            year : 'numeric',
+            month : 'long',
+            day : 'numeric',
+            hour : 'numeric',
+            minute : 'numeric',
+            hour12 : false,
+            //weekday : 'short'
+        };
+        const dateValue = dateFormatter(e.meetingGroupDto.groupMeetingDate, meetingDateOption);
+        newMeetingDate.text(dateValue);
+
+        const applyDateOption = {
+            year : 'numeric',
+            month : '2-digit',
+            day : '2-digit',            
+        };
+        const newMeetingApplyStart = newMeetingListCol.find("#newMeetingApplyStart");
+        const startDate = dateFormatter(e.meetingGroupDto.groupApplyStart, applyDateOption);
+        newMeetingApplyStart.text(startDate);
+
+        const newMeetingApplyEnd = newMeetingListCol.find("#newMeetingApplyEnd");
+        const endDate = dateFormatter(e.meetingGroupDto.groupApplyEnd, applyDateOption);
+        newMeetingApplyEnd.text(endDate);
+
+
+        newMeetingWrapperRow.append(newMeetingListCol);
+    }
+}
+
+async function hotMeetingListCSR(){
+    const hotMeetingList = await getHotMeetingList();
+    console.log('hotMeetingList: ', hotMeetingList);
+    
+    const hotMeetingWrapperRow = $("#hotMeetingWrapperRow");
+    hotMeetingWrapperRow.html("");
+    
+    for(e of hotMeetingList){
+        const hotMeetingListCol = $("#templete #hotMeetingListCol").clone();
+        hotMeetingListCol.attr('onclick', `moveToSearchPageAndOpenGroupModal(${e.meetingGroupDto.groupId})`);
+
+        const hotMeetingImage = hotMeetingListCol.find("#hotMeetingImage");
+        hotMeetingImage.attr("src", `/uploadFiles/ufuf/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
+
+        const hotMeetingLocation = hotMeetingListCol.find("#hotMeetingLocation");
+        const locationArray = e.meetingGroupDto.groupMeetingPlace.split(" ");
+        hotMeetingLocation.text(`${locationArray[0]} ${locationArray[1]}`);
+
+        const hotMeetingTitle = hotMeetingListCol.find("#hotMeetingTitle");
+        hotMeetingTitle.text(e.meetingGroupDto.groupTitle);
+
+        const hotMeetingCurruntHeadCount = hotMeetingListCol.find("#hotMeetingCurruntHeadCount");
+        hotMeetingCurruntHeadCount.text(e.applyUserMapList.length);
+
+        const hotMeetingMaxHeadCount = hotMeetingListCol.find("#hotMeetingMaxHeadCount");
+        hotMeetingMaxHeadCount.text(e.meetingGroupDto.groupHeadCount);
+
+        const hotMeetingDate = hotMeetingListCol.find("#hotMeetingDate");
+        const meetingDateOption = {
+            year : 'numeric',
+            month : 'long',
+            day : 'numeric',
+            hour : 'numeric',
+            minute : 'numeric',
+            hour12 : false,
+            //weekday : 'short'
+        };
+        const dateValue = dateFormatter(e.meetingGroupDto.groupMeetingDate, meetingDateOption);
+        hotMeetingDate.text(dateValue);
+
+        const applyDateOption = {
+            year : 'numeric',
+            month : '2-digit',
+            day : '2-digit',            
+        };
+        const hotMeetingApplyStart = hotMeetingListCol.find("#hotMeetingApplyStart");
+        const startDate = dateFormatter(e.meetingGroupDto.groupApplyStart, applyDateOption);
+        hotMeetingApplyStart.text(startDate);
+
+        const hotMeetingApplyEnd = hotMeetingListCol.find("#hotMeetingApplyEnd");
+        const endDate = dateFormatter(e.meetingGroupDto.groupApplyEnd, applyDateOption);
+        hotMeetingApplyEnd.text(endDate);
+
+
+        hotMeetingWrapperRow.append(hotMeetingListCol);
+    }
+}
+
+function getHotMeetingList(){
+    return fetch('./api/getHotMeetingList')
+    .then(response => response.json())
+    .then(response => {
+        return response.data;
+    });
+}
 
 function moveChatListPage(){
     if(!sessionUserInfo){
@@ -112,32 +281,37 @@ function moveCreateNewGroupPage(){
 }
 
 function checkMeetingProfile(){
-    const sessionUserId = sessionUserInfo.user_id;
-    
-    fetch("./api/checkMeetingProfile?user_id=" + sessionUserId)
-    .then(response => response.json())
-    .then(response => {
-        const resultValue = response.data;
-        console.log('resultValue: ', resultValue);
+    let userType = /*[[${session.userType}]]*/
 
-        if(resultValue === 0){
-            meetingProfileExist = "N";
-        }
-        else{
-            meetingProfileExist = "Y";
-        }
-    });
+    if(userType === "guest"){
+        meetingProfileExist = "N";
+    }
+    else{
+        const sessionUserId = sessionUserInfo.user_id;    
+        fetch("./api/checkMeetingProfile?user_id=" + sessionUserId)
+        .then(response => response.json())
+        .then(response => {
+            const resultValue = response.data;
+            console.log('resultValue: ', resultValue);
+            if(resultValue === 0){
+                meetingProfileExist = "N";
+            }
+            else{
+                meetingProfileExist = "Y";
+            }
+        });
+    }    
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
     
-    checkMeetingProfile()
+    checkMeetingProfile();
+    hotMeetingListCSR();
+    newMeetingListCSR();
 
 });
 
-
 </script>
-
 <body class="pt-5 pb-5">
     <div class="container-fluid" style="background-color:#f5ededea;">
         
@@ -167,100 +341,54 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
                 <div id="main01" class="row">
                     <div class="col">
-                        <div class="row">
-                            <div class="col px-0">
-                                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <div class="row my-1">
-                                            <div class="col text-center">                                                
-                                            </div>
-                                        </div>  
-                                        <div class="carousel-item active">
-                                            <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel01.jpg); height: 17em;">
-                                                <div class="col ms-2">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-1 fw-bold text-white">서울 강남</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-4 fw-bold text-white">광란의 파뤼파뤼</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-item">
-                                            <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel02.jpg); height: 17em;">
-                                                <div class="col ms-2">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-1 fw-bold text-white">서울 서초</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-4 fw-bold text-white">불금 토하고마시고</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>                                            
-                                        </div>
-                                        <div class="carousel-item">
-                                            <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel03.jpg); height: 17em;">
-                                                <div class="col ms-2">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-1 fw-bold text-white">용인 수지</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <span class="fs-4 fw-bold text-white">조용한 카페에서 폰겜ㄱㄱ</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> 
-                                        </div>
+                        <div class="row mt-3 mb-3">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col align-self-center">
+                                        <img src="/public/image/commons/main_image_meeting.jpg" class="img-fluid">
                                     </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-                                        <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-                                        <!-- <span class="carousel-control-next-icon" aria-hidden="true"></span> -->
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
                                 </div>
                             </div>
-                        </div>                
+                        </div>                               
                     </div>
-                </div>
+                </div>               
 
-                <div id="main02" class="row" style="background-image: url(/public/image/meeting/heartsignal01.jpg); background-size: cover;">
-                    <div class="col" style="height: 30em;">                       
-                        <div class="row mt-2 justify-content-end">
-                            <div class="col-auto">
-                                <span class="fs-1 fw-bold" style="color: #6E6E6D;">하트시그널 감성</span>
+                <div class="row bg-white">
+                    <div class="col">
+                        <div class="row mt-3">
+                            <div class="col">
+                                <span class="fs-3">오늘의 추천 미팅</span>
                             </div>
                         </div>
-                        <div class="row mt-2 justify-content-end">
-                            <div class="col-auto">
-                                <span class="fs-1 fw-bold" style="color: #6E6E6D;">그건 대체 뭘까</span>
-                            </div>
-                        </div> 
-                        <div class="row mt-2 justify-content-end">
-                            <div class="col-auto">
-                                <span class="fs-1 fw-bold" style="color: #6E6E6D;">모르겠다 증말</span>
-                            </div>
-                        </div> 
-                    </div>
-                </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span>HOT</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col overflow-x-scroll">
+                                        <div id="hotMeetingWrapperRow" class="row d-flex" style="width: 200%;">
 
-                <div id="main03" class="row">
-                    <div class="col">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col">
+                                        <span>NEW</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col overflow-x-scroll">
+                                        <div id="newMeetingWrapperRow" class="row" style="width:200%">
 
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -298,12 +426,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>                  
                     </div>             
-                </div>
-
-                <div id="main05" class="row mt-4">
-                    <div class="col">
-                    </div>
-                </div>
+                </div>                
                 
                 <!--footer-->
                 <div class="row fixed-bottom bg-white" style="height: 3.4em;">
@@ -374,7 +497,215 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
     </div>
+
+<!--/* 템플릿 */-->
+<div id="templete" class="d-none">
     
+    <div id="hotMeetingListCol" class="col mx-1 mt-2 mb-4 align-self-center border border-0 rounded shadowBox">
+        <div class="row">
+            <div class="col my-3 mx-1">
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-12">
+                                <img id="hotMeetingImage" class="img-fluid border border-0 rounded" style="aspect-ratio: 1/1;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mx-1">
+                        <div class="row justify-content-between">
+                            <div class="col-auto align-self-center">
+                                <span id="hotMeetingLocation" class="text-secondary" style="font-size: 0.7em;"></span>
+                            </div>
+                            <div class="col-auto align-self-center" style="font-size: 0.7em;">
+                                <span id="hotMeetingCurruntHeadCount"></span>
+                                <span id="">/</span>
+                                <span id="hotMeetingMaxHeadCount" class="fw-bold"></span>
+                                <span><i class="fi fi-sr-user bi-ailgn-middle"></i></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-auto text-truncate">
+                                <span id="hotMeetingTitle" class="fw-bold" style="font-size: 0.9em;"></span>
+                            </div>            
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span id="hotMeetingDate" class="fw-bold" style="font-size: 0.9em;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mx-2 border border-1"></div>
+                        </div>                        
+                        <div class="row mt-2">                    
+                            <div class="col text-secondary" style="font-size: 0.6em;">                    
+                                <span>모집기한 : </span>
+                                <span id="hotMeetingApplyStart" class="" ></span>
+                                <span>~</span>
+                                <span id="hotMeetingApplyEnd" class="" ></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>            
+        </div>        
+    </div>
+
+    <div id="newMeetingListCol" class="col mx-1 mt-2 mb-4 align-self-center border border-0 rounded shadowBox">
+        <div class="row">
+            <div class="col my-3 mx-1">
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-12">
+                                <img id="newMeetingImage" class="img-fluid border border-0 rounded" style="aspect-ratio: 1/1;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mx-1">
+                        <div class="row justify-content-between">
+                            <div class="col-auto align-self-center">
+                                <span id="newMeetingLocation" class="text-secondary" style="font-size: 0.7em;"></span>
+                            </div>
+                            <div class="col-auto align-self-center" style="font-size: 0.7em;">
+                                <span id="newMeetingCurruntHeadCount"></span>
+                                <span id="">/</span>
+                                <span id="newMeetingMaxHeadCount" class="fw-bold"></span>
+                                <span><i class="fi fi-sr-user bi-ailgn-middle"></i></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-auto text-truncate">
+                                <span id="newMeetingTitle" class="fw-bold" style="font-size: 0.9em;"></span>
+                            </div>            
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <span id="newMeetingDate" class="fw-bold" style="font-size: 0.9em;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mx-2 border border-1"></div>
+                        </div>                        
+                        <div class="row mt-2">                    
+                            <div class="col text-secondary" style="font-size: 0.6em;">                    
+                                <span>모집기한 : </span>
+                                <span id="newMeetingApplyStart" class="" ></span>
+                                <span>~</span>
+                                <span id="newMeetingApplyEnd" class="" ></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>            
+        </div>        
+    </div>
+
+    <!--
+    <div id="main02" class="row" style="background-image: url(/public/image/meeting/heartsignal01.jpg); background-size: cover;">
+        <div class="col" style="height: 30em;">                       
+            <div class="row mt-2 justify-content-end">
+                <div class="col-auto">
+                    <span class="fs-1 fw-bold" style="color: #6E6E6D;">하트시그널 감성</span>
+                </div>
+            </div>
+            <div class="row mt-2 justify-content-end">
+                <div class="col-auto">
+                    <span class="fs-1 fw-bold" style="color: #6E6E6D;">그건 대체 뭘까</span>
+                </div>
+            </div> 
+            <div class="row mt-2 justify-content-end">
+                <div class="col-auto">
+                    <span class="fs-1 fw-bold" style="color: #6E6E6D;">모르겠다 증말</span>
+                </div>
+            </div> 
+        </div>
+    </div>
+    -->
+    
+    <!--
+    <div class="row">
+        <div class="col px-0">
+            <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="row my-1">
+                        <div class="col text-center">                                                
+                        </div>
+                    </div>  
+                    <div class="carousel-item active">
+                        <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel01.jpg); height: 17em;">
+                            <div class="col ms-2">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-1 fw-bold text-white">서울 강남</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-4 fw-bold text-white">광란의 파뤼파뤼</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel02.jpg); height: 17em;">
+                            <div class="col ms-2">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-1 fw-bold text-white">서울 서초</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-4 fw-bold text-white">불금 토하고마시고</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                                            
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row" style="background-size: cover; background-image: url(/public/image/meeting/carousel03.jpg); height: 17em;">
+                            <div class="col ms-2">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-1 fw-bold text-white">용인 수지</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="fs-4 fw-bold text-white">조용한 카페에서 폰겜ㄱㄱ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    -->     
+</div>
     
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

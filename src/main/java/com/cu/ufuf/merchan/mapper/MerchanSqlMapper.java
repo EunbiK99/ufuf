@@ -7,6 +7,8 @@ import com.cu.ufuf.dto.CardInfoDto;
 import com.cu.ufuf.dto.ItemInfoDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptReqDto;
 import com.cu.ufuf.dto.KakaoPaymentAcceptResDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
+import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
 import com.cu.ufuf.dto.KakaoPaymentReqDto;
 import com.cu.ufuf.dto.KakaoPaymentResDto;
 import com.cu.ufuf.dto.OrderInfoDto;
@@ -26,6 +28,8 @@ public interface MerchanSqlMapper {
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto);
     public void insertKakaoPayAccReqInfo(KakaoPaymentAcceptReqDto kakaoPaymentAcceptReqDto);
     public void insertKakaoPayAccResInfo(KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto);
+    public void insertKakaoPayCancelReqInfo(KakaoPaymentCancelReqDto kakaoPaymentCancelReqDto);
+    public void insertKakaoPayCancelResInfo(KakaoPaymentCancelResDto kakaoPaymentCancelResDto);
     
     public void insertKakaoPayReqInfoWithCid(KakaoPaymentReqDto kakaoPaymentReqDto);
 

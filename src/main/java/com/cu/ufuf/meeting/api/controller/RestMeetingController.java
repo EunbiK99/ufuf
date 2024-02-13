@@ -598,6 +598,60 @@ public class RestMeetingController {
         return meetingRestResponseDto;
     }
 
+    @PostMapping("updateGroupMeetingStatus")
+    public MeetingRestResponseDto updateGroupMeetingStatus(@RequestBody int[] groupIdList){
+        for(int x : groupIdList){
+            System.out.println("groupId : " + x);
+        }
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.updateMeetingStatus(groupIdList));        
+        return meetingRestResponseDto;
+    }
+
+    @PostMapping("updateApplyStatus")
+    public MeetingRestResponseDto updateApplyStatus(@RequestBody int[] groupIdList){        
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.updateApplyStatus(groupIdList));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("increaseReadCount")
+    public MeetingRestResponseDto increaseReadCount(int groupId){
+
+        meetingService.updateGroupReadCount(groupId);
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getHotMeetingList")
+    public MeetingRestResponseDto getHotMeetingList(){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getHotMeetingGroup());
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("getNewMeetingList")
+    public MeetingRestResponseDto getNewMeetingList(){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.getNewMeetingGroup());
+        return meetingRestResponseDto;
+    }
+
+
+
 
     
     // 템플릿 코드

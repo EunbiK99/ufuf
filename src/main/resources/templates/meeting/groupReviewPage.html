@@ -121,8 +121,7 @@ const isMemberReviewExist = async(targetMemberIdTo)=>{
     const groupMemberIdTo = targetMemberIdTo;
 
     const response = await fetch("./api/isMemberReviewExist?groupMemberIdFrom=" + groupMemberIdFrom + "&groupMemberIdTo=" + groupMemberIdTo);
-    const responseData = await response.json();
-    console.log('responseData: ', responseData);
+    const responseData = await response.json();    
     return responseData.data;
 }
 
@@ -276,8 +275,7 @@ function checkExistBothLike(){
 
 function checkExistMemberReview(){
     
-    const memberReviewDtoList = sessionUserReviewData.meetingMemberReviewDtoList;
-    console.log('memberReviewDtoList: ', memberReviewDtoList);    
+    const memberReviewDtoList = sessionUserReviewData.meetingMemberReviewDtoList;   
 
     if(memberReviewDtoList.length > 0){
         
@@ -324,11 +322,8 @@ async function isGroupReviewExist(){
             groupMemberId = e.groupMemberDto.groupMemberId;
         }
     }
-    console.log('groupMemberId: ', groupMemberId);
-
     const response = await fetch("./api/isGroupReviewExist?groupMemberId=" + groupMemberId);
-    const resultData = await response.json();
-    console.log('resultData: ', resultData);
+    const resultData = await response.json();    
     return resultData.data;
 
     // fetch("./api/isReviewExist?groupMemberId=" + groupMemberId)
@@ -352,9 +347,10 @@ function makeGroupMemberReviewListRow(){
         const groupReviewWrapperCol = document.getElementById("groupReviewWrapperCol");
         groupReviewWrapperCol.innerHTML = "";
         
-        
+        let groupReviewCount = 0;
         for(e of responseData){
             if(e.groupMemberReviewDto !== null){
+                groupReviewCount++
                 const groupReviewListRow = document.querySelector("#templete #groupReviewListRow").cloneNode(true);
                 const groupMemberImage = groupReviewListRow.querySelector("#groupMemberImage");
                 groupMemberImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.groupMemberDto.profileImg}`);
@@ -370,7 +366,11 @@ function makeGroupMemberReviewListRow(){
 
                 groupReviewWrapperCol.appendChild(groupReviewListRow);            
             }            
-        }        
+        }
+        if(groupReviewCount === 0){
+            const notExistGroupReviewRow = document.querySelector("#templete #notExistGroupReviewRow").cloneNode(true);
+            groupReviewWrapperCol.appendChild(notExistGroupReviewRow);            
+        }
     });
 }
 
@@ -775,8 +775,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>                            
     </div>
 
-    <div id="notExistGroupReviewRow" class="row">
-        <div class="col">
+    <div id="notExistGroupReviewRow" class="row mt-5">
+        <div class="col mx-2 bg-white border rounded border-0 shadowBox">
             <div class="row">
                 <div class="col text-center">
                     <span>아직 작성된 리뷰가 없어요..ㅠㅠ</span>

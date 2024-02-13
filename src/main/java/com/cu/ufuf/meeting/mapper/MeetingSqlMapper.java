@@ -224,6 +224,18 @@ public interface MeetingSqlMapper {
     // * 채팅방PK, 프로필PK로 채팅참여유저Dto 셀렉트
     public MeetingChatRoomUserDto selectChatRoomUserDtoByProfileIdAndChatRoomId(int profileId, int chatRoomId);
 
+    // * 모집글PK기준 미팅완료여부 업데이트
+    public void updateMeetingStatus(int groupId);
+
+    // * 모집글PK기준 조회수 업데이트
+    public void updateGroupReadCount(int groupId);
+    
+    // * 모집글 조회수 기준 top5인 모집글PK 셀렉트
+    public int[] selectHotMeetingGroupIdList();
+
+    // * 모집글 등록일자 기준 오늘기준 최신글 top5인 모집글PK 셀렉트
+    public int[] selectNewMeetingGroupIdList();
+
 
 
 }

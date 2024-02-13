@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>미션등록</title>
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+<script>
+
+    var relativePath = window.location.origin;
+
+    function loadRegMissionHistory(){
+
+        fetch("./loadRegMissionHistory")
+            .then(response => response.json())
+            .then(response => {
+
+                const historyBox = document.getElementById("historyBox");
+                historyBox.innerHTML = "";
+
+                if(response.data.length == 0){
+
+                    historyBox.innerHTML = `<div class="row my-5">
+                                                    <div class="col my-5">
+                                                        <div class="row mt-4">
+                                                            <div class="col text-center">
+                                                                <i class="bi bi-envelope-x" style="font-size: 3.3rem; color: #dadada;"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center text-dark-emphasis">
+                                                                현재 조회 가능한 미션이 없습니다.
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center text-body-tertiary" style="font-size: 0.8rem;">
+                                                                미션을 신청하시고 수행하며 ufuf를 즐겨보세요!
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>`;
+                }else{
+
+                    for(info of response.data){
+
+                        const historyWrapper = document.querySelector("#historyTemplete .historyWrapper").cloneNode(true);
+                        
+                        const title = historyWrapper.querySelector(".title");
+                        const detail = historyWrapper.querySelector(".detail");
+                        const totalReward = historyWrapper.querySelector(".totalReward");
+                        const showMore = historyWrapper.querySelector(".showMore");
+                        const date = historyWrapper.querySelector(".date");
+                        const status = historyWrapper.querySelector(".status");
+    
+                        title.innerText = info.missionInfoDto.title;
+                        detail.innerText = info.missionInfoDto.detail;
+                        totalReward.innerText = info.totalReward.toLocaleString();
+                        status.innerText = info.missionInfoDto.status;
+
+                        var regDate = new Date(info.missionInfoDto.created_at);
+                        var regYear = regDate.getFullYear();
+                        var regMonth = regDate.getMonth() + 1;
+                        var regDay = regDate.getDate();
+                        var regHour = regDate.getHours();
+                        var regMinute = regDate.getMinutes();
+
+                        regDate = regYear + "." + regMonth + "." + regDay + " " + regHour + ":" + regMinute;
+                        date.innerText = regDate;
+
+                        if(info.missionInfoDto.status === "모집중"){
+                            (function (showMore, missionId) {
+                                showMore.onclick = function () {
+                                    window.location.href="./missionProcess?mission_id=" + missionId;
+                                };
+                            })(showMore, info.missionInfoDto.mission_id);
+                        }else{
+                            (function (showMore, charRoomId) {
+                                showMore.onclick = function () {
+                                    window.location.href="./missionProcess?chat_room_id=" + charRoomId;
+                                };
+                            })(showMore, info.missionChatRoomDto[0].chat_room_id);
+                        }
+
+                        historyBox.appendChild(historyWrapper);
+                    }
+
+
+                }
+            });
+    }
+
+    
+    window.addEventListener("DOMContentLoaded", () => {
+        loadRegMissionHistory();
+    });
+
+</script>
+
+<style>
+
+    *{font-family: -apple-system, 
+        BlinkMacSystemFont, 
+        "Apple SD Gothic Neo", 
+        "Pretendard Variable", 
+        Pretendard, Roboto, 
+        "Noto Sans KR", 
+        "Segoe UI",
+        "Malgun Gothic", 
+        "Apple Color Emoji", 
+        "Segoe UI Emoji", 
+        "Segoe UI Symbol", 
+        sans-serif;
+        letter-spacing: 0.03em;
+    }
+
+    .form-control:focus {
+      border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
+      box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
+
+    body{
+        overflow: scroll;
+    }
+
+    .titleOver {
+        max-width: 12.9rem;
+        font-size: 1rem;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col mx-2">
+                
+                <div class="fixed-top">
+                <div class="row mt-1 py-2 bg-white border-bottom border-secondary-subtle px-3">
+                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em" onclick="window.location.href='./myPage'">
+                        <i class="bi bi-arrow-left"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
+                        미션 수행 내역
+                    </div>
+                    <div class="col-1" style="font-size:1.1em">
+                    </div>
+                </div>
+                </div>
+
+                <div class="row mt-5 mb-5">
+                    <div class="col mt-1 pb-4" style="padding-left: 1.35rem; padding-right: 1.35rem;">
+
+                        <div class="row">
+                            <div id="historyBox" class="col">
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                
+
+            </div>
+        </div>
+        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+    </div>
+
+
+
+<div id="historyTemplete" class="d-none">
+    <div class="historyWrapper row border mt-3 py-2 shadow-sm" style="border: 0.1rem solid;">
+        <div class="col">
+            <div class="row justify-content-between">
+                <div class="title col fw-bold text-start pe-0 titleOver" style="font-size: 1.1rem;">
+                </div>
+                <div class="showMore col-3 text-body-tertiary align-self-center text-end" style="font-size: 0.8rem;">
+                    상세보기 >
+                </div>
+            </div>
+            <div class="row mt-1 pb-1">
+                <div class="detail col text-secondary" style="font-size: 0.85rem;">
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="status col text-start py-1" style="font-size: 0.75rem; color: #f3b481;">
+                </div>
+                <div class="col text-end py-1" style="font-size: 0.75rem; color: #999999;">
+                    <span class="border-end pe-1">
+                        등록날짜
+                    </span>
+                    <span class="date ms-2">
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1 pt-1"  style="border-top: 0.1rem dashed #a7a7a7">
+                <div class="col pt-1 fw-semibold" style="color: #838383; font-size: 0.9rem;">
+                    총 미션 보상
+                </div>
+                <div class="col pt-1 text-end align-self-center">
+                    <span class="totalReward fw-semibold" style="font-size: 1.05rem; color: #FF8827;"></span>
+                    <span style="color: #838383; font-size: 0.9rem;">원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

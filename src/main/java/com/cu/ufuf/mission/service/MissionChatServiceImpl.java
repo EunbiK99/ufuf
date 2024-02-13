@@ -192,7 +192,24 @@ public class MissionChatServiceImpl {
         return missionChatDto.getChat_id();
     }
 
-    
+    // 새로운 채팅
+    public List<Map<String, Object>> getNewChat(MissionChatDto missionChatDto){
+
+        List<Map<String, Object>> chatInfoList = new ArrayList<>();
+
+        List<MissionChatDto> missionChatList = missionChatSqlMapper.selectNewChat(missionChatDto);
+        for(MissionChatDto newMissionChatDto : missionChatList){
+
+            Map<String, Object> chatInfo = new HashMap<>();
+
+            chatInfo.put("missionChatDto", newMissionChatDto);
+            chatInfo.put("chatSenderDto", missionMapSqlMapper.selectUserById(missionChatDto.getUser_id()));
+
+            chatInfoList.add(chatInfo);
+        }
+
+        return chatInfoList;
+    }
 
 
     

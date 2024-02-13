@@ -297,6 +297,7 @@ public class MeetingServiceImpl {
     
     }
 
+    // * 카카오페이 준비요청
     public MeetingKakaoReadyResponseDto kakaoPayReady(KakaoPaymentReqDto kakaoPaymentReqDto){
 
         meetingSqlMapper.insertKakaoPaymentReq(kakaoPaymentReqDto);
@@ -313,15 +314,15 @@ public class MeetingServiceImpl {
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
 		
-        // // 집 IP
-        // parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        // 집 IP
+        parameters.add("approval_url", "https://220.120.230.170:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://220.120.230.170:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://220.120.230.170:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // 학원 IP
-        parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.36:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.36:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.36:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
         
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         
@@ -739,6 +740,57 @@ public class MeetingServiceImpl {
     // * 채팅방PK기준 채팅방Dto 셀렉트
     public MeetingChatRoomDto getChatRoomDto(int chatRoomId){
         return meetingSqlMapper.selectChatRoomDtoByChatRoomId(chatRoomId);
+    }
+
+    // * 미팅그룹 미팅완료현황 업데이트
+    public List<MeetingGroupDto> updateMeetingStatus(int[] groupIdList){
+        for(int groupId : groupIdList){
+            meetingSqlMapper.updateMeetingStatus(groupId);
+        }
+        return meetingSqlMapper.selectGroupListAll();
+    }
+
+    // * 미팅그룹 모집현황 업데이트
+    public List<MeetingGroupDto> updateApplyStatus(int[] groupIdList){
+        for(int groupId : groupIdList){
+            meetingSqlMapper.updateGroupApplyStatusByGroupId(groupId);        
+        }
+        return meetingSqlMapper.selectGroupListAll();
+    }
+
+    // * 그룹PK기준 조회수 업데이트
+    public void updateGroupReadCount(int groupId){
+        meetingSqlMapper.updateGroupReadCount(groupId);
+    }
+
+    // * 모집글 조회수 기준 Top5인 모집글 리스트
+    public List<Map<String, Object>> getHotMeetingGroup(){
+        
+        List<Map<String, Object>> hotMeetingGroupList = new ArrayList<>();
+        
+        int[] hotMeetingGroupIdList = meetingSqlMapper.selectHotMeetingGroupIdList();
+        
+        for(int hotMeetingGroupId : hotMeetingGroupIdList){
+            Map<String, Object> map = getGroupDetailInfo(hotMeetingGroupId);
+            hotMeetingGroupList.add(map);
+        }
+
+        return hotMeetingGroupList;
+    }
+
+    // * 모집글 등록일자 기준 최신글인 모집글 리스트
+    public List<Map<String, Object>> getNewMeetingGroup(){
+        
+        List<Map<String, Object>> newMeetingGroupList = new ArrayList<>();
+        
+        int[] newMeetingGroupIdList = meetingSqlMapper.selectNewMeetingGroupIdList();
+        
+        for(int newMeetingGroupId : newMeetingGroupIdList){
+            Map<String, Object> map = getGroupDetailInfo(newMeetingGroupId);
+            newMeetingGroupList.add(map);
+        }
+
+        return newMeetingGroupList;
     }
 
 }

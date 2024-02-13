@@ -117,7 +117,7 @@ function setApplyDataList(){
 
                 const memberedGroupMeetingdate = memberedGroupListRow.querySelector("#memberedGroupMeetingdate");
                 const dateValue = e.applyGroupDto.groupMeetingDate;
-                const array = new Date(...dateValue);                
+                const array = new Date(dateValue[0], dateValue[1] - 1, dateValue[2]);                
                 const dateOption = {
                     year : 'numeric',
                     month : 'long',
@@ -133,16 +133,21 @@ function setApplyDataList(){
                 memberedGroupMeetingPlace.innerText = e.applyGroupDto.groupMeetingPlace;
                 
                 const memberedGroupMeetingStatus = memberedGroupListRow.querySelector("#memberedGroupMeetingStatus");
-                const statusValue = e.applyGroupDto.groupApplyStatus;
-                if(statusValue === "Y"){
-                    memberedGroupMeetingStatus.classList.add("text-bg-danger");
-                    memberedGroupMeetingStatus.innerText = "모집종료";
+                if(e.applyGroupDto.groupMeetingStatus === "Y"){
+                    memberedGroupMeetingStatus.classList.add("text-bg-warning");
+                    memberedGroupMeetingStatus.innerText = "미팅종료";
                 }
                 else{
-                    memberedGroupMeetingStatus.classList.add("text-bg-success");
-                    memberedGroupMeetingStatus.innerText = "모집중";
+                    const statusValue = e.applyGroupDto.groupApplyStatus;
+                    if(statusValue === "Y"){
+                        memberedGroupMeetingStatus.classList.add("text-bg-danger");
+                        memberedGroupMeetingStatus.innerText = "모집종료";
+                    }
+                    else{
+                        memberedGroupMeetingStatus.classList.add("text-bg-success");
+                        memberedGroupMeetingStatus.innerText = "모집중";
+                    }
                 }
-
                 memberedGroupListWrapperCol.appendChild(memberedGroupListRow);                                
             }
             else{
@@ -167,16 +172,21 @@ function setApplyDataList(){
                 notMemberedGroupMeetingPlace.innerText = e.applyGroupDto.groupMeetingPlace;
 
                 const notMemberedGroupMeetingStatus = notMemberedGroupListRow.querySelector("#notMemberedGroupMeetingStatus");
-                const statusValue = e.applyGroupDto.groupApplyStatus;
-                if(statusValue === "Y"){
-                    notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-danger");
-                    notMemberedGroupMeetingStatus.innerText = "모집종료";
+                if(e.applyGroupDto.groupMeetingStatus === "Y"){
+                    notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-warning");
+                    notMemberedGroupMeetingStatus.innerText = "미팅종료";
                 }
                 else{
-                    notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-success");                    
-                    notMemberedGroupMeetingStatus.innerText = "모집중";
+                    const applyStatusValue = e.applyGroupDto.groupApplyStatus;
+                    if(applyStatusValue === "Y"){
+                        notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-danger");
+                        notMemberedGroupMeetingStatus.innerText = "모집종료";
+                    }
+                    else{
+                        notMemberedGroupMeetingStatus.setAttribute("class", "fw-bold badge text-bg-success");                    
+                        notMemberedGroupMeetingStatus.innerText = "모집중";
+                    }
                 }
-                
                 notMemberedGroupListWrapperCol.appendChild(notMemberedGroupListRow);
             }
         }

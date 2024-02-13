@@ -348,10 +348,13 @@
         openMissionAppListModal();
     }
 
-    function accMissionApplyer(chat_room_id){
+    // 미션 신청자 수락
+    function accMissionApplyer(chatRoomId){
+
         const data = {
-            chat_room_id: chat_room_id.value
+            chat_room_id: chatRoomId
         }
+
         fetch("./accMissionApplyer", {
             method: "POST",
             headers: {
@@ -361,17 +364,16 @@
         })
             .then(response => response.json())
             .then(response => {
-
-                const missionAppListWrapper = document.querySelectorAll("#missionAppListTemplete .missionAppListWrapper");
-                const accBtn = missionAppListWrapper.querySelectorAll(".accBtn");
-
-                accBtn.setAttribute("disabled");
-
                 closeRecheckAccPlayerModal();
+                loadMyMissionInProgress(chatRoomId);
             });
     }
 
+    // 진행중인 미션 표시
     function loadMyMissionInProgress(chat_room_id){
+
+        const myRecruitingMission = document.getElementById("myRecruitingMission");
+        myRecruitingMission.classList.add("d-none");
 
         const missionInProgress = document.getElementById("missionInProgress");
         missionInProgress.classList.remove("d-none");
@@ -422,48 +424,57 @@
                 }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "진행중"){
                     nowProcess.innerText = ((mission.countCompleteCourse) + 1) + "코스 진행중";
                 }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status != "진행중"){
-                    nowProcess.innerText = "미션 진행 완료";
+                    nowProcess.innerText = "미션 진행 종료";
                 }
 
+                // 진행중인 미션만 카운트다운
                 var countdownStartDate = new Date(mission.missionChatRoomDto.accept_at);
                 var limitTimeInMilliseconds = mission.missionInfoDto.limit_time * 60 * 1000;
 
                 var remainingTime = 0;
- 
-                var timerId = setInterval(function () {
-                    // 현재 시간 구하기
-                    var currentDate = new Date();
-                    
-                    var overtime = currentDate - countdownStartDate;
-                    
-                    remainingTime = limitTimeInMilliseconds - overtime;
-                    
-                    if (remainingTime <= 0) {
 
-                        clearInterval(timerId);
+                if(mission.missionInfoDto.status === "진행중"){
 
-                        countdownElement.style.color = "#929292";
-                        countdownElement.style.fontSize = "0.9rem";
-
-                        if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
-                            countdownElement.innerHTML = '미션실패';
-                            
-                        }else if(mission.courseInfoList.length == mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
-                            countdownElement.innerHTML = '미션완료';
+                    var timerId = setInterval(function () {
+                        // 현재 시간 구하기
+                        var currentDate = new Date();
+                        
+                        var overtime = currentDate - countdownStartDate;
+                        
+                        remainingTime = limitTimeInMilliseconds - overtime;
+                        
+                        if (remainingTime <= 0) {
+    
+                            clearInterval(timerId);
+    
+                            countdownElement.style.color = "#929292";
+                            countdownElement.style.fontSize = "0.9rem";
+    
+                            if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                                countdownElement.innerHTML = '미션실패';
+                                
+                            }else if(mission.courseInfoList.length == mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                                countdownElement.innerHTML = '미션완료';
+                            }
+    
+                        } else {
+    
+                            var hours = Math.floor(remainingTime / (60 * 60 * 1000));
+                            var minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
+                            var seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+    
+                            limitHour.innerText = (hours < 10) ? "0" + hours : hours;
+                            limitMinute.innerText = (minutes < 10) ? "0" + minutes : minutes;
                         }
-
-                    } else {
-
-                        var hours = Math.floor(remainingTime / (60 * 60 * 1000));
-                        var minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
-                        var seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
-
-                        limitHour.innerText = (hours < 10) ? "0" + hours : hours;
-                        limitMinute.innerText = (minutes < 10) ? "0" + minutes : minutes;
-                    }
-                }, 1000);
-
-                if(sessionUser == mission.missionChatRoomDto.user_id && mission.missionInfoDto.status != "미션종료"){
+                    }, 1000);
+                }else{
+                    countdownElement.style.color = "#929292";
+                    countdownElement.style.fontSize = "0.9rem";
+                    countdownElement.innerHTML = mission.missionInfoDto.status;
+                }
+ 
+                // 타이틀에 미션포기 버튼 있? 없?
+                if(sessionUser == mission.missionChatRoomDto.user_id && mission.missionInfoDto.status === "진행중"){
                     title.innerHTML = `${mission.missionInfoDto.title}
                                         <span class="dropdown">
                                             <button class="btn border-0 bg-white dropdown-toggle px-1 py-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -476,6 +487,7 @@
                     title.innerText = mission.missionInfoDto.title;
                 }
 
+                // 프로그레스바 기본 5퍼센트부터 시작
                 if(mission.progressPercent == 0){
                     progressbar.style.width = `5%`
                 }else{
@@ -487,7 +499,7 @@
                     const course = mission.courseInfoList[i];
 
                     // 미션 현재 진행중&미션수행자&미션진행중
-                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"){
+                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"){
 
                         const inProgressWrapper = document.querySelector("#progressTemplete .inProgressWrapper").cloneNode(true);
                         const courseIndex = inProgressWrapper.querySelector(".courseIndex");
@@ -526,7 +538,7 @@
 
                             successBtn.onclick = function () {
                                 if(distance <= 100){
-                                    openMissionComplModal();
+                                    openMissionComplModal(course);
                                 }else{
                                     alert("코스 목표지점의 100m내 거리에서만 미션 완료인증이 가능합니다.");
                                 }
@@ -578,8 +590,8 @@
 
                     // 내가 등록자이고 미션 수행이 되지 않았을 경우 || 내가 미션 플레이어인데 아직 미션순서가 안왔고, 미션 진행중일 경우
                     }else if((mission.countCompleteCourse <= i && mission.missionChatRoomDto.user_id != sessionUser) 
-                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status != "미션종료"
-                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status === "미션종료")) ){
+                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"
+                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status != "진행중")) ){
                         const notInProgressWrapper = document.querySelector("#progressTemplete .notInProgressWrapper").cloneNode(true);
     
                         const courseIndex = notInProgressWrapper.querySelector(".courseIndex");
@@ -734,8 +746,11 @@
                         viewReviewBtn.classList.remove("d-none");
                     }
 
+                    if(mission.isReviewExist == 0){
+                        countdownElement.innerHTML = '결과대기중';
+                    }
+
                     clearInterval(timerId);
-                    countdownElement.innerHTML = '미션종료';
                     countdownElement.style.color = "#929292";
                     countdownElement.style.fontSize = "0.9rem";
                 }  
@@ -765,6 +780,8 @@
         const modal = bootstrap.Modal.getOrCreateInstance("#missionComplModal");
         const missionComplModal = document.getElementById("missionComplModal");
         const submitMissionComplBtn = document.getElementById("submitMissionComplBtn");
+
+        console.log(course);
 
         submitMissionComplBtn.onclick = function(){
             submitMissionComplete(course);
@@ -848,9 +865,9 @@
         const applyerAccBtn = document.getElementById("applyerAccBtn");
 
         applyerName.innerText = applyer.userInfoDto.name;
-        applyerAccBtn.onclick = (function (chat_room_id) {
+        applyerAccBtn.onclick = (function (chatRoomId) {
             return function () {
-                accMissionApplyer(chat_room_id);
+                accMissionApplyer(chatRoomId);
             };
         })(applyer.missionChatRoomDto.chat_room_id);
 
@@ -867,6 +884,13 @@
     function openWriteReviewModal(){
         const modal = bootstrap.Modal.getOrCreateInstance("#writeReviewModal");
         isSuccess();
+
+        const submitReviewBtn = document.getElementById("submitReviewBtn");
+
+        submitReviewBtn.onclick = function(){
+            submitReview();
+        }
+
         modal.show();
     }
 
@@ -875,10 +899,31 @@
         modal.hide();
     }
 
+    function submitReview(){
 
+        const isSuccess = document.querySelector('input[name="isSuccess"]:checked').value;
+        const rating = document.getElementById("rating").value;
+        const review =  document.getElementById("review").value;
 
+        const data = {
+            chat_room_id: chat_room_id,
+            is_success: isSuccess,
+            rated: rating,
+            review: review
+        }
 
-
+        fetch("./submitReview", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                closeWriteReviewModal();
+            });
+    }
 
     // 미션 포기
     function giveup() {
@@ -981,7 +1026,7 @@
 
         successBtn.addEventListener("click", () => {
 
-            success.setAttribute("checked");
+            success.setAttribute("checked", "checked");
 
             successBtn.classList.remove("border");
             successBtn.style.border = "0.1rem soild #FF8827";
@@ -996,12 +1041,20 @@
         });
 
         failBtn.addEventListener("click", () => {
-            fail.setAttribute("checked");
+
+            fail.setAttribute("checked", "checked");
+
+            failBtn.classList.remove("border");
+            failBtn.style.border = "0.1rem soild #FF8827";
+            failBtn.style.color = "#FF8827";
+
+            successBtn.style.border = ""; 
+            successBtn.style.color = ""; 
+
             if(success.hasAttribute("checked")){
                 success.removeAttribute("checked");
             }
         });
-
     }
 
 
@@ -1033,9 +1086,7 @@
 
     });
 
-</script>
-
-    
+</script>    
 
 <style>
 
@@ -1154,7 +1205,7 @@
                                     <div class="col align-self-center">
                                         <div class="row">
                                             <div class="title col align-self-center fw-bold pe-1" style="font-size: 1.05rem;">
-                                                나랑 같이 밥먹고 데이트할 은비
+                                                
                                             </div>
                                         </div>
                                         <div class="row">
@@ -1518,7 +1569,7 @@
                         </div>
                         <div class="row mt-1 px-1">
                             <div class="col border d-flex justify-content-center mx-2 py-3">
-                                <img class="img-fluid complete_img" style="height: 7rem;">
+                                <img class="img-fluid complete_img" style="height: 10rem;">
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -1637,9 +1688,9 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col d-flex justify-content-center"> 
-                                <input type="radio" class="btn-check" name="options-base" id="success" autocomplete="off">성공
+                                <input type="radio" class="btn-check" name="isSuccess" id="success" autocomplete="off" value="S">
                                 <label class="btn rounded-1 rounded-end-0 border" for="success" id="successBtn" style="width: 50%;">성공</label>
-                                <input type="radio" class="btn-check" name="options-base" id="fail" autocomplete="off">
+                                <input type="radio" class="btn-check" name="isSuccess" id="fail" autocomplete="off" value="F">
                                 <label class="btn rounded-1 rounded-start-0 border" for="fail" id="failBtn" style="width: 50%;">실패</label>
                             </div>
                         </div>
@@ -1668,7 +1719,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em; background-color: #f7f7f7"></textarea>
+                                <textarea class="form-control rounded-0" id="review" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em; background-color: #f7f7f7"></textarea>
                             </div>
                         </div>
                         
@@ -1678,7 +1729,7 @@
             <div class="modal-footer border-0 mb-2 d-grid">
                 <div class="gap-2 d-md-block">
                     <button class="btn px-3 rounded-1 py-1" type="button" style="color: #FF8827; border: 0.1rem solid #FF8827;" onclick="closeWriteReviewModal()">닫기</button>
-                    <button class="btn text-white px-3 rounded-1 py-1" type="button" style="background-color: #FF8827;">작성완료</button>
+                    <button class="btn text-white px-3 rounded-1 py-1" id="submitReviewBtn" type="button" style="background-color: #FF8827;">작성완료</button>
                 </div>
             </div>
         </div>
