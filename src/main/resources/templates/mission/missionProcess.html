@@ -1102,55 +1102,56 @@
             loadMyMissionInProgress(chat_room_id);
         }
 
+        createdMap();
+
     });
 
-    window.addEventListener("DOMContentLoaded", () =>{
+    function createdMap(){
 
         var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                                    mapOption = { 
-                                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                        level: 3 // 지도의 확대 레벨
-                                    };
+            mapOption = { 
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };
+    
+        map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    
+        map.setZoomable(true);
+        map.setMinLevel(1);
+        map.setMaxLevel(5);
+        
+        function updateNowLocation() {
+    
+            getNowLocation(function(locPosition) {
+                panTo(locPosition);
+            });
+    
+            setInterval(function() {
+    
+                getNowLocation(function(locPosition) {
+    
+                    const mapCenter = map.getCenter();
+    
+                    // 좌표 비교를 위한 오차 범위
+                    const tolerance = 0.00015;
+    
+                    const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
+                                            Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
+    
+                    if(isSameLocation){
+                        panTo(locPosition);
+                    }else{
+    
+                    }
+    
+                });
+            }, 10000);
+        }
+    
+        updateNowLocation();
+    }
 
-                                map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-                                map.setZoomable(true);
-                                map.setMinLevel(1);
-                                map.setMaxLevel(5);
-                                
-
-                                function updateNowLocation() {
-
-                                    getNowLocation(function(locPosition) {
-                                        panTo(locPosition);
-                                    });
-
-                                    setInterval(function() {
-
-                                        getNowLocation(function(locPosition) {
-
-                                            const mapCenter = map.getCenter();
-
-                                            // 좌표 비교를 위한 오차 범위
-                                            const tolerance = 0.00015;
-
-                                            const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
-                                                                    Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
-
-                                            if(isSameLocation){
-                                                panTo(locPosition);
-                                            }else{
-
-                                            }
-
-                                        });
-                                    }, 10000);
-
-                                }
-
-                                updateNowLocation();
-
-    });
 
 </script>    
 
@@ -1250,6 +1251,8 @@
     }
 
 
+
+
 </style>
 
 </head>
@@ -1257,152 +1260,19 @@
 <body>
 
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col px-0">
-
-                <div  id="info" class="row px-2 bg-white border-bottom">
-                    <div class="col">
-                        <div class="row mt-3">
-                            <div class="col">
-                                <i class="bi bi-x-lg fw-semibold text-body-tertiary" onclick="window.history.back();"></i>
-                            </div>
-                        </div>
-        
-                        <div id="scrollContainer" class="row pb-1 mt-1 z-3 overflow-x-hidden" style="height:auto; max-height: 30rem; margin-top: 0.2rem; overflow-y: hidden; ">
-                            <div class="col">
-                                <div id="myRecruitingMission" class="row d-none">
-                                    <div class="col align-self-center">
-                                        <div class="row">
-                                            <div class="title col align-self-center fw-bold pe-1" style="font-size: 1.05rem;">
-                                                
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-7 showAppList px-0 align-self-center border-bottom" style="font-size: 0.85rem; color:#757575; width: fit-content; margin-left: 0.72rem;">
-                                                <span class="pe-1 align-middle">미션신청자</span>
-                                                <span class="countApp align-middle"></span>
-                                                <i class="bi bi-chevron-double-right align-self-center" style="font-size: 0.6rem;"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-3 rounded-2 pe-1 align-self-center">
-                                        <div class="row">
-                                            <div class="col text-center" style="font-size: 0.77rem; color:#757575;">
-                                                제한 시간
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col d-flex justify-content-center fw-bold" style="font-size: 1.05rem;">
-                                                <span class="limitHour" style="color:#FF8827;"></span>
-                                                <span class="mx-1" style="color:#b3b3b3;">:</span>
-                                                <span class="limitMinute" style="color:#FF8827;"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-        
-                                <div id="missionInProgress" class="row d-none">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col align-self-center">
-                                                <div class="row">
-                                                    <div class="title col fw-bold pe-0" style="font-size: 1.05rem;">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="nowProcess col" style="font-size: 0.85rem; color:#757575;">
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-3 rounded-2 pe-1 align-self-center">
-                                                <div class="row">
-                                                    <div class="col text-center" style="font-size: 0.77rem; color:#757575;">
-                                                        제한 시간
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div id="countdownElement" class="col d-flex justify-content-center fw-bold" style="font-size: 1.03rem;">
-                                                        <span class="limitHour" style="color:#FF8827;"></span>
-                                                        <span class="mx-1" style="color:#b3b3b3;">:</span>
-                                                        <span class="limitMinute" style="color:#FF8827;"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col">
-                                                <div class="progress" role="progressbar" style="background-color: #eeeeee; height: 0.8rem;">
-                                                    <div id="progressbar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 20%; background-color: #FF8827;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-2 mb-2">
-                                    <div id="missionCourseListBox" class="col mt-1">
-                                        
-                                    </div>
-                                </div>
-
-                                <div id="reviewBtn" class="row d-none">
-                                    <div class="col d-grid mb-1">
-                                        <button id="writeReview" type="button" class="btn py-1 fw-semibold rounded-1" 
-                                            style="border: 0.1em solid #b1b1b1; color:#666666; background-color: white; font-size: 0.9rem;">
-                                            <span class="px-1">미션 리뷰 작성</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="viewReviewBtn" class="row d-none">
-                                    <div class="col d-grid mb-1">
-                                        <button id="viewReview" type="button" class="btn py-1 fw-semibold rounded-1" 
-                                            style="border: 0.1em solid #b1b1b1; color:#666666; background-color: white; font-size: 0.9rem;">
-                                            <span class="px-1">미션 리뷰 확인</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="detailBox" class="row mt-2 d-none">
-                                    <div class="col px-3 mt-1">
-                                        <div class="row">
-                                            <div class="col-3 fw-semibold text-body" style="font-size: 0.87em;">
-                                                미션상세
-                                            </div>
-                                            <div class="col border-bottom mb-2 me-2"></div>
-                                        </div>
-                                        <div class="row mt-1 mb-1">
-                                            <div class="col">
-                                                <span id="detail" class="text-secondary align-self-center" style="font-size: 0.8em;">
-        
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-        
-                                <div id="showMore" class="row" onclick="loadShowMore()">
-                                    <div class="btn col text-center py-0 border-0" style="height: 1.6rem;">
-                                        <i class="bi bi-chevron-compact-down fs-5" style="color: #b1b1b1;"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+    <div class="container-fluid" style="height: 100vh;">
+        <div class="row" style="height: 100vh;">
+            <div class="col px-0" style="height: 100vh;">
 
                 <!-- 지도 -->
-                <div class="row">
-                    <div class="col px-0">
+                <div class="row" style="height: 100vh;">
+                    <div class="col px-0" style="height: 100vh;">
                         <div id="map" style="height: 100vh;">
                             
                         </div>
                     </div>
                 </div>
+
                 <div class="row" style="height: 2.2rem; width: 2.2rem;">
                     <div class="col-2 px-0">
                         <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
@@ -1421,6 +1291,141 @@
     </div>
     
 
+
+
+
+    <div  id="info" class="row px-2 bg-white border-bottom">
+        <div class="col">
+            <div class="row mt-3">
+                <div class="col">
+                    <i class="bi bi-x-lg fw-semibold text-body-tertiary" onclick="window.history.back();"></i>
+                </div>
+            </div>
+
+            <div id="scrollContainer" class="row pb-1 mt-1 z-3 overflow-x-hidden" style="height:auto; max-height: 30rem; margin-top: 0.2rem; overflow-y: hidden; ">
+                <div class="col">
+                    <div id="myRecruitingMission" class="row d-none">
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="title col align-self-center fw-bold pe-1" style="font-size: 1.05rem;">
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-7 showAppList px-0 align-self-center border-bottom" style="font-size: 0.85rem; color:#757575; width: fit-content; margin-left: 0.72rem;">
+                                    <span class="pe-1 align-middle">미션신청자</span>
+                                    <span class="countApp align-middle"></span>
+                                    <i class="bi bi-chevron-double-right align-self-center" style="font-size: 0.6rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 rounded-2 pe-1 align-self-center">
+                            <div class="row">
+                                <div class="col text-center" style="font-size: 0.77rem; color:#757575;">
+                                    제한 시간
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col d-flex justify-content-center fw-bold" style="font-size: 1.05rem;">
+                                    <span class="limitHour" style="color:#FF8827;"></span>
+                                    <span class="mx-1" style="color:#b3b3b3;">:</span>
+                                    <span class="limitMinute" style="color:#FF8827;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="missionInProgress" class="row d-none">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col align-self-center">
+                                    <div class="row">
+                                        <div class="title col fw-bold pe-0" style="font-size: 1.05rem;">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="nowProcess col" style="font-size: 0.85rem; color:#757575;">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3 rounded-2 pe-1 align-self-center">
+                                    <div class="row">
+                                        <div class="col text-center" style="font-size: 0.77rem; color:#757575;">
+                                            제한 시간
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="countdownElement" class="col d-flex justify-content-center fw-bold" style="font-size: 1.03rem;">
+                                            <span class="limitHour" style="color:#FF8827;"></span>
+                                            <span class="mx-1" style="color:#b3b3b3;">:</span>
+                                            <span class="limitMinute" style="color:#FF8827;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="progress" role="progressbar" style="background-color: #eeeeee; height: 0.8rem;">
+                                        <div id="progressbar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 20%; background-color: #FF8827;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2 mb-2">
+                        <div id="missionCourseListBox" class="col mt-1">
+                            
+                        </div>
+                    </div>
+
+                    <div id="reviewBtn" class="row d-none">
+                        <div class="col d-grid mb-1">
+                            <button id="writeReview" type="button" class="btn py-1 fw-semibold rounded-1" 
+                                style="border: 0.1em solid #b1b1b1; color:#666666; background-color: white; font-size: 0.9rem;">
+                                <span class="px-1">미션 리뷰 작성</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="viewReviewBtn" class="row d-none">
+                        <div class="col d-grid mb-1">
+                            <button id="viewReview" type="button" class="btn py-1 fw-semibold rounded-1" 
+                                style="border: 0.1em solid #b1b1b1; color:#666666; background-color: white; font-size: 0.9rem;">
+                                <span class="px-1">미션 리뷰 확인</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="detailBox" class="row mt-2 d-none">
+                        <div class="col px-3 mt-1">
+                            <div class="row">
+                                <div class="col-3 fw-semibold text-body" style="font-size: 0.87em;">
+                                    미션상세
+                                </div>
+                                <div class="col border-bottom mb-2 me-2"></div>
+                            </div>
+                            <div class="row mt-1 mb-1">
+                                <div class="col">
+                                    <span id="detail" class="text-secondary align-self-center" style="font-size: 0.8em;">
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="showMore" class="row" onclick="loadShowMore()">
+                        <div class="btn col text-center py-0 border-0" style="height: 1.6rem;">
+                            <i class="bi bi-chevron-compact-down fs-5" style="color: #b1b1b1;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
