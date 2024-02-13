@@ -249,24 +249,17 @@
             });
         });
     </script>
-    <script src="/public/js/lockLikeMobile.js"></script>
 </head>
 
 <body>
-    <div class="container">
+    <script src="/public/js/lockLikeMobile.js"></script>
+    <div class="container" style="position: relative;">
         <!-- 탑 네비-->
-        <div class="row pb-2 bg-white" style="position: fixed; top: 0; width: 100%; height: 3em; z-index: 1000;">
+        <div class="row pb-2 bg-white" style="position: fixed; top: 0; height: 3em; z-index: 1000;">
             <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
                 <a href="../commons/mainPage" class="ms-3 me-2 pt-2"><img src="/public/image/room/ufuf_logo.png" class="img-fluid" style="width: 2.5em; height: auto;"></a>
                 <span class="ps-0 me-0 ms-0 pt-2 mt-4 text-secondary">유니비앤비</span>
             </div>
-            <!--무슨카테고리 메인페이지인지 알게-->
-            
-
-            <!--알람? 유저아이콘? 뭐넣을지는 고민해야함
-            <div class="col-1 ps-0 pt-2 mt-1 me-1">
-                <a href="#"><i class="bi bi-bell text-secondary"></i></a>
-            </div>-->
         </div>
 
         <!--여백-->
@@ -298,8 +291,10 @@
             </div>
         </div>
 
-        <div id="global-navi" class="mt-1 overflow-x-auto">
-            <div class="row" id="roomListBox">
+        <div id="global-navi" class="row mt-1 overflow-x-auto">
+            <div class="col">
+                <div class="row" id="roomListBox">
+                </div>
             </div>
         </div>
 
@@ -337,7 +332,7 @@
             <div class="col-8 fw-bold text-start ps-0">실시간 리뷰</div>
         </div>
 
-        <div class="row" id="reviewListBox">
+        <div class="row" id="reviewListBox" style="overflow-x: hidden;">
         </div>
 
         <!--리뷰-->
@@ -376,66 +371,71 @@
         <!--푸터에 안가려지라고 여백용-->
         <div class="row p-5 mb-4"></div>
 
-        <div style="position: fixed; right: 1.8em; bottom: 4.3em; z-index: 1000;">
-            
-            <div class="dropup-end dropup">
-                <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
-                    <i class="fs-4 bi bi-plus-lg text-white"></i>
-                </button>
-                <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
-                  <li><a class="dropdown-item text-secondary" href="./roomRegisterPage" style="font-size: 0.9em;"><i class="bi bi-house-add"></i> &nbsp; 게스트하우스 등록하기</a></li>
-                </ul>
+        <div class="row pb-2" style="position: fixed; bottom: 6em; right: 1em; height: 3em; z-index: 1000;">
+            <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
+                <div class="dropup-end dropup" style="position: absolute; right: 2em;">
+                    <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
+                        <i class="fs-4 bi bi-plus-lg text-white"></i>
+                    </button>
+                    <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
+                      <li><a class="dropdown-item text-secondary" href="./roomRegisterPage" style="font-size: 0.9em;"><i class="bi bi-house-add"></i> &nbsp; 게스트하우스 등록하기</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
+
         <!-- 추가된 부분 -->
         <div class="modal-backdrop fade show" style="z-index: 999;"></div>
 
-
-        <!--푸터(임시)-->
-        <div class="fixed-bottom border-top bg-white ms-0 ps-0" style="padding-top: 0.3rem; bottom: 0; height: 3.4rem;">
-            <div class="row mt-0 pt-0 ms-2">
-                <div class="col mt-0 ms-1">
-                    <div class="row text-center">
-                        <a href="./roomMapPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+        <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
+            <div class="col">
+                <div class="row mt-0 pt-0">
+                    <div class="col mt-0 ms-1">
+                        <div class="row text-center">
+                            <a href="./roomMapPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">지도</div>
+                        </div>
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                        <div class="col">지도</div>
+                    <div class="col">
+                        <div class="row text-center">
+                            <a href="./myRoomReservationListPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-clipboard-check text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">MY예약</div>
+                        </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="row text-center">
-                        <a href="./myRoomReservationListPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-clipboard-check text-secondary"></i></a> 
+    
+                    <!--홈-->
+                    <div class="col ms-2 me-0" style="padding-top: 0.02rem;">
+                        <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='../commons/mainPage'">
+                        
                     </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                        <div class="col">MY예약</div>
+    
+                    <div class="col">
+                        <div class="row text-center">
+                            <a href="./myInterestRoomListPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
+                            <div class="col">찜 목록</div>
+                        </div>
                     </div>
-                </div>
-
-                <!--홈-->
-                <div class="col ms-1" style="padding-top: 0.02rem;">
-                    <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='../commons/mainPage'">
-                   
-                </div>
-
-                <div class="col">
-                    <div class="row text-center">
-                        <a href="./myInterestRoomListPage" style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
-                    </div>
-                    <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                        <div class="col">찜 목록</div>
-                    </div>
-                </div>
-                <div class="col me-2 mb-2">
-                    <div class="row text-center pt-0">
-                        <!--임시로 방 글쓰기 페이지로 이어짐니다-->
-                        <a href="./myRoomListPage" style=" text-decoration: none; padding-top: 0rem;"><i class=" pt-0 bi bi-houses text-secondary" style="font-size: 1.1em;"></i></a> 
-                    </div>
-                    <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
-                        <div class="col">호스트</div>
+                    <div class="col me-2 mb-2">
+                        <div class="row text-center pt-0">
+                            <!--임시로 방 글쓰기 페이지로 이어짐니다-->
+                            <a href="./myRoomListPage" style=" text-decoration: none; padding-top: 0rem;"><i class=" pt-0 bi bi-houses text-secondary" style="font-size: 1.1em;"></i></a> 
+                        </div>
+                        <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
+                            <div class="col">호스트</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+        
 
         
     </div>
