@@ -615,5 +615,11 @@ values (
     )
 </insert>
 
+<!-- * 그룹멤버PK 기준 내가 베스트멤버로 선정된 횟수 카운트-->
+<select id="countVoteBestMemberByGroupMemberIdTo" resultType="int">
+    SELECT count(*) from meeting_voteBestMember mvbm
+    where groupMemberIdTo = #{groupMemberIdTo}
+</select>
+
 
 </mapper>
