@@ -76,7 +76,7 @@ public class RoomController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd/");
 
 		if(mainImageFile != null && !mainImageFile.isEmpty()) {
-			String imageRootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+			String imageRootPath = "C:/uploadFiles/ufuf/roomImage";
 			String imageTodayPath = sdf.format(new Date());
 			
 			File todayFolderForCreate = new File(imageRootPath + imageTodayPath);
@@ -111,7 +111,7 @@ public class RoomController {
 					continue;
 				}
 
-				String rootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+				String rootPath = "C:/uploadFiles/ufuf/roomImage";
 				
 				String todayPath = sdf.format(new Date());
 				
@@ -379,7 +379,7 @@ public class RoomController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd/");
 
 		if(mainImageFile != null && !mainImageFile.isEmpty()) {
-			String imageRootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+			String imageRootPath = "C:/uploadFiles/ufuf/roomImage";
 			String imageTodayPath = sdf.format(new Date());
 			
 			File todayFolderForCreate = new File(imageRootPath + imageTodayPath);
@@ -416,7 +416,7 @@ public class RoomController {
 					continue;
 				}
 
-				String rootPath = "C:/Workspace/GitWorkspace/ufuf/src/main/resources/static/public/image/room/";
+				String rootPath = "C:/uploadFiles/ufuf/roomImage";
 				
 				String todayPath = sdf.format(new Date());
 				

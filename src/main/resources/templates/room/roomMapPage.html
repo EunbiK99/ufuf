@@ -105,7 +105,7 @@
                         roomList.classList.remove("d-none");
                         const roomMainImage = roomList.querySelector(".roomMainImage");
                         roomMainImage.removeAttribute("src");
-                        roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        roomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage/" + e.roomInfoDto.main_image);
                         const roomTitle = roomList.querySelector(".roomTitle");
                         roomTitle.innerHTML = "";
                         roomTitle.innerText = e.roomInfoDto.title;
@@ -147,7 +147,7 @@
                                 var content = '<div class="row py-2 px-2">'+
                                     '<div class="col" style="width: 7em;">'+
                                         '<a href="./roomDetailPage?room_info_id='+e.roomInfoDto.room_info_id+'">'+
-                                            '<img src="/public/image/room/'+e.roomInfoDto.main_image+'" class="img-fluid" style="width: 7em; height: 5em; overflow: hidden; position: relative;">'+
+                                            '<img src="/uploadFiles/ufuf/roomImage/'+e.roomInfoDto.main_image+'" class="img-fluid" style="width: 7em; height: 5em; overflow: hidden; position: relative;">'+
                                         '</a>'+
                                     '</div>'+
                                     '<div class="col-7 ms-0 ps-0" style="max-height: 10em;">'+
