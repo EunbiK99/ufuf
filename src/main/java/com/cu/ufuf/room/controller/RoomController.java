@@ -111,7 +111,7 @@ public class RoomController {
 					continue;
 				}
 
-				String rootPath = "C:/uploadFiles/ufuf/roomImage";
+				String rootPath = "C:/uploadFiles/ufuf/roomImage/";
 				
 				String todayPath = sdf.format(new Date());
 				
