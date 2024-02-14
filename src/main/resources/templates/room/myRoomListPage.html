@@ -79,9 +79,9 @@
     
 </head>
 
-<body style="background-color: rgb(241, 241, 241);">
+<body style="position: relative;">
     <script src="/public/js/lockLikeMobile.js"></script>
-    <div class="container" th:if="${session.sessionUserInfo !=null}">
+    <div class="container" th:if="${session.sessionUserInfo !=null}" style=" background-color: rgb(241, 241, 241);">
          <!-- 페이지 네비-->
          <div class="row pt-4 pb-3 bg-white border-bottom border-secondery-subtle" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
            
@@ -99,11 +99,10 @@
 
         
 
-        <div class="row mt-3">
-            <div class="col-1"></div>
-            <div class="col-md-5" th:each="room : ${roomList}">
+        <div class="row mt-3" th:each="room : ${roomList}" style="width: 100%;">
+            <div class="col">
                 
-                <div class="row mt-3 border border-secondery-subtle rounded bg-white mx-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
+                <div class="row mt-3 border border-secondery-subtle rounded bg-white ms-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
                     <div class="col">
                         
                         <div class="row pt-2 pb-3 px-1">
@@ -118,7 +117,7 @@
                         <div class="row">
                             <div class="col-3 me-0 pe-0">
                                 <a th:href="@{./roomReservationListPage(room_info_id=${room.roomInfoDto.room_info_id})}">
-                                    <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid rounded" style="width: 4em; height: 4em; overflow: hidden; position: relative; object-fit: cover;">
+                                    <img th:src="@{/public/image/room/}+${room.roomInfoDto.main_image}" class="img-fluid rounded" style="width: 5em; height: 5em; overflow: hidden; position: relative; object-fit: cover;">
                                 </a>
 
                             </div>
@@ -146,7 +145,7 @@
                                 
                             </div>    
                         </div>
-                        <div class="row mb-2 mt-1 pb-1">
+                        <div class="row mb-2 mt-2 pb-1">
                             <div class="col  d-grid"> 
                                 <a class="py-1 btn text-white" th:href="@{./updateRoomInfoPage(room_info_id=${room.roomInfoDto.room_info_id})}" style="background-color: #FF8827; font-size: 0.9em;">수정하기 </a>
                             </div>
@@ -160,7 +159,6 @@
                     
                 </div>
             </div>
-            <div class="col-md-5 offset-md-1"></div>
         </div>
        <!--여백-->
        <div class="row p-3"></div>

@@ -236,6 +236,15 @@ public interface MeetingSqlMapper {
     // * 모집글 등록일자 기준 오늘기준 최신글 top5인 모집글PK 셀렉트
     public int[] selectNewMeetingGroupIdList();
 
+    // * 검색키워드로 모집글 검색 및 해당모집글 리스팅
+    public List<MeetingGroupDto> selectMeetingGroupListBySearchKeyword(String searchKeyword);
+
+    // * 그룹멤버PK 기준 베스트멤버 테이블 존재여부 확인
+    public int countVoteBestMemberByGroupMemberId(int groupMemberIdFrom);
+
+    // * 베스트멤버 테이블 인서트
+    public void insertVoteBestMember(MeetingVoteBestMemberDto meetingVoteBestMemberDto);
+
 
 
 }

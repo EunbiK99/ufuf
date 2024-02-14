@@ -1068,39 +1068,43 @@
                     <!--일정-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 가능 일정</div>
                     <div class="row px-0">
-                        <div class="col">
-                            <div class="calendar-wrap">
-                                <div class="calendar-middle-wrap">
-                                <div class="cal_nav">
-                                    <a href="javascript:;" class="nav-btn go-prev"></a>
-                                    <span class="year-month start-year-month"></span>
-                                    <a href="javascript:;" class="nav-btn go-next"></a>
-                                </div>
-                                <div class="cal_wrap">
-                                    <div class="days">
-                                    <div class="day">일</div>
-                                    <div class="day">월</div>
-                                    <div class="day">화</div>
-                                    <div class="day">수</div>
-                                    <div class="day">목</div>
-                                    <div class="day">금</div>
-                                    <div class="day">토</div>
-                                    </div>
-                                    <div class="dates start-calendar"></div>
-                                </div>
-                                </div>
-            
-            
-                                <div class="checkInOutInfo ms-2 text-center bg-white">
-                                    <div class="row text-center">
-                                        <div class="col text-center ms-2">
-                                            <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">시작일</div>
-                                            <div class="row mt-2 text-center" name="start_schedule" id="check_in_day"></div>
+                        <div class="col" style="position: relative;">
+                            <div class="row calendar-wrap">
+                                <div class="col" >
+                                    <div class="row calendar-middle-wrap" style="width: 100%;">
+                                        <div class="cal_nav">
+                                            <a href="javascript:;" class="nav-btn go-prev"></a>
+                                            <span class="year-month start-year-month"></span>
+                                            <a href="javascript:;" class="nav-btn go-next"></a>
                                         </div>
-                                        <div class="col-1 mt-4 pt-2 ms-0 me-2">~</div>
-                                        <div class="col text-center">
-                                            <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">종료일</div>
-                                            <div class="row mt-2 text-center" name="end_schedule" id="check_out_day" style="align-items: center;"></div>
+                                        <div class="cal_wrap">
+                                            <div class="days">
+                                            <div class="day">일</div>
+                                            <div class="day">월</div>
+                                            <div class="day">화</div>
+                                            <div class="day">수</div>
+                                            <div class="day">목</div>
+                                            <div class="day">금</div>
+                                            <div class="day">토</div>
+                                            </div>
+                                            <div class="dates start-calendar"></div>
+                                        </div>
+                                    </div>
+                
+                
+                                    <div class="row checkInOutInfo ms-2 mt-0 text-center bg-white" style="width: 100%;">
+                                        <div class="col ms-3">
+                                            <div class="row text-center">
+                                                <div class="col text-center ms-2">
+                                                    <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">시작일</div>
+                                                    <div class="row mt-2 text-center" name="start_schedule" id="check_in_day"></div>
+                                                </div>
+                                                <div class="col-1 mt-4 pt-2 ms-0 me-2">~</div>
+                                                <div class="col text-center">
+                                                    <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">종료일</div>
+                                                    <div class="row mt-2 text-center" name="end_schedule" id="check_out_day" style="align-items: center;"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1131,11 +1135,12 @@
                         </div>
                     </div>
                    
-
-                    <div class="fixed-bottom bg-white">
-                        <div class="row text-center pb-2 border-top border-secondery-subtle">
-                            <div class="col d-grid mx-2 mt-2 mb-4">
-                                <input onclick="roomFormSubmit()" type="button" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="등록하기">
+                    <div class="row pb-2 bg-white border-top border-secondery-subtle" style="width: 100%; position: fixed; bottom: 0;  z-index: 1000;">
+                        <div class="col ps-0 pt-2 mt-1 pe-0">
+                            <div class="row text-center">
+                                <div class="col d-grid mx-2 mt-2 mb-4">
+                                    <input onclick="roomFormSubmit()" type="button" class="btn text-white fw-bold py-2" style="background-color: #FF8827;" value="등록하기">
+                                </div>
                             </div>
                         </div>
                     </div>

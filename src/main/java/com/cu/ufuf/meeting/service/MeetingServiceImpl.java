@@ -744,16 +744,18 @@ public class MeetingServiceImpl {
 
     // * 미팅그룹 미팅완료현황 업데이트
     public List<MeetingGroupDto> updateMeetingStatus(int[] groupIdList){
+        
         for(int groupId : groupIdList){
-            meetingSqlMapper.updateMeetingStatus(groupId);
+            meetingSqlMapper.updateMeetingStatus(groupId);            
         }
         return meetingSqlMapper.selectGroupListAll();
     }
 
     // * 미팅그룹 모집현황 업데이트
     public List<MeetingGroupDto> updateApplyStatus(int[] groupIdList){
+        
         for(int groupId : groupIdList){
-            meetingSqlMapper.updateGroupApplyStatusByGroupId(groupId);        
+            meetingSqlMapper.updateGroupApplyStatusByGroupId(groupId);            
         }
         return meetingSqlMapper.selectGroupListAll();
     }
@@ -789,9 +791,24 @@ public class MeetingServiceImpl {
             Map<String, Object> map = getGroupDetailInfo(newMeetingGroupId);
             newMeetingGroupList.add(map);
         }
-
         return newMeetingGroupList;
     }
+
+    // * 검색키워드로 해당하는 미팅모집글 리스팅
+    public List<MeetingGroupDto> searchMeetingGroupBySearchKeyword(String searchKeyword){
+        return meetingSqlMapper.selectMeetingGroupListBySearchKeyword(searchKeyword);
+    }
+
+    //* 그룹멤버PK기준 베스트멤버 투표 테이블 존재여부 확인 */
+    public int checkIsExistVoteBestMemberByGroupMemberId(int groupMemberIdFrom){
+        return meetingSqlMapper.countVoteBestMemberByGroupMemberId(groupMemberIdFrom);
+    }
+
+    // * 베스트멤버 테이블 인서트
+    public void registerVoteBestMember(MeetingVoteBestMemberDto meetingVoteBestMemberDto){
+        meetingSqlMapper.insertVoteBestMember(meetingVoteBestMemberDto);
+    }
+    
 
 }
 

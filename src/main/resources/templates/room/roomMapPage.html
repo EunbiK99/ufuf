@@ -81,7 +81,8 @@
 
         // 지도 중심으로 이동시키기
         function panTo(moveLatLon) {
-            map.panTo(moveLatLon);
+            setTimeout(() => map.panTo(moveLatLon) , 100);
+            // map.panTo(moveLatLon);
         }
 
 
@@ -248,11 +249,42 @@
             });
         }
 
+      
+        window.addEventListener("DOMContentLoaded", () => {
+            roomList();
+            
 
+        })
 
 
         window.addEventListener("DOMContentLoaded", () => {
-            roomList();
+            
+            var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                            mapOption = { 
+                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                level: 3 // 지도의 확대 레벨
+                            };
+
+                        map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                        map.setMinLevel(1);
+                        map.setMaxLevel(14);
+
+                        function updateNowLocation() {
+
+                        getNowLocation(function(locPosition) {
+                            panTo(locPosition);
+                        });
+
+                        setInterval(function() {
+                            getNowLocation(function(locPosition) {
+                                //panTo(locPosition);
+                            });
+                        }, 15000);
+                        }
+
+                        updateNowLocation();
+                        
 
         })
     </script>
@@ -355,7 +387,7 @@
             
                 <!--뒤로가기-->
                 <div class="col-2 mt-1">
-                    <a class="btn shadow bg-white rounded-circle border-secondery" href="./roomMainPage"><i class="bi bi-arrow-left text-secondary" style="color: black; text-decoration: none;"></i></a> 
+                    <a class="btn shadow bg-white rounded-circle border-secondery mt-0 pt-2" href="./roomMainPage" style="width: 2.8em; height: 2.8em;"><i class="bi bi-arrow-left text-secondary" style="color: black; text-decoration: none;"></i></a> 
                 </div>
 
                 <div class="col-9 shadow py-1 border bg-white border-secondery rounded-5 text-center fw-bold text-secondary fs-5">
@@ -364,7 +396,7 @@
                             <input id="searchWord" name="searchWord" type="text" class="border-0 ps-2 pt-1" placeholder="검색어를 입력해주세요." style="font-size: 0.9em;">
                         </div>
                         <div class="col-1">
-                            <button onclick="roomList()" id="searchButton" class="btn text-secondary pb-2 ms-2" style="border: 0; text-decoration: none;">
+                            <button onclick="roomList()" id="searchButton" class="btn text-secondary pb-2 ps-4 ms-2" style="border: 0; text-decoration: none;">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>
@@ -373,9 +405,9 @@
                 
             </div>
 
-            <div class="row ms-3" style="position: fixed; right: 30em; bottom: 14em; z-index: 1000;">
-                <div class="col-1 px-0 text-end">
-                    <button id="findMyLocation" class="btn-sm text-secondary rounded-circle bg-white border fs-5 shadow" 
+            <div class="row ms-3" style="position: fixed; right: 3em; z-index: 1000; bottom: 16em;">
+                <div class="col-1 px-0 text-end" style="position: absolute; right: 3em;">
+                    <button id="findMyLocation" class="btn-sm text-secondary rounded-circle bg-white border fs-5 shadow pt-1 ps-2 pe-2" 
                         onclick="findMyLocation()" style="height: 2em; width: 2em;">
                         <i class="bi bi-crosshair align-text-bottom"></i>
                     </button>
@@ -389,75 +421,53 @@
         </div>
 
         <div class="row">
-            <div class="col px-0">
-                <div id="map" style="height:43rem; width: 100%;">
-                    <script>
+            <div class="col" id="map" style="height: 100vh;">
+            </div>
+        </div>
 
-                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                            mapOption = { 
-                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                level: 3 // 지도의 확대 레벨
-                            };
-
-                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                        map.setMinLevel(1);
-                        map.setMaxLevel(14);
-
-                        function updateNowLocation() {
-
-                        getNowLocation(function(locPosition) {
-                            panTo(locPosition);
-                        });
-
-                        setInterval(function() {
-                            getNowLocation(function(locPosition) {
-                                //panTo(locPosition);
-                            });
-                        }, 15000);
-                        }
-
-                        updateNowLocation();
-
-                    </script>
+        <div class="row pb-2" style="position: fixed; width: 100%; bottom: 10em; height: 3em; z-index: 1000;">
+            <div class="col shadow border bg-white mt-1 overflow-x-auto mx-3 rounded-3" style=" bottom: 2.5em ; z-index: 1000;">
+                <div class="row mt-1 pt-1">
+                    <div class="col fw-bold">
+                        지도로 숙소찾기
+                    </div>
+                    <div class="col text-end">
+                        <a class="text-secondary ms-3" href="./roomListPage" style="font-size: 0.8em; text-decoration: none;">숙소 목록으로 ></a>
+                    </div>
+                </div>
+                <div class="row p-3" id="roomListBox">
                 </div>
             </div>
         </div>
 
-        <div id="global-navi" class="fixed-bottom shadow border bg-white mt-1 overflow-x-auto mx-3 rounded-3" style="bottom: 2.5em ; z-index: 1000;">
-            <div class="row mt-1 pt-1 ">
-                <div class="col fw-bold">
-                    지도로 숙소찾기
-                </div>
-                <div class="col ms-2">
-                    <a class="text-secondary ms-3" href="./roomListPage" style="font-size: 0.8em; text-decoration: none;">숙소 목록으로 ></a>
-                </div>
-            </div>
-            <div class="row p-3" id="roomListBox">
-            </div>
-        </div>
+        
 
-        <!--숙소 나오는거-->
-        <div class="col ms-1 me-3 mx-1 d-none" id="roomList" style="width: 20em;">
-            <div class="row">
-                <div class="col" style="width: 7em;">
-                    <a>
-                        <img src="/public/image/room/bedroom_2.jpg" class="img-fluid roomMainImage rounded" style="width: 7em; height: 5em; overflow: hidden; position: relative;">
-                    </a>
-                </div>
-                <div class="col-7 ms-0 ps-0" style="max-height: 10em;">
-                    <div class="row ps-1" style="max-width: 13em;">
-                        <a class="fw-bold text-start py-0 ms-0 roomTitle text-truncate" style="color: black; text-decoration: none; max-width: 11em;"></a>
+        
+            
+
+        <div class="row">
+            <!--숙소 나오는거-->
+            <div class="col ms-1 me-3 mx-1 d-none" id="roomList" style="width: 20em;">
+                <div class="row">
+                    <div class="col" style="width: 7em;">
+                        <a>
+                            <img src="/public/image/room/bedroom_2.jpg" class="img-fluid roomMainImage rounded" style="width: 7em; height: 5em; overflow: hidden; position: relative;">
+                        </a>
                     </div>
+                    <div class="col-7 ms-0 ps-0" style="max-height: 10em;">
+                        <div class="row ps-1" style="max-width: 13em;">
+                            <a class="fw-bold text-start py-0 ms-0 roomTitle text-truncate" style="color: black; text-decoration: none; max-width: 11em;"></a>
+                        </div>
 
-                    <div class="row ms-1" style="max-width: 10em;">
-                        <div class="col text-secondary ps-0 text-truncate" style="max-width: 10em;"><a class="text-secondary text-start py-0 roomLocation" style="font-size: 0.7em; color: black; text-decoration: none; max-width: 7em;"></a></div>
-                        
-                    </div>
+                        <div class="row ms-1" style="max-width: 10em;">
+                            <div class="col text-secondary ps-0 text-truncate" style="max-width: 10em;"><a class="text-secondary text-start py-0 roomLocation" style="font-size: 0.7em; color: black; text-decoration: none; max-width: 7em;"></a></div>
+                            
+                        </div>
 
-                    <div class="row mb-2 mt-1 ps-1" style="max-width: 10em;">
-                        <div class="col-2"> <a class="text-start ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a></div>
-                        <div class="col ms-4 text-start text-secondary">&nbsp;/1박</div>
+                        <div class="row mb-2 mt-1 ps-1" style="max-width: 10em;">
+                            <div class="col-2"> <a class="text-start ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a></div>
+                            <div class="col ms-4 text-start text-secondary">&nbsp;/1박</div>
+                        </div>
                     </div>
                 </div>
             </div>

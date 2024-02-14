@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
-
+    <script src="/public/js/lockLikeMobile.js"></script>
 
 <script>
 
@@ -192,7 +192,7 @@
         showMissionList.classList.remove("d-none");     
 
         const mapContainer = document.getElementById("map");
-        mapContainer.style.height = "20.85rem";
+        mapContainer.style.height = "50vh";
 
         const findMyLocation = document.getElementById("findMyLocation");
         findMyLocation.classList.add("button-slide-up");
@@ -561,21 +561,50 @@
 
 
 
-
-    function test() {
-        const mapContainer = document.getElementById("map");
-        mapContainer.style.height = "22em";
-
-        // 기존의 getNowLocation 함수에서 콜백 함수를 활용하여 중심 이동
-        getNowLocation(function(locPosition) {
-            // 크기 조정 후 중심 이동
-            map.relayout(); // 이 부분은 기본적으로 있어야 하며, 크기 조정 후에 맵을 다시 그리도록 합니다.
-            map.panTo(locPosition);
-        });
-    }
-
     window.addEventListener("DOMContentLoaded", () => {
+        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+            mapOption = { 
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };
+
+        map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+        map.setZoomable(true);
+        map.setMinLevel(1);
+        map.setMaxLevel(5);
+
+        function updateNowLocation() {
+
+            getNowLocation(function(locPosition) {
+                panTo(locPosition);
+            });
+
+            setInterval(function() {
+
+                getNowLocation(function(locPosition) {
+
+                    const mapCenter = map.getCenter();
+
+                    // 좌표 비교를 위한 오차 범위
+                    const tolerance = 0.00050;
+
+                    const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
+                                            Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
+
+                    if(isSameLocation){
+                        panTo(locPosition);
+                    }else{
+
+                    }
+
+                });
+            }, 5000);
+
+        }
         
+        updateNowLocation();
+
     });
 
 </script>
@@ -597,33 +626,28 @@
         letter-spacing: 0.03em;
     }
 
-    body { 
-        position: fixed;
-        width: 100%;
-    }
-
     #startBtn{
         z-index: 2;
-        position: absolute;
-        bottom: 2.6em;
+        position: fixed;
+        /* bottom: 21.5%; */
+        bottom: 0;
         margin: 0 auto;
         left: 0;
         right: 0;
+        padding-bottom: 4.5em;
     }
 
-    #findMyLocation{
+    .locbtn{
         z-index: 2;
-        position: absolute;
-        bottom: 5.2em;
-        /* margin: auto;
-        left: 0; */
-        right: 0.8em;
-        box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);
+        position: fixed;
+        bottom: 9em;
+        /* margin: auto; */
+        left: 21.5em;
         transition: top 0.8s ease;
     }
 
     .button-slide-up {
-        top: 14.4em; /* 이동할 거리 설정 */
+        top: 20em; /* 이동할 거리 설정 */
     }
 
     #missionApplyModal {
@@ -650,18 +674,23 @@
         white-space: nowrap;
     }
 
+    /* .container-fluid{
+        margin-bottom: 5em;
+    } */
 
+    body { overflow: hidden; touch-action: none; }
+    body .container-fluid { touch-action: none; }
 </style>
 
 </head>
 
 <body>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div id="container" class="container-fluid" style="overflow: hidden;">
+        <div class="row" style="overflow: hidden;">
             <div class="col">
 
-                <div class="row">
+                <div class="row" style="overflow: hidden; height: 100vh;">
                     <div class="col">
 
                         <!-- 현재 위치 출력 -->
@@ -679,59 +708,14 @@
                         <!-- 지도 -->
                         <div class="row">
                             <div class="col px-0">
-                                <div id="map" style="height:38.25em; width: 100%;">
-                                    <script>
-
-                                        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-                                            mapOption = { 
-                                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                                level: 3 // 지도의 확대 레벨
-                                            };
-
-                                        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                                        map.setZoomable(true);
-                                        map.setMinLevel(1);
-                                        map.setMaxLevel(5);
-
-                                        function updateNowLocation() {
-
-                                            getNowLocation(function(locPosition) {
-                                                panTo(locPosition);
-                                            });
-
-                                            setInterval(function() {
-
-                                                getNowLocation(function(locPosition) {
-
-                                                    const mapCenter = map.getCenter();
-
-                                                    // 좌표 비교를 위한 오차 범위
-                                                    const tolerance = 0.00030;
-
-                                                    const isSameLocation = Math.abs(mapCenter.getLat() - locPosition.getLat()) < tolerance && 
-                                                                            Math.abs(mapCenter.getLng() - locPosition.getLng()) < tolerance;
-
-                                                    if(isSameLocation){
-                                                        panTo(locPosition);
-                                                    }else{
-
-                                                    }
-
-                                                });
-                                            }, 5000);
-    
-                                        }
-
-                                        updateNowLocation();
-
-                                    </script>
+                                <div id="map" style="height: 95vh;">
+  
                                 </div>
                             </div>
                         </div>
 
                         <!-- 미션 리스트 -->
-                        <div id="showMissionList" class="shut row border-top d-none" style="height:17.3rem; box-shadow: inset 0 -2rem 1.5rem -2.5rem #cacaca;">
+                        <div id="showMissionList" class="shut row border-top d-none">
                             <div class="col">
                                 <div class="row py-2 border-bottom">
                                     <div class="col text-end align-self-center text-secondary" style="font-size: 0.95rem;">
@@ -741,13 +725,13 @@
                                         <button class="btn text-secondary py-1 px-2 rounded-1 align-self-center" style="font-size: 0.8rem;">500m</button>
                                     </div>
                                 </div>
-                                <div class="overflow-y-scroll overflow-x-hidden" style="height:13.8em;">
-                                    <div class="row px-2">
-                                        <div id="missionListBox" class="col">
-                                            
-                                        </div>
+
+                                <div class="row px-2 overflow-y-scroll overflow-x-hidden" style="height: 30vh;">
+                                    <div id="missionListBox" class="col">
+                                        
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -830,45 +814,47 @@
                                 
                             </div>
                         </div>
-
-
-
-
+                    </div>
+                </div>
+                
+             
+                
+                
+                
+                <div class="row">
+                    <div class="col">
+                        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
                     </div>
                 </div>
             </div>
         </div>
-
-        
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
     </div>
-
-    <div class="row" >
-        <div class="col-2 px-0">
-            <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
-                onclick="findMyLocation()" style="height: 2.2rem; width: 2.2rem; border-radius: 50%; background-color: white;">
+    
+    <div class="locbtn row fixed-bottom px-0 justify-content-end" style="height: 2.2rem; width: 2.3rem;">
+        <div class="col-2 px-0 d-flex justify-content-end">
+            <button id="findMyLocation" class="btn-sm text-secondary border px-2 fs-5 text-center rounded-circle" 
+                onclick="findMyLocation()" type="button" style="height: 2.2rem; width: 2.2rem; background-color: white; box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);">
                 <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
             </button>
         </div>
     </div>
 
-    <div class="row z-2 shut px-1" id="startBtn">
-        <div class="col d-grid pe-1">
+
+    <div class="row z-2 shut px-3" id="startBtn">
+        <div class="col d-grid pe-1 ps-0">
             <button id="findMissionBtn" type="button" class="btn py-2 fw-semibold text-white rounded-1 shadow" 
                 style="background-color: #FF8827; font-size: 1.13rem;" onclick="loadMissionList()">
                 <span>미션 찾기</span>
             </button>
         </div>
-        <div class="col d-grid ps-1">       
+        <div class="col d-grid ps-1 pe-0">       
             <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 shadow" onclick="window.location.href='./missionRegistration'"
                 style="border: 0.1rem solid #fa7e18; color:#FF8827; background-color: white; font-size: 1.13rem;">
                 <span>미션 등록</span>
             </button>
         </div>
     </div>
-
-
-
+    
 
 
 <!-- 미션 리스트 출력 -->

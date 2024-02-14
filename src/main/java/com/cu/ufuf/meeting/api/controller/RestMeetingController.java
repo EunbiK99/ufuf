@@ -41,6 +41,7 @@ import com.cu.ufuf.dto.MeetingRestResponseDto;
 import com.cu.ufuf.dto.MeetingSNSDto;
 import com.cu.ufuf.dto.MeetingSecondLocationCategoryDto;
 import com.cu.ufuf.dto.MeetingTagDto;
+import com.cu.ufuf.dto.MeetingVoteBestMemberDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.meeting.service.MeetingServiceImpl;
 
@@ -56,8 +57,6 @@ public class RestMeetingController {
 
     @GetMapping("checkDuplicateSNSUrl")
     public MeetingRestResponseDto checkDuplicateSNSUrl(String value){
-        
-        System.out.println(value);
         
         int checkedValue = meetingService.checkDuplicateSNSUrl(value);
         
@@ -232,15 +231,35 @@ public class RestMeetingController {
     }
 
     @GetMapping("getGroupList")
-    public MeetingRestResponseDto getGroupList(){
-
-        List<MeetingGroupDto> groupList = meetingService.getGroupListAll();
+    public MeetingRestResponseDto getGroupList(@RequestParam(name="searchKeyword", defaultValue = "") String searchKeyword){
         
-        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+        System.out.println("searchKeyword : " + searchKeyword);
+        
+        if(searchKeyword.equals("")){
+            System.out.println("검색키워드 없이 그룹리스트 가져옴");
+            List<MeetingGroupDto> groupList = meetingService.getGroupListAll();
+            
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+    
+            meetingRestResponseDto.setResult("success");
+            meetingRestResponseDto.setData(groupList);
+            return meetingRestResponseDto;
+        }
+        else{
+            System.out.println("검색키워드로 검색한 그룹리스트 가져옴");
+            List<MeetingGroupDto> searchWordGroupList = meetingService.searchMeetingGroupBySearchKeyword(searchKeyword);
+            for(MeetingGroupDto group : searchWordGroupList){
+                System.out.println("검색결과 모집글 타이틀 : " + group.getGroupTitle());
+            }{
 
-        meetingRestResponseDto.setResult("success");
-        meetingRestResponseDto.setData(groupList);
-        return meetingRestResponseDto;
+            }
+            MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+    
+            meetingRestResponseDto.setResult("success");
+            meetingRestResponseDto.setData(searchWordGroupList);
+            return meetingRestResponseDto;
+        }
+
     }
 
     @GetMapping("getGroupDetailInfo")
@@ -255,11 +274,10 @@ public class RestMeetingController {
 
     @PostMapping("registerApplyUser")
     public MeetingRestResponseDto registerApplyUser(@RequestBody MeetingApplyUserDto meetingApplyUserDto){
-        System.out.println("registerApplyUser 실행됨");
-        System.out.println(meetingApplyUserDto.getGroupId());
-        System.out.println(meetingApplyUserDto.getProfileId());
-        System.out.println(meetingApplyUserDto.getApplyComment());
-
+        // System.out.println("registerApplyUser 실행됨");
+        // System.out.println(meetingApplyUserDto.getGroupId());
+        // System.out.println(meetingApplyUserDto.getProfileId());
+        // System.out.println(meetingApplyUserDto.getApplyComment());
 
         meetingService.registerMeetingApplyUser(meetingApplyUserDto);
 
@@ -272,12 +290,12 @@ public class RestMeetingController {
 
     @GetMapping("applyCheck")
     public MeetingRestResponseDto applyCheck(int profileId, int groupId){
-        System.out.println("applyCheck 실행됨");
-        System.out.println("profileId : " + profileId);
-        System.out.println("groupId : " + groupId);
+        // System.out.println("applyCheck 실행됨");
+        // System.out.println("profileId : " + profileId);
+        // System.out.println("groupId : " + groupId);
 
         int result = meetingService.checkExistApplyUser(profileId, groupId);
-        System.out.println("result : " + result);
+        // System.out.println("result : " + result);
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
@@ -327,8 +345,8 @@ public class RestMeetingController {
 
     @PostMapping("addGroupMember")
     public MeetingRestResponseDto addGroupMember(MeetingGroupMemberDto params){
-        
-        System.out.println("addGroupMember 실행됨");
+
+        // System.out.println("addGroupMember 실행됨");
         int groupId = params.getGroupId();
         int profileId = params.getProfileId();        
 
@@ -585,9 +603,9 @@ public class RestMeetingController {
     @PostMapping("registerChatMessage")
     public MeetingRestResponseDto registerChatMessage(@RequestBody MeetingChatMessageDto params){
 
-        System.out.println(params.getChatRoomId());
-        System.out.println(params.getChatRoomUserId());
-        System.out.println(params.getChatComment());
+        // System.out.println(params.getChatRoomId());
+        // System.out.println(params.getChatRoomUserId());
+        // System.out.println(params.getChatComment());
         
         meetingService.registerChatMessage(params);
 
@@ -600,9 +618,9 @@ public class RestMeetingController {
 
     @PostMapping("updateGroupMeetingStatus")
     public MeetingRestResponseDto updateGroupMeetingStatus(@RequestBody int[] groupIdList){
-        for(int x : groupIdList){
-            System.out.println("groupId : " + x);
-        }
+        // for(int x : groupIdList){
+        //     System.out.println("groupId : " + x);
+        // }
         MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
 
         meetingRestResponseDto.setResult("success");
@@ -647,6 +665,30 @@ public class RestMeetingController {
 
         meetingRestResponseDto.setResult("success");
         meetingRestResponseDto.setData(meetingService.getNewMeetingGroup());
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("checkExistVoteBestMember")
+    public MeetingRestResponseDto checkExistVoteBestMember(int groupMemberId){
+
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");
+        meetingRestResponseDto.setData(meetingService.checkIsExistVoteBestMemberByGroupMemberId(groupMemberId));
+        return meetingRestResponseDto;
+    }
+
+    @GetMapping("voteBestMember")
+    public MeetingRestResponseDto voteBestMember(int groupMemberIdFrom, int groupMemberIdTo){
+        
+        MeetingVoteBestMemberDto meetingVoteBestMemberDto = new MeetingVoteBestMemberDto();
+        meetingVoteBestMemberDto.setGroupMemberIdFrom(groupMemberIdFrom);
+        meetingVoteBestMemberDto.setGroupMemberIdTo(groupMemberIdTo);
+        meetingService.registerVoteBestMember(meetingVoteBestMemberDto);
+        
+        MeetingRestResponseDto meetingRestResponseDto = new MeetingRestResponseDto();
+
+        meetingRestResponseDto.setResult("success");        
         return meetingRestResponseDto;
     }
 
