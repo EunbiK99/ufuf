@@ -636,6 +636,11 @@ public class MissionMapServiceImpl {
 
     }
 
+    // 리뷰 열람
+    public MissionReviewDto getMissionReview(int chat_room_id){
+        return missionMapSqlMapper.selectReviewByMission(chat_room_id);
+    }
+
 
 
 

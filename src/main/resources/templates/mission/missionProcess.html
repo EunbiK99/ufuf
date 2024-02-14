@@ -937,8 +937,11 @@
     }
 
     // 작성된 리뷰 열람 모달
-    function openViewReviewModal(){
+    function openViewReviewModal(chat_room_id){
         const modal = bootstrap.Modal.getOrCreateInstance("#viewReviewModal");
+
+        loadMissionReview(chat_room_id);
+
         modal.show();
     }
 
@@ -947,7 +950,78 @@
         modal.hide();
     }
 
+    // 리뷰 불러오기
+    function loadMissionReview(chat_room_id){
 
+        const data = {
+            chat_room_id: chat_room_id
+        }
+
+        fetch("./loadMissionReview", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const reviewDto = response.data;
+                
+                const viewReviewModal = document.getElementById("viewReviewModal");
+                const result = viewReviewModal.querySelector(".result");
+                const score = viewReviewModal.querySelector(".score");
+                const rating = viewReviewModal.querySelector(".rating");
+                const review = viewReviewModal.querySelector(".review");
+
+                if(reviewDto.is_success === "S"){
+                    result.innerText = "미션성공";
+                }else{
+                    result.innerText = "미션실패";
+                }
+
+                if(reviewDto.rated == 1){
+                    score.innerText = "1점";
+                    rating.innerHTML = `<i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>`;
+                }else if(reviewDto.rated == 2){
+                    score.innerText = "2점";
+                    rating.innerHTML = `<i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>`;
+                }else if(reviewDto.rated == 3){
+                    score.innerText = "3점";
+                    rating.innerHTML = `<i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>`;
+                }else if(reviewDto.rated == 4){
+                    score.innerText = "4점";
+                    rating.innerHTML = `<i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star pe-1"></i>`;
+                }else if(reviewDto.rated == 5){
+                    score.innerText = "5점";
+                    rating.innerHTML = `<i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>
+                                            <i class="bi bi-star-fill pe-1"></i>`;
+                }
+
+                review.innerText = reviewDto.review;
+
+            });
+    }
 
 
 
@@ -1082,6 +1156,11 @@
             }
         });
     }
+
+    
+
+
+
 
 
     // 이미지 파일 선택하면 바로 프론트에서 호출
@@ -1803,7 +1882,7 @@
                                 </div>
                                 <div class="row mt-1">
                                     <div class="fw-semibold text-center" style="color: #9e9e9e;"> 
-                                        "<span class="result px-2" style="color:#FF8827;">미션성공</span>"
+                                        "<span class="result px-2" style="color:#FF8827;"></span>"
                                     </div>
                                 </div>
                             </div>
@@ -1811,17 +1890,13 @@
                                 <div class="row">
                                     <div class="col ms-3" style="color: #9e9e9e; font-size: 0.8rem;">
                                         <span>만족도 점수</span>
-                                        <span class="ms-1">5점</span>
+                                        <span class="ms-1 score"></span>
                                     </div>
                                 </div>
                                 <div class="row mt-1">
                                     <div class="col text-center" style="color:#ffab67; font-size: 1.1rem;">
-                                        <div id="rating">
-                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
-                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
-                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
-                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
-                                            <i id="star1" class="bi bi-star-fill pe-1" onclick="star1()"></i>
+                                        <div class="rating">
+ 
                                         </div>
                                     </div>
                                 </div>
@@ -1830,7 +1905,7 @@
 
                         <div class="row mt-3">
                             <div class="review col" style="font-size:0.9em; color: #666666">
-                                sdfsdlkflkjkjlkjlkjkjlaksjdflsijflskdjflskdjfoeijlskfdkslfksldjlfjoeijfkdkj
+                                
                             </div>
                         </div>
                         

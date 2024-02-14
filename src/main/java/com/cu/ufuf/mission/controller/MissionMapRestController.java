@@ -481,7 +481,18 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @PostMapping("loadMissionReview")
+    public RestResponseDto loadMissionReview(@RequestBody String chat_room_id){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+        
+        restResponseDto.setData(missionMapService.getMissionReview(chatRoomId));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
     

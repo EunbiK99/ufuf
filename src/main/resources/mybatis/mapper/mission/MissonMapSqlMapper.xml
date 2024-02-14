@@ -256,6 +256,11 @@
     ]]>
 </select>
 
+<select id="selectReviewByMission" resultType="com.cu.ufuf.dto.MissionReviewDto">
+    select * from mission_review
+    where chat_room_id = #{chat_room_id}
+</select>
+
 
 
 
