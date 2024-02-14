@@ -9,41 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 
     <script>
-        // function saveIdToSesson(){
-		
-        //     const userid = document.getElementById("userid");
-        //     const password = document.getElementById("password");
-        //     const passwordCheck = document.getElementById("passwordCheck");
-
-        //     const data = {
-        //         userid: userid,
-        //         password: password
-        //      };
-
-        //     fetch("./saveIdToSession", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //     .then(response => response.json())
-        //     .then(response => {
-                
-        //         console.log(response);
-
-        //         // 입력 필드 초기화
-        //         document.getElementById("userid").value = "";
-        //         document.getElementById("password").value = "";
-        //         document.getElementById("passwordCheck").value = "";
-                
-        //     });
-
-        //     location.href="./registerProfileForm";
-        
-        // }
 
 
     </script>
@@ -61,27 +30,27 @@
 
 <body>
     
-    <div class="container-fluid">
+    <div class="container-fluid overflow-x-hidden">
         <div class="row">
-            <div class="col">
+            <div class="col px-0">
 
-                <div class="row py-3">
-                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
-                        <i class="bi bi-arrow-left"></i>
+                <div class="row py-2" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.history.back();">
+                        <i class="bi bi-arrow-left ms-1"></i>
                     </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
+                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
                         회원가입
                     </div>
-                    <div class="col-1" style="font-size:1.1em">
+                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
                     </div>
                 </div>
 
                 <!--코드 시작-->
                 <form action="./saveIdToSession" method="post">
-                <div class="row">
-                    <div class="col px-3">
+                <div class="row" style="padding-left: 1.2rem; padding-right: 1.2rem;">
+                    <div class="col">
 
-                        <div class="row mt-2">
+                        <div class="row mt-3">
                             <div class="col fw-semibold mt-2" style="font-size:1.5em;">
                                 사용하실 아이디와<br>비밀번호를 입력해주세요
                             </div>
@@ -118,11 +87,10 @@
                             <div class="col my-4">
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-                <div class="fixed-bottom">
+                <div class="fixed-bottom" style="padding-left: 1rem; padding-right: 1rem;">
                     <div class="row mt-2">
                         <div class="col px-2 text-center">
                             <a class="text-secondary" style="font-size:0.9em;">이미 계정이 있으신가요?</a>
