@@ -236,10 +236,10 @@
                 </div>
                 <div class="carousel-inner" style="margin: 0%; padding: 0%;">
                   <div class="carousel-item active">
-                    <img th:src="@{/public/image/room/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 120%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
+                    <img th:src="@{/uploadFiles/ufuf/roomImage/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 120%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                   <div class="carousel-item" th:each="image : ${roomDetail.roomImageDto}">
-                    <img th:src="@{/public/image/room/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
+                    <img th:src="@{/uploadFiles/ufuf/roomImage/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                 </div>
                 <button class="carousel-control-prev px-0 ms-2" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">

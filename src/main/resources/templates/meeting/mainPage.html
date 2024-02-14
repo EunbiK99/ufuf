@@ -356,17 +356,24 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>               
 
                 <div class="row bg-white">
-                    <div class="col">
+                    <div class="col mx-1">
                         <div class="row mt-3">
-                            <div class="col">
-                                <span class="fs-3">오늘의 추천 미팅</span>
+                            <div class="col ms-1">
+                                <span class="fs-3 fw-bold">오늘의 추천</span>
                             </div>
                         </div>
                         <div class="row mt-2">
-                            <div class="col">
+                            <div class="col ms-1">
                                 <div class="row">
                                     <div class="col">
-                                        <span>HOT</span>
+                                        <span class="text-danger fs-5"><i class="fi fi-sr-flame bi-align-middle"></i></span>
+                                        <span class="fs-5 fw-bold">HOT</span>
+                                        <span class="text-danger fs-5"><i class="fi fi-sr-flame bi-align-middle"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-secondary" style="font-size: 0.9em;">사람들이 주목하고 있는 미팅이에요!</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -378,7 +385,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 </div>
                                 <div class="row mt-4">
                                     <div class="col">
-                                        <span>NEW</span>
+                                        <span class="text-warning fs-5"><i class="fi fi-sr-sparkles bi-align-middle"></i></span>
+                                        <span class="fs-5 fw-bold">New</span>
+                                        <span class="text-warning fs-5"><i class="fi fi-sr-sparkles bi-align-middle"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-secondary" style="font-size: 0.9em;">가장 최근에 등록된 미팅들이에요!</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -428,77 +442,85 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>                  
                     </div>             
-                </div>                
-                
-                <!--footer-->
-                <div class="row fixed-bottom bg-white" style="height: 3.4em;">
-                    <div class="col text-center align-self-center">
-                        <div class="row">
-                            <div class="col">
-                                <div class="row justify-content-around mt-1 text-secondary">
-                                    <div class="col text-center mx-1" onclick="moveSearchPage()">
-                                        <div class="row">
-                                            <div class="col">                                                
-                                                <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="">Find</span>
-                                            </div>
-                                        </div>
+                </div>
+            </div>
+        </div>
+        <!--footer-->
+        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+            <div class="col text-center align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around mt-1 text-secondary">
+                            <div class="col text-center mx-1" onclick="moveSearchPage()">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
                                     </div>
-                                    <div class="col text-center mx-1" onclick="moveCreateNewGroupPage()">
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="">Make</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
-                                        <div class="row">
-                                            <div class="col">                                                
-                                                <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
-                                            </div>
-                                        </div>                                        
-                                    </div>
-                                    <div class="col text-center mx-1" onclick="moveChatListPage()">
-                                        <div class="row">
-                                            <div class="col align-self-center">
-                                                <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="">Chat</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <span class="">My</span>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Find</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                            <div class="col text-center mx-1" onclick="moveCreateNewGroupPage()">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Make</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
+                                <div class="row">
+                                    <div class="col">                                                
+                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
+                                    </div>
+                                </div>                                        
+                            </div>
+                            <div class="col text-center mx-1" onclick="moveChatListPage()">
+                                <div class="row">
+                                    <div class="col align-self-center">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">Chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="">My</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <img src="/public/image/commons/ufuf_commercial_2.png" class="img-fluid">
                     </div>
                 </div>
             </div>
         </div>
-        <div class="p-4"></div>
+        <div class="p-2"></div>
     </div>
 
 <!--/* 템플릿 */-->

@@ -34,7 +34,7 @@
                     roomList.classList.remove("d-none");
                     const roomMainImage = roomList.querySelector(".roomMainImage");
                     roomMainImage.removeAttribute("src");
-                    roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                    roomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage" + e.roomInfoDto.main_image);
                     const roomTitle = roomList.querySelector(".roomTitle");
                     roomTitle.innerHTML = "";
                     roomTitle.innerText = e.roomInfoDto.title;
@@ -75,13 +75,13 @@
                 for(e of response.data){
 
                     if(e.roomInfoDto!=null){
-                    
+                        
                         // 리뷰 리스트 생성
                         const reviewList = document.querySelector("#reviewList").cloneNode(true);
                         reviewList.classList.remove("d-none");
                         const reviewRoomMainImage = reviewList.querySelector(".reviewRoomMainImage");
                         reviewRoomMainImage.removeAttribute("src");
-                        reviewRoomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        reviewRoomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage" + e.roomInfoDto.main_image);
                         const reviewRoomTitle = reviewList.querySelector(".reviewRoomTitle");
                         reviewRoomTitle.innerHTML = "";
                         reviewRoomTitle.innerText = e.roomInfoDto.title;
