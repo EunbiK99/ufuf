@@ -237,4 +237,10 @@ public class MeetingController {
 
         return "./meeting/chatRoomPage";    
     }
+
+    @RequestMapping("errorPage")
+    public String errorPage(){
+        return "./meeting/errorPage";
+    }
+    
 }
