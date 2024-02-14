@@ -11,6 +11,7 @@
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 <script>
 
     var relativePath = window.location.origin;
@@ -143,7 +144,7 @@
                                         </div>
                                         <div class="row mt-1">
                                             <div class="col">
-                                                <div class="map" style="height:10em; width: 100%;"></div>
+                                                <div class="map" style="height:13em; width: 100%;"></div>
                                             </div>
                                         </div>
                                         <div class="row px-1 mt-2">
@@ -176,7 +177,7 @@
         const latSelector = `#course${courseCounter} .lat`;
         const lngSelector = `#course${courseCounter} .lng`;
 
-        var map = new kakao.maps.Map(document.querySelector(mapSelector), {
+        map = new kakao.maps.Map(document.querySelector(mapSelector), {
             center: new kakao.maps.LatLng(33.450701, 126.570667),
             level: 3
         });
@@ -531,22 +532,21 @@
 
 <body>
 
+    <div class="row py-2 border-bottom border-dark-subtle fixed-top" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+        <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./map';">
+            <i class="bi bi-arrow-left ms-1"></i>
+        </div>
+        <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+            미션 등록
+        </div>
+        <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+            <i class="bi bi-three-dots-vertical"></i>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col mx-2">
-                
-                <div class="fixed-top">
-                <div class="row mt-1 py-2 bg-white border-bottom border-secondary-subtle px-3">
-                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
-                        <i class="bi bi-arrow-left"></i>
-                    </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
-                        미션 등록
-                    </div>
-                    <div class="col-1" style="font-size:1.1em">
-                    </div>
-                </div>
-                </div>
 
                 <div class="row mt-5">
                     <div class="col mt-3">

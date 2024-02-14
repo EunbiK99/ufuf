@@ -11,6 +11,7 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     
 <script>
 
@@ -766,57 +767,61 @@
 
 <body>
 
+
+    <div class="row py-2 border-bottom border-dark-subtle fixed-top" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+        <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./chatList'">
+            <i class="bi bi-arrow-left ms-1"></i>
+        </div>
+        <div id="name" class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+            채팅 목록
+        </div>
+        <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+            <i class="bi bi-three-dots-vertical"></i>
+        </div>
+    </div>
+
+    <div id="missionInfo" class="row pt-2 pb-1 border-bottom px-2 z-5" style="height: 5.2rem; background-color: #fffbf7; position: fixed; top: 3.3rem;">
+        <div class="col">
+            <div class="row">
+                <div class="topDiv col fw-bold d-flex align-self-center">
+                    <span class="title align-self-center" style="font-size:1.05rem"></span>
+                    <span class="status px-2 rounded-4 ms-2 justify-content-center align-self-center" 
+                        style="border: 0.08em solid #FF8827; color: #FF8827; font-size: 0.75em; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;">
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="detail col word" style="font-size:0.8rem; color: #b1b1b1;"></div>
+            </div>
+            <div class="row" style="margin-top: -0.05rem;">
+                <div class="col justify-content-start">
+                    <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">전체 미션성공시</span>
+                    <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.93rem;"></span>
+                    <span class="" style="color: #818181; font-size: 0.88rem;">원</span>
+                </div>
+                <div class="col-5 justify-content-end text-end">
+                    <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
+                    <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">시간</span>
+                    <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
+                    <span class="fw-semibold" style="color: #818181; font-size: 0.88   rem;">분</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="chatDialogue" class="row overflow-y-scroll overflow-x-hidden z-1" style="bottom:3.4rem; top:8.5rem; height: auto; position:fixed; margin: auto; width: 100%;">
+        <div id="chatDialogueBox" class="col">
+        </div>
+    </div>
+
+
+
+
     <div class="container-fluid">
         <div class="row">
             <div class="col px-0">
-
-                <div class="row py-2 px-2 border-bottom border-dark-subtle" style="height: 3.3rem;">
-                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./chatList'">
-                        <i class="bi bi-arrow-left ms-2"></i>
-                    </div>
-                    <div id="name" class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
-                        
-                    </div>
-                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
-                        <i class="bi bi-three-dots-vertical me-1"></i>
-                    </div>
-                </div>
-
-                <div id="missionInfo" class="row pt-2 pb-1 border-bottom px-2" style="background-color: #fffbf7; box-shadow: 0em 0.3em 0.3em #ffffff;">
-                    <div class="col">
-                        <div class="row">
-                            <div class="topDiv col fw-bold d-flex align-self-center">
-                                <span class="title align-self-center" style="font-size:1.05rem"></span>
-                                <span class="status px-2 rounded-4 ms-2 justify-content-center align-self-center" 
-                                    style="border: 0.08em solid #FF8827; color: #FF8827; font-size: 0.75em; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;">
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="detail col word" style="font-size:0.8rem; color: #b1b1b1;"></div>
-                        </div>
-                        <div class="row" style="margin-top: -0.05rem;">
-                            <div class="col justify-content-start">
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">전체 미션성공시</span>
-                                <span class="totalReward ms-1 fw-semibold" style="color: #a0a0a0; font-size: 0.93rem;"></span>
-                                <span class="" style="color: #818181; font-size: 0.88rem;">원</span>
-                            </div>
-                            <div class="col-5 justify-content-end text-end">
-                                <span class="limitHour fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.88rem;">시간</span>
-                                <span class="limitMinute fw-semibold" style="color: #FF8827; font-size: 0.93rem;"></span>
-                                <span class="fw-semibold" style="color: #818181; font-size: 0.88   rem;">분</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="chatDialogue" class="row overflow-y-sccroll overflow-x-hidden" style="height: 29.5rem;">
-                    <div id="chatDialogueBox" class="col">
-                    </div>
-                </div>
-
-                <div id="inputChat" class="row border-top bg-white" style="height: 3.4rem;">
+                <div id="inputChat" class="row border-top bg-white z-2" style="height: 3.4rem;">
                     <div class="col align-self-center px-1">
                         <div class="input-group align-self-center">
                             <label for="sendImg">
@@ -838,7 +843,7 @@
     </div>
 
 <div id="myChatTemplete" class="d-none">
-    <div class="myChatWrapper row my-3 justify-content-end mx-3">
+    <div class="myChatWrapper row my-3 justify-content-end mx-2">
         <div class="created_at col-3 align-self-end text-end" style="font-size: 0.7rem; color: #cfcfcf;">
             
         </div>
@@ -850,7 +855,7 @@
 </div>
 
 <div id="mateChatTemplete" class="d-none">
-    <div class="mateChatWrapper row my-3 justify-content-start mx-3">
+    <div class="mateChatWrapper row my-3 justify-content-start mx-2">
         <div class="text col-7 rounded-2 lh-sm py-2 shadow-sm" style="border: 0.07rem solid #cfcfcf; font-size: 0.9rem; width: auto; max-width: 15rem; overflow-wrap: break-word;">
             
         </div>
