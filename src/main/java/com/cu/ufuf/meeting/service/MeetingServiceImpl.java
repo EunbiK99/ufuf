@@ -475,12 +475,14 @@ public class MeetingServiceImpl {
         List<MeetingVoteBestMemberDto> meetingVoteBestMemberDtoList = meetingSqlMapper.selectVoteBestMemberFromByGroupMemberId(groupMemberId);
         List<MeetingBothLikeDto> meetingBothLikeFromList = meetingSqlMapper.selectBothLikeFromByGroupMemberId(groupMemberId);
         List<MeetingBothLikeDto> meetingBothLikeToList = meetingSqlMapper.selectBothLikeToByGroupMemberId(groupMemberId);
+        int pickedBestMemberCount = meetingSqlMapper.countVoteBestMemberByGroupMemberIdTo(groupMemberId);
 
         userReviewDataMap.put("meetingGroupReviewDto", meetingGroupReviewDto);
         userReviewDataMap.put("meetingMemberReviewDtoList", meetingMemberReviewDtoList);
         userReviewDataMap.put("meetingVoteBestMemberDtoList", meetingVoteBestMemberDtoList);
         userReviewDataMap.put("meetingBothLikeFromList", meetingBothLikeFromList);
         userReviewDataMap.put("meetingBothLikeToList", meetingBothLikeToList);
+        userReviewDataMap.put("pickedBestMemberCount", pickedBestMemberCount);
         
         return userReviewDataMap;
     }
@@ -801,7 +803,7 @@ public class MeetingServiceImpl {
 
     //* 그룹멤버PK기준 베스트멤버 투표 테이블 존재여부 확인 */
     public int checkIsExistVoteBestMemberByGroupMemberId(int groupMemberIdFrom){
-        return meetingSqlMapper.countVoteBestMemberByGroupMemberId(groupMemberIdFrom);
+        return meetingSqlMapper.countVoteBestMemberByGroupMemberIdFrom(groupMemberIdFrom);
     }
 
     // * 베스트멤버 테이블 인서트

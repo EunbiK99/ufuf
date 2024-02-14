@@ -240,10 +240,13 @@ public interface MeetingSqlMapper {
     public List<MeetingGroupDto> selectMeetingGroupListBySearchKeyword(String searchKeyword);
 
     // * 그룹멤버PK 기준 베스트멤버 테이블 존재여부 확인
-    public int countVoteBestMemberByGroupMemberId(int groupMemberIdFrom);
+    public int countVoteBestMemberByGroupMemberIdFrom(int groupMemberIdFrom);
 
     // * 베스트멤버 테이블 인서트
     public void insertVoteBestMember(MeetingVoteBestMemberDto meetingVoteBestMemberDto);
+
+    // * 그룹멤버PK기준 베스트멤버로 선정된 횟수 카운트 */
+    public int countVoteBestMemberByGroupMemberIdTo(int groupMemberIdTo);
 
 
 
