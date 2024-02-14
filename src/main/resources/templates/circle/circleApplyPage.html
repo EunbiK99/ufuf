@@ -105,23 +105,68 @@
     }
     //동아리 등록완료
     //저번에 쓰던 값 가져오기 #id값 > option:checked
+    const circleNameDuplicate = (circle_name) => {
+
+        $.ajax({
+            url: `./circleNameDuplicateCheck?circle_name=`+ circle_name,
+            dataType: `json`,
+            success: (response) => {
+                console.log(response.data);
+                for(e of response.data){
+
+                    if(e != null){
+                        alert("이미사용중인 동아리명입니다.")
+                        return;
+                    }
+
+                }
+
+            }
+            
+        })
+
+    }
+
     function circleComplete(){
         // 이앞에는 동아리명이 중복되지 않는지 검증 해야 함 // 동아리명은 unique 해야함
         
-        // 1. selected 된 circle_small_category_id
-        let cc = document.querySelector("#small > option:checked").value;
-        let circle_small_category_id = parseInt(cc, 10);
+        
         
         // 2. circle_name
         const circle_name = document.querySelector("#circle_name").value;
         
+        if(circle_name === ""){
+            document.querySelector("#circle_name").focus();
+            alert("동아리명을 입력하세요.")
+            return;
+        }
+        //circleNameDuplicate(circle_name);
+        // 1. selected 된 circle_small_category_id
+        let cc = document.querySelector("#small > option:checked").value;
+        let circle_small_category_id = parseInt(cc, 10);
+        if(cc === "위 카테고리를 선택하세요"){
+            document.querySelector("#middle").focus();
+            alert("소분류 카테고리를 선택하세요.")
+            return;
+        }
+        
         // 3. circle_content
         const circle_content = document.querySelector("#circle_content").value;
+        if(circle_content.length < 20){
+            document.querySelector("#circle_content").focus();
+            alert("설명을 20자 이상 적어주세요.")
+            return;
+        }
         
         // 4. circle_image 원본파일명 => filename
         // const filename = aa.files[0].name;
 
         const aa = document.querySelector("#circle_image");
+        if(aa.files[0] == null){
+            document.querySelector("#circle_image").focus();
+            alert("동아리 대표이미지를 등록해주세요")
+            return;
+        }
         
         const formData = new FormData();
         formData.append('file', aa.files[0]);
@@ -177,7 +222,7 @@
         }
         .cf {
                 transition: 0.3s;
-                height: 50em;
+                height: 60em;
                 
                 
             
@@ -220,7 +265,7 @@
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <input id="circle_name" class="form-control" type="text" placeholder="동아리명을 입력해주세요">
+                    <input id="circle_name" class="form-control" type="text" placeholder="동아리명을 입력하세요">
                 </div>
             </div>
             <div class="row mt-2">
@@ -250,7 +295,7 @@
             </div>
             <div class="row mt-1">
                 <div class="col d-grid align-items-center">
-                    <textarea id="circle_content" class="form-control" placeholder="동아리명을 입력해주세요" rows="4"></textarea>
+                    <textarea id="circle_content" class="form-control" placeholder="동아리에 대한 설명을 20자 이상 작성하세요" rows="4"></textarea>
                 </div>
             </div>
             <div class="row mt-2">

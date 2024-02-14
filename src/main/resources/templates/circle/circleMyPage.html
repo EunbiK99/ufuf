@@ -109,20 +109,20 @@
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid mt-2">
+    <div class="container-fluid mt-3">
         <div class="row">
-            <div class="col text-center">
+            <div class="col text-center" style="font-size: 1.3em;">
                 <span id="ufufname" class="fw-semibold" style="color: #fb7928;"></span><span>님 환영합니다</span>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <div id="Cnt" class="row mt-2 text-center">
-                    <div class="col py-2">
+                    <div class="col py-3">
                         <div class="row">
                             <div class="col-4">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col" style="font-size: 1.2em;">
                                         게시물 수
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                             </div>
                             <div class="col-4" style="border-right: 0.06em solid rgb(211, 211, 211); border-left: 0.06em solid rgb(211, 211, 211);">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col" style="font-size: 1.2em;">
                                         투표글 수
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                             </div>
                             <div class="col-4">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col" style="font-size: 1.2em;">
                                         일정 수
                                     </div>
                                 </div>
@@ -160,56 +160,56 @@
                     </div>
                     
                 </div>
-                <div class="row mb-3 mt-2">
+                <div class="row mb-4 mt-2">
                     <div class="col d-grid px-0">
                         <img src="/public/image/circle/add1.jpg" class="img-fluid">
                     </div>
                 </div>
-                <div class="row rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row rounded-3 border mx-2 px-3 py-3 align-items-center" onclick="(() => {
                     location.href = './myCircleListPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;" >
-                        <i class="bi bi-people-fill" style="color: #fb7928;"></i> &nbsp;내 동아리 리스트
+                        <i class="bi bi-people-fill" style="color: #fb7928;"></i> &nbsp;&nbsp;내 동아리 리스트
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
                     </div>
                 </div>
-                <div class="row mt-1 rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row mt-1 rounded-3 border mx-2 px-3 py-3 align-items-center" onclick="(() => {
                     location.href = './circleScheduleListPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-calendar-check-fill" style="color: #fb7928;"></i></i> &nbsp;신청한 일정리스트
+                        <i class="bi bi-calendar-check-fill" style="color: #fb7928;"></i></i> &nbsp;&nbsp;신청한 일정리스트
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
                     </div>
                 </div>
-                <div class="row mt-1 rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row mt-1 rounded-3 border mx-2 px-3 py-3 align-items-center" onclick="(() => {
                     location.href = './circleManagerOnlyPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-person-fill-add" style="color: #fb7928;"></i> &nbsp;동아리 가입관리
+                        <i class="bi bi-person-fill-add" style="color: #fb7928;"></i> &nbsp;&nbsp;동아리 가입관리
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
                     </div>
                 </div>
-                <div class="row mt-3 rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row mt-4 rounded-3 border mx-2 px-3 py-3 align-items-center" onclick="(() => {
                     location.href = './circleMyLikeListPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-heart-fill" style="color: #fb7928;"></i></i> &nbsp;내가 찜한 동아리
+                        <i class="bi bi-heart-fill" style="color: #fb7928;"></i></i> &nbsp;&nbsp;내가 찜한 동아리
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
                     </div>
                 </div>
-                <div class="row mt-1 rounded-3 border mx-2 px-3 py-2 align-items-center" onclick="(() => {
+                <div class="row mt-1 rounded-3 border mx-2 px-3 py-3 align-items-center" onclick="(() => {
                     location.href = './circleMyVoteListPage'
                 })()">
                     <div class="col" style="font-size: 1.3em;">
-                        <i class="bi bi-box2-heart-fill" style="color: #fb7928;"></i></i> &nbsp;작성한 투표리스트
+                        <i class="bi bi-box2-heart-fill" style="color: #fb7928;"></i></i> &nbsp;&nbsp;작성한 투표리스트
                     </div>
                     <div class="col-1 text-end">
                         <i class="bi bi-caret-right-fill" style="font-size: 1.3em;"></i>
@@ -384,7 +384,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            동아리에 가입 해야 게시물을 작성할 수 있습니다.
+                            동아리에 가입해야 게시물을 작성할 수 있습니다.
                         </div>
                     </div>
                     <div class="row">
