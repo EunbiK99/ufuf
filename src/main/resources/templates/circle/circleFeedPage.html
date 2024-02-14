@@ -566,8 +566,24 @@
 </head>
 <body>
     <!-- 여기는 동아리 내부 게시글&피드 같이 만들거임 =>  존재 동아리 피드라고 생각하면 됨 -->
-    <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid content" style="background-color: rgb(237, 237, 237);">
+    <div class="container-fluid">
+        <div class="row mt-2 align-items-center">
+            <div class="col-2" onclick="(() => {
+                location.href = './circleMainPage'
+            })()">
+                <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
+            </div>
+            <div class="col-8 py-2 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;" onclick="(() => {
+                location.href = './circleMainPage'
+            })()">
+                ufuf                                                                                     
+            </div>
+            <div class="col-2">
+                <a href="./logoutProcess" style="text-decoration: none; color: black;"><i class="bi bi-door-closed fs-1"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid content mt-2" style="background-color: rgb(237, 237, 237);">
         <div class="row px-0 relative-container justify-content-center">
             <div id="main_image" class="col px-0 image-container d-grid">
                 

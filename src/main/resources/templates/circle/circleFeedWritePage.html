@@ -47,6 +47,22 @@
         const board_title = document.querySelector("#board_title").value;
         const board_content = document.querySelector("#board_content").value;
         const aa = document.querySelector("#main_image");
+        if(board_title == ""){
+            document.querySelector("#board_title").focus();
+            alert("게시물 제목을 입력하세요.")
+            return;
+        }
+        if(board_content == ""){
+            document.querySelector("#board_content").focus();
+            alert("게시물 내용을 입력하세요.")
+            
+            return;
+        }
+        if(aa.files[0] == null){
+            document.querySelector("#main_image").focus();
+            alert("게시글 대표이미지를 등록해주세요")
+            return;
+        }
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
