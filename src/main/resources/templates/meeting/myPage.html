@@ -399,62 +399,83 @@ function restoreMenuColor(target){
 }
 
 function userProfileCSR(){
-    const userSNSUrl = document.getElementById("userSNSUrl");
-    userSNSUrl.innerText = userSNSDto.snsURL;
+    if(userType === "user"){
+        const sessionUserName = document.getElementById("sessionUserName");
+        sessionUserName.innerText = sessionUserInfo.name;        
+        const loginUserRow = document.getElementById("loginUserRow");
+        loginUserRow.classList.remove("d-none");
 
-    const userProfileImage = document.getElementById("userProfileImage");
-    userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
+        const userSNSUrl = document.getElementById("userSNSUrl");
+        userSNSUrl.innerText = userSNSDto.snsURL;
 
-    const userNickname = document.getElementById("userNickname")
-    userNickname.innerText = meetingProfileInfo.profileNickname;
+        const userProfileImage = document.getElementById("userProfileImage");
+        userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
 
-    const userGender = document.getElementById("userGender");
-    if(sessionUserInfo.gender === "M"){
-        const maleIcon = document.createElement("i");
-        maleIcon.setAttribute("class", "fi fi-rr-mars text-primary bi-align-middle");
-        userGender.appendChild(maleIcon);
+        const userNickname = document.getElementById("userNickname")
+        userNickname.innerText = meetingProfileInfo.profileNickname;
+
+        const userGender = document.getElementById("userGender");
+        if(sessionUserInfo.gender === "M"){
+            const maleIcon = document.createElement("i");
+            maleIcon.setAttribute("class", "fi fi-rr-mars text-primary bi-align-middle");
+            userGender.appendChild(maleIcon);
+        }
+        else{
+            const femaleIcon = document.createElement("i");
+            femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger bi-align-middle");
+            userGender.appendChild(femaleIcon);        
+        }
+
+        const userUniversity = document.getElementById("userUniversity")
+        userUniversity.innerText = sessionUserInfo.university;
+        
+        const userUniversityDepartment = document.getElementById("userUniversityDepartment")
+        userUniversityDepartment.innerText = sessionUserInfo.department;
+
+        const userProfileComment = document.getElementById("userProfileComment")
+        userProfileComment.innerText = meetingProfileInfo.profileComment;
+
+        let mySignalToCount = 0;
+        const mySignalTo = document.getElementById("mySignalTo");
+        mySignalTo.innerText = mySignalToCount
+
+        let mySignalBothCount = 0;
+        const mySignalBoth = document.getElementById("mySignalBoth");
+        mySignalBoth.innerText = mySignalBothCount;
+
+        let pickedBestMemberCount = 0;
+        const pickedBestMember = document.getElementById("pickedBestMember");
+        pickedBestMember.innerText = pickedBestMemberCount;
+
+        for(e of groupMemberDtoList){
+            for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
+                mySignalToCount++;
+                mySignalTo.innerText = mySignalToCount;
+                }
+            }
+            if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
+                for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
+                    for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                        if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
+                            mySignalBothCount++;
+                            mySignalBoth.innerText = mySignalBothCount;
+                        }                    
+                    }                
+                }
+            }
+            const pickedBestMemberCountValue = e.userReviewDataMap.pickedBestMemberCount;
+            console.log('pickedBestMemberCount: ', pickedBestMemberCount);
+            pickedBestMemberCount += pickedBestMemberCountValue;
+            pickedBestMember.innerText = pickedBestMemberCount;
+        }
     }
     else{
-        const femaleIcon = document.createElement("i");
-        femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger bi-align-middle");
-        userGender.appendChild(femaleIcon);        
-    }
-
-    const userUniversity = document.getElementById("userUniversity")
-    userUniversity.innerText = sessionUserInfo.university;
-    
-    const userUniversityDepartment = document.getElementById("userUniversityDepartment")
-    userUniversityDepartment.innerText = sessionUserInfo.department;
-
-    const userProfileComment = document.getElementById("userProfileComment")
-    userProfileComment.innerText = meetingProfileInfo.profileComment;
-
-    let mySignalToCount = 0;
-    const mySignalTo = document.getElementById("mySignalTo");
-    mySignalTo.innerText = mySignalToCount
-
-    let mySignalBothCount = 0;
-    const mySignalBoth = document.getElementById("mySignalBoth");
-    mySignalBoth.innerText = mySignalBothCount;
-
-    for(e of groupMemberDtoList){
-        for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
-            if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
-            mySignalToCount++;
-            mySignalTo.innerText = mySignalToCount;
-            }
-        }
-        if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
-            for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
-                for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
-                    if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
-                        mySignalBothCount++;
-                        mySignalBoth.innerText = mySignalBothCount;
-                    }                    
-                }                
-            }
-        }        
-    }
+        const sessionUserName = document.getElementById("sessionUserName");
+        sessionUserName.innerText = "Guest";
+        const guestUserRow = document.getElementById("guestUserRow");
+        guestUserRow.classList.remove("d-none");
+    }    
 }
 
 
@@ -489,24 +510,10 @@ function moveMyRecruitGroup(){
     
 }
 
-function checkUserType(){
-    if(userType === "user"){
-        const sessionUserName = document.getElementById("sessionUserName");
-        sessionUserName.innerText = sessionUserInfo.name;        
-        const loginUserRow = document.getElementById("loginUserRow");
-        loginUserRow.classList.remove("d-none");
-    }
-    else{
-        const sessionUserName = document.getElementById("sessionUserName");
-        sessionUserName.innerText = "Guest";
-        const guestUserRow = document.getElementById("guestUserRow");
-        guestUserRow.classList.remove("d-none");
-    }
-}
+
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-    checkUserType();
     userProfileCSR();
 });
 </script>
@@ -645,11 +652,21 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                         <div class="row mt-2">
                                                             <div class="col-auto btn py-0" onclick="showMySignalBothModal()">
                                                                 <span class="fs-3">
-                                                                    <i class="fi fi-rr-comment-heart text-danger bi-align-middle"></i>
+                                                                    <i class="fi fi-sr-comment-heart text-danger bi-align-middle"></i>
                                                                      :
                                                                 </span>
                                                                 <span id="mySignalBoth" class="fs-3 fw-bold"></span>
                                                                 <span>명</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-auto btn py-0">
+                                                                <span class="fs-3">
+                                                                    <i class="fi fi-sr-award bi-align-middle text-warning"></i>
+                                                                     :
+                                                                </span>
+                                                                <span id="pickedBestMember" class="fs-3 fw-bold"></span>
+                                                                <span>Pick</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -711,6 +728,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                 <span class="fw-bold fs-3">결제 정보</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        
                     </div>
                 </div>
                 <div class="p-5">
