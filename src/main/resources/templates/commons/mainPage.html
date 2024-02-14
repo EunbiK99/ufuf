@@ -88,14 +88,14 @@
                             </div>
                             <div class="col-auto mt-1">
                                 <span th:if="${session.sessionUserInfo ==null}">
-                                    <a onclick="window.location.href='../login/loginPage'" style="color: #ff9a47; text-decoration: none;">로그인</a>
+                                    <a onclick="window.location.href='../login/loginPage'" style="color: white; text-decoration: none;">로그인</a>
                                 </span>
 
                                 <span th:if="${session.sessionUserInfo !=null}">
                                     <div class="dropdown-end">
-                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ff9a47; text-decoration: none;">
-                                            <span class="" th:text="|${session.sessionUserInfo.name}|" style="color: #ff9a47;"></span>
-                                            <span class="" style="color: #ff9a47;"><i class="bi bi-person-circle"></i></span>
+                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; text-decoration: none;">
+                                            <span class="text-white" th:text="|${session.sessionUserInfo.name}|"></span>
+                                            <span class="text-white" style="color: #ff9a47;"><i class="bi bi-person-circle"></i></span>
                                         </a>
                                         <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
                                             <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>
