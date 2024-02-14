@@ -191,13 +191,16 @@
 
                     const container = 26.5 - mission.missionCourseList.length * 1.5;
 
-                    const mapContainer = document.getElementById("map");
-                    mapContainer.style.height = `${container}rem`;
+                    if(mission.courseInfoList.length >= 3 && mission.courseInfoList.length < 5){
+                        const map = document.getElementById("map");
+                        map.style.height = "75vh";
+                        map.style.top = "12rem";
+                    }else if(mission.courseInfoList.length = 5){
+                        const map = document.getElementById("map");
+                        map.style.height = "70vh";
+                        map.style.top = "15rem";
+                    }
     
-                    getNowLocation(function(locPosition) {
-                        map.relayout();
-                        map.panTo(locPosition);
-                    });
                 }
 
                 const missionCourseListBox = document.getElementById("missionCourseListBox");
@@ -399,10 +402,14 @@
 
                     const container = 26.5 - mission.courseInfoList.length;
 
-                    if(mission.courseInfoList.length >= 3){
+                    if(mission.courseInfoList.length >= 3 && mission.courseInfoList.length < 5){
+                        const map = document.getElementById("map");
+                        map.style.height = "75vh";
+                        map.style.top = "12rem";
+                    }else if(mission.courseInfoList.length = 5){
                         const map = document.getElementById("map");
                         map.style.height = "70vh";
-                        map.style.top = "14rem";
+                        map.style.top = "15rem";
                     }
 
                 }
@@ -1152,6 +1159,13 @@
         updateNowLocation();
     }
 
+    function setScreenSize() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+
+    setScreenSize();
+
 
 
 </script>    
@@ -1203,17 +1217,13 @@
         overflow-wrap: break-word;
     }
 
-    #findMyLocation{
+    #locbtn{
         z-index: 2;
-        position: absolute;
-        bottom: 4.1rem;
-        /* margin: auto;
-        left: 0; */
-        right: 0.6em;
-        box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);
+        position: fixed;
+        bottom: 5em;
+        /* margin: auto; */
+        left: 21.5em;
         transition: top 0.8s ease;
-        height: 2.2rem; 
-        width: 2.2rem;
     }
 
     #missionConfirmModal{
@@ -1268,20 +1278,12 @@
                 <!-- 지도 -->
                 <div class="row" style="height: 100vh;">
                     <div class="col px-0">
-                        <div id="map" style="height: 80vh !important; top:10rem;">
+                        <div id="map" style="height: calc((var(--vh, 1vh) * 78)); top:10rem;">
                             
                         </div>
                     </div>
                 </div>
 
-                <div class="row" style="height: 2.2rem; width: 2.2rem;">
-                    <div class="col-2 px-0">
-                        <button id="findMyLocation" class="btn-sm text-secondary border px-0 fs-5 text-center" 
-                            onclick="findMyLocation()" style="border-radius: 50%; background-color: white;">
-                            <i class="bi bi-crosshair d-grid justify-content-center text-center align-self-center"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row">
@@ -1291,6 +1293,15 @@
         </div>
     </div>
     
+    <div id="locbtn" class="row fixed-bottom px-0 justify-content-end" style="height: 2.2rem; width: 2.3rem;">
+        <div class="col-2 px-0 d-flex justify-content-end">
+            <button id="findMyLocation" class="btn-sm text-secondary border px-2 fs-5 text-center rounded-circle" 
+                onclick="findMyLocation()" type="button" style="height: 2.2rem; width: 2.2rem; background-color: white; box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);">
+                <i class="bi bi-crosshair d-flex justify-content-center text-center align-self-center"></i>
+            </button>
+        </div>
+    </div>
+
 
 
 <!-- fixed top // 미션 정보 나오는 부분 -->
