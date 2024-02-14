@@ -1361,6 +1361,28 @@ public class CircleRestController {
         
         return responseDto;
     }
+    //circleSearchList
+    @RequestMapping("circleSearchList")
+        public RestResponseDto circleSearchList(@RequestParam("searchword") String searchword){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleSearchList(searchword)); // 검색한 리스트들이 나와야함
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleNameDuplicateCheck
+    @RequestMapping("circleNameDuplicateCheck")
+        public RestResponseDto circleNameDuplicateCheck(@RequestParam("circle_name") String circle_name){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.circleNameDuplicateCheck(circle_name)); // 검색한 리스트들이 나와야함
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
 
     // RESTAPI 양식 
     /*

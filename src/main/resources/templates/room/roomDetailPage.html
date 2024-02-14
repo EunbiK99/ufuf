@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gugi&family=Jua&display=swap" rel="stylesheet">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c1a3fb01af622d05a21a2037b7b02bc&libraries=services"></script>
-    
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
 
@@ -510,7 +510,7 @@
         <div class="row p-5 mt-3"></div>
 
         <!--예약하기 버튼-->
-        <div class="row bg-white" style="position: fixed; bottom:0; z-index: 1000;">
+        <div class="row bg-white" style="position: fixed; width: 100%; bottom:0; z-index: 1000;">
             <div class="col" style=" width: 100%;">
                 <div class="row text-center pb-2 border-top border-secondery-subtle">
                     <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">

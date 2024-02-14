@@ -262,4 +262,8 @@ public interface CircleSqlMapper {
     public int boardCntByUserId(int user_id);
     public int voteCntByUserId(int user_id);
     public int scheduleCntByUserId(int user_id);
+
+    // 검색한 동아리 리스트
+    public List<CircleDto> circleSearchList(String searchword);
+    public List<CircleDto> circleNameDuplicateCheck(String circle_name);
 }

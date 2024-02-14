@@ -161,6 +161,7 @@ public class RoomRestController {
 
     @RequestMapping("getRoomListForSearchAndChargeDesc")
     public RestResponseDto getRoomListForSearchAndChargeDesc(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
+        System.out.println("getRoomListForSearchAndChargeDesc 실행");
         RestResponseDto restResponseDto = new RestResponseDto();
 
         restResponseDto.setResult("success");

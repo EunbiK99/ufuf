@@ -70,7 +70,7 @@
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
                     } else if(e.circleGradeDto.grade_name === "골드"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
-                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                    } else if(e.circleGradeDto.grade_name === "플레티넘"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
                     }
 
@@ -143,7 +143,7 @@
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
                     } else if(e.circleGradeDto.grade_name === "골드"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
-                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                    } else if(e.circleGradeDto.grade_name === "플레티넘"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
                     }
 
@@ -217,7 +217,7 @@
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
                     } else if(e.circleGradeDto.grade_name === "골드"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
-                    } else if(e.circleGradeDto.grade_name === "플래티넘"){
+                    } else if(e.circleGradeDto.grade_name === "플레티넘"){
                         circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
                     }
                     
@@ -238,6 +238,80 @@
 
             })
 
+
+        }
+        const circleSearchList = () => {
+
+            document.querySelector("#listInsert").innerHTML = "";
+            const circleWrapper = document.querySelector("#circleWrapper")
+            const mainTitle = circleWrapper.querySelector(".mainTitle").innerText = "동아리 검색"
+            const subTitle = circleWrapper.querySelector(".subTitle").innerText = "내가 원하는 동아리를 직접 검색하세요!"
+
+            const searchword = document.querySelector("#searchword").value
+            console.log(searchword);
+
+            $.ajax({
+                url: `./circleSearchList?searchword=` + searchword,
+                dataType: `json`,
+                success: (response) => {
+
+                    for(e of response.data){
+
+                        const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                    Wrapper.classList.remove("d-none");
+                    const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                    circlemainimage.removeAttribute("src");
+                    circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                    const circlecategory = Wrapper.querySelector(".circlecategory");
+                    circlecategory.innerHTML = "";
+                    circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlemiddlecategory = Wrapper.querySelector(".circlemiddlecategory");
+                    circlemiddlecategory.innerHTML = "";
+                    circlemiddlecategory.innerText = e.circleMiddleCategoryDto.category_name;
+                    const circlename = Wrapper.querySelector(".circlename");
+                    circlename.innerHTML = "";
+                    circlename.innerText = e.circleDto.circle_name;
+                    const university = Wrapper.querySelector(".university");
+                    university.innerHTML = "";
+                    university.innerText = e.circleDto.circle_university;
+                    const currentpeople = Wrapper.querySelector(".currentpeople");
+                    currentpeople.innerHTML = "";
+                    currentpeople.innerText = e.circleMemberCnt;
+                    const circlepeople = Wrapper.querySelector(".circlepeople");
+                    circlepeople.innerHTML = "";
+                    circlepeople.innerText = e.circleGradeDto.circle_people;
+                    const circlegrade = Wrapper.querySelector(".circlegrade");
+                    circlegrade.innerHTML = "";
+                    circlegrade.innerText = e.circleGradeDto.grade_name;
+                    const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                    if(e.circleGradeDto.grade_name === "아이언"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                    } else if(e.circleGradeDto.grade_name === "브론즈"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                    } else if(e.circleGradeDto.grade_name === "실버"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                    } else if(e.circleGradeDto.grade_name === "골드"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                    } else if(e.circleGradeDto.grade_name === "플레티넘"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                    }
+                    
+
+                    // 링크태그 여기서 하나씩 잡아주어야함
+                    const a = document.createElement("a");
+                    a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                    a.setAttribute("style", "text-decoration: none; color: black;");
+                    a.appendChild(Wrapper);
+                    
+
+                    // 본문에 붙이는 코드(리스트들)
+                    const listInsert = document.querySelector("#listInsert");
+                    listInsert.appendChild(a);
+
+                    }
+
+                }
+            })
 
         }
 
@@ -276,6 +350,14 @@
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     
     <div class="container-fluid">
+        <div class="row mt-2 align-items-center justify-content-center">
+            <div class="col pe-0">
+                <input id="searchword" type="text" class="form-control" placeholder="동아리명을 입력하세요">
+            </div>
+            <div class="col-2 text-center btn" onclick="circleSearchList()">
+                <i class="bi bi-search fw-semibold" style="font-size: 1.5em;color: rgb(255, 82, 14);"></i>
+            </div>
+        </div>
         <div class="row py-2">
         <div class="col-2 text-center" onclick="circledNewList()">
             신규

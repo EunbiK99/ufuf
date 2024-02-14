@@ -379,6 +379,13 @@
     <select id="scheduleCntByUserId" resultType="int">
         SELECT COUNT(*) from circle_schedule where circle_member_id in (SELECT circle_member_id  from circle_member WHERE user_id = #{user_id})
     </select>
+    <select id="circleSearchList" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle where circle_name like CONCAT('%', #{searchword}, '%')
+        order by circle_id DESC
+    </select>
+    <select id="circleNameDuplicateCheck" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle where circle_name = #{circle_name}
+    </select>
     
     
 

@@ -64,8 +64,12 @@
             .then(response => response.json())
             .then(response => {
                 
-                location.href = "circleScheduleManagePage?circle_id=" + circle_id;
-
+                location.href = "circleFeedPage?circle_id=" + circle_id;
+    
+                // 이동 후 2초 뒤에 알림창 띄우기
+                setTimeout(function() {
+                    alert("스케쥴 등록이 완료되었습니다.");
+                }, 1000);
             })            
 
         }

@@ -7,7 +7,7 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
@@ -105,15 +105,15 @@
 
         <div class="row border-bottom pb-4 mt-2" th:each="reservation : ${roomReservationList}">
             <div class="col" th:if="${reservation.roomInfoDto!=null}">
-                <div class="row mt-3 mx-3 pe-2 mt-2">
-                    <div class="col-3 me-0" style="width: 8em;">
+                <div class="row mt-3 mx-3 ps-2 pe-2 mt-2">
+                    <div class="col-3 " style="width: 7.5em;">
                         <div class="row pe-0">
                             <a class="ps-0 pe-0" th:href="@{./roomReservationInfoPage(room_info_id=${reservation.roomInfoDto.room_info_id})}">
                                 <img th:src="@{/public/image/room/}+${reservation.roomInfoDto.main_image}" class="img-fluid rounded" style="width: 7em; height: 7em; overflow: hidden; position: relative; object-fit: cover;">
                             </a>
                         </div>
                     </div>
-                    <div class="col" style="width: 15em;">
+                    <div class="col-7">
                         
                         <div class="row mt-2">
                             <div class="col text-truncate" style=" max-width: 12em;">
