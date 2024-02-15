@@ -191,11 +191,11 @@
 
                     const container = 26.5 - mission.missionCourseList.length * 1.5;
 
-                    if(mission.courseInfoList.length >= 3 && mission.courseInfoList.length < 5){
+                    if(mission.missionCourseList.length >= 3 && mission.missionCourseList.length < 5){
                         const map = document.getElementById("map");
                         map.style.height = "75vh";
                         map.style.top = "12rem";
-                    }else if(mission.courseInfoList.length = 5){
+                    }else if(mission.missionCourseList.length = 5){
                         const map = document.getElementById("map");
                         map.style.height = "70vh";
                         map.style.top = "15rem";
@@ -748,7 +748,19 @@
                             openWriteReviewModal();
                         });
                         reviewBtn.classList.remove("d-none");
-                    }else{
+                    }else if (mission.missionInfoDto.user_id != sessionUser && mission.isReviewExist == 0){
+
+                        const viewReviewBtn = document.getElementById("viewReviewBtn");
+                        viewReviewBtn.classList.remove("d-none");
+
+                        const text = viewReviewBtn.querySelector("span");
+
+                        text.innerText = "수행 결과 대기중";
+                        text.style.color = "#cccccc";
+
+                        viewReviewBtn.disabled = true;
+
+                    }else if(mission.isReviewExist > 0){
                         const viewReviewBtn = document.getElementById("viewReviewBtn");
                         viewReviewBtn.classList.remove("d-none");
 

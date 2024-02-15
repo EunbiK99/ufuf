@@ -467,6 +467,19 @@ public class MissionMapRestController {
         
         return restResponseDto;
     }
+
+    @GetMapping("loadPlayMissionHistory")
+    public RestResponseDto loadPlayMissionHistory(HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        restResponseDto.setData(missionMapService.getMyPlayMisisonInfo(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
     
     @GetMapping("loadMyReview")
     public RestResponseDto loadMyReview(HttpSession session){

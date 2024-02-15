@@ -600,6 +600,45 @@ public class MissionMapServiceImpl {
         return regMissionInfoList;
     }
 
+    public List<Map<String, Object>> getMyPlayMisisonInfo(int user_id){
+
+        List<Map<String, Object>> regMissionInfoList = new ArrayList<>();
+
+        List<MissionChatRoomDto> myPlayMissionChatRoomDtoList = missionMapSqlMapper.selectMyPlayMission(user_id);
+
+        for(MissionChatRoomDto chatRoomDto : myPlayMissionChatRoomDtoList){
+
+            Map<String, Object> myResMission = new HashMap<>();
+
+            int mission_id = chatRoomDto.getMission_id();
+
+            MissionInfoDto missionInfoDto = missionMapSqlMapper.selectMissionById(mission_id);
+            List<MissionCourseDto> missionCourseList = missionMapSqlMapper.selectCourseByMission(mission_id);
+
+            int totalReward = 0;
+            for(MissionCourseDto missionCourseDto : missionCourseList){
+                int courseReward = missionCourseDto.getReward();
+                totalReward = totalReward + courseReward;
+            }
+
+            myResMission.put("missionInfoDto", missionInfoDto);
+            myResMission.put("totalReward", totalReward);
+
+            List<MissionChatRoomDto> list = missionChatSqlMapper.selectChatRoomListByMission(mission_id);
+
+            if(list != null){
+                for(MissionChatRoomDto missionChatRoomDto : list){
+                    if(missionChatRoomDto.getAccept_at() != null){
+                        myResMission.put("missionChatRoomDto", list);
+                    }
+                }
+            }
+
+            regMissionInfoList.add(myResMission);
+        }
+        return regMissionInfoList;
+    }
+
     public List<Map<String, Object>> getMyReviewInfo(int user_id){
 
         List<Map<String, Object>> reviewInfo = new ArrayList<>();

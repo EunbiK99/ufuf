@@ -249,6 +249,9 @@
             .then(response => response.json())
             .then(response => {
 
+                const missionCount = document.getElementById("missionCount");
+                missionCount.innerText = "(" + response.data.length + ")" ;
+
                 for(mission of response.data){
                     
                     const missionWrapper = document.querySelector("#missionListTemplete .missionWrapper").cloneNode(true);
@@ -797,7 +800,7 @@
                                 <div class="row border-bottom py-1" style="height: 2rem;  overflow: hidden;">
                                     <div class="col mx-2">
                                         <span style="font-size: 0.9rem; color: #6d6d6d;">신청 가능한 미션</span>
-                                        <span id="missionCount"></span>
+                                        <span style="font-size: 0.9rem; color: #6d6d6d;" id="missionCount"></span>
                                     </div>
                                 </div>
                                 <div class="row px-2 overflow-x-hidden overflow-y-scroll" style="height: calc((var(--vh, 1vh) * 100) - (var(--vh, 1vh) * 50) - 5.5rem);">

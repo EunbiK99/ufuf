@@ -59,11 +59,6 @@
     WHERE status = '모집중'
 </select>
 
-<select id="countRecruitingMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
-    select * from mission_info
-    WHERE status = '모집중'
-</select>
-
 <select id="selectCourseByMission" resultType="com.cu.ufuf.dto.MissionCourseDto">
     select * from mission_course
     where mission_id = #{mission_id}
