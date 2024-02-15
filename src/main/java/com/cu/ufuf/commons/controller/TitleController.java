@@ -9,6 +9,6 @@ public class TitleController {
 
     @RequestMapping("/")
     public String commonsMainPage(){
-        return "redirect:commons/mainPage";
+        return "redirect:https://ufuf.null-pointer-exception.com/commons/mainPage";
     }
 }
