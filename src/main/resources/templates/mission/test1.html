@@ -3,167 +3,315 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>로그인</title>
-    
+        
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 </head>
 
 <script>
 
-var count = 0;
-
-    function addForm(){
-
-        var addedFormDiv = document.getElementById("addedFormDiv");
-
-        var str = "";
-        str+="<br>제목"+count+" <input type='text' name='tb1_"+count+"'>";
-        str+="<br>내용"+count+" <input type='text' name='tb2_"+count+"'>";
-        str+="<br>가격"+count+" <input type='text' name='tb3_"+count+"'><BR>";
-
-        // 추가할 폼(에 들어갈 HTML)
-        var addedDiv = document.createElement("div"); // 폼 생성
-        addedDiv.id = "added_"+count; // 폼 Div에 ID 부여 (삭제를 위해)
-        addedDiv.innerHTML  = str; // 폼 Div안에 HTML삽입
-        addedFormDiv.appendChild(addedDiv); // 삽입할 DIV에 생성한 폼 삽입
-
-        count++;
-
-        document.baseForm.count.value=count;
-
-    }
-
-    function delForm(){
-
-        var addedFormDiv = document.getElementById("addedFormDiv");
-
-        if(count >1){ // 현재 폼이 두개 이상이면
-
-            var addedDiv = document.getElementById("added_"+(--count));
-
-            // 마지막으로 생성된 폼의 ID를 통해 Div객체를 가져옴
-            addedFormDiv.removeChild(addedDiv); // 폼 삭제 
-
-        }else{ // 마지막 폼만 남아있다면
-
-            document.baseForm.reset(); // 폼 내용 삭제
-
-        }
-
-    }
-
+    var relativePath = window.location.origin;
 
 </script>
 
-<body onload="addForm();">
+<style>
+    
+    .container-fluid{
+        box-shadow : rgba(0,0,0,0.5) 0 0 0 9999px;
+        z-index : 1;
+        position: absolute;
+    }
 
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <form name="baseForm" action="" method="post">
-                    <input type="hidden" name="count" value="0">
-                    <div id="addedFormDiv"></div><BR>
-                    <input type="Button" value="추가" onclick="addForm()">
-                    <input type="Button" value="삭제" onclick="delForm()">
-                    <input type="Submit" value="완료">
-                </form>
-            </div>
+    .half-circle {
+        bottom: 0;
+        width: 16rem; /* 원하는 너비 설정 */
+        height: 8rem; /* 반원의 높이는 반지름의 절반이 됩니다 */
+        background-color: white; /* 원하는 배경색 설정 */
+        border-radius: 10rem 10rem 0 0; /* 위쪽 두 모서리에만 반지름 적용 */
+        margin: auto;
+    }
+
+    .fi {
+        background: linear-gradient(to bottom, #ff663f, #ff8f3a, #ffb351); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
+    
+</style>
+
+<body>
+<!-- 
+    <i class="fi fi-rr-comment-heart"></i>
+    <i class="fi fi-rr-circle-heart"></i>
+    <i class="fi fi-rr-search-heart"></i>
+    <i class="fi fi-rr-heart-rate"></i>
+
+    <i class="fi fi-rr-house-chimney"></i>
+
+
+    <i class="fi fi-rr-ticket-alt"></i>
+    <i class="fi fi-rr-track"></i>
+    <i class="fi fi-rr-land-layer-location"></i>
+    <i class="fi fi-rr-route"></i>
+
+    <i class="fi fi-rr-bed-alt"></i>
+    <i class="fi fi-rr-home-location-alt"></i>
+    <i class="fi fi-rr-house-night"></i>
+
+    <i class="fi fi-rr-tour-guide-people"></i>
+    <i class="fi fi-rr-users"></i>
+    <i class="fi fi-rr-meeting-alt"></i>
+    <i class="fi fi-rr-meeting"></i>
+ -->
+
+<div class="container-fluid">
+    
+</div>
+
+              
+
+
+
+
+    <!-- <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 4.5rem; width: 100%; margin: auto;">
+        <div class="col text-center">
+            <span class="rounded-circle px-2 py-2" style="background-color: #ffa861; color: white; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-comment-heart fs-3 align-middle"></i>
+            </span>
+        </div>
+        <div class="col text-center">
+            <span class="rounded-circle px-2 py-2" style="background-color: #ffa861; color: white; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-map-marker fs-3 align-middle"></i>
+            </span>
+        </div>
+        <div class="col text-center">
+            <span class="rounded-circle px-2 py-2" style="background-color: #ffa861; color: white; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-house-chimney fs-3 align-middle"></i>
+            </span>
+        </div>
+        <div class="col text-center">
+            <span class="rounded-circle px-2 py-2" style="background-color: #ffa861; color: white; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-bed-alt fs-3 align-middle"></i>
+            </span>
+        </div>
+        <div class="col text-center">
+            <span class="rounded-circle px-2 py-2" style="background-color: #ffa861; color: white; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-meeting fs-3 align-middle"></i>
+            </span>
+        </div>
+    </div> -->
+
+<!-- 
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 7rem; width: 100%; margin: auto;">
+        <div class="col-2 text-center">
+            <span class="rounded-circle px-2 py-2 bg-white" style="color: #818181; box-shadow: 0 0 0.3rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-house-chimney fs-4 align-middle"></i>
+            </span>
         </div>
     </div>
 
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 6.3rem; width: 100%; margin: auto;">
+        <div class="col-2 text-end">
+            <btn class="rounded-circle px-2 py-2 bg-white" style="color: #818181; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-map-marker fs-4 align-middle"></i>
+            </span>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-2 text-start">
+            <span class="rounded-circle px-2 py-2 bg-white" style="color: #818181; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-bed-alt fs-4 align-middle"></i>
+            </span>
+        </div>
+    </div>
 
-    <!-- 코스 추가 템플릿 -->
-    <div class="inputCourseTemplate row mt-3 d-none" data-valu="1">
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 4.3rem; width: 100%; margin: auto;">
+        <div class="col-2 text-center">
+            <span class="rounded-circle px-2 py-2 bg-white" style="color: #818181; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-comment-heart fs-4 align-middle"></i>
+            </span>
+        </div>
+        <div class="col-5"></div>
+        <div class="col-2 text-center">
+            <span class="rounded-circle px-2 py-2 bg-white" style="color: #818181; box-shadow: 0 0 0.2rem 0.1rem #dddddd;">
+                <i class="fi fi-rr-meeting fs-4 align-middle"></i>
+            </span>
+        </div>
+    </div> -->
+
+    
+
+    <div class="row justify-content-center" style="margin: auto; position: fixed; bottom: 2.3rem; z-index : 2; width: 100%;">
         <div class="col">
+            <div class="half-circle" style=""></div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 7.2rem; width: 100%; margin: auto;">
+        <div class="col-2 text-center">
             <div class="row">
-                <div class="col d-grid">
-                    <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border" style="background-color: #f7f7f7;">
-                        <span class="flex-grow-1 text-start">코스<span class="courseIndex ps-2">1</span></span>
-                        <i class="bi bi-caret-down text-secondary"></i>
-                    </button>
+                <div class="col">
+                    <span class="rounded-circle px-1 py-1" style="color: #616161;">
+                        <i class="fi fi-rr-house-chimney fs-4 align-middle"></i>
+                    </span>
                 </div>
             </div>
-            <div class="row px-1">
-                <div class="col border border-top-0 mx-2 py-3">
-                    <div class="row">
-                        <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
-                            코스명
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col">
-                            <input type="text" class="courseName form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
-                            완료 상금
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col">
-                            <input type="text" class="reward form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;">
-                        </div>
-                    </div>
-                    <div class="row py-2">
-                        <div class="col d-grid">
-                            <div class="gap-2 d-md-block">
-                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+1000</button>
-                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+3000</button>
-                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+5000</button>
-                                <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;">+10000</button>
-                              </div>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
-                            미션 수행 지점
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col">
-                            <div class="map" style="height:10em; width: 100%;">
-                                <script>
-
-                                    var mapContainer = document.querySelector(".map"), // 지도를 표시할 div
-                                        mapOption = { 
-                                            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                                            level: 3 // 지도의 확대 레벨
-                                        };
-
-                                    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-                                    map.setZoomable(true);
-                                    
-                                    getNowLocation(function(locPosition) {
-                                        panTo(locPosition);
-                                    });
-
-                                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
-
-                                        // 클릭한 위도, 경도 정보를 가져옵니다 
-                                        var latlng = mouseEvent.latLng; 
-                                        
-                                        // 마커 위치를 클릭한 위치로 옮깁니다
-                                        nowMarker.setPosition(latlng);
-                                        
-                                    });
-
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row px-1 mt-2">
-                        <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
-                            <i class="bi bi-geo-alt me-2"></i><span id="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
-                            <input type="hidden" class="lat">
-                            <input type="hidden" class="lng">
-                        </div>
-                    </div>
+            <div class="row" style="margin-top: -0.2rem;">
+                <div class="col text-center" style="color: #949494; font-size: 0.6rem;">
+                    홈
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 6.3rem; width: 100%; margin: auto;">
+        <div class="col-2 text-end">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="rounded-circle px-2 py-2" style="color: #616161;">
+                        <i class="fi fi-rr-map-marker fs-4 align-middle"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: -0.2rem;">
+                <div class="col text-center" style="color: #949494; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2rem;"></div>
+        <div class="col-2 text-end">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="rounded-circle px-2 py-2" style="color: #616161;">
+                        <i class="fi fi-rr-bed-alt fs-4 align-middle"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: -0.2rem;">
+                <div class="col text-center" style="color: #949494; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center z-2" style="position: fixed; bottom: 4.2rem; width: 100%; margin: auto;">
+        <div class="col-2 text-end">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="rounded-circle px-2 py-2" style="color: #616161;">
+                        <i class="fi fi-rr-comment-heart fs-4 align-middle"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: -0.2rem;">
+                <div class="col text-center" style="color: #949494; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6rem;"></div>
+        <div class="col-2 text-end">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="rounded-circle px-2 py-2" style="color: #616161;">
+                        <i class="fi fi-rr-meeting fs-4 align-middle"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: -0.2rem;">
+                <div class="col text-center" style="color: #949494; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="footer row bg-white border-top fixed-bottom" style="margin: auto;">
+        <div class="col px-0">
+            <div class="row text-secondary text-center py-1" style="height: 3.4rem;">
+                <div class="col ps-3">
+                    <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/map'">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-map"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            미션맵
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="col px-0">
+                    <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/myMission'">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-envelope-paper"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            My미션
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="col px-0">
+                    <div class="row">
+                        <div class="col px-0">
+                            <img src="/public/image/commons/logo_fill.png" class="img-fluid mt-1" style="height: 2.2em;" onclick="window.location.href='../commons/mainPage'">
+                        </div>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/chatList'">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            채팅
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="col pe-3">
+                    <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/myPage'">
+                    <div class="row">
+                        <div class="col px-0">
+                            <i class="bi bi-person-bounding-box"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col px-0" style="font-size:0.75em;">
+                            My페이지
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
