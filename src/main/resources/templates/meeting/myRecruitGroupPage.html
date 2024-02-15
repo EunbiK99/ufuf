@@ -45,32 +45,39 @@ function getMyRecruitMeetingList(){
         const myRecruitGroupWrapperCol = document.getElementById("myRecruitGroupWrapperCol");
         myRecruitGroupWrapperCol.innerHTML = "";
 
-        for(e of myMeetingGroupList){
+        if(myMeetingGroupList.length > 0){
+            for(e of myMeetingGroupList){
             
-            const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
-            myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
-            
-            const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
+                const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
+                myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
+                myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
+                
+                const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
+                myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
 
-            const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
-            myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
+                const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
+                myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
 
-            const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
-            myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
+                const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
+                myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
 
-            const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
-            const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
-            myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
+                const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
+                const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
+                myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
 
-            const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-            const orginalRegdate = e.meetingGroupDto.regdate;
-            const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
-            myMeetingGroupRegdate.innerText = newRegdate;
+                const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
+                const orginalRegdate = e.meetingGroupDto.regdate;
+                const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
+                myMeetingGroupRegdate.innerText = newRegdate;
 
-            myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
+                myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
+            }
         }
+        else{
+            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
+            myRecruitGroupWrapperCol.appendChild(notExistGroupMessage);
+        }
+        
     });
 }
 
@@ -227,6 +234,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <span id="myMeetingGroupMaxHeadCount"></span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row notExistGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
+        <div class="col text-center">
+            <div class="row">
+                <div class="col mt-4">
+                    <span class="fs-4 fw-bold text-secondary">모집중인 미팅그룹이 없어요.</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mb-4">
+                    <span class="fs-4 fw-bold text-secondary" style="white-space:nowrap;">새 그룹을 만들어보는건 어때요?</span>
+                    <span class="fs-4 fw-bold text-secondary"><i class="fi fi-rr-leadership-alt"></i></span>
                 </div>
             </div>
         </div>
