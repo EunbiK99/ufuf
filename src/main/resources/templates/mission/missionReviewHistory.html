@@ -29,7 +29,7 @@
 
                 if(response.data.length == 0){
 
-                    historyBox.innerHTML = `<div class="row my-5">
+                    historyBox.innerHTML = `<div class="row my-5 d-flex">
                                                     <div class="col my-5">
                                                         <div class="row mt-4">
                                                             <div class="col text-center">
@@ -151,7 +151,7 @@
         </div>
     </div>
 
-    <div class="row overflow-y-scroll" style="height: auto; position: fixed; margin: auto; top:3.3rem; bottom: 3.4rem;">
+    <div class="row overflow-y-scroll" style="height: auto; position: fixed; margin: auto; top:3.3rem; bottom: 3.4rem; width: 100%;">
         <div id="historyBox" class="col">
             
         </div>
@@ -167,14 +167,6 @@
         <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-
-            </div>
-        </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
-    </div>
 
 
 

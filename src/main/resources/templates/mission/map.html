@@ -441,6 +441,9 @@
 
                             if(sessionUserPk == mission.userInfoDto.user_id){
                                 missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.9rem;"></i><span style="font-size: 0.93rem;">미션 삭제</span>`;
+                                myElement.addEventListener('click', function() {
+                                    cancelKakaoPay();
+                                });
                             }else if(sessionUserPk == 0){
                                 missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9em;"></i><span class="" style="font-size: 0.93em;">미션신청</span>`;
                                 missionApplyModalBtn.onclick = function(){
@@ -542,24 +545,8 @@
         loadMyAppMission();
     }
 
-    // 마이 미션
-    function loadMyMission(){
 
-        const shut = document.querySelectorAll(".shut");
-        shut.classList.add("d-none");
-
-        const MyMissionList = document.getElementById("MyMissionList");
-        MyMissionList.classList.remove("d-none"); 
-
-        const mapContainer = document.getElementById("map");
-        mapContainer.style.height = "20.85rem";
-
-        const findMyLocation = document.getElementById("findMyLocation");
-        findMyLocation.style.bottom = "20rem";
-
-        loadMyPlayMission();
-    }
-
+    // 미션 삭제 시, 카카오페이 delete
 
     function setScreenSize() {
         let vh = window.innerHeight * 0.01;
