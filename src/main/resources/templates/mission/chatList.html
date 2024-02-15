@@ -33,91 +33,120 @@
             .then(response => response.json())
             .then(response => {
 
-                for(chat of response.data){
+                if(response.data.length == 0){
 
-                    if(sessionUser == chat.missionInfoDto.user_id){
+                    chatListBox.innerHTML = `<div class="row my-5">
+                                                <div class="col my-5">
+                                                    <div class="row mt-4">
+                                                        <div class="col text-center">
+                                                            <i class="bi bi-envelope-x" style="font-size: 3.3rem; color: #dadada;"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col text-center text-dark-emphasis">
+                                                            현재 열려있는 채팅방이 존재하지 않습니다.
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col text-center text-body-tertiary" style="font-size: 0.8rem;">
+                                                            미션을 신청하시고 채팅을 시작해 보세요!
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>`;
 
-                        // 내가 등록한 미션의 채팅일 경우
-
-                        if (!processedMissionIds.has(chat.missionInfoDto.mission_id)) {
-
-                            const myMissionChatWrapper = document.querySelector("#myMissionChatTemplete .myMissionChatWrapper").cloneNode(true);
-
-                            myMissionChatWrapper.id = chat.missionInfoDto.mission_id;
+                    const parentElement = chatListBox.parentElement;
+                    parentElement.classList.remove("overflow-y-scroll");
                     
-                            myMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
-                            myMissionChatWrapper.querySelector(".detail").innerHTML = chat.missionInfoDto.detail;
-                            myMissionChatWrapper.querySelector(".countChatRoom").innerText = chat.countChatRoomByMission;
+                }else{
 
-                            myMissionChatWrapper.onclick = (function (missionInfo) {
-                                return function () {
-                                    loadMyMissionPlayer(missionInfo);
-                                    
+                    for(chat of response.data){
+    
+                        if(sessionUser == chat.missionInfoDto.user_id){
+    
+                            // 내가 등록한 미션의 채팅일 경우
+    
+                            if (!processedMissionIds.has(chat.missionInfoDto.mission_id)) {
+    
+                                const myMissionChatWrapper = document.querySelector("#myMissionChatTemplete .myMissionChatWrapper").cloneNode(true);
+    
+                                myMissionChatWrapper.id = chat.missionInfoDto.mission_id;
+                        
+                                myMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
+                                myMissionChatWrapper.querySelector(".detail").innerHTML = chat.missionInfoDto.detail;
+                                myMissionChatWrapper.querySelector(".countChatRoom").innerText = chat.countChatRoomByMission;
+    
+                                myMissionChatWrapper.onclick = (function (missionInfo) {
+                                    return function () {
+                                        loadMyMissionPlayer(missionInfo);
+                                        
+                                    };
+                                })(chat.missionInfoDto);
+    
+                                chatListBox.appendChild(myMissionChatWrapper);
+    
+                                processedMissionIds.add(chat.missionInfoDto.mission_id);
+                            }
+    
+                        }else if(sessionUser == chat.missionChatRoomDto.user_id){
+    
+                            // 내가 신청 및 수행하는 미션의 채팅일 경우
+                            const myPlayMissionChatWrapper = document.querySelector("#myPlayMissionChatTemplete .myPlayMissionChatWrapper").cloneNode(true);
+    
+                            myPlayMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
+    
+                            var countUnread = chat.countUnreadChat;
+    
+                            // 미션 진행상태
+                            if(chat.missionChatRoomDto.accept_at == null){
+                                myPlayMissionChatWrapper.querySelector(".status").innerText = "수락대기중";
+                            }else if(chat.missionChatRoomDto.accept_at != null && chat.missionChatRoomDto.giveup_at == null){
+                                myPlayMissionChatWrapper.querySelector(".status").innerText = "미션진행중";
+                            }else if(chat.missionChatRoomDto.giveup_at != null){
+                                myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
+                            }
+    
+                            // 채팅 읽음 0이면 표시 X
+                            if(chat.countUnreadChat == 0){
+                                myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = "";
+                            }else{
+                                myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = `<span class="countUnread px-2 rounded-5 text-white fw-semibold text-center d-flex align-self-center" 
+                                                                                                            style="background-color: #FF8827; font-size: 0.9em;">
+                                                                                                            ${countUnread}
+                                                                                                        </span>`
+                            }
+    
+                            // 가장 마지막에 온 채팅 유형 구분 => 미리보기에 뭘 내보낼지
+                            if(chat.latestChatDto.chat_category_id === 1){
+                                myPlayMissionChatWrapper.querySelector(".latestChat").innerText = chat.latestChatDto.message;
+                            }else if(chat.latestChatDto.chat_category_id === 2){
+                                myPlayMissionChatWrapper.querySelector(".latestChat").innerText = "(사진)";
+                            }else if(chat.latestChatDto.chat_category_id === 3){
+    
+                                let pattern = /\^alert!\^([\s\S]*?)\^alert!\^/g;
+                                let match = pattern.exec(chat.latestChatDto.message);
+    
+                                var title = chat.missionInfoDto.title;
+                                var name = chat.chatSenderDto.name;
+    
+                                let text = match[1].replace("${name}", name);
+                                text = text.replace("${title}", title);
+    
+                                myPlayMissionChatWrapper.querySelector(".latestChat").innerHTML = text;
+                            }
+    
+                            (function (currentChatWrapper, currentChatRoomId) {
+                                myPlayMissionChatWrapper.onclick = function () {
+                                    window.location.href="./chatRoom?chat_room_id=" + currentChatRoomId;
+                                    updateReadStatus(currentChatRoomId);
                                 };
-                            })(chat.missionInfoDto);
-
-                            chatListBox.appendChild(myMissionChatWrapper);
-
-                            processedMissionIds.add(chat.missionInfoDto.mission_id);
+                            })(myPlayMissionChatWrapper, chat.missionChatRoomDto.chat_room_id);
+    
+                            chatListBox.appendChild(myPlayMissionChatWrapper);
                         }
-
-                    }else if(sessionUser == chat.missionChatRoomDto.user_id){
-
-                        // 내가 신청 및 수행하는 미션의 채팅일 경우
-                        const myPlayMissionChatWrapper = document.querySelector("#myPlayMissionChatTemplete .myPlayMissionChatWrapper").cloneNode(true);
-
-                        myPlayMissionChatWrapper.querySelector(".title").innerText = chat.missionInfoDto.title;
-
-                        var countUnread = chat.countUnreadChat;
-
-                        // 미션 진행상태
-                        if(chat.missionChatRoomDto.accept_at == null){
-                            myPlayMissionChatWrapper.querySelector(".status").innerText = "수락대기중";
-                        }else if(chat.missionChatRoomDto.accept_at != null && chat.missionChatRoomDto.giveup_at == null){
-                            myPlayMissionChatWrapper.querySelector(".status").innerText = "미션진행중";
-                        }else if(chat.missionChatRoomDto.giveup_at != null){
-                            myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
-                        }
-
-                        // 채팅 읽음 0이면 표시 X
-                        if(chat.countUnreadChat == 0){
-                            myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = "";
-                        }else{
-                            myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = `<span class="countUnread px-2 rounded-5 text-white fw-semibold text-center d-flex align-self-center" 
-                                                                                                        style="background-color: #FF8827; font-size: 0.9em;">
-                                                                                                        ${countUnread}
-                                                                                                    </span>`
-                        }
-
-                        // 가장 마지막에 온 채팅 유형 구분 => 미리보기에 뭘 내보낼지
-                        if(chat.latestChatDto.chat_category_id === 1){
-                            myPlayMissionChatWrapper.querySelector(".latestChat").innerText = chat.latestChatDto.message;
-                        }else if(chat.latestChatDto.chat_category_id === 2){
-                            myPlayMissionChatWrapper.querySelector(".latestChat").innerText = "(사진)";
-                        }else if(chat.latestChatDto.chat_category_id === 3){
-
-                            let pattern = /\^alert!\^([\s\S]*?)\^alert!\^/g;
-                            let match = pattern.exec(chat.latestChatDto.message);
-
-                            var title = chat.missionInfoDto.title;
-                            var name = chat.chatSenderDto.name;
-
-                            let text = match[1].replace("${name}", name);
-                            text = text.replace("${title}", title);
-
-                            myPlayMissionChatWrapper.querySelector(".latestChat").innerHTML = text;
-                        }
-
-                        (function (currentChatWrapper, currentChatRoomId) {
-                            myPlayMissionChatWrapper.onclick = function () {
-                                window.location.href="./chatRoom?chat_room_id=" + currentChatRoomId;
-                                updateReadStatus(currentChatRoomId);
-                            };
-                        })(myPlayMissionChatWrapper, chat.missionChatRoomDto.chat_room_id);
-
-                        chatListBox.appendChild(myPlayMissionChatWrapper);
                     }
                 }
+
             });    
     }
 
@@ -309,7 +338,7 @@
         <div class="row">
             <div class="col px-0">
 
-                <div class="row" style="margin-top: 3.3rem; margin-bottom: 3.4rem;">
+                <div class="row" style="margin-top: 3.3rem; margin-bottom: 3.4rem; width: 100%; margin: auto;">
                     <div class="overflow-y-scroll overflow-x-hidden" style="height: auto;">
                         <div id="chatListBox" class="col">
                         </div>
