@@ -116,9 +116,6 @@
       box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
     }
 
-    body{
-        overflow: scroll;
-    }
 
 </style>
 
@@ -130,20 +127,20 @@
         <div class="row">
             <div class="col px-0">
 
-                <div class="row py-2 px-2 border-bottom border-dark-subtle" style="height: 3.3rem;">
+                <div class="row py-2 border-bottom border-dark-subtle" style="height: 3.3rem; margin: auto;">
                     <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./map';">
-                        <i class="bi bi-arrow-left ms-2"></i>
+                        <i class="bi bi-arrow-left ms-1"></i>
                     </div>
                     <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
                         마이페이지
                     </div>
                     <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
-                        <i class="bi bi-three-dots-vertical me-1"></i>
+                        <i class="bi bi-three-dots-vertical "></i>
                     </div>
                 </div>
 
-                <div class="row mt-1 px-2">
-                    <div class="col mx-2" style="padding-left: 1.35rem; padding-right: 1.35rem;">
+                <div class="row" style="margin: auto;">
+                    <div class="col mx-1" style="padding-left: 1.35rem; padding-right: 1.35rem;">
 
                         <!-- 프로필 -->
                         <div class="row mt-3 py-1">
@@ -216,7 +213,7 @@
                                             </div>
                                         </div>
                                         <div class="row py-1">
-                                            <div class="col text-light-emphasis">
+                                            <div class="col" style="color: #8a8a8a; font-weight: 400;">
                                                 <div class="row py-1">
                                                     <div class="col" style="font-size: 0.95rem;">
                                                         <a onclick="window.location.href='./missionRegisterHistory'">미션 등록 내역</a>
@@ -245,7 +242,7 @@
                                             </div>
                                         </div>
                                         <div class="row py-1">
-                                            <div class="col text-light-emphasis">
+                                            <div class="col" style="color: #8a8a8a; font-weight: 400;">
                                                 <div class="row py-1">
                                                     <div class="col" style="font-size: 0.95rem;">
                                                         <a>포인트 내역 확인</a>
@@ -264,7 +261,7 @@
                                             </div>
                                         </div>
                                         <div class="row py-1">
-                                            <div class="col text-light-emphasis">
+                                            <div class="col" style="color: #8a8a8a; font-weight: 400;">
                                                 <div class="row py-1">
                                                     <div class="col" style="font-size: 0.95rem;">
                                                         <a>자주묻는 질문</a>
