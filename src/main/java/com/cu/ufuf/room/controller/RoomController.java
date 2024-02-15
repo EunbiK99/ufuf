@@ -73,10 +73,10 @@ public class RoomController {
     public String roomRegisterProcess(HttpSession session, RoomInfoDto roomInfoDto, @RequestParam(name = "mainImageFile") MultipartFile mainImageFile, @RequestParam(name = "imageFiles") MultipartFile[] imageFiles, @RequestParam(name = "room_option_category_id") int[] room_option_category_id,String checkin1,String checkin2,String checkout1,String checkout2 ){
 		
 		//메인이미지
-		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd/");
+		SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd/");
 
 		if(mainImageFile != null && !mainImageFile.isEmpty()) {
-			String imageRootPath = "C:/uploadFiles/ufuf/roomImage";
+			String imageRootPath = "C:/uploadFiles/ufuf/room/roomImage/";
 			String imageTodayPath = sdf.format(new Date());
 			
 			File todayFolderForCreate = new File(imageRootPath + imageTodayPath);
@@ -111,7 +111,7 @@ public class RoomController {
 					continue;
 				}
 
-				String rootPath = "C:/uploadFiles/ufuf/roomImage/";
+				String rootPath = "C:/uploadFiles/ufuf/room/roomImage/";
 				
 				String todayPath = sdf.format(new Date());
 				
@@ -376,10 +376,10 @@ public class RoomController {
 		
 
 		//메인이미지
-		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd/");
+		SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd/");
 
 		if(mainImageFile != null && !mainImageFile.isEmpty()) {
-			String imageRootPath = "C:/uploadFiles/ufuf/roomImage";
+			String imageRootPath = "C:/uploadFiles/ufuf/roomImage/";
 			String imageTodayPath = sdf.format(new Date());
 			
 			File todayFolderForCreate = new File(imageRootPath + imageTodayPath);
@@ -416,7 +416,7 @@ public class RoomController {
 					continue;
 				}
 
-				String rootPath = "C:/uploadFiles/ufuf/roomImage";
+				String rootPath = "C:/uploadFiles/ufuf/roomImage/";
 				
 				String todayPath = sdf.format(new Date());
 				
