@@ -476,9 +476,7 @@ function makeGroupDetailPage(){
                 }
             }
             if(watingUserCountValue === 0){
-                const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
-                const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
-                noApplyProfileInfoText.innerText = "선발대기중인 신청인원이 없어요.";
+                const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);                
                 applyProfileListWrapperCol.appendChild(noApplyProfileRow);
             }
         }
@@ -846,8 +844,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
     <div id="noApplyProfileRow" class="row my-3">
         <div class="col">
             <div class="row">
-                <div class="col text-center align-self-center">
-                    <span id="noApplyProfileInfoText" class="fw-bold fs-3 text-secondary"></span>
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-face-pleading bi-align-middle"></i></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <span id="noApplyProfileInfoText" class="fw-bold text-secondary text-opacity-50">아직 신청한 인원이 없어요.</span>
                 </div>
             </div>            
         </div>        
@@ -947,7 +950,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     <span class="text-danger">난 성격에 문제있어서</span>
                                 </div>
                             </div>
-                            <div class="row"                    >
+                            <div class="row">
                                 <div class="col text-center">                                    
                                     <span class="text-danger">아무도 뽑고싶지 않아요</span>
                                     <span class="text-danger"><i class="fi fi-rr-face-expressionless bi-align-center"></i></span>
