@@ -1,0 +1,20 @@
+/* 하단 footer 애니메이션을 위한 코드 */
+#secondLine, #thirdLine {
+    transition: opacity 1s;
+}
+
+#signal, #bnb, #mission, #circle, #home{
+    transition: all 0.5s;
+    opacity: 0;
+}
+
+#signal.clicked, #bnb.clicked, #mission.clicked, #circle.clicked, #home.clicked {
+    opacity: 1;
+}
+
+.footer .fi {
+    background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+    -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+    background-clip: text; /* 텍스트에만 배경 적용 */
+    color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+}

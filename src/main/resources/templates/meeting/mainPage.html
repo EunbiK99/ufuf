@@ -16,8 +16,13 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    
     <script src="/public/js/lockLikeMobile.js"></script>
+    
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    
+    <script src="/public/js/meetingFooter.js"></script>
+    <link rel="stylesheet" href="/public/css/meetingFooterCSS.css">
     
 
     <style>
@@ -36,13 +41,78 @@
     .shadowBox{        
         border: 1px solid black;        
         box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.1);
-    }
+    }    
     </style>
 </head>
 <script th:inline="javascript">
 
 let sessionUserInfo = /*[[${session.sessionUserInfo}]]*/
 let meetingProfileExist;
+
+window.addEventListener("DOMContentLoaded", () => {
+    let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+    document.getElementById("ufuf").addEventListener("click", function() {
+        const container = document.querySelector(".footer");
+
+        if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+            // 변경된 스타일 적용
+            container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+            container.style.zIndex = "250";
+            container.style.transition = "all 0.2s";
+
+            document.getElementById("home").classList.remove("d-none");
+            document.getElementById("secondLine").classList.remove("d-none");
+            document.getElementById("thirdLine").classList.remove("d-none");
+
+            setTimeout(() => {
+                document.getElementById("home").classList.add("clicked");
+            }, 250);
+
+            setTimeout(() => {
+                document.getElementById("secondLine").classList.add("clicked");
+                setTimeout(() => {
+                    document.getElementById("mission").classList.add("clicked");
+                }, 100);
+                setTimeout(() => {
+                    document.getElementById("circle").classList.add("clicked");
+                }, 200);
+
+            }, 90);
+
+            setTimeout(() => {
+
+                document.getElementById("thirdLine").classList.add("clicked");
+
+                setTimeout(() => {
+                    document.getElementById("signal").classList.add("clicked");
+                }, 50);
+                setTimeout(() => {
+                    document.getElementById("bnb").classList.add("clicked");
+                }, 250);
+
+            }, 90);
+        } else { // ufuf 버튼이 이미 클릭되어 있을 때
+            // 변경 취소
+            container.style.boxShadow = "none";
+            container.style.zIndex = "300";
+            container.style.transition = "none";
+            
+
+            document.getElementById("home").classList.add("d-none");
+            document.getElementById("secondLine").classList.add("d-none");
+            document.getElementById("thirdLine").classList.add("d-none");
+            document.getElementById("home").classList.remove("clicked");
+            document.getElementById("secondLine").classList.remove("clicked");
+            document.getElementById("thirdLine").classList.remove("clicked");
+            document.getElementById("mission").classList.remove("clicked");
+            document.getElementById("circle").classList.remove("clicked");
+            document.getElementById("signal").classList.remove("clicked");
+            document.getElementById("bnb").classList.remove("clicked");
+        }
+        ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+    });
+});
 
 function moveToSearchPageAndOpenGroupModal(groupId){
     const confirmValue = confirm("해당 미팅 상세보기로 이동할까요?");
@@ -105,7 +175,7 @@ async function newMeetingListCSR(){
         newMeetingTitle.text(e.meetingGroupDto.groupTitle);
 
         const newMeetingCurruntHeadCount = newMeetingListCol.find("#newMeetingCurruntHeadCount");
-        newMeetingCurruntHeadCount.text(e.applyUserMapList.length);
+        newMeetingCurruntHeadCount.text(e.groupMemberDataList.length);
 
         const newMeetingMaxHeadCount = newMeetingListCol.find("#newMeetingMaxHeadCount");
         newMeetingMaxHeadCount.text(e.meetingGroupDto.groupHeadCount);
@@ -163,7 +233,7 @@ async function hotMeetingListCSR(){
         hotMeetingTitle.text(e.meetingGroupDto.groupTitle);
 
         const hotMeetingCurruntHeadCount = hotMeetingListCol.find("#hotMeetingCurruntHeadCount");
-        hotMeetingCurruntHeadCount.text(e.applyUserMapList.length);
+        hotMeetingCurruntHeadCount.text(e.groupMemberDataList.length);
 
         const hotMeetingMaxHeadCount = hotMeetingListCol.find("#hotMeetingMaxHeadCount");
         hotMeetingMaxHeadCount.text(e.meetingGroupDto.groupHeadCount);
@@ -445,72 +515,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
             </div>
         </div>
-        <!--footer-->
-        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
-            <div class="col text-center align-self-center">
-                <div class="row">
-                    <div class="col">
-                        <div class="row justify-content-around mt-1 text-secondary">
-                            <div class="col text-center mx-1" onclick="moveSearchPage()">
-                                <div class="row">
-                                    <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">Find</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="moveCreateNewGroupPage()">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">Make</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
-                                <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
-                                    </div>
-                                </div>                                        
-                            </div>
-                            <div class="col text-center mx-1" onclick="moveChatListPage()">
-                                <div class="row">
-                                    <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">Chat</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">My</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>                        
-            </div>
-        </div>
+        
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -521,6 +526,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
         <div class="p-2"></div>
+        <th:block th:replace="~{meeting/meetingFooterFragment.html}"></th:block>
     </div>
 
 <!--/* 템플릿 */-->

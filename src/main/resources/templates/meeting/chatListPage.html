@@ -18,6 +18,9 @@
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script src="/public/js/lockLikeMobile.js"></script>
 
+    <script src="/public/js/meetingFooter.js"></script>
+    <link rel="stylesheet" href="/public/css/meetingFooterCSS.css">
+
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
@@ -212,72 +215,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
 
-        <!--footer-->
-        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
-            <div class="col text-center align-self-center">
-                <div class="row">
-                    <div class="col">
-                        <div class="row justify-content-around mt-1 text-secondary">
-                            <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
-                                <div class="row">
-                                    <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">Find</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-following bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">Make</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
-                                <div class="row">
-                                    <div class="col">                                                
-                                        <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
-                                    </div>
-                                </div>                                        
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
-                                <div class="row">
-                                    <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-comment-alt bi-align-middle"></i></span>                                                
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="" style="color: #FF8827;">Chat</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="">My</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>                        
-            </div>
-        </div>
+        <th:block th:replace="~{meeting/meetingFooterFragment.html :: footer}"></th:block>
         
     </div>
 
