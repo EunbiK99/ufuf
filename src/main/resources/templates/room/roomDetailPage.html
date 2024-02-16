@@ -87,7 +87,7 @@
             
             if(myId == null){
                 if(confirm("로그인 후 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?")){
-                    location.href = "../login/testloginPage";
+                    location.href = "../login/loginPage";
                 }
                 return;
             }
@@ -166,7 +166,10 @@
 
         window.addEventListener("DOMContentLoaded", () => {
             getMyId();
+
+            alert(1);
             reloadTotalCount();
+            alert(2);
             
             var mapContainer = document.getElementById("map"), // 지도를 표시할 div
                 mapOption = { 
