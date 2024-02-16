@@ -174,6 +174,21 @@
                     const circlepeople = Wrapper.querySelector(".circlepeople");
                     circlepeople.innerHTML = "";
                     circlepeople.innerText = e.circleGradeDto.circle_people;
+                    const circlegrade = Wrapper.querySelector(".circlegrade");
+                    circlegrade.innerHTML = "";
+                    circlegrade.innerText = e.circleGradeDto.grade_name;
+                    const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                    if(e.circleGradeDto.grade_name === "아이언"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                    } else if(e.circleGradeDto.grade_name === "브론즈"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                    } else if(e.circleGradeDto.grade_name === "실버"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                    } else if(e.circleGradeDto.grade_name === "골드"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                    } else if(e.circleGradeDto.grade_name === "플레티넘"){
+                        circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                    }
                     
                     
 
@@ -420,10 +435,8 @@
 <body>
     <div class="container-fluid">
         <div class="row mt-2 align-items-center">
-            <div class="col-2" onclick="(() => {
-                location.href = './circleMainPage'
-            })()">
-                <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
+            <div class="col-2">
+                <img id="ufuf" src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
             </div>
             <div class="col-8 py-2 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;" onclick="(() => {
                 location.href = './circleMainPage'
