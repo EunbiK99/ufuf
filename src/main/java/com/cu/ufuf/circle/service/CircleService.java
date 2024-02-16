@@ -637,10 +637,13 @@ public class CircleService {
                 Map<String, Object> map = new HashMap<>();
                 CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
                 int circle_grade_id = e.getCircle_grade_id();
+                int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+                CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
                 CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
                 int circle_id = e.getCircle_id();
                 int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
-        
+
+                map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
                 map.put("circleMemberCnt", circleMemberCnt);
                 map.put("circleGradeDto", circleGradeDto);
                 map.put("circleSmallCategoryDto", circleSmallCategoryDto);
