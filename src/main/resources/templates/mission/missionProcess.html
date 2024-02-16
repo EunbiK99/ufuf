@@ -183,8 +183,6 @@
             .then(response => response.json())
             .then(response => {
 
-                console.log(response.data)
-
                 let mission = response.data;
 
                 if(mission.missionCourseList.length > 1){
@@ -250,7 +248,7 @@
 
                     courseIndex.innerText = i + 1;
                     courseName.innerText = course.content;
-                    courseReward.innerText = course.reward;
+                    courseReward.innerText = course.reward.toLocaleString();
 
                     const lat = course.lat;
                     const lng = course.lng;
@@ -517,7 +515,7 @@
     
                         courseIndex.innerText = i + 1;
                         courseName.innerText = course.missionCourseDto.content;
-                        courseReward.innerText = course.missionCourseDto.reward;
+                        courseReward.innerText = course.missionCourseDto.reward.toLocaleString();
     
                         const lat = course.missionCourseDto.lat;
                         const lng = course.missionCourseDto.lng;
@@ -632,7 +630,7 @@
 
                         courseIndex.innerText = i + 1;
                         courseName.innerText = course.missionCourseDto.content;
-                        courseReward.innerText = course.missionCourseDto.reward;
+                        courseReward.innerText = course.missionCourseDto.reward.toLocaleString();
     
                         const lat = course.missionCourseDto.lat;
                         const lng = course.missionCourseDto.lng;
@@ -691,7 +689,7 @@
     
                         courseIndex.innerText = i + 1;
                         courseName.innerText = course.missionCourseDto.content;
-                        courseReward.innerText = course.missionCourseDto.reward;
+                        courseReward.innerText = course.missionCourseDto.reward.toLocaleString();
     
                         const lat = course.missionCourseDto.lat;
                         const lng = course.missionCourseDto.lng;
@@ -803,8 +801,6 @@
         const modal = bootstrap.Modal.getOrCreateInstance("#missionComplModal");
         const missionComplModal = document.getElementById("missionComplModal");
         const submitMissionComplBtn = document.getElementById("submitMissionComplBtn");
-
-        console.log(course);
 
         submitMissionComplBtn.onclick = function(){
             submitMissionComplete(course);
@@ -949,10 +945,10 @@
     }
 
     // 작성된 리뷰 열람 모달
-    function openViewReviewModal(chat_room_id){
+    function openViewReviewModal(){
         const modal = bootstrap.Modal.getOrCreateInstance("#viewReviewModal");
 
-        loadMissionReview(chat_room_id);
+        loadMissionReview();
 
         modal.show();
     }
@@ -963,7 +959,7 @@
     }
 
     // 리뷰 불러오기
-    function loadMissionReview(chat_room_id){
+    function loadMissionReview(){
 
         const data = {
             chat_room_id: chat_room_id
@@ -1302,7 +1298,6 @@
     }
 
     #missionComplModal{
-        width: 90%;
         top: 7%;
         left: 2.5%;
         overflow-wrap: break-word;
@@ -1318,35 +1313,30 @@
     }
 
     #missionConfirmModal{
-        width: 90%;
         top: 10%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #missionAppListModal{
-        width: 90%;
         top: 15%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #recheckAccPlayerModal{
-        width: 90%;
         top: 30%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #writeReviewModal{
-        width: 90%;
         top: 9%;
         left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #viewReviewModal{
-        width: 90%;
         top: 9%;
         left: 2.5%;
         overflow-wrap: break-word;
@@ -1647,7 +1637,7 @@
 
 <!-- 미션 완료 작성 모달 -->
 <div id="missionComplModal" class="modal mx-auto">
-    <div class="modal-dialog shadow">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
                 <div class="row mt-3">
@@ -1692,7 +1682,7 @@
 
 <!-- 미션 완료 인증 확인 모달 -->
 <div id="missionConfirmModal" class="modal mx-auto">
-    <div class="modal-dialog shadow">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
                 <div class="row mt-3">
@@ -1728,7 +1718,7 @@
 
 <!-- 미션 신청자 목록 모달 -->
 <div id="missionAppListModal" class="modal mx-auto">
-    <div class="modal-dialog shadow">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-2">
@@ -1777,7 +1767,7 @@
 
 <!-- 미션 신청자 수락시 재확인 모달 -->
 <div id="recheckAccPlayerModal" class="modal mx-auto">
-    <div class="modal-dialog" style="box-shadow: 0 0 3rem 3rem 5rem #666666;">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body pb-0 px-3">
                 <div class="row pt-3">
@@ -1804,7 +1794,7 @@
 
 <!-- 미션 리뷰 작성 모달 -->
 <div id="writeReviewModal" class="modal mx-auto">
-    <div class="modal-dialog shadow">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-3">
@@ -1873,7 +1863,7 @@
 
 <!-- 미션 리뷰 열람 모달 -->
 <div id="viewReviewModal" class="modal">
-    <div class="modal-dialog shadow">
+    <div class="modal-dialog shadow" style="width: 90%;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-3">
@@ -1900,7 +1890,7 @@
                             </div>
                             <div class="col align-self-center">
                                 <div class="row">
-                                    <div class="col ms-3" style="color: #9e9e9e; font-size: 0.8rem;">
+                                    <div class="col text-center" style="color: #9e9e9e; font-size: 0.8rem;">
                                         <span>만족도 점수</span>
                                         <span class="ms-1 score"></span>
                                     </div>
@@ -1914,8 +1904,12 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row mt-3">
+                        <div class="row mt-4">
+                            <div class="col fw-semibold text-secondary mt-1" style="font-size: 0.95rem;">
+                                리뷰 코멘트
+                            </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="review col" style="font-size:0.9em; color: #666666">
                                 
                             </div>

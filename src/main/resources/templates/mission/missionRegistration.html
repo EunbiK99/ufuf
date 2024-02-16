@@ -297,7 +297,7 @@
         }
 
         const totalReward = document.getElementById("totalReward");
-        totalReward.innerText = sum;
+        totalReward.innerText = sum.toLocaleString();
 
         if (totalReward.innerText === "NaN") {
             totalReward.innerText = 0;
@@ -351,6 +351,29 @@
         const hour = document.getElementById("hour").value;
         const minute = document.getElementById("minute").value;
 
+        const titleDiv = document.getElementById("title");
+        const detailDiv = document.getElementById("detail");
+        const hourDiv = document.getElementById("hour");
+        const minuteDiv = document.getElementById("minute");
+
+        if (!title) {
+            alert("미션명을 입력해주세요");
+            titleDiv.focus();
+	        return;
+	    }
+
+        if (!detail) {
+            alert("미션 상세 내용을 입력해주세요");
+            detailDiv.focus();
+	        return;
+	    }
+
+        if (!hour || !minute) {
+            alert("미션 제한 시간을 입력해주세요");
+            minuteDiv.focus();
+	        return;
+	    }
+
         var total_minutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
 
         for(i = 1; i < courseCounter; i++){
@@ -363,6 +386,30 @@
             var reward = document.querySelector(rewardSelector);
             var lat = document.querySelector(latSelector);
             var lng = document.querySelector(lngSelector);
+
+            if(!content.value){
+                alert("코스명을 입력해주세요");
+                content.focus();
+                return;
+            }
+
+            if(!reward.value){
+                alert("성공 보상 금액을 입력해주세요");
+                reward.focus();
+                return;
+            }
+
+            if(reward.value){
+
+                let inputNumber = parseInt(reward.value, 10);
+
+                if (inputNumber < 1000) {
+                    reward.focus();
+                    alert("미션 최소 금액은 1,000원 입니다.");
+                }
+
+                return;
+            }
 
             const course = {
                 content: content.value,
@@ -485,18 +532,6 @@
 
         });
     }
-
-    
-
-
-
-
-
-
-
-
-
-
 
     window.addEventListener("DOMContentLoaded", () => {
         addCourseForm();
