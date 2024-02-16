@@ -1383,6 +1383,17 @@ public class CircleRestController {
         
         return responseDto;
     }
+    // voteCompleteInfo
+    @RequestMapping("voteCompleteInfo")
+        public RestResponseDto voteCompleteInfo(@RequestParam("circle_vote_id") int circle_vote_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.voteCompleteInfo(circle_vote_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
 
     // RESTAPI 양식 
     /*

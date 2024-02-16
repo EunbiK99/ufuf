@@ -422,10 +422,8 @@ function getGroupDetailInfo(groupId){
         const applyUserMapList = groupDetailInfo.applyUserMapList;
         
         if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "Y"){
-            const applyUserNotExist = document.querySelector("#templete #applyUserNotExist").cloneNode(true);
-            const applyUserNotExistSpan = applyUserNotExist.querySelector("#applyUserNotExistSpan");
-            applyUserNotExistSpan.innerText = "해당 미팅은 종료되었습니다."
-            applyUserProfieImageListRow.appendChild(applyUserNotExist);
+            const endedMeeting = document.querySelector("#templete #endedMeeting").cloneNode(true);            
+            applyUserProfieImageListRow.appendChild(endedMeeting);
             const parentCol = applyUserProfieImageListRow.closest(".col");            
             parentCol.classList.remove("overflow-x-scroll");
             applyUserProfieImageListRow.removeAttribute("style");
@@ -724,7 +722,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             </div>
         </div>
         
-        <div class="row mb-5">
+        <div class="row mb-4">
             <div class="col">
                 <div class="row my-2">
                     <div class="col">
@@ -879,7 +877,30 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     <!--/* 신청자 없을 시 안내문구 템플릿 */-->
     <div id="applyUserNotExist" class="col text-center">
-        <span id="applyUserNotExistSpan" class="fw-bold text-danger fs-5">아직 신청한 인원이 없습니다.</span>
+        <div class="row">
+            <div class="col">
+                <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-face-pleading bi-align-middle"></i></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span id="applyUserNotExistSpan" class="fw-bold text-secondary text-opacity-50">아직 신청한 인원이 없어요.</span>
+            </div>
+        </div>
+    </div>
+
+    <!--/* 미팅 종료 시 안내문구 템플릿 */-->
+    <div id="endedMeeting" class="col text-center">
+        <div class="row">
+            <div class="col">
+                <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-location-exclamation bi-align-middle"></i></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span id="endedMeetingSpan" class="fw-bold text-secondary text-opacity-50">해당 미팅은 종료되었습니다.</span>
+            </div>
+        </div>
     </div>
     
 </div>

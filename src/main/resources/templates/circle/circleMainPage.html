@@ -18,6 +18,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script>
         $(document).ready(function () {
             // 모달이 나타날 때
@@ -158,6 +159,9 @@
                     const circlecategory = Wrapper.querySelector(".circlecategory");
                     circlecategory.innerHTML = "";
                     circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                    const circlemiddlecategory = Wrapper.querySelector(".circlemiddlecategory");
+                    circlemiddlecategory.innerHTML = "";
+                    circlemiddlecategory.innerText = e.circleMiddleCategoryDto.category_name; 
                     const circlename = Wrapper.querySelector(".circlename");
                     circlename.innerHTML = "";
                     circlename.innerText = e.circleDto.circle_name;
@@ -396,7 +400,7 @@
 
         .content {
         overflow-y: auto;
-        min-height: 85em;
+        min-height: 100em;
         }
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;

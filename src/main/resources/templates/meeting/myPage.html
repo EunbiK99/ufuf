@@ -111,6 +111,17 @@ console.log('meetingProfileInfo: ', meetingProfileInfo);
 console.log('userSNSDto: ', userSNSDto);
 console.log('groupMemberDtoList: ', groupMemberDtoList);
 
+function moveRegisterProfilePage(){   
+    window.location.href="./registerProfile";
+    
+    /* if(userType === "user"){
+    }
+    else{
+        alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");
+        window.location.href="../login/loginPage";
+    } */
+}
+
 function moveChatListPage(){
     if(!sessionUserInfo){
         alert("로그인이 필요한 서비스입니다. 로그인 후 이용해 주시기 바랍니다.");        
@@ -289,7 +300,7 @@ function mySignalBothModalCSR(){
         if(userBothLikeCount === 0){
             const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
             const messageSpan1 = noSignalMessageRow.querySelector("#messageSpan1");
-            messageSpan1.innerText = "아직 보낸 시그널이 없어요!"
+            messageSpan1.innerText = "매치된 시그널이 없어요!"
             const messageSpan2 = noSignalMessageRow.querySelector("#messageSpan2");
             messageSpan2.innerText = "리뷰를 남기고 시그널을 보내보세요 :)"
 
@@ -400,75 +411,92 @@ function restoreMenuColor(target){
 
 function userProfileCSR(){
     if(userType === "user"){
-        const sessionUserName = document.getElementById("sessionUserName");
-        sessionUserName.innerText = sessionUserInfo.name;        
-        const loginUserRow = document.getElementById("loginUserRow");
-        loginUserRow.classList.remove("d-none");
+        if(meetingProfileExist === "Y"){
+            const sessionUserName = document.getElementById("sessionUserName");
+            sessionUserName.innerText = sessionUserInfo.name;        
+            const loginUserRow = document.getElementById("loginUserRow");
+            loginUserRow.classList.remove("d-none");
 
-        const userSNSUrl = document.getElementById("userSNSUrl");
-        userSNSUrl.innerText = userSNSDto.snsURL;
+            const userSNSUrl = document.getElementById("userSNSUrl");
+            userSNSUrl.innerText = userSNSDto.snsURL;
 
-        const userProfileImage = document.getElementById("userProfileImage");
-        userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
+            const userProfileImage = document.getElementById("userProfileImage");
+            userProfileImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${meetingProfileInfo.profileImg}`);
 
-        const userNickname = document.getElementById("userNickname")
-        userNickname.innerText = meetingProfileInfo.profileNickname;
+            const userNickname = document.getElementById("userNickname")
+            userNickname.innerText = meetingProfileInfo.profileNickname;
 
-        const userGender = document.getElementById("userGender");
-        if(sessionUserInfo.gender === "M"){
-            const maleIcon = document.createElement("i");
-            maleIcon.setAttribute("class", "fi fi-rr-mars text-primary bi-align-middle");
-            userGender.appendChild(maleIcon);
+            const userGender = document.getElementById("userGender");
+            if(sessionUserInfo.gender === "M"){
+                const maleIcon = document.createElement("i");
+                maleIcon.setAttribute("class", "fi fi-rr-mars text-primary bi-align-middle");
+                userGender.appendChild(maleIcon);
+            }
+            else{
+                const femaleIcon = document.createElement("i");
+                femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger bi-align-middle");
+                userGender.appendChild(femaleIcon);        
+            }
+
+            const userUniversity = document.getElementById("userUniversity")
+            userUniversity.innerText = sessionUserInfo.university;
+            
+            const userUniversityDepartment = document.getElementById("userUniversityDepartment")
+            userUniversityDepartment.innerText = sessionUserInfo.department;
+
+            const userProfileComment = document.getElementById("userProfileComment")
+            userProfileComment.innerText = meetingProfileInfo.profileComment;
+
+            let mySignalToCount = 0;
+            const mySignalTo = document.getElementById("mySignalTo");
+            mySignalTo.innerText = mySignalToCount
+
+            let mySignalBothCount = 0;
+            const mySignalBoth = document.getElementById("mySignalBoth");
+            mySignalBoth.innerText = mySignalBothCount;
+
+            let pickedBestMemberCount = 0;
+            const pickedBestMember = document.getElementById("pickedBestMember");
+            pickedBestMember.innerText = pickedBestMemberCount;
+
+            for(e of groupMemberDtoList){
+                for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                    if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
+                    mySignalToCount++;
+                    mySignalTo.innerText = mySignalToCount;
+                    }
+                }
+                if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
+                    for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
+                        for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
+                            if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
+                                mySignalBothCount++;
+                                mySignalBoth.innerText = mySignalBothCount;
+                            }                    
+                        }                
+                    }
+                }
+                const pickedBestMemberCountValue = e.userReviewDataMap.pickedBestMemberCount;
+                console.log('pickedBestMemberCount: ', pickedBestMemberCount);
+                pickedBestMemberCount += pickedBestMemberCountValue;
+                pickedBestMember.innerText = pickedBestMemberCount;
+            }
         }
         else{
-            const femaleIcon = document.createElement("i");
-            femaleIcon.setAttribute("class", "fi fi-rr-venus text-danger bi-align-middle");
-            userGender.appendChild(femaleIcon);        
-        }
+            const sessionUserName = document.getElementById("sessionUserName");
+            sessionUserName.innerText = sessionUserInfo.name;        
+            const loginUserRow = document.getElementById("loginUserRow");
+            loginUserRow.classList.remove("d-none");
 
-        const userUniversity = document.getElementById("userUniversity")
-        userUniversity.innerText = sessionUserInfo.university;
+            const profileContentCol = document.querySelector("#profileInnerBody #profileContentCol");
+            console.log('profileContentCol: ', profileContentCol);
+            profileContentCol.innerHTML = "";
+
+            const profileNotExistNoticeRow = document.querySelector("#templete #profileNotExistNoticeRow").cloneNode(true);
+
+            profileContentCol.appendChild(profileNotExistNoticeRow);
+        }
         
-        const userUniversityDepartment = document.getElementById("userUniversityDepartment")
-        userUniversityDepartment.innerText = sessionUserInfo.department;
-
-        const userProfileComment = document.getElementById("userProfileComment")
-        userProfileComment.innerText = meetingProfileInfo.profileComment;
-
-        let mySignalToCount = 0;
-        const mySignalTo = document.getElementById("mySignalTo");
-        mySignalTo.innerText = mySignalToCount
-
-        let mySignalBothCount = 0;
-        const mySignalBoth = document.getElementById("mySignalBoth");
-        mySignalBoth.innerText = mySignalBothCount;
-
-        let pickedBestMemberCount = 0;
-        const pickedBestMember = document.getElementById("pickedBestMember");
-        pickedBestMember.innerText = pickedBestMemberCount;
-
-        for(e of groupMemberDtoList){
-            for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
-                if(bothLikeFromDto.groupMemberIdFrom === e.meetingGroupMemberDto.groupMemberId){
-                mySignalToCount++;
-                mySignalTo.innerText = mySignalToCount;
-                }
-            }
-            if(e.userReviewDataMap.meetingBothLikeToList.length > 0){
-                for(bothLikeToDto of e.userReviewDataMap.meetingBothLikeToList){
-                    for(bothLikeFromDto of e.userReviewDataMap.meetingBothLikeFromList){
-                        if(bothLikeToDto.groupMemberIdFrom === bothLikeFromDto.groupMemberIdTo){
-                            mySignalBothCount++;
-                            mySignalBoth.innerText = mySignalBothCount;
-                        }                    
-                    }                
-                }
-            }
-            const pickedBestMemberCountValue = e.userReviewDataMap.pickedBestMemberCount;
-            console.log('pickedBestMemberCount: ', pickedBestMemberCount);
-            pickedBestMemberCount += pickedBestMemberCountValue;
-            pickedBestMember.innerText = pickedBestMemberCount;
-        }
     }
     else{
         const sessionUserName = document.getElementById("sessionUserName");
@@ -587,7 +615,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
                         <div id="profileInnerBody" class="row bg-white rounded-bottom">
-                            <div class="col">
+                            <div id="profileContentCol" class="col">
 
                                 <div class="row my-3 mx-1">
                                     <div class="col">
@@ -748,9 +776,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col">
-                        
+                        <div class="row">
+                            <div class="col text-start btn" onclick="window.location.href='./layoutTest'">
+                                <span class="fw-bold fs-3">PC가두기 레이아웃 작업공간</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-5">
@@ -932,6 +964,38 @@ document.addEventListener("DOMContentLoaded", ()=>{
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
 
+    <div id="profileNotExistNoticeRow" class="row">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col-auto text-center align-self-center">
+                    <div class="row">
+                        <div class="col">
+                            <span class="fw-bold text-secondary text-opacity-50" style="font-size: 8em;"><i class="fi fi-rr-comment-question bi-align-middle"></i></span>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-auto text-center align-self-center mb-3">
+                            <span class="fw-bold text-secondary text-opacity-50" style="white-space: pre-line;">아직 미팅프로필이 없어요 <i class="fi fi-rr-face-anxious-sweat bi-align-middle"></i>
+                                프로필을 만들러 가볼까요?
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="row justify-content-center">
+                        <div class="col-6 text-center align-self-center btn" onclick="moveRegisterProfilePage()" style="background-color: #FF8827; --bs-btn-active-border-color:white">
+                            <span class="text-white fw-bold"><i class="fi fi-rr-face-viewfinder bi-align-middle"></i></span>
+                            <span class="text-white fw-bold">프로필 만들기</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div id="userSignalToWrapperRow" class="row my-2 mx-1 border rounded shadowBox">
         <div class="col">
             <div class="row">
@@ -1000,14 +1064,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     <div id="noSignalMessageRow" class="row border rounded shadowBox my-3 mx-2">
         <div class="col">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center mt-2">
                 <div class="col text-center">
-                    <span class="text-secondary" id="messageSpan1"></span>
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-comment-alt-dots bi-align-middle"></i></span>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col text-center">
-                    <span class="text-secondary" id="messageSpan2"></span>
+                    <span class="fw-bold text-secondary text-opacity-50" id="messageSpan1"></span>
+                </div>
+            </div>
+            <div class="row justify-content-center mb-2">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" id="messageSpan2"></span>
                 </div>
             </div>
         </div>

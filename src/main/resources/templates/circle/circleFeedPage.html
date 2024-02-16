@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script>
         // 여기서 circleFeedWritePage갈때 쿼리스트링 => circle_id 날려줘야 함
         $(document).ready(function () {
@@ -67,9 +68,10 @@
                     user_name.innerText = e.userInfoDto.name;
                     const member_profile_img = Wrapper.querySelector(".member_profile_img");
                     // 여기두.. 원래는 아래코드가 정상!!!!
-                    // member_profile_img.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img);
+                    console.log(e.userInfoDto.profile_img);
+                     member_profile_img.setAttribute("src", `/uploadFiles/ufuf/userProfile${e.userInfoDto.profile_img}`);
                     // 밑에코드는 테스트
-                    member_profile_img.setAttribute("src", "/public/image/circle/grade2.png");
+                    //member_profile_img.setAttribute("src", "/public/image/circle/grade2.png");
                     const board_main_image = Wrapper.querySelector(".board_main_image");
                     board_main_image.setAttribute("src", "/uploadFiles/" + e.circleBoardDto.main_image);
                     // board_main_image.setAttribute("onclick","boardArticleMove("+ e.circleBoardDto.circle_board_id +")")
@@ -335,7 +337,7 @@
                 const profile_img = document.querySelector("#profile_img");
                 const pfimg = document.createElement("img");
                 // pfimg.setAttribute("src", "/uploadFiles/" + e.userInfoDto.profile_img); ===> 무조건 이거 활성화 시키기!!
-                pfimg.setAttribute("src", "/public/image/circle/grade2.png")
+                pfimg.setAttribute("src", `/uploadFiles/ufuf/userProfile${e.userInfoDto.profile_img}`)
                 pfimg.classList.add("img-fluid","responsive-img2")
                 
                 

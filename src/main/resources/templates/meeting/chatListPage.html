@@ -111,39 +111,44 @@ function chatListCSR(){
     getUserChatRoomData()
     .then(chatRoomData => {
         console.log('chatRoomData: ', chatRoomData);
-        for(e of chatRoomData){
-            const chatListRow = document.querySelector("#templete #chatListRow").cloneNode(true);
-            chatListRow.setAttribute("chatRoomId", e.chatRoomDto.chatRoomId);
-    
-            const chatRoomImage = chatListRow.querySelector("#chatRoomImage");
-            chatRoomImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
-    
-            const chatRoomTitle = chatListRow.querySelector("#chatRoomTitle");
-            chatRoomTitle.innerText = e.targetProfileDto.profileNickname;
+        if(chatRoomData.length > 0){
+            for(e of chatRoomData){
+                const chatListRow = document.querySelector("#templete #chatListRow").cloneNode(true);
+                chatListRow.setAttribute("chatRoomId", e.chatRoomDto.chatRoomId);
+        
+                const chatRoomImage = chatListRow.querySelector("#chatRoomImage");
+                chatRoomImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${e.targetProfileDto.profileImg}`);
+        
+                const chatRoomTitle = chatListRow.querySelector("#chatRoomTitle");
+                chatRoomTitle.innerText = e.targetProfileDto.profileNickname;
 
-            const chatRoomMessageLength = e.chatMessageList.length;
-            if(chatRoomMessageLength === 0){
-                const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
-                chatRoomLastMessage.innerText = '대화내용이 없습니다.';
-                const lastMesaggeTime = chatListRow.querySelector("#lastMesaggeTime");
-                lastMesaggeTime.innerText = "";
+                const chatRoomMessageLength = e.chatMessageList.length;
+                if(chatRoomMessageLength === 0){
+                    const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
+                    chatRoomLastMessage.innerText = '대화내용이 없습니다.';
+                    const lastMesaggeTime = chatListRow.querySelector("#lastMesaggeTime");
+                    lastMesaggeTime.innerText = "";
+                }
+                else{
+                    const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
+                    chatRoomLastMessage.innerText = e.chatMessageList[chatRoomMessageLength-1].chatComment;
+                    const lastMesaggeTime = chatListRow.querySelector("#lastMesaggeTime");
+                    const lastMesaggeTimeValue = e.chatMessageList[chatRoomMessageLength-1].regdate;
+                    const dateOption = {                    
+                        month : 'long',
+                        day : 'numeric',                    
+                    };
+                    const convertDate = dateConverter(lastMesaggeTimeValue, dateOption);
+                    lastMesaggeTime.innerText = convertDate;
+                }                
+                chatListWrapperCol.appendChild(chatListRow);
             }
-            else{
-                const chatRoomLastMessage = chatListRow.querySelector("#chatRoomLastMessage");
-                chatRoomLastMessage.innerText = e.chatMessageList[chatRoomMessageLength-1].chatComment;
-                const lastMesaggeTime = chatListRow.querySelector("#lastMesaggeTime");
-                const lastMesaggeTimeValue = e.chatMessageList[chatRoomMessageLength-1].regdate;
-                const dateOption = {                    
-                    month : 'long',
-                    day : 'numeric',                    
-                };
-                const convertDate = dateConverter(lastMesaggeTimeValue, dateOption);
-                lastMesaggeTime.innerText = convertDate;
-            }
-            
-            chatListWrapperCol.appendChild(chatListRow);
-
         }
+        else{
+            const notExistChatRoom = document.querySelector("#templete #notExistChatRoom").cloneNode(true);
+            chatListWrapperCol.classList.remove("bg-white");
+            chatListWrapperCol.appendChild(notExistChatRoom);
+        }        
     });    
 }
 
@@ -312,8 +317,27 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <span id="lastMesaggeTime" class="text-secondary" style="font-size: 0.7em;"></span>
                 </div>
             </div>
+        </div>        
+    </div>
+
+    <div id="notExistChatRoom" class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 8em;"><i class="fi fi-rr-comment-dots bi-align-middle"></i></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50">아직 개설된 채팅이 없어요.</span>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50">마음에 드는 상대에게 시그널을 보내보세요!</span>
+                </div>
+            </div>
         </div>
-        
     </div>
 
 </div>
