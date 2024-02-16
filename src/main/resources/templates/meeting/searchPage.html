@@ -19,6 +19,9 @@
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script src="/public/js/lockLikeMobile.js"></script>
 
+    <script src="/public/js/meetingFooter.js"></script>
+    <link rel="stylesheet" href="/public/css/meetingFooterCSS.css">
+
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
@@ -756,7 +759,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
+
+        <th:block th:fragment="~${meeting/meetingFooterFragment.html}"></th:block>
 
         <!--footer-->
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">

@@ -266,4 +266,7 @@ public interface CircleSqlMapper {
     // 검색한 동아리 리스트
     public List<CircleDto> circleSearchList(String searchword);
     public List<CircleDto> circleNameDuplicateCheck(String circle_name);
+    
+    // 동아리 피드 board수정
+    public List<CircleBoardDto> circleBoardDtoBycircleId(int circle_id);
 }

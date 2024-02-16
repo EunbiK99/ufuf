@@ -298,38 +298,67 @@ public class CircleService {
         return list;
     }
 
+    // public List<Map<String, Object>> circleboardList(int circle_id){
+
+    //     List<Map<String, Object>> list = new ArrayList<>();
+    //     // 동아리 id로 동아리 회원들 리스트를 뽑음
+    //     List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
+
+    //     // 동아리 회원이 여러명 근데 회원 한명당 글을 여러개 작성할 수도 있단말이야?
+    //     // 동아리 맴버 별로 글을 하나씩 뽑는거..? 이게맞나...
+    //     for(CircleMemberDto e : circleMemberDtos){
+
+    //         int circle_member_id = e.getCircle_member_id();
+    //         // 동아리 회원 한명당 리스트를 뽑음 
+    //         List<CircleBoardDto> circleBoardDtos = circleSqlMapper.circleboardInfoByCircleMemberId(circle_member_id);
+
+    //         if(!(circleBoardDtos.equals(null))){
+    //             for(CircleBoardDto e2 : circleBoardDtos){
+
+    //                 Map<String, Object> map = new HashMap<>();
+
+    //                 int user_id = e.getUser_id();
+    //                 UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+    //                 // 유저정보(프로필사진), 글정보(글내용), 동아리멤버정보(등급)
+    //                 map.put("userInfoDto", userInfoDto);
+    //                 map.put("circleBoardDto", e2);
+    //                 map.put("circleMemberDto", e);
+                    
+    //                 list.add(map);
+    //             }
+    //         }
+
+
+    //     }
+
+    //     return list;
+    // }
+
     public List<Map<String, Object>> circleboardList(int circle_id){
 
         List<Map<String, Object>> list = new ArrayList<>();
 
-        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
+        List<CircleBoardDto> circleBoardDtos = circleSqlMapper.circleBoardDtoBycircleId(circle_id);
 
-        // 동아리 회원이 여러명 근데 회원 한명당 글을 여러개 작성할 수도 있단말이야?
+        if(!(circleBoardDtos.equals(null))){
+            for(CircleBoardDto e : circleBoardDtos){
 
-        for(CircleMemberDto e : circleMemberDtos){
-
-            int circle_member_id = e.getCircle_member_id();
-
-            List<CircleBoardDto> circleBoardDtos = circleSqlMapper.circleboardInfoByCircleMemberId(circle_member_id);
-
-            if(!(circleBoardDtos.equals(null))){
-                for(CircleBoardDto e2 : circleBoardDtos){
-
-                    Map<String, Object> map = new HashMap<>();
-
-                    int user_id = e.getUser_id();
-                    UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
-                    // 유저정보(프로필사진), 글정보(글내용), 동아리멤버정보(등급)
-                    map.put("userInfoDto", userInfoDto);
-                    map.put("circleBoardDto", e2);
-                    map.put("circleMemberDto", e);
-                    
-                    list.add(map);
-                }
+                Map<String, Object> map = new HashMap<>();
+                int circle_member_id = e.getCircle_member_id();
+                CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByCircleMemberId(circle_member_id);
+                int user_id = circleMemberDto.getUser_id();
+                UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+                // 유저정보(프로필사진), 글정보(글내용), 동아리멤버정보(등급)
+                map.put("userInfoDto", userInfoDto);
+                map.put("circleBoardDto", e);
+                map.put("circleMemberDto", circleMemberDto);
+                
+                list.add(map);
             }
-
-
         }
+
+
+        
 
         return list;
     }

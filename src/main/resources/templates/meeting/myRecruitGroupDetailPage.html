@@ -775,7 +775,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="userPaymentCheckListRow" class="row my-2">
+    <div id="userPaymentCheckListRow" class="row my-2 mx-1 border border-0 rounded shadowBox" style="background-color: cornsilk;">
         <div class="col">
             <div class="row">
                 <div class="col-4 align-self-center">
@@ -785,15 +785,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     <span id="checkUserPaymentStatus"></span>
                 </div>
                 <div id="kakaoPayButton" class="col d-none text-center btn" onclick="registerOrderProcess()">
-                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 4em; height: 90%;">
+                    <div class="row justify-content-center">
+                        <div class="col-auto ms-4">
+                            <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 4em; height: 90%;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="applyProfileListRow" class="row mt-2 mb-2">
+    <div id="applyProfileListRow" class="row my-2 mx-1 border border-0 rounded shadowBox" style="background-color: cornsilk;">
         <div class="col">
-            <div class="row">
+            <div class="row my-1">
                 <div class="col">
                     <div class="row">
                         <div class="col-auto">
@@ -806,11 +810,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                             <div class="row">
                                 <div class="col text-center">
-                                    <span id="applyProfileNickname" style="font-size: 0.8em;"></span>
+                                    <span id="applyProfileNickname" class="fw-bold" style="font-size: 0.8em;"></span>
                                 </div>
                             </div>                    
                         </div>
-                        <div class="col align-self-center">
+                        <div class="col ps-0 align-self-center">
                             <div class="row">
                                 <div class="col">
                                     <span class="fw-bold">Comment</span>
@@ -825,14 +829,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     </div>
                 </div>
                 <div class="col-auto align-self-center">
-                    <div class="row">
-                        <div class="col px-1 mx-1 text-center btn btn-success" role="button">
-                            <span class="align-middle" style="font-size: 0.8em;">프로필보기</span>    
+                    <!-- <div class="row">
+                        <div class="col-auto px-1 mx-1 text-center btn btn-success" role="button">
+                            <span class="align-middle" style="font-size: 0.8em;">프로필</span>    
                         </div>                        
-                    </div>
+                    </div> -->
                     <div class="row mt-2">
-                        <div id="applyProfilePickButton" class="col px-1 mx-1 text-center btn btn-primary" role="button">
-                            <span style="font-size: 0.8em;">선발하기</span>    
+                        <div id="applyProfilePickButton" class="col-auto px-1 me-2 text-center btn" style="--bs-btn-active-border-color: cornsilk;">
+                            <span class="" style="font-size: 2em; color: #FF8827;"><i class="fi fi-rr-add bi-align-middle"></i></span>                            
                         </div>
                     </div>
                 </div>

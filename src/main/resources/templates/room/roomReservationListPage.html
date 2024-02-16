@@ -54,6 +54,7 @@
         <div class="row p-4 mt-4"></div>
 
         <div class="row mt-3">
+            <div class="col-1"></div>
             <div class="col ms-3 fw-bold">예약자명</div>
             <div class="col ms-3 fw-bold">예약금액</div>
         </div>
@@ -61,13 +62,13 @@
         <div class="accordion accordion-flush" id="accordionExample">
             <div class="row">
                 <div class="col-1"></div>
-                <div class="col-md-5" th:each="room : ${getRoomReservationList}">
+                <div class="col" th:each="room : ${getRoomReservationList}">
                     <div class="row mt-3 border-top border-bottom mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
                         <div class="accordion-item">
                             <div class="accordion-header">
                                 
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                    <span class="me-5 pe-3" th:text="${room.userDto.name}"></span> 
+                                    <span class="me-5 pe-5" th:text="${room.userDto.name}"></span> 
                                     <span class="ms-5 ps-4 fw-bold text-end" th:text="${#numbers.formatDecimal(room.totalCost, 0, 'COMMA', 0, 'POINT')}"></span>
                                     <span>원</span><br>
                                 </button>

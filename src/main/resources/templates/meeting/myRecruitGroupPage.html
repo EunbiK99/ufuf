@@ -35,7 +35,7 @@
 </head>
 <script th:inline="javascript">
 
-function getMyRecruitMeetingList(){
+function myRecruitMeetingListCSR(){
     fetch("./api/getMyRecruitMeetingList")
     .then(response => response.json())
     .then(response =>{
@@ -65,10 +65,21 @@ function getMyRecruitMeetingList(){
                 const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
                 myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
 
-                const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-                const orginalRegdate = e.meetingGroupDto.regdate;
+                const myMeetingGroupMeetingdate = myMeetingGroupListRow.querySelector("#myMeetingGroupMeetingdate");
+                const orginalRegdate = e.meetingGroupDto.groupMeetingDate;
                 const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
-                myMeetingGroupRegdate.innerText = newRegdate;
+                myMeetingGroupMeetingdate.innerText = newRegdate;
+
+                if(e.meetingGroupDto.groupApplyStatue === "Y"){
+                    const myMeetingGroupStatus = myMeetingGroupListRow.querySelector("#myMeetingGroupStatus");
+                    myMeetingGroupStatus.setAttribute("class", "fw-bold badge text-bg-danger");
+                    myMeetingGroupStatus.innerText = "모집종료";
+                }
+                if(e.meetingGroupDto.groupMeetingStatus === "Y"){
+                    const myMeetingGroupStatus = myMeetingGroupListRow.querySelector("#myMeetingGroupStatus");
+                    myMeetingGroupStatus.setAttribute("class", "fw-bold badge text-bg-warning");
+                    myMeetingGroupStatus.innerText = "미팅종료";
+                }
 
                 myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
             }
@@ -83,7 +94,7 @@ function getMyRecruitMeetingList(){
 
 document.addEventListener("DOMContentLoaded", ()=>{
     
-    getMyRecruitMeetingList();
+    myRecruitMeetingListCSR();
 
 })
 
@@ -212,18 +223,28 @@ document.addEventListener("DOMContentLoaded", ()=>{
     <div id="myMeetingGroupListRow" class="row my-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
         <div class="col my-1 mx-1">
             <div class="row my-1">
-                <div class="col-auto">
-                    <img id="myMeetingGroupImage" style="width: 5em; height: 5em; border-radius: 10%;">
+                <div class="col-auto align-self-center ps-0 ms-1">
+                    <img id="myMeetingGroupImage" style="width: 6em; aspect-ratio: 1/1; border-radius: 10%;">
                 </div>
-                <div class="col ps-0 ms-2">
-                    <div class="row border-bottom me-1 pb-1">
-                        <div class="col-auto ps-0">
-                            <span id="myMeetingGroupTitle" class="fw-bold"></span>
-                        </div>                        
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto px-0 align-self-center">
+                            <span id="myMeetingGroupStatus" class="fw-bold badge text-bg-success">모집중</span>
+                        </div>
+                    </div>
+                    <div class="row border-bottom mt-1 pb-1">
+                        <div class="col-auto align-self-center">
+                            <div class="row">
+                                <div class="col px-0 align-self-center text-truncate">
+                                    <span id="myMeetingGroupTitle" class="fw-bold"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-auto ps-0">
-                            <span id="myMeetingGroupRegdate" class="text-secondary" style="font-size:0.8em"></span>
+                            <span class="text-secondary" style="font-size: 0.8em;"><i class="fi fi-rr-calendar-lines bi-align-middle"></i></span>
+                            <span id="myMeetingGroupMeetingdate" class="text-secondary" style="font-size:0.8em"></span>
                         </div>
                     </div>
                     <div class="row">
