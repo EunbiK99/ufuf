@@ -637,10 +637,13 @@ public class CircleService {
                 Map<String, Object> map = new HashMap<>();
                 CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
                 int circle_grade_id = e.getCircle_grade_id();
+                int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+                CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
                 CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
                 int circle_id = e.getCircle_id();
                 int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
-        
+
+                map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
                 map.put("circleMemberCnt", circleMemberCnt);
                 map.put("circleGradeDto", circleGradeDto);
                 map.put("circleSmallCategoryDto", circleSmallCategoryDto);
@@ -963,6 +966,7 @@ public class CircleService {
             Map<String, Object> map = new HashMap<>();
              
             int vote_option_id = circleVoteOptionDto.getVote_option_id();
+            
             int voteCount = circleSqlMapper.circleVoteCompleteCount(vote_option_id);
 
             // vote옵션하나당 투표한수만 넣으면 될거같음
@@ -1032,6 +1036,37 @@ public class CircleService {
     public List<CircleDto> circleNameDuplicateCheck(String circle_name){
 
         return circleSqlMapper.circleNameDuplicateCheck(circle_name);
+    }
+    // 항목을 체크한 유저종보가 필요함 
+    public List<Map<String, Object>> voteCompleteInfo(int circle_vote_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleVoteOptionDto> circleVoteOptionDtos = circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circle_vote_id);
+
+        for(CircleVoteOptionDto e : circleVoteOptionDtos){
+
+            int vote_option_id = e.getVote_option_id();
+            List<CircleVoteCompleteDto> circleVoteCompleteDtos = circleSqlMapper.circleVoteCompleteInfoByVoteOptionId(vote_option_id);
+            for(CircleVoteCompleteDto ee : circleVoteCompleteDtos){
+                Map<String, Object> map = new HashMap<>();
+
+                int circle_member_id = ee.getCircle_member_id();
+                CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByCircleMemberId(circle_member_id);
+                int user_id = circleMemberDto.getUser_id();
+                UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+
+                map.put("circleVoteOptionDto", e);
+                map.put("circleMemberDto", circleMemberDto);
+                map.put("userInfoDto", userInfoDto);
+
+                list.add(map);
+                
+            } 
+
+        }
+
+        return list;
     }
     
 }

@@ -37,10 +37,34 @@ const llmRightSummarySettingValues = {
 
 const leftSummaryHtml = `
 <div class="row">
-<div class="col fw-bold">왼쪽 제목... 블라블라...</div>
+<div class="col mt-2 fw-bold text-center">
+<span class="fw-bold fs-4">- Notice -</span>
+</div>
+</div>
+<div class="row mt-2">
+<div class="col">
+<span style="white-space: pre-line;">
+안녕하세요. Team UFUF입니다.
+우선 저희 프로젝트에 관심을 가져 
+주셔서 감사합니다.
+프로젝트 ufuf는
+'U'niverce 'F'or 'U'niversity 'F'riends.
+즉, 대학생들을 대상으로 학교생활 중
+유용하거나 재미있을만한 기능들 위주로 제작 해 보았습니다.
+본 프로젝트는 모바일 환경에
+최적화 되어 있습니다.
+아래 QR코드를 찍고 모바일 디바이스에서 확인 해 주시면 감사하겠습니다.
+</span>
+</div>
 </div>
 <div class="row">
-<div class="col">레이아웃 테스트</div>
+<div class="col">
+<div class="row">
+<div class="col">
+<img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid">
+</div>
+</div>
+</div>
 </div>
 `;
 
@@ -77,6 +101,7 @@ function createLeftSummary() {
     summaryWrapper.style.height = `${llmLeftSummarySettingValues.height}em`;
 
 
+    summaryWrapper.innerHTML = "";
     summaryWrapper.innerHTML = leftSummaryHtml;
 
     document.body.appendChild(summaryWrapper);

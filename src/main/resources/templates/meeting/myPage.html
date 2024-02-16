@@ -300,7 +300,7 @@ function mySignalBothModalCSR(){
         if(userBothLikeCount === 0){
             const noSignalMessageRow = document.querySelector("#templete #noSignalMessageRow").cloneNode(true);
             const messageSpan1 = noSignalMessageRow.querySelector("#messageSpan1");
-            messageSpan1.innerText = "아직 보낸 시그널이 없어요!"
+            messageSpan1.innerText = "매치된 시그널이 없어요!"
             const messageSpan2 = noSignalMessageRow.querySelector("#messageSpan2");
             messageSpan2.innerText = "리뷰를 남기고 시그널을 보내보세요 :)"
 
@@ -776,9 +776,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col">
-                        
+                        <div class="row">
+                            <div class="col text-start btn" onclick="window.location.href='./layoutTest'">
+                                <span class="fw-bold fs-3">PC가두기 레이아웃 작업공간</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-5">
@@ -1060,14 +1064,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     <div id="noSignalMessageRow" class="row border rounded shadowBox my-3 mx-2">
         <div class="col">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center mt-2">
                 <div class="col text-center">
-                    <span class="text-secondary" id="messageSpan1"></span>
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-comment-alt-dots bi-align-middle"></i></span>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col text-center">
-                    <span class="text-secondary" id="messageSpan2"></span>
+                    <span class="fw-bold text-secondary text-opacity-50" id="messageSpan1"></span>
+                </div>
+            </div>
+            <div class="row justify-content-center mb-2">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" id="messageSpan2"></span>
                 </div>
             </div>
         </div>
