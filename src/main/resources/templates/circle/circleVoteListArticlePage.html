@@ -17,6 +17,7 @@
      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
      <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script src="/public/js/lockLikeMobile.js"></script>
+     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
      <script>
         
         // 뒤로이동
@@ -155,6 +156,54 @@
             })
 
         }
+        // 차트 정보를 또 가져올거임 ==> 여기선 이제 항목별로 투표를 한 정보를 보여주도록 할건데..
+        // 모달창으로 정보를 보여주면서 
+        const voteCompleteInfo = () => {
+
+            document.querySelector("#voteInfoInsert").innerHTML = "";
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const circle_vote_id = urlParams.get("circle_vote_id");
+
+            $.ajax({
+                url: `./voteCompleteInfo?circle_vote_id=${circle_vote_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    
+                    
+                    for(e of response.data){
+
+                        const voteNode = $("#voteNode").clone(true);
+                        voteNode.removeClass("d-none")
+                        voteNode.find(".username").text(e.userInfoDto.name)
+                        const position = e.circleMemberDto.circle_position
+                        if(position === "P"){
+                            voteNode.find(".usergrade").text("동아리회장")
+                        }if(position === "A"){
+                            voteNode.find(".usergrade").text("매니저")
+                        }if(position === "M"){
+                            voteNode.find(".usergrade").text("회원")
+                        }
+                        voteNode.find(".voteoption").text(e.circleVoteOptionDto.option_content)
+                        
+                        $("#voteInfoInsert").append(voteNode)
+
+                        
+
+                    }
+                    
+                    const modal = bootstrap.Modal.getOrCreateInstance("#voteModal");
+                    modal.show();
+                    
+
+                }
+            })
+
+        }
+        
+
         // 차트 정보 가져올것들
         const voteChart = () => {
 
@@ -208,7 +257,7 @@
             
             const ctx = document.getElementById('myChart');
             myChart = new Chart(ctx, {
-                        type: 'pie',
+                        type: 'doughnut',
                         data: {
                         
                         datasets: [{
@@ -269,20 +318,19 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 100%;
             background-color: #ffffff;
             text-align: center;
         }
             /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
         .image-container {
             width: auto;
-            height: 12em; /* 높이를 조절하세요 */
+            height: 15em; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
         .responsive-img {
-            
-            height: 100%;
+            width: auto;
+            height: auto;
             object-fit: cover;
         }
          /* .self_check input[type="radio"] {
@@ -322,14 +370,20 @@
                                 투표 주제
                             </div>
                         </div>
-                        <div class="row py-0 ">
+                        <div class="row py-0 mt-2">
                             <div id="hideControl" class="col-12 d-grid py-0 justify-content-center align-items-center" style="height: 15em;">
                                 <canvas id="myChart"></canvas>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
                                 중복투표는 불가!
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-9"></div>
+                            <div onclick="voteCompleteInfo()" class="col fw-semibold btn rounded-3 border me-1" style="color: white; background-color: rgb(57, 57, 57);">
+                                투표한 사람
                             </div>
                         </div>
                         <div class="row">
@@ -361,24 +415,19 @@
         </div>
     </div>
     <div id="Wrapper" class="row d-none rounded-3 mt-2">
-        <div class="voteWrapper col rounded-3 mt-4">
+        <div class="voteWrapper col rounded-3 border" style="padding-left: 0%; padding-right: 0%; padding-top: 0%; background-color: white;">
             <!-- 테스트1 --><input type="radio" class="radiobutton form-check custom-radio btn-check" name="vbtn-radio" autocomplete="off">
             <label class="labelbutton btn btn-outline-warning" style="border: 0.01em solid#f3f3f3;">
             <div class="row py-1 rounded-3 justify-content-center align-items-center">
-                <div class="col image-container rounded-3 d-grid">
+                <div class="col image-container rounded-3">
                     <img class="responsive-img option_image img-fluid rounded-3">
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="row">
+                    <div class="row align-items-center justify-content-center">
                         <div class="col text-center fw-semibold" style="font-size: 0.9em; color: black;">
                             <span class="option_content">항목내용</span>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col">
-                            <!-- <input type="radio" class="radiobutton form-check custom-radio"> -->
                         </div>
                     </div>
                 </div>
@@ -407,6 +456,50 @@
                 </div>
               </div>
             </div>
+        </div>
+    </div>
+    <div id="voteWrapper d-none">
+        <div id="voteModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">투표 현황</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-center">
+                        <div class="col pe-0 fw-semibold">
+                            투표한 사람
+                        </div>
+                        <div class="col px-0 fw-semibold">
+                            직책
+                        </div>
+                        <div class="col ps-0 fw-semibold">
+                            투표항목
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div id="voteInfoInsert" class="col align-items-center justify-content-center">
+                            <!-- 리스팅 되어야할 곳 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-decoration-line: none;">
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div id="voteNode" class="row mt-1 text-center d-none justify-content-center align-items-center">
+        <div class="col username pe-0">
+
+        </div>
+        <div class="col usergrade px-0">
+            
+        </div>
+        <div class="col voteoption ps-0 fw-semibold" style="color: #fb7928;">
+
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>

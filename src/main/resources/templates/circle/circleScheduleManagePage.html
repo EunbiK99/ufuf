@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script>
         // 캘린더..
         
@@ -138,7 +139,7 @@
         //     calendar.render(); 
         // }
 
-        // 캘린더 2
+        // 캘린더 2 이거 비동기식?
         document.addEventListener('DOMContentLoaded', async function() {
             // console.log("");
             // console.log("=========================================");
@@ -217,10 +218,10 @@
                 editable: true,
                 selectable: true,
                 expandRows: false,
-                dayMaxEventRows: 2, // 날짜별 이벤트 행의 개수 설정 가능
+                dayMaxEventRows: 3, // 날짜별 이벤트 행의 개수 설정 가능
                 locale: 'ko',
                 selectLongPressDelay: 300,
-                aspectRatio: 3,
+                aspectRatio: 0.9,
                 
             });
 
@@ -623,6 +624,7 @@
             })
 
         }
+
         // 카카오페이 승인요청을 받아야함
         // 여기가 문제...... 승인요청하면 결제시스템이라 서버측에서 하는게 맞고.. 토큰값은 approval_url 리다이렉트 되면서 생기니까 여기서 값저장 안되는듯?
         const kakaoPaymentAccept = (eventData, data) => {
@@ -710,7 +712,7 @@
             .then(response => response.json())
             .then(response => {
 
-
+                
 
             })
 
@@ -969,13 +971,6 @@
             background-color: #ffffff;
             text-align: center;
         }
-        html, body {
-            width: 100%;
-            height: 120%;
-            margin : 0 auto;
-            padding : 0;
-            border : none;   
-        }
         #fc-dom-1{
             padding-left: 1em;
         }
@@ -1035,13 +1030,14 @@
             padding-top: 1em;
             width: 100%;
         }
+        
     </style>
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid d-grid">
+    <div class="container-fluid" style="height: 300%;">
         <div class="row">
-            <div id="calendar" class="col py-2 px-0">
+            <div id="calendar" class="col px-0">
 
             </div>
         </div>
@@ -1169,7 +1165,7 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col px-0"><!-- 일정에 주소좌표가 들어갈 예정 --> 
-                        <div id="map" style="width: 100%; height: 22em;"></div>
+                        <div id="map" style="width: 100%; height: 20.2em;"></div>
                     </div>
                 </div>
             </div>
@@ -1211,10 +1207,15 @@
                   <h5 class="modal-title">일정 출석부</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body pb-0">
                     <div class="row">
                         <div id="attendanceInfoInsert" class="col align-items-center justify-content-center">
                             <!-- 리스팅 되어야할 곳 -->
+                        </div>
+                    </div>
+                    <div class="row mt-3 text-end">
+                        <div class="col" style="font-size: 0.8em;">
+                            일정 출석 기한은 일정 종료일로부터 2일입니다.
                         </div>
                     </div>
                 </div>
@@ -1226,15 +1227,15 @@
         </div>
     </div>
     <!-- 여기는 이제 일정 출석부에 추가해야할 클론노드 -->
-    <div id="attendanceNode" class="row d-none justify-content-center align-items-center">
+    <div id="attendanceNode" class="row mt-1 d-none justify-content-center align-items-center">
         <div class="col">
             <div class="row">
-                <div class="col text-center username fs-5 fw-semibold">
+                <div class="col text-center username fs-5">
 
                 </div>
             </div>
         </div>
-        <div class="col-4 d-grid userButton">
+        <div class="col-5 d-grid userButton">
             
         </div>
     </div>

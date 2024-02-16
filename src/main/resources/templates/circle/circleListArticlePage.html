@@ -14,10 +14,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script>
         function goBack() {
             window.history.go(-1);
-        }   
+        }
+        // 검증이 끝난다음에 입력될 곳(모달창으로 가입신청이 완료되었다는 걸 알려줘야할 듯?)
         function circleApplyComplete(){
             // 이미 가입시 disabled or 모달로 경고창 // 다른학교일경우에 disabled or 모달로 경고창 // 가입안되있으면 가입신청이 완료
             const queryString = window.location.search;
@@ -29,10 +31,14 @@
             .then(response => response.json())
             .then(response => {
                 
+                // 가입 완료 모달불러오기
+                const modal = bootstrap.Modal.getOrCreateInstance("#joinModal");
+                modal.show();
+
             })
             
-            location.href = "./circleMainPage"
-
+            
+            // 쓸데없는거
             setTimeout(() => {
                 showModal()
             }, 1000)
@@ -140,7 +146,7 @@
                 const circlecreatedtime = Wrapper.querySelector(".circlecreatedtime")
                 const changetime = e.circleDto.application_date
                 const formattedDate = `${String(changetime[0])}.${String(changetime[1]).padStart(2, '0')}.${String(changetime[2]).padStart(2, '0')}`;
-                circlecreatedtime.innerText = `${formattedDate}개설`    
+                circlecreatedtime.innerText = `${formattedDate}`    
 
                 
                 // 현재 인원 / 등급 인원 
@@ -340,7 +346,7 @@
         }
         .cf {
                 transition: 0.3s;
-                height: 60em;
+                height: auto;
                 
                 
             
@@ -381,7 +387,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col" style="color: rgb(139, 139, 139);">
-                                <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="circleMemberCnt" style="color: black;"></span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circle_people" style="color: black;"></span>&nbsp;<span style="color: black;">·</span>&nbsp;<span class="circlecreatedtime"></span>
+                                <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="circleMemberCnt" style="color: black;"></span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circle_people" style="color: black;"></span>&nbsp;<span style="color: black;">
                             </div>
                         </div>
                     </div>
@@ -404,11 +410,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col py-3">
+                    <div class="col py-2">
 
                     </div>
                 </div>
-                <div class="row mt-5 mb-0">
+                <div class="row">
+                    <div class="col text-end">
+                        </span>&nbsp;<span class="circlecreatedtime fw-semibold" style="color: rgb(59, 59, 59);"></span>
+                    </div>
+                </div>
+                <div class="row mt-0">
                     <div class="col px-0 pb-0">
                         <img src="/public/image/circle/add2.jpg" class="img-fluid">
                     </div>
@@ -439,6 +450,28 @@
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Next</span>
             </button>
+          </div>
+    </div>
+    <!-- 이렇게 사용하면 x표시가 없어서 예외발생을 하지않음 -->
+    <div id="joinWrapper" class="col">
+        <div id="joinModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">동아리 가입완료</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            동아리 가입이 완료되었습니다.
+                        </div>
+                    </div>
+                </div>    
+                <div class="modal-footer" style="text-decoration-line: none;">
+                    <button onclick="(() => {location.href = './circleMainPage'})()" type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;">확인</button>
+                </div>
+              </div>
+            </div>
           </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
