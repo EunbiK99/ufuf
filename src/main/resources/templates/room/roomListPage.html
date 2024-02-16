@@ -128,7 +128,7 @@
                             roomList.classList.remove("d-none");
                             const roomMainImage = roomList.querySelector(".roomMainImage");
                             roomMainImage.removeAttribute("src");
-                            roomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage/" + e.roomInfoDto.main_image);
+                            roomMainImage.setAttribute("src", "/uploadFiles/ufuf/room/roomImage/" + e.roomInfoDto.main_image);
                             const roomTitle = roomList.querySelector(".roomTitle");
                             roomTitle.innerHTML = "";
                             roomTitle.innerText = e.roomInfoDto.title;

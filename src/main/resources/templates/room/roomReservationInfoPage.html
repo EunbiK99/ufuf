@@ -134,7 +134,7 @@
         <div class="row p-4 mt-4"></div>
 
         <div class="row">
-            <img th:src="@{/uploadFiles/ufuf/roomImage/}+${reservationInfo.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 8em; overflow: hidden; position: relative; object-fit: cover;">
+            <img th:src="@{/uploadFiles/ufuf/room/roomImage/}+${reservationInfo.roomInfoDto.main_image}" class="img-fluid" style="width: 100%; height: 8em; overflow: hidden; position: relative; object-fit: cover;">
         </div>
 
         <div class="row mt-4">
@@ -221,9 +221,10 @@
                     <div class="col me-1 text-end" th:text="${reservationInfo.userDto.phone}"></div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-3">이메일</div>
-                    <div class="col-4"></div>
-                    <div class="col me-1 text-end" th:text="${reservationInfo.userDto.email}"></div>
+                    <div class="col">
+                        이메일
+                    </div>
+                    <div class="col mt-0 me-1 text-end" th:text="${reservationInfo.userDto.email}"></div>
                 </div>
             </div>
         </div>

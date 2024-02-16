@@ -680,8 +680,8 @@
             }
 
             // 체크인 날짜와 체크아웃 날짜
-            const checkInDate = moment(document.getElementById("check_in_day").innerText).format("YYYY-MM-DD");
-            const checkOutDate = moment(document.getElementById("check_out_day").innerText).format("YYYY-MM-DD");
+            const checkInDate =moment(document.getElementById("check_in_day").innerText, 'YYYY-MM-DD').format('YYYY-MM-DD');
+            const checkOutDate =moment(document.getElementById("check_out_day").innerText, 'YYYY-MM-DD').format('YYYY-MM-DD');
 
             // 폼에 데이터 추가
             
@@ -796,7 +796,7 @@
                         </div>
                     </div>
 
-                    <div class="row bg-white" style="position: fixed; bottom: 0; z-index: 1000;">
+                    <div class="row bg-white" style="position: fixed; width: 100%; bottom: 0; z-index: 1000;">
                         <div class="col">
                             <div class="row text-center pb-2 border-top border-secondery-subtle">
                                 <div class="col d-grid mx-2 mt-2 mb-4">

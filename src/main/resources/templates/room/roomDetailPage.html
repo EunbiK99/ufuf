@@ -87,7 +87,7 @@
             
             if(myId == null){
                 if(confirm("로그인 후 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?")){
-                    location.href = "../login/testloginPage";
+                    location.href = "../login/loginPage";
                 }
                 return;
             }
@@ -166,7 +166,10 @@
 
         window.addEventListener("DOMContentLoaded", () => {
             getMyId();
+
+            alert(1);
             reloadTotalCount();
+            alert(2);
             
             var mapContainer = document.getElementById("map"), // 지도를 표시할 div
                 mapOption = { 
@@ -236,10 +239,10 @@
                 </div>
                 <div class="carousel-inner" style="margin: 0%; padding: 0%;">
                   <div class="carousel-item active">
-                    <img th:src="@{/uploadFiles/ufuf/roomImage/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 120%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
+                    <img th:src="@{/uploadFiles/ufuf/room/roomImage/}+${roomDetail.roomInfoDto.main_image}" class="img-fluid" style="width: 120%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                   <div class="carousel-item" th:each="image : ${roomDetail.roomImageDto}">
-                    <img th:src="@{/uploadFiles/ufuf/roomImage/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
+                    <img th:src="@{/uploadFiles/ufuf/room/roomImage/}+${image.location}" class="img-fluid" style="width: 100%; height: 13em; overflow: hidden; position: relative; object-fit: cover;">
                   </div>
                 </div>
                 <button class="carousel-control-prev px-0 ms-2" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -332,7 +335,7 @@
         </div>
 
 
-        <div class="row mx-1 mt-4 mb-3 fw-bold" style="font-size: 1em;">숙소 기본 옵션</div>
+        <div class="row mx-1 ps-2 mt-4 mb-3 fw-bold" style="font-size: 1em;">숙소 기본 옵션</div>
 
         <div class="row ms-4 me-1 pb-3 pe-0 ps-0">
             <div class="col-3 mt-2 mb-2" th:each="roomOption : ${roomDetail.roomOptionDto}">
@@ -385,71 +388,80 @@
                         <div th:case="12">
                             <div class="row"><i class="fs-1 text-secondary fi fi-rr-tablet-android"></i></div>
                             <div class="row ps-1 text-center" style="font-size: 0.8em;">도어락</div>
+                        </div>
                         <div th:case="13">
                             <div class="row"><i class="fs-1 text-secondary fi fi-rr-oven"></i></div>
                             <div class="row text-center" style="font-size: 0.8em;">전기밥솥</div>
                         </div>
                         <div th:case="*"></div>
+                            
                         
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-3 mb-1" style="font-size: 1.1em;">예약 공지</div>
+        <div class="row mt-3 px-4 border-top border-secondery-subtle">
+            <div class="col mx-0">
+
+                <div class="row pt-4 fw-bold mb-1" style="font-size: 1.1em;">예약 공지</div>
         
-        <div class="row mt-3 ms-2 me-3 mb-2 text-secondary fw-bold" style="width: 90%;">예약 가능일정</div>
-        <div class="row ps-2">
-            <div class="col">
-                <span th:text="${roomDetail.roomInfoDto.start_schedule}"></span>
-                ~
-                <span th:text="${roomDetail.roomInfoDto.end_schedule}"></span>
-            </div>
-            
-        </div>
-
-
-        <div class="row mx-2 mb-2 mt-3 text-secondary fw-bold">체크인 / 아웃</div>
-        <div class="row ps-1">
-            <div class="col-1 mt-1 ps-3 "><i class="fi fi-rr-clock-three"></i></div>
-            <div class="col">
-                    체크인&nbsp;
-                    <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkin_time}"></span>&nbsp;-&nbsp;
-                    체크아웃&nbsp;
-                    <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkout_time}"></span>
-            </div>
-            
-        </div>
-
-        <div class="row mx-1 ps-1 mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
-        <div class="row ps-2">
-            <div class="col-1 pt-1">
-                <i class="fi fi-rr-user"></i>
-            </div>
-            <div class="col-9">
-               <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_standard}"></span>
-               인 기준 / 최대 
-               <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_limit}"></span>
-               인
-            </div>
-        </div>
-        <div class="row " th:if="${roomDetail.roomInfoDto.people_count_standard != roomDetail.roomInfoDto.people_count_limit}">
-            <div class="col">
-                <div class="row ms-2 mt-3 text-secondary fw-bold" style="width: 90%;">인원 추가요금</div>
-                
-                <div class="row mt-2 ps-1">&nbsp;
-
-                    <div class="col-9">
-                        1인당&nbsp;
-                        <span class="fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></span>
-                        원
-                        <span class="text-secondary" style="font-size: 0.9em;">(최대</span>
-                        <span class="text-secondary" th:text="${roomDetail.roomInfoDto.people_count_limit}" style="font-size: 0.9em;"></span>
-                        <span class="text-secondary" style="font-size: 0.9em;">인)</span>
+                <div class="row mt-3 me-3 mb-2 text-secondary fw-bold" style="width: 90%;">예약 가능일정</div>
+                <div class="row">
+                    <div class="col ps-0">
+                        <span th:text="${roomDetail.roomInfoDto.start_schedule}"></span>
+                        ~
+                        <span th:text="${roomDetail.roomInfoDto.end_schedule}"></span>
+                    </div>
+                    
+                </div>
+                <div class="row mb-2 mt-3 text-secondary fw-bold">체크인 / 아웃</div>
+                <div class="row">
+                    <div class="col-1 mt-1 ps-0"><i class="fi fi-rr-clock-three"></i></div>
+                    <div class="col ps-0">
+                            체크인&nbsp;
+                            <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkin_time}"></span>&nbsp;-&nbsp;
+                            체크아웃&nbsp;
+                            <span class=" fw-bold" th:text="${roomDetail.roomInfoDto.checkout_time}"></span>
+                    </div>
+                    
+                </div>
+        
+                <div class="row mb-2 mt-3 text-secondary fw-bold">숙박 인원</div>
+                <div class="row ps-0">
+                    <div class="col-1 ps-0">
+                        <i class="fi fi-rr-user"></i>
+                    </div>
+                    <div class="col-9 ps-0">
+                       <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_standard}"></span>
+                       인 기준 / 최대 
+                       <span class="fw-bold" th:text="${roomDetail.roomInfoDto.people_count_limit}"></span>
+                       인
+                    </div>
+                </div>
+                <div class="row " th:if="${roomDetail.roomInfoDto.people_count_standard != roomDetail.roomInfoDto.people_count_limit}">
+                    <div class="col">
+                        <div class="row mt-3 text-secondary fw-bold" style="width: 90%;">인원 추가요금</div>
+                        
+                        <div class="row mt-2">&nbsp;
+        
+                            <div class="col-9 ps-0">
+                                1인당&nbsp;
+                                <span class="fw-bold" th:text="${#numbers.formatDecimal(roomDetail.roomInfoDto.extra_money, 0, 'COMMA', 0, 'POINT')}"></span>
+                                원
+                                <span class="text-secondary" style="font-size: 0.9em;">(최대</span>
+                                <span class="text-secondary" th:text="${roomDetail.roomInfoDto.people_count_limit}" style="font-size: 0.9em;"></span>
+                                <span class="text-secondary" style="font-size: 0.9em;">인)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+
+
+       
 
         <div class="row pt-4 ps-3 border-top border-secondery-subtle fw-bold mt-4 mb-4" style="font-size: 1em;">오시는 길</div>
 
@@ -506,7 +518,7 @@
 
         <!--예약하기 버튼-->
         <div class="row bg-white" style="position: fixed; width: 100%; bottom:0; z-index: 1000;">
-            <div class="col" style=" width: 100%;">
+            <div class="col" style="width: 100%;">
                 <div class="row text-center pb-2 border-top border-secondery-subtle">
                     <div class="col d-grid mx-2 mt-2 mb-3" th:if="${roomDetail.roomInfoDto.end_schedule} ge ${currentDate}">
                         <a  th:href="@{./roomReservationPage(room_info_id=${roomDetail.roomInfoDto.room_info_id})}" class="btn text-white fw-bold py-2" style="background-color: #FF8827;">예약하기</a>

@@ -95,9 +95,9 @@
             roomData.cid = "TC0ONETIME";
             roomData.item_name = "ufuf게스트하우스예약";
             roomData.total_amount =  roomData.reservationCharge;
-            roomData.approval_url = `https://localhost:8888/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
-            roomData.fail_url = `https://localhost:8888/room/roomPaymentFail?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
-            roomData.cancel_url = `https://localhost:8888/room/roomPaymentCancel?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
+            roomData.approval_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
+            roomData.fail_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentFail?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
+            roomData.cancel_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentCancel?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
             console.log(roomData);
 
             const requestData = new URLSearchParams({
@@ -343,8 +343,10 @@
             </div>
             <div class="col-2 mt-5">
                 <div class="row border border-0 rounded-5 fw-bold bg-warning-subtle">
-                    <div class="col-1 ms-2" th:text="${reservationInfo.reservationDuration}" style="font-size: 0.9em; color: #693f00;"></div>
-                    <div class="col-1 ps-0" style="font-size: 0.9em; color: #693f00;">박</div>
+                    <div class="col text-center">
+                        <span th:text="${reservationInfo.reservationDuration}" style="font-size: 0.9em; color: #693f00;"></span>
+                        <span style="font-size: 0.9em; color: #693f00;">박</span>
+                    </div>
                 </div>
                 
             </div>
@@ -376,12 +378,13 @@
                 <div class="row mt-3">
                     <div class="col-3">연락처</div>
                     <div class="col-4"></div>
-                    <div class="col me-1 text-end" th:text="${reservationInfo.userDto.phone}"></div>
+                    <div class="col me-1 text-end" th:text="${reservationInfo.userDto.phone}" style="color: black; text-decoration: none;"></div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-3">이메일</div>
-                    <div class="col-4"></div>
-                    <div class="col me-1 text-end" th:text="${reservationInfo.userDto.email}"></div>
+                    <div class="col">
+                        이메일
+                    </div>
+                    <div class="col mt-0 me-1 text-end" th:text="${reservationInfo.userDto.email}"></div>
                 </div>
             </div>
         </div>
@@ -463,7 +466,7 @@
         <!--여백-->
         <div class="row p-5"></div>
 
-        <div class="row bg-white" style="position: fixed; bottom: 0; z-index: 1000;">
+        <div class="row bg-white" style="position: fixed; bottom: 0; width: 100%; z-index: 1000;">
             <div class="col" style="width: 100%;">
                 <div class="row text-center pb-2 border-top border-secondery-subtle" >
                     <div class="col d-grid mx-2 mt-2 mb-4">

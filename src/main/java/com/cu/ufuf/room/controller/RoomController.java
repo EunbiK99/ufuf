@@ -193,6 +193,7 @@ public class RoomController {
 
 		return "room/roomReservationPage";
 	}
+	
 
 	//예약 값 넘기는거
 	@RequestMapping("roomReservationProcess")
