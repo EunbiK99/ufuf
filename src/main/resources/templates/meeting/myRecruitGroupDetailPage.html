@@ -412,7 +412,7 @@ function makeGroupDetailPage(){
     groupTitle.innerText = groupDetailInfo.meetingGroupDto.groupTitle;
 
     const groupCreateUserImage = document.getElementById("groupCreateUserImage");
-    groupCreateUserImage.setAttribute("src", `/public/image/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
+    groupCreateUserImage.setAttribute("src", `/uploadFiles/ufuf/meeting/profileImage/${groupDetailInfo.meetingProfileDto.profileImg}`);
 
     const groupCreateUserNickname = document.getElementById("groupCreateUserNickname");
     groupCreateUserNickname.innerText = groupDetailInfo.meetingProfileDto.profileNickname;
