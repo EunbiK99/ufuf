@@ -14,9 +14,75 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 
 
     <script>
+        window.addEventListener("DOMContentLoaded", () => {
+        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        document.getElementById("ufuf").addEventListener("click", function() {
+            const container = document.querySelector(".footer");
+
+            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+                // 변경된 스타일 적용
+                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+                container.style.zIndex = "250";
+                container.style.transition = "all 0.2s";
+
+                document.getElementById("home").classList.remove("d-none");
+                document.getElementById("secondLine").classList.remove("d-none");
+                document.getElementById("thirdLine").classList.remove("d-none");
+
+                setTimeout(() => {
+                    document.getElementById("home").classList.add("clicked");
+                }, 250);
+
+                setTimeout(() => {
+                    document.getElementById("secondLine").classList.add("clicked");
+                    setTimeout(() => {
+                        document.getElementById("mission").classList.add("clicked");
+                    }, 100);
+                    setTimeout(() => {
+                        document.getElementById("circle").classList.add("clicked");
+                    }, 200);
+
+                }, 90);
+
+                setTimeout(() => {
+
+                    document.getElementById("thirdLine").classList.add("clicked");
+
+                    setTimeout(() => {
+                        document.getElementById("signal").classList.add("clicked");
+                    }, 50);
+                    setTimeout(() => {
+                        document.getElementById("bnb").classList.add("clicked");
+                    }, 250);
+
+                }, 90);
+            } else { // ufuf 버튼이 이미 클릭되어 있을 때
+                // 변경 취소
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+
+                document.getElementById("home").classList.add("d-none");
+                document.getElementById("secondLine").classList.add("d-none");
+                document.getElementById("thirdLine").classList.add("d-none");
+                document.getElementById("home").classList.remove("clicked");
+                document.getElementById("secondLine").classList.remove("clicked");
+                document.getElementById("thirdLine").classList.remove("clicked");
+                document.getElementById("mission").classList.remove("clicked");
+                document.getElementById("circle").classList.remove("clicked");
+                document.getElementById("signal").classList.remove("clicked");
+                document.getElementById("bnb").classList.remove("clicked");
+            }
+
+            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+        });
+    });
         //숙소리스트!
         function roomList(){
             // 처음에 초기화
@@ -118,6 +184,38 @@
         })
     </script>
     <style> 
+            .footer{
+                margin: auto;
+            }
+
+            #secondLine,
+            #thirdLine {
+                transition: opacity 1s;
+            }
+
+             #signal,
+            #bnb,
+            #mission,
+            #circle,
+            #home{
+                transition: all 0.5s;
+                opacity: 0;
+            }
+
+            #signal.clicked,
+            #bnb.clicked,
+            #mission.clicked,
+            #circle.clicked,
+            #home.clicked {
+                opacity: 1;
+            }
+
+            .fi {
+                background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+                -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+                background-clip: text; /* 텍스트에만 배경 적용 */
+                color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+            }
 
 
         body {
@@ -316,8 +414,13 @@
             </div>
 
             <div class="row mb-2 mt-1 ps-1" style="max-width: 13em;">
-                <div class="col-2"> <a class="text-start ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a></div>
-                <div class="col ms-3 text-start text-secondary">&nbsp;/1박</div>
+                <div class="col">
+                    <span>
+                        <a class="ms-0 ps-0 roomCharge" style="color: black; text-decoration: none;"></a>
+                    </span>
+                    <span class="text-start text-secondary">&nbsp;/1박</span>
+                    </div>
+                <div></div>
             </div>
         </div>
 
@@ -371,7 +474,7 @@
         <!--푸터에 안가려지라고 여백용-->
         <div class="row p-5 mb-4"></div>
 
-        <div class="row pb-2" style="position: fixed; bottom: 6em; right: 1em; height: 3em; z-index: 1000;">
+        <div class="row pb-2" style="position: fixed; bottom: 6em; right: 1em; height: 3em; z-index: 100;">
             <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
                 <div class="dropup-end dropup" style="position: absolute; right: 2em;">
                     <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
@@ -386,10 +489,10 @@
 
         <!-- 추가된 부분 -->
         <div class="row">
-            <div class="col modal-backdrop fade show" style="z-index: 999;"></div>
+            <div class="col modal-backdrop fade show" style="z-index: 99;"></div>
         </div>
 
-        <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
+        <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle footer" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
             <div class="col">
                 <div class="row mt-0 pt-0">
                     <div class="col mt-0 ms-1">
@@ -411,7 +514,7 @@
     
                     <!--홈-->
                     <div class="col ms-2 me-0" style="padding-top: 0.02rem;">
-                        <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='../commons/mainPage'">
+                        <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;" id="ufuf">
                         
                     </div>
     
@@ -437,7 +540,92 @@
         </div>
 
 
+        <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+            <div class="col text-center px-0 ">
+                <div class="row">
+                    <div class="col px-0 align-self-center d-flex justify-content-center">
+                        <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                            <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                        홈
+                    </div>
+                </div>
+            </div>
+        </div>
         
+        <div id="secondLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 6.8em; width: 100%; margin: auto; z-index: 9999;">
+            <div id="mission" class="col-2 text-center">
+                <div class="row">
+                    <div class="col px-0 align-self-center d-flex justify-content-center">
+                        <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                            <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                        유니미션
+                    </div>
+                </div>
+            </div>
+            <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+            <div id="circle" class="col-2 text-center">
+                <div class="row">
+                    <div class="col px-0 align-self-center d-flex justify-content-center">
+                        <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                            <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                        유니써클
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div id="thirdLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 4.3em; width: 100%; margin: auto; z-index: 9999;">
+            <div id="signal" class="col-3 text-center">
+                <div class="row">
+                    <div class="col px-0 align-self-center d-flex justify-content-center">
+                        <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                            <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                        유니시그널
+                    </div>
+                </div>
+            </div>
+            <div class="col-1" style="width: 6.1rem;"></div>
+            <div id="bnb" class="col-3 text-center">
+                <div class="row">
+                    <div class="col px-0 align-self-center d-flex justify-content-center">
+                        <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                                style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                            <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                        유니비앤비
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         
     </div>
