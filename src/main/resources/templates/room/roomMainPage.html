@@ -13,7 +13,7 @@
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 
 
     <script>
@@ -34,7 +34,7 @@
                     roomList.classList.remove("d-none");
                     const roomMainImage = roomList.querySelector(".roomMainImage");
                     roomMainImage.removeAttribute("src");
-                    roomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                    roomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage" + e.roomInfoDto.main_image);
                     const roomTitle = roomList.querySelector(".roomTitle");
                     roomTitle.innerHTML = "";
                     roomTitle.innerText = e.roomInfoDto.title;
@@ -75,13 +75,13 @@
                 for(e of response.data){
 
                     if(e.roomInfoDto!=null){
-                    
+                        
                         // 리뷰 리스트 생성
                         const reviewList = document.querySelector("#reviewList").cloneNode(true);
                         reviewList.classList.remove("d-none");
                         const reviewRoomMainImage = reviewList.querySelector(".reviewRoomMainImage");
                         reviewRoomMainImage.removeAttribute("src");
-                        reviewRoomMainImage.setAttribute("src", "/public/image/room/" + e.roomInfoDto.main_image);
+                        reviewRoomMainImage.setAttribute("src", "/uploadFiles/ufuf/roomImage" + e.roomInfoDto.main_image);
                         const reviewRoomTitle = reviewList.querySelector(".reviewRoomTitle");
                         reviewRoomTitle.innerHTML = "";
                         reviewRoomTitle.innerText = e.roomInfoDto.title;
@@ -255,7 +255,7 @@
     <script src="/public/js/lockLikeMobile.js"></script>
     <div class="container" style="position: relative;">
         <!-- 탑 네비-->
-        <div class="row pb-2 bg-white" style="position: fixed; top: 0; height: 3em; z-index: 1000;">
+        <div class="row pb-2 bg-white" style="position: fixed; top: 0;width:100%; height: 3em; z-index: 1000;">
             <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
                 <a href="../commons/mainPage" class="ms-3 me-2 pt-2"><img src="/public/image/room/ufuf_logo.png" class="img-fluid" style="width: 2.5em; height: auto;"></a>
                 <span class="ps-0 me-0 ms-0 pt-2 mt-4 text-secondary">유니비앤비</span>
@@ -282,11 +282,11 @@
 
         <!-- 여백용-->
         <div class="row p-1"></div>
-        <!--내 근처 숙소-->
+        <!--내 근처 숙소--> 
         <div class="row mt-4 ps-2 mb-3">
             <div class="col-8"><a class="fw-bold text-start ps-0" href="./roomListPage" style="color: black; text-decoration: none;">방금 올라온 숙소</a></div>
             <div class="col"></div>
-            <div class="col">
+            <div class="col text-end me-3">
                 <a href="./roomListPage" style="color: black; text-decoration: none;"><i class="bi bi-arrow-right text-end"></i></a>
             </div>
         </div>
@@ -385,7 +385,9 @@
         </div>
 
         <!-- 추가된 부분 -->
-        <div class="row modal-backdrop fade show" style="z-index: 999;"></div>
+        <div class="row">
+            <div class="col modal-backdrop fade show" style="z-index: 999;"></div>
+        </div>
 
         <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
             <div class="col">

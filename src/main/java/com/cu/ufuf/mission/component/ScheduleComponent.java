@@ -29,9 +29,6 @@ public class ScheduleComponent {
         missionMapService.updateSuccessAfter3days();
     }
 
-    @Scheduled(cron = "0 0 12 * * *")
-    public void cancelMissionPayment() throws JsonMappingException, JsonProcessingException {
-        missionPaymentRestController.cancelKakaoPayment();
-    }
+
 
 }

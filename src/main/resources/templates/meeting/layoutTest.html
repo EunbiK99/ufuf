@@ -25,12 +25,18 @@
         /* font-family: 'Quicksand', sans-serif; */
         /* font-family: 'Noto Sans KR', sans-serif; */
         font-family: 'Pretendard Variable', Pretendard, Roboto;        
-    }    
+    }
+
+    #leftLayout{
+        background-color: white;
+        width: 15em;
+        height: 40em;
+    }
     </style>
 </head>
 
 <body class="pt-5 pb-5" style="background-color: #f5ededea;">
-    <div class="container-fluid">
+    <div class="container-fluid bg-body-tertiary">
         
         <!--/* 임시 탑 에어리어 */-->
         <div class="row fixed-top bg-white" style="height: 3.3em;">
@@ -54,68 +60,48 @@
         </div>
         
         <div class="row">
-            <div class="col">
-
-                <!-- ufuf 주황색컬러 -->
-                <div style="color: #FF8827;"></div>
-                <div style="color: #eeeaea;"></div>
-
-                <!-- 바디 커스텀 컬러 -->
-                <div style="background-color: #f5ededea;"></div>
-
-                <!-- 왼쪽화살표 아이콘 -->
-                <span class=" fs-3"><i class="fi fi-rr-angle-small-left bi-align-middle"></i></span>
-                
-                <!-- Comment 아이콘 -->
-                <i class="fi fi-rr-comment-dots bi-align-middle"></i>
-                
-                <!-- 탑에어리어 알람 종 아이콘 -->
-                <span class="fs-5 text-secondary"><i class="fi fi-rr-bell bi-ailgn-middle"></i></span>
-
-                <!-- 검색 아이콘 -->
-                <i class="fi fi-rr-search bi-ailgn-middle"></i>
-
-                <!-- 사람 아이콘(인원수 앞에) -->
-                <i class="fi fi-rr-user bi-ailgn-middle"></i>
-
-                <!-- 체크 아이콘 -->
-                <i class="fi fi-rr-check-circle bi-ailgn-middle"></i>
-
-                <!-- 금지 아이콘 -->
-                <i class="fi fi-rr-do-not-enter bi-ailgn-middle"></i>
-
-                <!-- 글작성 아이콘 -->
-                <i class="fi fi-rr-edit bi-ailgn-middle"></i>
-
-                <!-- 남자성별 아이콘 -->
-                <i class="fi fi-rr-mars text-primary bi-align-middle"></i>
-
-                <!-- 여자성별 아이콘 -->
-                <i class="fi fi-rr-venus text-danger bi-align-middle"></i>
-
-                <!-- 1등 아이콘 후보 : 꽃에 리본달린거 -->
-                <i class="fi fi-rr-wreath bi-align-middle"></i>
-
-                <!-- 1등 아이콘 후보 : 체크된 배지-->
-                <i class="fi fi-rr-badget-check-alt bi-align-middle"></i>
-
-                <!-- 1등 아이콘 후보 : 체크된 배지-->
-                <i class="fi fi-rr-award bi-align-middle"></i>
-
-                <!-- p32 -->
-                <!-- 돋보기 안에 물음표 아이콘 -->
-                
-                
-                <!-- p25 -->
-                <!-- 서있는 사람 옆에 물음표 아이콘-->
-                <i class="fi fi-rr-person-circle-question"></i>
-
-                <!-- 서있는 사람 옆에 엑스 아이콘-->
-                <i class="fi fi-rr-person-circle-xmark"></i>
-
-                <!--  -->
+            <div class="col text-center">
+                <span class="fs-2 fw-bold">포트폴리오 링크 PC 가두기 좌, 우 레이아웃 작업공간 입니다.</span>
             </div>
         </div>
+
+        <div class="row mt-5">
+            <div id="leftLayout" class="col">
+                <!--/* 여기부터 좌측내용 */-->
+                <div class="row">
+                    <div class="col mt-2 fw-bold text-center">
+                        <span class="fw-bold fs-4">- Notice -</span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <span style="white-space: pre-line;">
+                            안녕하세요. Team UFUF입니다.
+                            
+                            우선 저희 프로젝트에 관심을 가져 주셔서 감사합니다.
+                            프로젝트 ufuf는 'U'niverce 'F'or 'U'niversity 'F'riends.
+                            즉, 대학생들을 대상으로 학교생활 중 유용하거나 재미있을만한 기능들 위주로 제작 해 보았습니다.
+
+                            본 프로젝트는 모바일 환경에서 보다 최적화 되어 있습니다.
+                            아래 QR코드를 통해 모바일 디바이스에서 확인 해 주시면 감사하겠습니다.                            
+                            
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/* 요기까지 복사해서 쓰면 됨! */-->
+                
+            </div>
+        </div>
+        
 
         <!--footer-->
         <div class="row fixed-bottom bg-white" style="height: 3.4em;">

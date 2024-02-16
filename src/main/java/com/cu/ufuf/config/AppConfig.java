@@ -6,6 +6,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.cu.ufuf.meeting.interceptor.MeetingInterceptor;
+
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+
 @Configuration
 @EnableWebMvc
 @EnableScheduling
@@ -27,11 +31,20 @@ public class AppConfig implements WebMvcConfigurer{
         registry.addResourceHandler("/uploadFiles/**")
             .addResourceLocations("file:///C:/uploadFiles/")
             // .setCachePeriod(60 * 60 * 24 * 365);
-        ;
-
-        
-          
+        ; 
 	}
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MeetingInterceptor())
+            .addPathPatterns("/meeting/**")
+            .excludePathPatterns("/meeting/mainPage/**")
+            .excludePathPatterns("/meeting/myPage/**")            
+            .excludePathPatterns("/meeting/errorPage/**")            
+            .excludePathPatterns("/meeting/api/**")            
+            ;
+    }
+    
 
 }
 

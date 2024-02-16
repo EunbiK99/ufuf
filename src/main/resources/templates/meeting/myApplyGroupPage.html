@@ -15,6 +15,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script src="/public/js/lockLikeMobile.js"></script>
 
     <style>
@@ -160,7 +161,7 @@ function setApplyDataList(){
                 notMemberedGroupListRow.setAttribute("groupId", e.applyGroupDto.groupId);
             
                 const notMemberedGroupImage = notMemberedGroupListRow.querySelector("#notMemberedGroupImage");
-                notMemberedGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.applyGroupDto.groupImage}`);
+                notMemberedGroupImage.setAttribute("src", `/uploadFiles/ufuf/meeting/groupImage/${e.applyGroupDto.groupImage}`);
 
                 const notMemberedGroupTitle = notMemberedGroupListRow.querySelector("#notMemberedGroupTitle");
                 notMemberedGroupTitle.innerText = e.applyGroupDto.groupTitle;
@@ -192,13 +193,13 @@ function setApplyDataList(){
             }
         }
         if(memberedGroupCountValue === 0){
-            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
-            memberedGroupListWrapperCol.appendChild(notExistGroupMessage);
+            const notExistMemberedGroupMessage = document.querySelector("#templete .notExistMemberedGroupMessage").cloneNode(true);
+            memberedGroupListWrapperCol.appendChild(notExistMemberedGroupMessage);
         }
         
         if(notMemberedGroupCountValue === 0){
-            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
-            notMemberedGroupListWrapperCol.appendChild(notExistGroupMessage);
+            const notExistApplyGroupMessage = document.querySelector("#templete .notExistApplyGroupMessage").cloneNode(true);
+            notMemberedGroupListWrapperCol.appendChild(notExistApplyGroupMessage);
         }
     });
 }
@@ -278,7 +279,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                         </div>
         
-                        <div class="row mt-3 mb-4">
+                        <div class="row mt-5 mb-4">
                             <div class="col mx-1">
                                 <div class="row">
                                     <div class="col">
@@ -420,9 +421,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
                 <div class="col ms-2 ps-0">
                     <div class="row justify-content-between border-bottom pb-1 pe-0">
-                        <div class="col-auto align-self-center">
+                        <div class="col-auto align-self-center pe-0">
                             <div class="row">
-                                <div class="col-11 ps-0 align-self-center text-truncate">
+                                <div class="col-11 px-0 align-self-center text-truncate">
                                     <span id="notMemberedGroupTitle" class="fw-bold"></span>
                                 </div>
                             </div>
@@ -448,11 +449,43 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>        
     </div>
 
-    <div class="row notExistGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
+    <div class="row notExistApplyGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
         <div class="col text-center">
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 6em;"><i class="fi fi-rr-comment-alt-dots bi-align-middle"></i></span>
+                </div>
+            </div>
             <div class="row">
-                <div class="col my-4">
-                    <span class="fs-4 fw-bold text-secondary">해당하는 미팅그룹이 없어요 T^T</span>
+                <div class="col">
+                    <span class="fw-bold text-secondary text-opacity-50">아직 참여중인 미팅그룹이 없어요.</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class=" fw-bold text-secondary text-opacity-50">'Find' 메뉴에서 찾아볼까요? (총총..</span>
+                    <span class=" fw-bold text-secondary text-opacity-50"><i class="fi fi-rr-walking bi-align-middle"></i>)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row notExistMemberedGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
+        <div class="col text-center">
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 6em;"><i class="fi fi-rr-comment-alt-dots bi-align-middle"></i></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="fw-bold text-secondary text-opacity-50">아직 선발된 미팅그룹이 없어요.</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class=" fw-bold text-secondary text-opacity-50">가입신청서에 조금 더 어필해볼까요?</span>
+                    <span class=" fw-bold text-secondary text-opacity-50"><i class="fi fi-rr-wishlist-heart bi-align-middle"></i></span>
                 </div>
             </div>
         </div>

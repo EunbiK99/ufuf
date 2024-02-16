@@ -11,6 +11,7 @@
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 <script>
 
     var relativePath = window.location.origin;
@@ -141,37 +142,32 @@
 
 <body>
 
+    <div class="row py-2 border-bottom border-dark-subtle fixed-top" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+        <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='./myPage';">
+            <i class="bi bi-arrow-left ms-1"></i>
+        </div>
+        <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+            미션 등록 내역
+        </div>
+        <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+            <i class="bi bi-three-dots-vertical"></i>
+        </div>
+    </div>
+
+    <div class="row overflow-y-scroll" style="height: auto; position: fixed; margin: auto; top:3.3rem; bottom: 3.4rem; width: 100%;">
+        <div id="historyBox" class="col py-1">
+            
+        </div>
+    </div>
+
+
+
+
     <div class="container-fluid">
         <div class="row">
-            <div class="col mx-2">
-                
-                <div class="fixed-top">
-                <div class="row mt-1 py-2 bg-white border-bottom border-secondary-subtle px-3">
-                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em" onclick="window.location.href='./myPage'">
-                        <i class="bi bi-arrow-left"></i>
-                    </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
-                        미션 등록 내역
-                    </div>
-                    <div class="col-1" style="font-size:1.1em">
-                    </div>
-                </div>
-                </div>
+            <div class="col">
 
-                <div class="row mt-5 mb-5">
-                    <div class="col mt-1 pb-4" style="padding-left: 1.35rem; padding-right: 1.35rem;">
-
-                        <div class="row">
-                            <div id="historyBox" class="col">
-                                
-                            </div>
-                        </div>
                         
-                    </div>
-                </div>
-
-                
-
             </div>
         </div>
         <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
@@ -180,7 +176,7 @@
 
 
 <div id="historyTemplete" class="d-none">
-    <div class="historyWrapper row border mt-3 py-2 shadow-sm" style="border: 0.1rem solid;">
+    <div class="historyWrapper row border py-2 shadow-sm mx-1" style="border: 0.1rem solid; margin-top: 0.8rem; margin-bottom: 0.8rem;">
         <div class="col">
             <div class="row justify-content-between">
                 <div class="title col fw-bold text-start pe-0 titleOver" style="font-size: 1.1rem;">
@@ -202,7 +198,7 @@
                     </span>
                 </div>
             </div>
-            <div class="row mt-1 pt-1"  style="border-top: 0.1rem dashed #a7a7a7">
+            <div class="row mt-1 pt-1"  style="border-top: 0.05rem dashed #a7a7a7">
                 <div class="col pt-1 fw-semibold" style="color: #838383; font-size: 0.9rem;">
                     총 미션 보상
                 </div>

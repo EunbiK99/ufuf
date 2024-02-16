@@ -229,9 +229,10 @@
 </select>
 
 <select id="countMyCompleteMission" resultType="int">
-    select count(*) from mission_info
-    where user_id = #{user_id}
-    and status = "미션실패" or status = "미션성공" or status = "미션종료"
+    select count(*) from mission_info mi
+    inner join mission_chat_room mcr on mi.mission_id = mcr.mission_id
+    where mcr.user_id = #{user_id}
+    and (mi.status = "미션실패" or mi.status = "미션성공" or mi.status = "미션종료")
 </select>
 
 <select id="countTotalPoint" resultType="int">
@@ -254,6 +255,11 @@
     <![CDATA[
     and mp.created_at <= DATE_SUB(NOW(), INTERVAL 3 DAY)
     ]]>
+</select>
+
+<select id="selectReviewByMission" resultType="com.cu.ufuf.dto.MissionReviewDto">
+    select * from mission_review
+    where chat_room_id = #{chat_room_id}
 </select>
 
 

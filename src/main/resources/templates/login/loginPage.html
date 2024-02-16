@@ -11,6 +11,8 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script type="text/javascript" src="7319aff03174c9825e5552818af66d19"></script>
+    <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
 
 
     <script>
@@ -135,43 +137,52 @@
 
     }
 
-
-
-
     
 
     </script>
 
     <style>
-        body { 
-            position: fixed;
-            width: 100%;
+
+        *{font-family: -apple-system, 
+            BlinkMacSystemFont, 
+            "Apple SD Gothic Neo", 
+            "Pretendard Variable", 
+            Pretendard, Roboto, 
+            "Noto Sans KR", 
+            "Segoe UI",
+            "Malgun Gothic", 
+            "Apple Color Emoji", 
+            "Segoe UI Emoji", 
+            "Segoe UI Symbol", 
+            sans-serif;
+            letter-spacing: 0.03em;
         }
+
     </style>
 
 </head>
 
 <body>
+
+    <div class="row py-2 fixed-top" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+        <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.location.href='../commons/mainPage';">
+            <i class="bi bi-arrow-left ms-1"></i>
+        </div>
+        <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+            로그인
+        </div>
+        <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+        </div>
+    </div>
     
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
-
-                <div class="row py-4">
-                    <div class="col-1 fw-semibold text-secondary text-start" style="font-size:1.1em">
-                        <i class="bi bi-arrow-left" onclick="window.location.href='../commons/mainPage'"></i>
-                    </div>
-                    <div class="col fw-semibold text-secondary text-center" style="font-size:1.15em">
-                        로그인
-                    </div>
-                    <div class="col-1" style="font-size:1.1em">
-                    </div>
-                </div>
+            <div class="col mt-1">
 
                 <!--코드 시작-->
-                <div class="row mt-2">
-                    <div class="col px-3">
-                        <div class="row mt-3">
+                <div class="row mt-5">
+                    <div class="col mt-4 px-3">
+                        <div class="row mt-4">
                             <div class="col"></div>
                             <div class="col-5 fw-semibold mt-2 justify-content-center">
                                 <img class="img-fluid" th:src="@{/public/image/commons/whiteLogo.png}">
@@ -180,7 +191,7 @@
                         </div>
                         <form action="./loginProcess" method="post">
                         <div class="row mt-5">
-                            <div class="col">
+                            <div class="col mt-2">
                                 <input type="text" name ="userid"
                                     class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder=" 아이디" style="font-size:1.12em;">
                             </div>
@@ -216,10 +227,11 @@
                         </div>
 
 
-                        <div class="row mt-5">
-                            <div class="col mt-4"></div>
-                        </div>
                         <div class="row mt-2">
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row mt-5">
                             <div class="col border-top mt-2"></div>
                             <div class="col text-center text-secondary">간편로그인</div>
                             <div class="col border-top mt-2"></div>

@@ -467,6 +467,19 @@ public class MissionMapRestController {
         
         return restResponseDto;
     }
+
+    @GetMapping("loadPlayMissionHistory")
+    public RestResponseDto loadPlayMissionHistory(HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        UserInfoDto sessionUserInfo = (UserInfoDto)session.getAttribute("sessionUserInfo");
+        
+        restResponseDto.setData(missionMapService.getMyPlayMisisonInfo(sessionUserInfo.getUser_id()));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
     
     @GetMapping("loadMyReview")
     public RestResponseDto loadMyReview(HttpSession session){
@@ -481,7 +494,18 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @PostMapping("loadMissionReview")
+    public RestResponseDto loadMissionReview(@RequestBody String chat_room_id){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int chatRoomId = parseJson.toInt("chat_room_id", chat_room_id);
+        
+        restResponseDto.setData(missionMapService.getMissionReview(chatRoomId));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
 
 
     

@@ -125,6 +125,7 @@
                 (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
             ]]>
         </if>
+        and <![CDATA[ end_schedule >= CURDATE()]]>
         ORDER BY room_info_id DESC
     </select>
 
@@ -148,6 +149,7 @@
                 (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
             ]]>
         </if>
+        and <![CDATA[ end_schedule >= CURDATE()]]>
         order by room_charge desc
     </select>
 
@@ -171,7 +173,8 @@
                 (#{startSchedule} <= end_schedule AND #{endSchedule} >= start_schedule)
             ]]>
         </if>
-         order by room_charge asc
+        and <![CDATA[ end_schedule >= CURDATE()]]>
+        order by room_charge asc
     </select>
 
 	<select id="selectByUserId" resultType="com.cu.ufuf.dto.UserInfoDto">

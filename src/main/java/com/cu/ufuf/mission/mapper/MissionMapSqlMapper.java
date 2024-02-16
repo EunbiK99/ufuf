@@ -31,6 +31,7 @@ public interface MissionMapSqlMapper {
 
     // 미션 리스트 출력
     public List<MissionInfoDto> selectAllMission();
+
     // 미션 코스 리스트
     public List<MissionCourseDto> selectCourseByMission(int mission_id);
 
@@ -96,4 +97,9 @@ public interface MissionMapSqlMapper {
 
     // 미션 완료 후 3일 지났는데 리뷰 없는거
     public List<MissionInfoDto> selectMissionCompleteAfter3days();
+
+    // 미션완료 후 리뷰 열람
+    public MissionReviewDto selectReviewByMission(int chat_room_id);
+
+
 }

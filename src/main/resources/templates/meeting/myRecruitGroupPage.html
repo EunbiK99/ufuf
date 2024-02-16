@@ -15,6 +15,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <script src="/public/js/lockLikeMobile.js"></script>
 
     <style>
@@ -44,32 +45,39 @@ function getMyRecruitMeetingList(){
         const myRecruitGroupWrapperCol = document.getElementById("myRecruitGroupWrapperCol");
         myRecruitGroupWrapperCol.innerHTML = "";
 
-        for(e of myMeetingGroupList){
+        if(myMeetingGroupList.length > 0){
+            for(e of myMeetingGroupList){
             
-            const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
-            myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
-            myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
-            
-            const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
-            myMeetingGroupImage.setAttribute("src", `/public/image/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
+                const myMeetingGroupListRow = document.querySelector("#templete #myMeetingGroupListRow").cloneNode(true);
+                myMeetingGroupListRow.setAttribute("groupId", e.meetingGroupDto.groupId);
+                myMeetingGroupListRow.setAttribute("onclick",`window.location.href='./myRecruitGroupDetailPage?groupId=' + ${e.meetingGroupDto.groupId}`);
+                
+                const myMeetingGroupImage = myMeetingGroupListRow.querySelector("#myMeetingGroupImage");
+                myMeetingGroupImage.setAttribute("src", `/uploadFiles/ufuf/meeting/groupImage/${e.meetingGroupDto.groupImage}`);
 
-            const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
-            myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
+                const myMeetingGroupTitle = myMeetingGroupListRow.querySelector("#myMeetingGroupTitle");
+                myMeetingGroupTitle.innerText = e.meetingGroupDto.groupTitle;
 
-            const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
-            myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
+                const myMeetingGroupMaxHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupMaxHeadCount");
+                myMeetingGroupMaxHeadCount.innerText = e.meetingGroupDto.groupHeadCount;
 
-            const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
-            const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
-            myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
+                const myMeetingGroupCurruntHeadCountValue = e.groupMemberList.length;
+                const myMeetingGroupCurruntHeadCount = myMeetingGroupListRow.querySelector("#myMeetingGroupCurruntHeadCount");
+                myMeetingGroupCurruntHeadCount.innerText = myMeetingGroupCurruntHeadCountValue;
 
-            const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
-            const orginalRegdate = e.meetingGroupDto.regdate;
-            const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
-            myMeetingGroupRegdate.innerText = newRegdate;
+                const myMeetingGroupRegdate = myMeetingGroupListRow.querySelector("#myMeetingGroupRegdate");
+                const orginalRegdate = e.meetingGroupDto.regdate;
+                const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
+                myMeetingGroupRegdate.innerText = newRegdate;
 
-            myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
+                myRecruitGroupWrapperCol.appendChild(myMeetingGroupListRow);
+            }
         }
+        else{
+            const notExistGroupMessage = document.querySelector("#templete .notExistGroupMessage").cloneNode(true);
+            myRecruitGroupWrapperCol.appendChild(notExistGroupMessage);
+        }
+        
     });
 }
 
@@ -229,6 +237,26 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="row notExistGroupMessage my-2 mx-2 border border-2 border-secondery-subtle rounded shadowBox bg-white">
+        <div class="col text-center">
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-person-circle-question bi-align-middle"></i></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="fw-bold text-secondary text-opacity-50">아직 모집중인 미팅그룹이 없어요.</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class=" fw-bold text-secondary text-opacity-50">'Make' 메뉴에서 새 미팅그룹을 만들어봐요!</span>                    
+                </div>
+            </div>
+        </div>        
     </div>
 
 
