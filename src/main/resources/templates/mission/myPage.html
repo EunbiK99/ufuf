@@ -92,6 +92,72 @@
         loadMyPoint();
     });
 
+    window.addEventListener("DOMContentLoaded", () => {
+        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        document.getElementById("ufuf").addEventListener("click", function() {
+            const container = document.querySelector(".footer");
+
+            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+                // 변경된 스타일 적용
+                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+                container.style.zIndex = "250";
+                container.style.transition = "all 0.2s";
+
+                document.getElementById("home").classList.remove("d-none");
+                document.getElementById("secondLine").classList.remove("d-none");
+                document.getElementById("thirdLine").classList.remove("d-none");
+
+                setTimeout(() => {
+                    document.getElementById("home").classList.add("clicked");
+                }, 250);
+
+                setTimeout(() => {
+                    document.getElementById("secondLine").classList.add("clicked");
+                    setTimeout(() => {
+                        document.getElementById("mission").classList.add("clicked");
+                    }, 100);
+                    setTimeout(() => {
+                        document.getElementById("circle").classList.add("clicked");
+                    }, 200);
+
+                }, 90);
+
+                setTimeout(() => {
+
+                    document.getElementById("thirdLine").classList.add("clicked");
+
+                    setTimeout(() => {
+                        document.getElementById("signal").classList.add("clicked");
+                    }, 50);
+                    setTimeout(() => {
+                        document.getElementById("bnb").classList.add("clicked");
+                    }, 250);
+
+                }, 90);
+            } else { // ufuf 버튼이 이미 클릭되어 있을 때
+                // 변경 취소
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+
+                document.getElementById("home").classList.add("d-none");
+                document.getElementById("secondLine").classList.add("d-none");
+                document.getElementById("thirdLine").classList.add("d-none");
+                document.getElementById("home").classList.remove("clicked");
+                document.getElementById("secondLine").classList.remove("clicked");
+                document.getElementById("thirdLine").classList.remove("clicked");
+                document.getElementById("mission").classList.remove("clicked");
+                document.getElementById("circle").classList.remove("clicked");
+                document.getElementById("signal").classList.remove("clicked");
+                document.getElementById("bnb").classList.remove("clicked");
+            }
+
+            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+        });
+    });
+
 </script>
 
 <style>
@@ -109,6 +175,39 @@
         "Segoe UI Symbol", 
         sans-serif;
         letter-spacing: 0.03em;
+    }
+
+    .footer{
+        margin: auto;
+    }
+
+    #secondLine,
+    #thirdLine {
+        transition: opacity 1s;
+    }
+
+    #signal,
+    #bnb,
+    #mission,
+    #circle,
+    #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked,
+    #bnb.clicked,
+    #mission.clicked,
+    #circle.clicked,
+    #home.clicked {
+        opacity: 1;
+    }
+
+    .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
     }
 
     .form-control:focus {
@@ -287,7 +386,11 @@
 
             </div>
         </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+        <div class="row">
+            <div class="col px-0">
+                <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+            </div>
+        </div>
     </div>
 
 
