@@ -1,7 +1,9 @@
 package com.cu.ufuf.mission.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -11,23 +13,34 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.cu.ufuf.dto.GetKakaoPaymentAcceptResDto;
 import com.cu.ufuf.dto.KakaoPaymentCancelReqDto;
 import com.cu.ufuf.dto.KakaoPaymentCancelResDto;
+import com.cu.ufuf.dto.MissionInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
+import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.dto.UserPointDto;
+import com.cu.ufuf.mission.service.MissionMapServiceImpl;
 import com.cu.ufuf.mission.service.MissionPaymentServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class MissionPaymentRestController {
 
     @Autowired
     MissionPaymentServiceImpl missionPaymentService;
+    @Autowired
+    MissionMapServiceImpl missionMapService;
 
     @PostMapping("cancelKakaoPayment")
     public void cancelKakaoPayment() throws JsonMappingException, JsonProcessingException {
@@ -60,5 +73,12 @@ public class MissionPaymentRestController {
             }
         }
     }
+
+    
+
+
+
+    
+
 
 }

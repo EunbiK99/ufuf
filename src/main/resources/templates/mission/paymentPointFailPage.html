@@ -12,28 +12,9 @@
 </head>
 
 <script>
-    function upDateOrderstatus(){
-        const data = {
-            order_id: order_id,
-            status: "결제실패"
-        };
-        fetch("./upDateOrderstatus", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(response => {
-
-                console.log(response);
-                
-        });
-    }
 
     window.addEventListener("DOMContentLoaded", () => {
-        upDateOrderstatus();
+        
     });
 </script>
 
@@ -55,18 +36,18 @@
                         <div class="row mt-2">
                             <div class="col fw-semibold" style="font-size:1.5em;">
                                 결제에 <span style="color: #FF8827">실패</span>하여<br>
-                                등록을 완료하지 못했습니다
+                                충전을 완료하지 못했습니다
                             </div>
                         </div>
                         
                         <div class="row mt-4">
                             <div class="col text-secondary" style="font-size:0.9em">
-                                미션 등록을 완료하지 못했습니다.
+                                포인트 충전에 실패하였습니다.
                             </div>
                         </div>
                         <div class="row">
                             <div class="col text-secondary" style="font-size:0.9em">
-                                결제수단 확인 후 다시 시도해 주세요.
+                                결제수단을 확인하신 후 다시 시도해 주세요.
                             </div>
                         </div>
 

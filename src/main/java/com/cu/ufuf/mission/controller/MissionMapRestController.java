@@ -37,6 +37,7 @@ import com.cu.ufuf.dto.MissionReviewDto;
 import com.cu.ufuf.dto.OrderInfoDto;
 import com.cu.ufuf.dto.RestResponseDto;
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.dto.UserPointDto;
 import com.cu.ufuf.mission.component.ParseJson;
 import com.cu.ufuf.mission.service.MissionChatServiceImpl;
 import com.cu.ufuf.mission.service.MissionMapServiceImpl;
@@ -186,6 +187,33 @@ public class MissionMapRestController {
             e.printStackTrace();
             restResponseDto.setResult("Error");
         } 
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("submitMissionByPoint")
+    public RestResponseDto submitMissionByPoint(@RequestBody MissionRegRequestDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        missionMapService.submitMissionByPoint(params);
+        
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+
+    @PostMapping("deleteMission")
+    public RestResponseDto deleteMission(@RequestBody String mission_id, HttpSession session){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        int missionId = parseJson.toInt("mission_id", mission_id);
+        UserInfoDto sessionUserInfoDto = (UserInfoDto)session.getAttribute("sessionUserInfo");
+
+        missionMapService.deleteMission(missionId, sessionUserInfoDto.getUser_id());
+        
+        restResponseDto.setResult("Success");
         
         return restResponseDto;
     }
@@ -507,7 +535,29 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
+    @PostMapping("chargePoint")
+    public RestResponseDto chargePoint(@RequestBody UserPointDto params){
 
+        RestResponseDto restResponseDto = new RestResponseDto();
+
+        restResponseDto.setData(missionMapService.chargePoint(params));
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
+    
+    @PostMapping("insertKakaoPayAccResForPoint")
+    public RestResponseDto insertKakaoPayAccResForPoint(@RequestBody GetKakaoPaymentAcceptResDto params){
+
+        RestResponseDto restResponseDto = new RestResponseDto();
+        
+        missionPaymentService.insertKakaoPayAccResForPoint(params);
+        
+        restResponseDto.setData(params);
+        restResponseDto.setResult("Success");
+        
+        return restResponseDto;
+    }
     
 
 

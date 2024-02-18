@@ -83,12 +83,65 @@ public class MissionMapServiceImpl {
         orderInfoDto.setOrder_id(order_id);
         orderInfoDto.setItem_id(itemId);
         orderInfoDto.setUser_id(userId);
-        orderInfoDto.setStatus("진행중");
+        orderInfoDto.setStatus("결제미완료");
 
         merchanSqlMapper.insertOrderInfo(orderInfoDto);
 
         return missionPaymentService.kakaoPayReq(orderInfoDto, itemId, totalReward);
+    }
 
+    // 미션 등록
+    public void submitMissionByPoint(MissionRegRequestDto missionRegRequestDto){
+
+        missionMapSqlMapper.insertMission(missionRegRequestDto.getMissionInfoDto());
+        MissionInfoDto missionInfoDto = missionRegRequestDto.getMissionInfoDto();
+        int missionId = missionInfoDto.getMission_id();
+        int userId = missionInfoDto.getUser_id();
+
+        int totalReward = 0;
+
+        List<MissionCourseDto> courseList = missionRegRequestDto.getMissionCourseDto();
+        
+        for(MissionCourseDto missionCourseDto : courseList){
+            missionCourseDto.setMission_id(missionId);
+            missionMapSqlMapper.insertMissionCourse(missionCourseDto);
+            int reward = missionCourseDto.getReward();
+            totalReward = totalReward + reward;
+        }
+
+        UserPointDto userPointDto = new UserPointDto();
+        userPointDto.setUser_id(userId);
+        userPointDto.setPoint_plus_minus(-totalReward);
+        userPointDto.setDetail("미션등록");
+
+        missionMapSqlMapper.insertPoint(userPointDto);
+
+        ItemInfoDto itemInfoDto = new ItemInfoDto();
+        itemInfoDto.setItem_category_id(1);
+        itemInfoDto.setMerchan_id(missionId);
+
+        merchanSqlMapper.insertItemInfo(itemInfoDto);
+        int itemId = itemInfoDto.getItem_id();
+
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+        String order_id = "MI";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String today = sdf.format(new Date());
+
+        UUID uuid = UUID.randomUUID();
+        String ramdomUUID = uuid.toString().replace("-", "");
+        ramdomUUID = ramdomUUID.substring(0, 10);
+        ramdomUUID = ramdomUUID.toUpperCase();
+
+        order_id = order_id + itemId + today + ramdomUUID;
+
+        orderInfoDto.setOrder_id(order_id);
+        orderInfoDto.setItem_id(itemId);
+        orderInfoDto.setUser_id(userId);
+        orderInfoDto.setStatus("결제완료");
+
+        merchanSqlMapper.insertOrderInfo(orderInfoDto);
     }
 
     public MissionInfoDto selectMissionByOrderId(String order_id){
@@ -514,6 +567,7 @@ public class MissionMapServiceImpl {
             
             userPointDto.setUser_id(missionChatRoomDto.getUser_id());
             userPointDto.setPoint_plus_minus(totalReward);
+            userPointDto.setDetail("미션성공");
             
             missionMapSqlMapper.insertPoint(userPointDto);
 
@@ -526,7 +580,24 @@ public class MissionMapServiceImpl {
             merchanSqlMapper.updateOrderStatus(orderInfoDto);
 
         }else{
+
             missionMapSqlMapper.updateStatus(mission_id, "미션실패");
+
+            int user_id = missionInfoDto.getUser_id();
+
+            int sum = 0;
+
+            for(MissionCourseDto missionCourseDto : missionCourseDtos){
+                int reward = missionCourseDto.getReward();
+                sum = sum + reward;
+            }
+            
+            UserPointDto userPointDto = new UserPointDto();
+            userPointDto.setUser_id(user_id);
+            userPointDto.setPoint_plus_minus(sum);
+            userPointDto.setDetail("미션실패 환불");
+
+            missionMapSqlMapper.insertPoint(userPointDto);
         }
     }
 
@@ -541,7 +612,25 @@ public class MissionMapServiceImpl {
     
                 int mission_id = missionInfoDto.getMission_id();
                 missionMapSqlMapper.updateStatus(mission_id, "미션실패");
+
+                int user_id = missionInfoDto.getUser_id();
                 
+                List<MissionCourseDto> missionCourseDtos = missionMapSqlMapper.selectCourseByMission(missionInfoDto.getMission_id());
+
+                int sum = 0;
+
+                for(MissionCourseDto missionCourseDto : missionCourseDtos){
+                    int reward = missionCourseDto.getReward();
+                    sum = sum + reward;
+                }
+                
+                UserPointDto userPointDto = new UserPointDto();
+                userPointDto.setUser_id(user_id);
+                userPointDto.setPoint_plus_minus(sum);
+                userPointDto.setDetail("미션실패 환불");
+
+                missionMapSqlMapper.insertPoint(userPointDto);
+
             }
         }
     }
@@ -670,6 +759,25 @@ public class MissionMapServiceImpl {
 
             for(MissionInfoDto missionInfoDto : missionInfoDtos){
                 missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션성공");
+
+                MissionChatRoomDto missionChatRoomDto = missionMapSqlMapper.selectAcceptedChatRoom(missionInfoDto.getMission_id());
+                int user_id = missionChatRoomDto.getUser_id();
+
+                List<MissionCourseDto> missionCourseDtos = missionMapSqlMapper.selectCourseByMission(missionInfoDto.getMission_id());
+
+                int sum = 0;
+
+                for(MissionCourseDto missionCourseDto : missionCourseDtos){
+                    int reward = missionCourseDto.getReward();
+                    sum = sum + reward;
+                }
+                
+                UserPointDto userPointDto = new UserPointDto();
+                userPointDto.setUser_id(user_id);
+                userPointDto.setPoint_plus_minus(sum);
+                userPointDto.setDetail("미션성공");
+
+                missionMapSqlMapper.insertPoint(userPointDto);
             }
         }
 
@@ -680,8 +788,58 @@ public class MissionMapServiceImpl {
         return missionMapSqlMapper.selectReviewByMission(chat_room_id);
     }
 
+    // 포인트 충전
+    public KakaoPaymentReqDto chargePoint(UserPointDto userPointDto){
 
+        ItemInfoDto itemInfoDto = new ItemInfoDto();
+        itemInfoDto.setItem_category_id(5);
+        itemInfoDto.setMerchan_id(0);
 
+        merchanSqlMapper.insertItemInfo(itemInfoDto);
+        int itemId = itemInfoDto.getItem_id();
+
+        OrderInfoDto orderInfoDto = new OrderInfoDto();
+        String order_id = "P";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String today = sdf.format(new Date());
+
+        UUID uuid = UUID.randomUUID();
+        String ramdomUUID = uuid.toString().replace("-", "");
+        ramdomUUID = ramdomUUID.substring(0, 10);
+        ramdomUUID = ramdomUUID.toUpperCase();
+
+        order_id = order_id + itemId + today + ramdomUUID;
+
+        orderInfoDto.setOrder_id(order_id);
+        orderInfoDto.setItem_id(itemId);
+        orderInfoDto.setUser_id(userPointDto.getUser_id());
+        orderInfoDto.setStatus("결제미완료");
+
+        return missionPaymentService.KakaoPayReqForPoint(orderInfoDto, itemId, userPointDto.getPoint_plus_minus());
+    }
+
+    // 미션 삭제
+    public void deleteMission(int mission_id, int user_id){
+        
+        List<MissionCourseDto> missionCourseDtos = missionMapSqlMapper.selectCourseByMission(mission_id);
+
+        int sum = 0;
+
+        for(MissionCourseDto missionCourseDto : missionCourseDtos){
+            int reward = missionCourseDto.getReward();
+            sum = sum + reward;
+        }
+        
+        UserPointDto userPointDto = new UserPointDto();
+        userPointDto.setUser_id(user_id);
+        userPointDto.setPoint_plus_minus(sum);
+        userPointDto.setDetail("미션삭제 환불");
+
+        missionMapSqlMapper.insertPoint(userPointDto);
+
+        missionMapSqlMapper.deleteMission(mission_id);
+    }
 
 
 

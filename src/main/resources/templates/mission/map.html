@@ -590,8 +590,8 @@
 
                             if(sessionUserPk == mission.userInfoDto.user_id){
                                 missionApplyModalBtn.innerHTML = `<i class="bi bi-trash3 me-2" style="font-size: 0.9rem;"></i><span style="font-size: 0.93rem;">미션 삭제</span>`;
-                                myElement.addEventListener('click', function() {
-                                    cancelKakaoPay();
+                                missionApplyModalBtn.addEventListener('click', function() {
+                                    openMissionDeleteModal(mission.missionInfoDto.mission_id);
                                 });
                             }else if(sessionUserPk == 0){
                                 missionApplyModalBtn.innerHTML = `<i class="bi bi-plus-lg me-1" style="font-size: 0.9em;"></i><span class="" style="font-size: 0.93em;">미션신청</span>`;
@@ -619,8 +619,48 @@
                     missionApplyModalBtn.style.backgroundColor = '#FF8827';
                 });
         });
-
     }
+
+    function deleteMission(mission_id){
+
+        const data = {
+            mission_id: mission_id
+        }
+
+        fetch("./deleteMission", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                loadMissionList();
+        });
+    }
+
+    // 미션 삭제 모달 열기
+    function openMissionDeleteModal(mission_id) {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#missionDeleteModal");
+
+        const missionDeleteBtn = document.getElementById("missionDeleteBtn");
+
+        missionDeleteBtn.onclick = function(){
+            deleteMission(mission_id);
+        }
+
+    	modal.show();
+	}
+
+    function closeMissionDeleteModal() {
+    	
+    	const modal = bootstrap.Modal.getOrCreateInstance("#missionDeleteModal");
+    	
+        modal.hide();
+	}
 
     // 미션 수락 신청 모달 열기
     function openMissionApplyModal(mission_id) {
@@ -1126,6 +1166,44 @@
                 <div class="row pb-1">
                     <div class="col text-body-tertiary" style="font-size: 0.8em;">
                         <i class="bi bi-exclamation-octagon me-2"></i>미션 등록자가 신청을 수락하면 채팅으로 알림을 보내드리며, 즉시 제한시간 카운트다운이 시작됩니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 미션 삭제 모달 -->
+<div id="missionDeleteModal" class="modal mx-auto">
+    <div class="modal-dialog shadow" style="width: 90%;">
+        <div class="modal-content rounded-2">
+            <div class="modal-body pb-0 px-3">
+                <div class="row">
+                    <div class="col d-flex justify-content-end">
+                        <span onclick="closeMissionDeleteModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
+                    </div>
+                </div>
+                <div class="row mt-1 text-center">
+                    <div class="col">
+                        <span class="text-dark-emphasis ms-1">정말 미션을 삭제하시겠습니까?</span>
+                    </div>
+                </div>
+                <div class="row mt-4 mb-3">
+                    <div class="col d-grid text-center mb-1">
+                        <div class="gap-2 d-md-block">
+                            <button class="btn px-4 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827;" onclick="closeMissionDeleteModal()">
+                                취소
+                            </button>
+                            <button id="missionDeleteBtn" class="btn text-white px-4 rounded-1 py-1" type="button" style="background-color: #FF8827;">삭제</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer d-grid py-2">
+                <div class="row pb-1">
+                    <div class="col text-body-tertiary" style="font-size: 0.8em;">
+                        <i class="bi bi-exclamation-octagon me-2"></i>미션 삭제시 결제 금액은 ufuf 포인트를 통해 들어오게 됩니다.
                     </div>
                 </div>
             </div>
