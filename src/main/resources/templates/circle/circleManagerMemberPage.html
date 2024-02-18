@@ -82,57 +82,53 @@
             ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
         });
     });
-
         function goBack() {
             window.history.go(-1);
         }
+        // 내가 동아리회원인데 P or A 인 동아리 리스트만 가져옴
+        const circleListOnlyP = () => {
 
-        const circleMyVoteList = () => {
-
-
-            const url = "./circleMyVoteList";
-
-            fetch(url)
+            fetch("./circleListOnlyP")
             .then(response => response.json())
             .then(response => {
 
                 for(e of response.data){
 
-                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
-                    Wrapper.classList.remove("d-none");
-                    const vote_title = Wrapper.querySelector(".vote_title");
-                    vote_title.innerText = e.circleVoteDto.vote_title;
-                    const vote_theme = Wrapper.querySelector(".vote_theme");
-                    vote_theme.innerText = e.circleVoteDto.vote_theme;
-                    const vote_end_time = Wrapper.querySelector(".vote_end_time");
-                    const dateArray  = e.circleVoteDto.vote_end_time;
-                    const aa = new Date(...dateArray);
+                    // 관리자용이니까 동아리 등급, 총 게시물수?, 현재 동아리 인원, 카테고리이름2, 동아리명, 학교명
+                    const circlelist = document.querySelector("#Wrapper .circlelist").cloneNode(true);
+                    const middle_category_name = circlelist.querySelector(".middle_category_name");
+                    middle_category_name.innerText = e.circleMiddleCategoryDto.category_name;
+                    const small_category_name = circlelist.querySelector(".small_category_name");
+                    small_category_name.innerText = e.circleSmallCategoryDto.category_name;
+                    const circle_name = circlelist.querySelector(".circle_name");
+                    circle_name.innerText = e.circleDto.circle_name;
+                    const circle_university = circlelist.querySelector(".circle_university");
+                    circle_university.innerText = e.circleDto.circle_university;
+                    const circle_position = circlelist.querySelector(".circle_position");
+                    const position = e.circleMemberDto.circle_position;
 
-                   
+                    if(position === 'P'){
+                        circle_position.innerText = '관리자';
+                    }else if(position === 'A'){
+                        circle_position.innerText = '매니저';
+                    }
 
-                    const year = aa.getFullYear();
-                    const month = (aa.getMonth() + 1).toString().padStart(2, '0');
-                    const day = aa.getDate().toString().padStart(2, '0');
-                    const hour = aa.getHours().toString().padStart(2, '0');
-                    const min = aa.getMinutes().toString().padStart(2, '0');
-
-
-                    const formattedDate = year + '-' + month + '-' + day + ' ' + hour + "시" + min + "분";
-
-
-                    vote_end_time.innerText = formattedDate;
-                    const voteCnt = Wrapper.querySelector(".voteCnt");
-                    voteCnt.innerText = e.voteCnt;
-                    voteCnt.style.fontSize = "0.8em";
-                    // 아마 시간 수정해줘야할듯
+                    const grade_name = circlelist.querySelector(".grade_name");
+                    grade_name.innerText = e.circleGradeDto.grade_name;
+                    const circle_people = circlelist.querySelector(".circle_people");
+                    circle_people.innerText = e.circleGradeDto.circle_people;
+                    const currentpeople = circlelist.querySelector(".currentpeople");
+                    currentpeople.innerText = e.memberCnt;
+                    const boardCnt = circlelist.querySelector(".boardCnt");
+                    boardCnt.innerText = e.circleBoartCnt;
+                    
                     const a = document.createElement("a");
-                    a.setAttribute("href", "./circleVoteListArticlePage?circle_id=" + e.circle_id + "&circle_vote_id=" + e.circleVoteDto.circle_vote_id);
+                    a.setAttribute("href", "./circleMemberManagementPage?circle_id=" + e.circleDto.circle_id);
                     a.setAttribute("style", "text-decoration: none; color: black;");
-                    a.appendChild(Wrapper);
+                    a.appendChild(circlelist);
+
                     const listInsert = document.querySelector("#listInsert");
                     listInsert.appendChild(a);
-                    // a 태그만들어서 링크 => 동아리id랑 게시글id둘다 쿼리스트링으로 보내야함
-                    // 이거 나중에 투표수도 가져올거임 
                     
 
                 }
@@ -142,10 +138,10 @@
         }
         const scheduleIconClick = () => {
 
-        const boardDeleteModal = document.querySelector("#scheduleCheckModal");
+            const boardDeleteModal = document.querySelector("#scheduleCheckModal");
 
-        const modal = bootstrap.Modal.getOrCreateInstance("#scheduleCheckModal");
-        modal.show();
+            const modal = bootstrap.Modal.getOrCreateInstance("#scheduleCheckModal");
+            modal.show();
 
         }
         const accessDeniedVote = () => {
@@ -159,7 +155,7 @@
         // 투표글 아이콘 클릭시 ==> 동아리 가입 내동아리 들어갈 수 있는 모달 생성
         const VoteIconClick = () => {
 
-        accessDeniedVote()
+            accessDeniedVote()
 
         }
         const writeNeedjoin = () => {
@@ -172,14 +168,10 @@
             }, 10000)
 
         }
-
         window.addEventListener("DOMContentLoaded", () => {
-
-            circleMyVoteList()
-
+            circleListOnlyP();
         })
      </script>
-
      <style>
         .footer{
         margin: auto;
@@ -213,17 +205,6 @@
         background-clip: text; /* 텍스트에만 배경 적용 */
         color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
     }
-        *{
-            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        }
-        .pp{
-            margin-left: 0.01em;
-            margin-right: 0.01em;
-        }
-        .shadow-box {
-        background-color: #ffffff;
-        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-        }
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -231,51 +212,72 @@
             background-color: #ffffff;
             text-align: center;
         }
+        .shadow {
+            background-color: #ffffff; /* 그림자 효과를 적용할 요소의 배경색 */
+            box-shadow: 0 0 8em rgba(255, 92, 16, 0.963); /* 수평, 수직, 번지도, 색상(투명도) */
+        }
+        *{
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        }
     </style>
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col" style="font-size: 1.2em;">
-                        <i class="bi bi-box2-heart-fill" style="color: #fb7928;"></i></i>&nbsp;&nbsp;작성한 투표리스트
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col" id="listInsert" style="margin-bottom: 15%;">
-                        
-                    </div>
-                </div>
+            <div class="col" style="font-size: 1.2em;">
+                <i class="bi bi-person-fill-gear fw-bold" style="color: #fb7928;"></i>&nbsp;&nbsp;동아리 회원관리
             </div>
         </div>
-    </div>
-    <div id="Wrapper" class="col d-none">
-        <div class="row pp">
-            <div class="col">
-                <div class="row my-2 rounded-3 shadow-box" style="background-color: white;">
-                    <div class="col py-2 px-3">
-                        <div class="row mb-0">
-                            <div class="vote_title col pb-0" style="font-size: 1.2em;">
-                                글제목
-                            </div>
-                        </div>
-                        <div class="row mt-0">
-                            <div class="vote_theme col pt-0" style="font-size: 1.08em; color: rgb(102, 102, 102);">
-                                투표주제
+        <div class="row">
+            <div id="listInsert" class="col" style="margin-bottom: 15%;">
+                
+            </div>
+        </div>
+    </div> 
+    <div id="Wrapper" class="d-none">
+        <div class="circlelist row">
+            <div class="col py-2 mx-2">
+                <div class="row py-2 rounded-4 shadow" style="border: 0.01em solid #ffffff;">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <span class="middle_category_name"></span>&nbsp;>&nbsp;<span class="small_category_name"></span>
                             </div>
                         </div>
                         <div class="row mt-1">
-                            <div class="col-5">
-                                <span class="voteCnt fw-semibold" style="color: #ff7926;"></span><span style="font-size: 0.8em;">명 참여</span>
+                            <div class="col">
+                                <span class="circle_name"></span>
                             </div>
+                        </div>
+                        <div class="row mt-0">
+                            <div class="col">
+                                <span class="circle_university" style="color: rgba(93, 93, 93, 0.794);"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        
+                    </div>
+                    <div class="col">
+                        <div class="row align-items-center">
+                            <div class="col fw-semibold text-end">
+                                <span class="grade_name"></span>·<span class="circle_position"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-1 align-items-center">
                             <div class="col text-end">
-                                <span class="vote_end_time" style="text-align: end; font-size: 0.8em;">마감 ㅇ</span>
+                                <i class="bi bi-people-fill"></i>&nbsp;&nbsp;<span class="currentpeople"></span>&nbsp;/&nbsp;<span class="circle_people"></span>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col text-end">
+                                총 게시물 <span class="boardCnt"></span>
                             </div>
                         </div>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -557,7 +559,6 @@
         </div>
     </div>
 </div>  
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>

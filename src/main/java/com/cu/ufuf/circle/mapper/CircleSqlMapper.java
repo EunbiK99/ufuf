@@ -267,6 +267,21 @@ public interface CircleSqlMapper {
     public List<CircleDto> circleSearchList(String searchword);
     public List<CircleDto> circleNameDuplicateCheck(String circle_name);
     
-    // 동아리 피드 board수정
+    // 동아리 피드 board수정 && 게시판 board_id로 찾기
     public List<CircleBoardDto> circleBoardDtoBycircleId(int circle_id);
+    public CircleBoardDto circleBoardInfoByCircleBoardId(int circle_board_id);
+
+    // 동아리 투표리스트 수정 && 동아리 나랑 같은 대학교 인거 나옴
+    public List<CircleVoteDto> circleVoteDtoBycircleId(int circle_id);
+    public List<CircleDto> circleSessionListOrderByCircleId(int user_id);
+
+    // 동아리 가입신청한 정보 가져오기
+    public CircleJoinApplyDto circleJoinApplyInfoByCircleIdAndUserId(@Param("circle_id") int circle_id, @Param("user_id") int user_id);
+
+    // 동아리 회원정보 삭제 && 동아리 가입신청 테이블 정보 삭제
+    public void circleMemberDeleteByCircleMemberId(int circle_member_id);
+    public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id);
+
+    // 동아리회원 관리자로 바꿔주기
+    public void circleMemberChangeAByCircleMemberId(int circle_member_id);
 }

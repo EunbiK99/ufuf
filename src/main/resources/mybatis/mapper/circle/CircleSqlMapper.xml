@@ -47,6 +47,9 @@
     <select id="circleNewListOrderByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
         SELECT * from circle order by circle_id desc
     </select>
+    <select id="circleSessionListOrderByCircleId" resultType="com.cu.ufuf.dto.CircleDto">
+        SELECT * from circle where circle_university = (select university from user_info where user_id = #{user_id}) order by circle_id desc
+    </select>
     <select id="circlesmallCategoryListBysmallCategoryId" resultType="com.cu.ufuf.dto.CircleSmallCategoryDto">
         select * from circle_small_category where circle_small_category_id = #{circle_small_category_id}
     </select>
@@ -389,6 +392,25 @@
     <select id="circleBoardDtoBycircleId" resultType="com.cu.ufuf.dto.CircleBoardDto">
         SELECT * from circle_board WHERE circle_member_id in (select circle_member_id  from circle_member WHERE circle_id = #{circle_id}) order by created_at desc
     </select>
+    <select id="circleVoteDtoBycircleId" resultType="com.cu.ufuf.dto.CircleVoteDto">
+        SELECT * from circle_vote WHERE circle_member_id in (select circle_member_id  from circle_member WHERE circle_id = #{circle_id}) order by created_at desc
+    </select>
+    <select id="circleBoardInfoByCircleBoardId" resultType="com.cu.ufuf.dto.CircleBoardDto">
+        select * from circle_board where circle_board_id = #{circle_board_id}
+    </select>
+    <select id="circleJoinApplyInfoByCircleIdAndUserId" resultType="com.cu.ufuf.dto.CircleJoinApplyDto">
+        select * from circle_join_apply where circle_id = #{circle_id} and user_id = #{user_id}
+    </select>
+    <delete id="circleMemberDeleteByCircleMemberId">
+        delete from circle_member where circle_member_id = #{circle_member_id}
+    </delete>
+    <delete id="circleJoinApplyDeleteByCircleJoinApplyId">
+        delete from circle_join_apply where circle_join_apply_id = #{circle_join_apply_id}
+    </delete>
+    <update id="circleMemberChangeAByCircleMemberId">
+        update circle_member set circle_position = "A" where circle_member_id = #{circle_member_id}
+    </update>
+    
     
     
 

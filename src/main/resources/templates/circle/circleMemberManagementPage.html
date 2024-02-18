@@ -83,105 +83,90 @@
         });
     });
 
+    const circleMemberManageList = () => {
+
+        // 링크보낼때 동아리 번호 보내야됨
+        // 동아리 번호기준으로 가입승인이 'N' 인사람 끌어오기
+        const queryString = window.location.search;
+        const urlParam = new URLSearchParams(queryString);
+        const circle_id = urlParam.get("circle_id");
+
+
+        fetch("./circleMemberManageList?circle_id=" + circle_id)
+        .then(response => response.json())
+        .then(response => {
+
+            // 가입신청 두번못하게 막아야함
+            for(e of response.data){
+                console.log(e);
+
+                const UserInfoOne = document.querySelector("#Wrapper .UserInfoOne").cloneNode(true);
+                const name = UserInfoOne.querySelector(".name").innerText = e.userInfoDto.name;
+                const university = UserInfoOne.querySelector(".university").innerText = e.userInfoDto.university;
+                const address = UserInfoOne.querySelector(".address").innerText = e.userInfoDto.address;
+                const changeGender = e.userInfoDto.gender;
+                const userprofile = UserInfoOne.querySelector(".userprofile")
+                    userprofile.setAttribute("src",`/uploadFiles/ufuf/userProfile${e.userInfoDto.profile_img}`)
+                if(changeGender === "M"){
+                    const gender = UserInfoOne.querySelector(".gender").innerText = "남";
+                }else if(changeGender === "F"){
+                    const gender = UserInfoOne.querySelector(".gender").innerText = "여";
+                }
+                
+                UserInfoOne.setAttribute("onclick",`modalShow(${JSON.stringify(e)})`)
+               
+
+                const listInsert = document.querySelector("#listInsert")
+                listInsert.appendChild(UserInfoOne);
+                
+            }
+
+        })
+        }
+        // 모달창을 띄우고 거기서 동아리 회원 삭제 가입신청테이블에서 삭제 + 
+        // 
+        const modalShow = (element) => {
+            console.log(element);// 이 요소를 모달에 표시
+            const modal = bootstrap.Modal.getOrCreateInstance("#modalManagement");
+            modal.show();
+
+        }
+        const circleMemberDelete = (circle_join_apply_id, circle_member_id) => {
+
+            $.ajax({
+                url: `./circleMemberDelete?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                }
+            })
+
+        }
+        const circleJoinApplyDelete = (circle_join_apply_id, circle_member_id) => {
+
+            $.ajax({
+                url: `./circleJoinApplyDelete?circle_join_apply_id=${circle_join_apply_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                }
+            })
+
+        }
+        
         function goBack() {
             window.history.go(-1);
         }
 
-        const circleMyVoteList = () => {
-
-
-            const url = "./circleMyVoteList";
-
-            fetch(url)
-            .then(response => response.json())
-            .then(response => {
-
-                for(e of response.data){
-
-                    const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
-                    Wrapper.classList.remove("d-none");
-                    const vote_title = Wrapper.querySelector(".vote_title");
-                    vote_title.innerText = e.circleVoteDto.vote_title;
-                    const vote_theme = Wrapper.querySelector(".vote_theme");
-                    vote_theme.innerText = e.circleVoteDto.vote_theme;
-                    const vote_end_time = Wrapper.querySelector(".vote_end_time");
-                    const dateArray  = e.circleVoteDto.vote_end_time;
-                    const aa = new Date(...dateArray);
-
-                   
-
-                    const year = aa.getFullYear();
-                    const month = (aa.getMonth() + 1).toString().padStart(2, '0');
-                    const day = aa.getDate().toString().padStart(2, '0');
-                    const hour = aa.getHours().toString().padStart(2, '0');
-                    const min = aa.getMinutes().toString().padStart(2, '0');
-
-
-                    const formattedDate = year + '-' + month + '-' + day + ' ' + hour + "시" + min + "분";
-
-
-                    vote_end_time.innerText = formattedDate;
-                    const voteCnt = Wrapper.querySelector(".voteCnt");
-                    voteCnt.innerText = e.voteCnt;
-                    voteCnt.style.fontSize = "0.8em";
-                    // 아마 시간 수정해줘야할듯
-                    const a = document.createElement("a");
-                    a.setAttribute("href", "./circleVoteListArticlePage?circle_id=" + e.circle_id + "&circle_vote_id=" + e.circleVoteDto.circle_vote_id);
-                    a.setAttribute("style", "text-decoration: none; color: black;");
-                    a.appendChild(Wrapper);
-                    const listInsert = document.querySelector("#listInsert");
-                    listInsert.appendChild(a);
-                    // a 태그만들어서 링크 => 동아리id랑 게시글id둘다 쿼리스트링으로 보내야함
-                    // 이거 나중에 투표수도 가져올거임 
-                    
-
-                }
-
-            })
-
-        }
-        const scheduleIconClick = () => {
-
-        const boardDeleteModal = document.querySelector("#scheduleCheckModal");
-
-        const modal = bootstrap.Modal.getOrCreateInstance("#scheduleCheckModal");
-        modal.show();
-
-        }
-        const accessDeniedVote = () => {
-
-            const boardDeleteModal = document.querySelector("#voteCheckModal");
-
-            const modal = bootstrap.Modal.getOrCreateInstance("#voteCheckModal");
-            modal.show();
-
-        }   
-        // 투표글 아이콘 클릭시 ==> 동아리 가입 내동아리 들어갈 수 있는 모달 생성
-        const VoteIconClick = () => {
-
-        accessDeniedVote()
-
-        }
-        const writeNeedjoin = () => {
-
-            const modal = bootstrap.Modal.getOrCreateInstance("#writeModal");
-            modal.show();
-
-            setTimeout(() => {
-                location.href = "./circleListPage"
-            }, 10000)
-
-        }
-
         window.addEventListener("DOMContentLoaded", () => {
-
-            circleMyVoteList()
-
+            circleMemberManageList();
         })
+
      </script>
 
      <style>
-        .footer{
+        
+.footer{
         margin: auto;
     }
 
@@ -216,14 +201,7 @@
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
-        .pp{
-            margin-left: 0.01em;
-            margin-right: 0.01em;
-        }
-        .shadow-box {
-        background-color: #ffffff;
-        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-        }
+        /* 여기도 보내주세요 */
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -231,53 +209,69 @@
             background-color: #ffffff;
             text-align: center;
         }
+        .image-container {
+            width: 10em;
+            height: 10em; /* 높이를 조절하세요 */
+            overflow: hidden;
+        }
+
+        .responsive-img {
+            width: 10em;
+            height: 100%; 
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col" style="font-size: 1.2em;">
-                        <i class="bi bi-box2-heart-fill" style="color: #fb7928;"></i></i>&nbsp;&nbsp;작성한 투표리스트
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col" id="listInsert" style="margin-bottom: 15%;">
-                        
-                    </div>
-                </div>
+            <div class="col" style="font-size: 1.2em;">
+                <i class="bi bi-person-fill-gear fw-bold" style="color: #fb7928;"></i>&nbsp;&nbsp;동아리 회원관리
+            </div>
+        </div>
+        <div class="row">
+            <div id="listInsert" class="col ps-0" style="margin-bottom: 15%;">
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="col d-none">
-        <div class="row pp">
+    <div id="Wrapper" class="d-none">
+        <div class="UserInfoOne row mt-2 align-items-center justify-content-center">
+            
             <div class="col">
-                <div class="row my-2 rounded-3 shadow-box" style="background-color: white;">
-                    <div class="col py-2 px-3">
-                        <div class="row mb-0">
-                            <div class="vote_title col pb-0" style="font-size: 1.2em;">
-                                글제목
+                <div class="row mx-0">
+                    <div class="col pe-0">
+                        <div class="col pe-0 rounded-3 d-grid image-container">
+                            <img class="responsive-img img-fluid userprofile rounded-3">
+                        </div>
+                    </div>
+                    <div class="col" style="padding-right: 13%; padding-left: 0%;">
+                        <div class="row" style="margin-top: 25%;">
+                            <div class="col">
+                                <span class="name">이름</span>&nbsp;·&nbsp;<span class="gender">성별</span>
                             </div>
                         </div>
-                        <div class="row mt-0">
-                            <div class="vote_theme col pt-0" style="font-size: 1.08em; color: rgb(102, 102, 102);">
-                                투표주제
+                        <div class="row">
+                            <div class="col">
+                                <span class="university">대학교</span>
                             </div>
                         </div>
-                        <div class="row mt-1">
-                            <div class="col-5">
-                                <span class="voteCnt fw-semibold" style="color: #ff7926;"></span><span style="font-size: 0.8em;">명 참여</span>
+                        <div class="row">
+                            <div class="col" style="font-size: 0.7em;">
+                                <span class="address">주소</span>
                             </div>
-                            <div class="col text-end">
-                                <span class="vote_end_time" style="text-align: end; font-size: 0.8em;">마감 ㅇ</span>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+        
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
+
     </div>
     <div class="row pb-2" style="position: fixed; bottom: 6em; right: 0; height: 3em; z-index: 100;">
         <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
@@ -556,8 +550,35 @@
             </div>
         </div>
     </div>
+</div>
+<div id="modalManagementWrapper d-none">
+    <div id="modalManagement" class="modal" tabindex="-1" style="border: none;">
+        <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+          <div class="modal-content px-0 py-0">
+            <div class="modal-header">
+              <h5 class="modal-title">회원 관리</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        
+                    </div>
+                    
+                </div>
+            </div>    
+            <div class="modal-footer" style="text-decoration-line: none;">
+                <button type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;" onclick="(() => {
+                    location.href = './circleListPage'
+                })()">동아리 가입</button>
+                <button type="button" class="btn btn-secondary fw-semibold" style="color: #fb7928; background-color: white; border-color: #fb7928;" onclick="(() => {
+                    location.href = './myCircleListPage'
+                })()">내 동아리</button>
+            </div>
+          </div>
+        </div>
+    </div>
 </div>  
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>
