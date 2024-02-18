@@ -357,6 +357,16 @@ public class CircleController {
 
         return "circle/circleVotePopularPage";
     }
+    @RequestMapping("circleMemberManagementPage")
+    public String circleMemberManagementPage(){
+
+        return "circle/circleMemberManagementPage";
+    }
+    @RequestMapping("circleManagerMemberPage")
+    public String circleManagerMemberPage(){
+
+        return "circle/circleManagerMemberPage";
+    }
     
     
     

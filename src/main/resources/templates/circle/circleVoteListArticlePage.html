@@ -18,6 +18,7 @@
      <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script src="/public/js/lockLikeMobile.js"></script>
      <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
      <script>
         
         // 뒤로이동
@@ -265,10 +266,10 @@
                             
                             borderWidth: 1,
                             backgroundColor: [
-                            '#fb7928',
-                            'red',
-                            'blue',
-                            'green'
+                            '#78D2EC',
+                            '#CAA6E3',
+                            '#9FE5DA',
+                            '#FAB8C4'
                             ]
                         }]
                         },
@@ -376,14 +377,14 @@
                             </div>
                         </div>
                         <div class="row mt-2">
-                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
-                                중복투표는 불가!
+                            <div class="col-9"></div>
+                            <div onclick="voteCompleteInfo()" class="col fw-semibold btn rounded-3 me-1 text-end lh-sm" style="color: blue; padding-top: 0%; padding-bottom: 0%; font-size: 1.0em;">
+                                투표한 사람
                             </div>
                         </div>
-                        <div class="row mt-1">
-                            <div class="col-9"></div>
-                            <div onclick="voteCompleteInfo()" class="col fw-semibold btn rounded-3 border me-1" style="color: white; background-color: rgb(57, 57, 57);">
-                                투표한 사람
+                        <div class="row">
+                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
+                                중복투표는 불가!
                             </div>
                         </div>
                         <div class="row">

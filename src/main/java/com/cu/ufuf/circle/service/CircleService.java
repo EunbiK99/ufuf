@@ -400,23 +400,20 @@ public class CircleService {
     public List<Map<String, Object>> circleVoteAllListInfo(int circle_id){
 
         List<Map<String, Object>> list = new ArrayList<>();
-
-        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
-
-        for(CircleMemberDto e : circleMemberDtos){
-            
-            int circle_member_id = e.getCircle_member_id();
-            int user_id = e.getUser_id();
-
-            UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
-            
-            List<CircleVoteDto> circleVoteDtos = circleSqlMapper.circleVoteBoardListByCircleMemberId(circle_member_id);
+    
+            List<CircleVoteDto> circleVoteDtos = circleSqlMapper.circleVoteDtoBycircleId(circle_id);
             
                 if(!circleVoteDtos.equals(null)){
                     for(CircleVoteDto ee : circleVoteDtos){
                         
+
                         // 게시글 하나하나 나옴 여기서 put add 해야됨
                         Map<String, Object> map = new HashMap<>();
+
+                        
+                        CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByCircleMemberId(ee.getCircle_member_id());
+                        UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(circleMemberDto.getUser_id());
+
                         int circleVoteId = ee.getCircle_vote_id();
                         List<CircleVoteOptionDto> circleVoteOptionDtos = circleSqlMapper.circleVoteOptionInfoByCircleVoteId(circleVoteId);
                         int count = 0;
@@ -426,7 +423,7 @@ public class CircleService {
                             count += voteCnt;
                         }
                         map.put("voteCnt", count);
-                        map.put("circleMemberDto", e);
+                        map.put("circleMemberDto", circleMemberDto);
                         map.put("userInfoDto", userInfoDto);
                         map.put("circleVoteDto", ee);
                         
@@ -436,7 +433,7 @@ public class CircleService {
             }
             
 
-        }
+        
         
         return list;
     }
@@ -503,6 +500,46 @@ public class CircleService {
             
 
             if(circlePosition.equals("P") || circlePosition.equals("A")){
+                Map<String, Object> map = new HashMap<>();
+                // 정보 다엮어봐?
+                int circle_id = e.getCircle_id();
+                CircleDto circleDto = circleSqlMapper.circleInfoByCircleId(circle_id);
+                int circle_grade_id = circleDto.getCircle_grade_id();
+                CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
+                int circle_small_category_id = circleDto.getCircle_small_category_id();
+                CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+                int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+                CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
+                int memberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+                int circleBoartCnt = circleSqlMapper.circleBoartCnt(circle_id);
+                map.put("circleBoartCnt", circleBoartCnt);
+                map.put("memberCnt",memberCnt);
+                map.put("circleMemberDto", e);
+                map.put("circleDto", circleDto);
+                map.put("circleGradeDto", circleGradeDto);
+                map.put("circleSmallCategoryDto", circleSmallCategoryDto);
+                map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
+
+                list.add(map);
+
+            }
+
+        }
+        
+        return list;
+    }
+    // 얜 동아리 장 일때만 출력
+    public List<Map<String, Object>> circleListOnlyP(int user_id){
+
+        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByUserId(user_id);
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        for(CircleMemberDto e : circleMemberDtos){
+
+            String circlePosition = e.getCircle_position();
+            
+            if(circlePosition.equals("P")){
                 Map<String, Object> map = new HashMap<>();
                 // 정보 다엮어봐?
                 int circle_id = e.getCircle_id();
@@ -1096,6 +1133,119 @@ public class CircleService {
         }
 
         return list;
+    }
+    // 어차피 동아리회원이 아니면 피드조차 못 들어가니까 동아리회원이 아닌사람들이 삭제버튼 눌렀을때는 예외처리를 안해도 됨 !!!!!!!
+    public Boolean boardDeleteCheckSession(int circle_member_id, int circle_board_id){
+        
+        Boolean check = false;
+
+        CircleBoardDto circleBoardDto = circleSqlMapper.circleBoardInfoByCircleBoardId(circle_board_id);
+        int check_id = circleBoardDto.getCircle_member_id();
+
+        CircleMemberDto circleMemberDto = circleSqlMapper.circleMemberInfoByCircleMemberId(circle_member_id);
+        String position = circleMemberDto.getCircle_position();
+        // 본인이거나 관리자거나 동아리장일때만 삭제가 가능해야함
+        if(check_id == circle_member_id || position == "P" || position == "A"){
+            check = true;
+        }
+
+        
+
+        return check;
+
+    }
+
+    public List<Map<String, Object>> circleSessionListOrderByCircleId(int user_id){
+        
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleDto> circleDtos = circleSqlMapper.circleSessionListOrderByCircleId(user_id);
+
+        for(CircleDto e : circleDtos){
+
+            Map<String, Object> map = new HashMap<>();
+            int circle_small_category_id = e.getCircle_small_category_id();
+            CircleSmallCategoryDto circleSmallCategoryDto = circleSqlMapper.circlesmallCategoryListBysmallCategoryId(circle_small_category_id);
+            int circle_middle_category_id = circleSmallCategoryDto.getCircle_middle_category_id();
+            CircleMiddleCategoryDto circleMiddleCategoryDto = circleSqlMapper.circlemiddleCategoryInfoByMiddleCategoryId(circle_middle_category_id);
+            int circle_grade_id = e.getCircle_grade_id();
+            CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circle_grade_id);
+            int circle_id = e.getCircle_id();
+            int circleMemberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+
+            map.put("circleMiddleCategoryDto", circleMiddleCategoryDto);
+            map.put("circleMemberCnt", circleMemberCnt);
+            map.put("circleGradeDto", circleGradeDto);
+            map.put("circleSmallCategoryDto", circleSmallCategoryDto);
+            map.put("circleDto", e);
+
+            list.add(map);
+            
+        }
+        
+        
+
+
+        return list;
+    }
+    
+    public Boolean peopleCheckNagative(int circle_id){
+
+        Boolean check = true;
+
+        CircleDto circleDto = circleSqlMapper.circleInfoByCircleId(circle_id);
+        
+        CircleGradeDto circleGradeDto = circleSqlMapper.circleGradeInfoByGradeId(circleDto.getCircle_grade_id());
+        int gradePeople = circleGradeDto.getCircle_people();
+        int memberCnt = circleSqlMapper.circleMemberCountInfo(circle_id);
+        
+        if(gradePeople == memberCnt){
+            check = false;
+        }
+
+        return check;
+
+    }
+    // 가져와야할 것들 ==> 동아리 회원정보, userInfo, 가입신청정보
+    public List<Map<String, Object>> circleMemberManageList(int circle_id, int jang_id){
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<CircleMemberDto> circleMemberDtos = circleSqlMapper.circleMemberInfoByCircleId(circle_id);
+
+        for(CircleMemberDto e : circleMemberDtos){
+            
+            Map<String, Object> map = new HashMap<>();
+
+            int user_id = e.getUser_id();
+            if(user_id == jang_id){
+                continue;
+            }
+            UserInfoDto userInfoDto = circleSqlMapper.userInfoByUserId(user_id);
+            CircleJoinApplyDto circleJoinApplyDto = circleSqlMapper.circleJoinApplyInfoByCircleIdAndUserId(circle_id, user_id);
+            // 어차피 동아리 가입신청은 한명당 하나씩밖에 못하니까 테이블이 두개이상 나올수가 없음
+
+            map.put("circleMemberDto", e);
+            map.put("userInfoDto", userInfoDto);
+            map.put("circleJoinApplyDto", circleJoinApplyDto);
+
+            list.add(map);
+
+        }
+
+        return list;
+    }
+    public void circleMemberDeleteByCircleMemberId(int circle_member_id){
+        
+        circleSqlMapper.circleMemberDeleteByCircleMemberId(circle_member_id);
+    }
+    public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id){
+
+        circleSqlMapper.circleJoinApplyDeleteByCircleJoinApplyId(circle_join_apply_id);
+    }
+    public void circleMemberChangeAByCircleMemberId(int circle_member_id){
+
+        circleSqlMapper.circleMemberChangeAByCircleMemberId(circle_member_id);
     }
     
 }

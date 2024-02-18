@@ -15,6 +15,7 @@
      <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
      <script src="/public/js/lockLikeMobile.js"></script>
      <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <script>
         function goBack() {
             window.history.go(-1);
@@ -92,6 +93,79 @@
             })
 
         }
+        // 내 세션에맞는 동아리 찾아야함..
+        const circleSessionList = () => {
+
+        document.querySelector("#listInsert").innerHTML = "";
+        const url = "./circleSessionList";
+        const circleWrapper = document.querySelector("#circleWrapper")
+        const mainTitle = circleWrapper.querySelector(".mainTitle").innerText = "우리 학교 동아리"
+        const subTitle = circleWrapper.querySelector(".subTitle").innerText = "우리 학교 동아리를 쉽게 찾아보세요!"
+
+        fetch(url)
+        .then(response => response.json())
+        .then(response => {
+
+            for(e of response.data){
+                
+                // 동아리 리스트 생성
+                const Wrapper = document.querySelector("#Wrapper").cloneNode(true);
+                Wrapper.classList.remove("d-none");
+                const circlemainimage = Wrapper.querySelector(".circlemainimage");
+                circlemainimage.removeAttribute("src");
+                circlemainimage.setAttribute("src", "/uploadFiles/" + e.circleDto.circle_image);
+                const circlecategory = Wrapper.querySelector(".circlecategory");
+                circlecategory.innerHTML = "";
+                circlecategory.innerText = e.circleSmallCategoryDto.category_name;
+                const circlemiddlecategory = Wrapper.querySelector(".circlemiddlecategory");
+                circlemiddlecategory.innerHTML = "";
+                circlemiddlecategory.innerText = e.circleMiddleCategoryDto.category_name;
+                const circlename = Wrapper.querySelector(".circlename");
+                circlename.innerHTML = "";
+                circlename.innerText = e.circleDto.circle_name;
+                const university = Wrapper.querySelector(".university");
+                university.innerHTML = "";
+                university.innerText = e.circleDto.circle_university;
+                const currentpeople = Wrapper.querySelector(".currentpeople");
+                currentpeople.innerHTML = "";
+                currentpeople.innerText = e.circleMemberCnt;
+                const circlepeople = Wrapper.querySelector(".circlepeople");
+                circlepeople.innerHTML = "";
+                circlepeople.innerText = e.circleGradeDto.circle_people;
+                const circlegrade = Wrapper.querySelector(".circlegrade");
+                circlegrade.innerHTML = "";
+                circlegrade.innerText = e.circleGradeDto.grade_name;
+                const circlegradeimg = Wrapper.querySelector(".circlegradeimg");
+                if(e.circleGradeDto.grade_name === "아이언"){
+                    circlegradeimg.setAttribute("src",`/public/image/circle/grade1.png`)
+                } else if(e.circleGradeDto.grade_name === "브론즈"){
+                    circlegradeimg.setAttribute("src",`/public/image/circle/grade2.png`)
+                } else if(e.circleGradeDto.grade_name === "실버"){
+                    circlegradeimg.setAttribute("src",`/public/image/circle/grade3.png`)
+                } else if(e.circleGradeDto.grade_name === "골드"){
+                    circlegradeimg.setAttribute("src",`/public/image/circle/grade4.png`)
+                } else if(e.circleGradeDto.grade_name === "플레티넘"){
+                    circlegradeimg.setAttribute("src",`/public/image/circle/grade5.png`)
+                }
+
+                // 링크태그 여기서 하나씩 잡아주어야함
+                const a = document.createElement("a");
+                a.setAttribute("href", "./circleListArticlePage?circle_id=" + e.circleDto.circle_id);
+                a.setAttribute("style", "text-decoration: none; color: black;");
+                a.appendChild(Wrapper);
+                
+
+                // 본문에 붙이는 코드(리스트들)
+                const listInsert = document.querySelector("#listInsert");
+                listInsert.appendChild(a);
+                
+
+            }
+
+        })
+
+        }
+        
 
         // 등급별 동아리 리스트
         const circleGradeList = () => {
@@ -356,18 +430,21 @@
                 <input id="searchword" type="text" class="form-control" placeholder="동아리명을 입력하세요">
             </div>
             <div class="col-2 text-center btn" onclick="circleSearchList()">
-                <i class="bi bi-search fw-semibold" style="font-size: 1.5em;color: rgb(255, 82, 14);"></i>
+                <i class="bi bi-search fw-semibold" style="font-size: 1.5em;color: #FF8827;"></i>
             </div>
         </div>
         <div class="row py-2">
-        <div class="col-2 text-center" onclick="circledNewList()">
+        <div class="col-2 text-center" onclick="circledNewList()" style="font-size: 0.9em;">
             신규
         </div>
-        <div class="col-2 text-center" onclick="circlePopularList()">
+        <div class="col-2 text-center" onclick="circlePopularList()" style="font-size: 0.9em;">
             인기
         </div>
-        <div class="col-2 text-center" onclick="circleGradeList()">
+        <div class="col-2 text-center" onclick="circleGradeList()" style="font-size: 0.9em;">
             등급
+        </div>
+        <div class="col-2 text-center fw-bold" onclick="circleSessionList()" style="font-size: 0.9em; color: #FF8827;">
+            My학교
         </div>        
     </div>
     </div>

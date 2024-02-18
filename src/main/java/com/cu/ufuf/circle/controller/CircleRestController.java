@@ -642,6 +642,21 @@ public class CircleRestController {
 
         return responseDto;
     }
+    // circleListOnlyP
+    @RequestMapping("circleListOnlyP")
+    public RestResponseDto circleListOnlyP(HttpSession session) {
+
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        // 여기서 user_id 넣었을때 동아리회원목록이 전부나오게해야함
+
+        responseDto.setData(circleService.circleListOnlyP(user_id));
+        responseDto.setResult("success");
+
+        return responseDto;
+    }
 
     // ApprovalJoinAllList
     @RequestMapping("ApprovalJoinAllList")
@@ -1394,6 +1409,122 @@ public class CircleRestController {
         
         return responseDto;
     }
+    // boardDeleteCheckSession
+    @RequestMapping("boardDeleteCheckSession")
+        public RestResponseDto boardDeleteCheckSession(HttpSession session,@RequestParam("circle_id") int circle_id, @RequestParam("circle_board_id") int circle_board_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleMemberDto circleMemberDto = circleService.circleMemberInfoByUserIdAndCircleId(user_id, circle_id);
+        int circle_member_id = circleMemberDto.getCircle_member_id();
+        
+        responseDto.setData(circleService.boardDeleteCheckSession(circle_member_id, circle_board_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleSessionList 세션에 맞는 리스트 추가
+    @RequestMapping("circleSessionList")
+        public RestResponseDto circleSessionList(HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+        
+        responseDto.setData(circleService.circleSessionListOrderByCircleId(user_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // peopleCheckNagative
+    @RequestMapping("peopleCheckNagative")
+        public RestResponseDto peopleCheckNagative(@RequestParam("circle_id") int circle_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        responseDto.setData(circleService.peopleCheckNagative(circle_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleJangCheck
+    @RequestMapping("circleJangCheck")
+        public RestResponseDto circleJangCheck(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int user_id = userInfoDto.getUser_id();
+
+        CircleDto circleDto = circleService.circleInfo(circle_id);
+        int circleJang_id = circleDto.getUser_id();
+        
+        Boolean check = true;
+        if(user_id == circleJang_id){
+            check = false;
+        }
+        
+        responseDto.setData(check);
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    //circleMemberManageList
+    @RequestMapping("circleMemberManageList")
+        public RestResponseDto circleMemberManageList(@RequestParam("circle_id") int circle_id, HttpSession session){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+
+        UserInfoDto userInfoDto = (UserInfoDto) session.getAttribute("sessionUserInfo");
+        int jang_id = userInfoDto.getUser_id();
+        
+        responseDto.setData(circleService.circleMemberManageList(circle_id, jang_id));
+        responseDto.setResult("success");
+        
+        return responseDto;
+
+    }
+    // circleMemberDelete 동아리 맴버테이블 삭제
+    @RequestMapping("circleMemberDelete")
+        public RestResponseDto circleMemberDelete(@RequestParam("circle_member_id") int circle_member_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleMemberDeleteByCircleMemberId(circle_member_id);
+        
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleJoinApplyDelete 동아리 가입신청 테이블 삭제
+    @RequestMapping("circleJoinApplyDelete")
+        public RestResponseDto circleJoinApplyDelete(@RequestParam("circle_join_apply_id") int circle_join_apply_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleJoinApplyDeleteByCircleJoinApplyId(circle_join_apply_id);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleMemberChangeAByCircleMemberId
+    @RequestMapping("circleMemberChangeA")
+        public RestResponseDto circleMemberChangeA(@RequestParam("circle_member_id") int circle_member_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleMemberChangeAByCircleMemberId(circle_member_id);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    
 
     // RESTAPI 양식 
     /*
