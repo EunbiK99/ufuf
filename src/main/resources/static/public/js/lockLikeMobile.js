@@ -58,9 +58,9 @@ const leftSummaryHtml = `
 </div>
 </div>
 <div class="row">
-<div class="col">
-<div class="row">
-<div class="col">
+<div class="col-auto">
+<div class="row justify-content-center">
+<div class="col-8 align-self-center">
 <img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid">
 </div>
 </div>

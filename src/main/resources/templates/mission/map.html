@@ -267,7 +267,7 @@
         locbtn.style.bottom = "51.5%";
 
         var clickTime;
-        var threshold = 50;
+        var threshold = 80;
 
         mapContainer.addEventListener('mousedown', function(event) {
             clickTime = new Date().getTime();
@@ -880,7 +880,7 @@
 
                         <!-- 현재 위치 출력 -->
                         <div class="row">
-                            <div class="fixed-top z-2">
+                            <div class="fixed-top" style="z-index: 200;">
                                 <div class="col bg-white justify-content-center shadow-sm rounded-5 border border-secondary-subtle d-flex align-text-center mx-4"
                                     style="margin-top: 0.7rem;">
                                     <span><i class="bi bi-geo-alt me-2" style="margin-bottom: 0.05rem;"></i></span>
@@ -1008,7 +1008,7 @@
         </div>
     </div>
     
-    <div id="locbtn" class="row fixed-bottom px-0 justify-content-end" style="height: 2.2rem; width: 2.3rem;">
+    <div id="locbtn" class="row fixed-bottom px-0 justify-content-end" style="height: 2.2rem; width: 2.3rem; z-index: 200;">
         <div class="col-2 px-0 d-flex justify-content-end">
             <button id="findMyLocation" class="btn-sm text-secondary border px-2 fs-5 text-center rounded-circle" 
                 onclick="findMyLocation()" type="button" style="height: 2.2rem; width: 2.2rem; background-color: white; box-shadow: 0.08em 0.14em 0.28em 0.0em rgba(119, 119, 119, 0.3);">

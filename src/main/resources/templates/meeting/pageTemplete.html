@@ -113,12 +113,18 @@
                 <!-- 서있는 사람 옆에 엑스 아이콘-->
                 <i class="fi fi-rr-person-circle-xmark"></i>
 
-                <!--  -->
+                <!-- p22 -->
+                <!-- 육각형 안에 엑스 아이콘 -->
+                <i class="fi fi-rr-times-hexagon"></i>
+
+                <!-- p18 ~ p19 -->
+
+                
             </div>
         </div>
 
         <!--footer-->
-        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+        <div class="row fixed-bottom bg-white footer" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
@@ -147,7 +153,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
+                            <div id="ufuf" class="col text-center mx-1">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
@@ -169,23 +175,111 @@
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="">My</span>
+                                        <span class="" style="color: #FF8827;">My</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>                        
-            </div>
-        </div>
-        
+            </div>            
+        </div>        
         
     </div>
+    
+<!--/* footer요소 */-->
+<div class="footer">
+    <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+        <div class="col text-center px-0 ">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                        <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    홈
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="secondLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 6.8em; width: 100%; z-index: 9999;">
+        <div id="mission" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                        <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+        <div id="circle" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                        <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="thirdLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 4.3em; width: 100%; z-index: 9999;">
+        <div id="signal" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                        <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6.1rem;"></div>
+        <div id="bnb" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                        <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
