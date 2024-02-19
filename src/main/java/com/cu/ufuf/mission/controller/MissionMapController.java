@@ -1,13 +1,17 @@
 package com.cu.ufuf.mission.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cu.ufuf.dto.UserInfoDto;
+import com.cu.ufuf.mission.component.KakaoRestApiManager;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,6 +20,9 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/mission/*")
 public class MissionMapController {
+
+    @Autowired
+    KakaoRestApiManager kakaoRestApiManager;
 
     @RequestMapping("missionMap")
     public String missionMap(HttpSession session, Model model){
@@ -70,6 +77,11 @@ public class MissionMapController {
         return "mission/missionReviewHistory";
     }
 
+    @RequestMapping("chargePointPage")
+    public String chargePointPage(HttpSession session){
+        return "mission/chargePointPage";
+    }
+
 
 
 
@@ -106,6 +118,25 @@ public class MissionMapController {
     public String paymentFailPage(){
 
         return "mission/paymentFailPage";
+    }
+
+    
+    @RequestMapping("paymentPointSuccessPage")
+    public String paymentPointSuccessPage(){
+
+        return "mission/paymentPointSuccessPage";
+    }
+
+    @RequestMapping("paymentPointCancelPage")
+    public String paymentPointCancelPage(){
+
+        return "mission/paymentPointCancelPage";
+    }
+
+    @RequestMapping("paymentPointFailPage")
+    public String paymentPointFailPage(){
+
+        return "mission/paymentPointFailPage";
     }
 
 

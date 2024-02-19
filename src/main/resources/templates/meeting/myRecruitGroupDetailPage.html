@@ -86,15 +86,102 @@
         visibility: visible;
         display: block;
     }
+
+    /* 하단 footer 애니메이션을 위한 코드 */
+    #secondLine, #thirdLine {
+        transition: opacity 1s;
+    }
+
+    #signal, #bnb, #mission, #circle, #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked, #bnb.clicked, #mission.clicked, #circle.clicked, #home.clicked {
+        opacity: 1;
+    }
+
+    .footer .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
     </style>
 </head>
 <script th:inline="javascript">
 // "Authorization" : "KakaoAK 326a50751a1bfac7c3ce3006c0ad9581",
 
-let groupDetailInfo = /*[[${groupDetailInfo}]]*/;
-let sessionUserMeetingProfileDto = /*[[${session.meetingProfileDto}]]*/
+let groupDetailInfo = [[${groupDetailInfo}]]
+let sessionUserMeetingProfileDto = [[${session.meetingProfileDto}]]
+
 console.log('sessionUserMeetingProfileDto: ', sessionUserMeetingProfileDto);
 console.log('groupDetailInfo: ', groupDetailInfo);
+
+window.addEventListener("DOMContentLoaded", () => {
+    let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+    document.getElementById("ufuf").addEventListener("click", function() {
+        const container = document.querySelector(".footer");
+
+        if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+            // 변경된 스타일 적용
+            container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+            container.style.zIndex = "250";
+            container.style.transition = "all 0.2s";
+
+            document.getElementById("home").classList.remove("d-none");
+            document.getElementById("secondLine").classList.remove("d-none");
+            document.getElementById("thirdLine").classList.remove("d-none");
+
+            setTimeout(() => {
+                document.getElementById("home").classList.add("clicked");
+            }, 250);
+
+            setTimeout(() => {
+                document.getElementById("secondLine").classList.add("clicked");
+                setTimeout(() => {
+                    document.getElementById("mission").classList.add("clicked");
+                }, 100);
+                setTimeout(() => {
+                    document.getElementById("circle").classList.add("clicked");
+                }, 200);
+
+            }, 90);
+
+            setTimeout(() => {
+
+                document.getElementById("thirdLine").classList.add("clicked");
+
+                setTimeout(() => {
+                    document.getElementById("signal").classList.add("clicked");
+                }, 50);
+                setTimeout(() => {
+                    document.getElementById("bnb").classList.add("clicked");
+                }, 250);
+
+            }, 90);
+        } else { // ufuf 버튼이 이미 클릭되어 있을 때
+            // 변경 취소
+            container.style.boxShadow = "none";
+            container.style.zIndex = "300";
+            container.style.transition = "none";
+            
+
+            document.getElementById("home").classList.add("d-none");
+            document.getElementById("secondLine").classList.add("d-none");
+            document.getElementById("thirdLine").classList.add("d-none");
+            document.getElementById("home").classList.remove("clicked");
+            document.getElementById("secondLine").classList.remove("clicked");
+            document.getElementById("thirdLine").classList.remove("clicked");
+            document.getElementById("mission").classList.remove("clicked");
+            document.getElementById("circle").classList.remove("clicked");
+            document.getElementById("signal").classList.remove("clicked");
+            document.getElementById("bnb").classList.remove("clicked");
+        }
+        ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+    });
+});
 
 async function checkExistVoteBestMember(){
     let sessionUserGroupId;
@@ -349,27 +436,38 @@ function getMeetingGroupMemberList(){
 
             const checkUserPaymentStatus = userPaymentCheckListRow.querySelector("#checkUserPaymentStatus");
             const paymentStatusValue = e.groupMemberPaymentStatus;
-            
-            if(paymentStatusValue === "Y"){
-                const checkIcon = document.createElement("i");
-                checkIcon.setAttribute("class", "fi fi-sr-check-circle bi-ailgn-middle text-success fw-bold")
-                checkUserPaymentStatus.appendChild(checkIcon);
+
+            if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "N"){
+                if(paymentStatusValue === "Y"){
+                    const checkIcon = document.createElement("i");
+                    checkIcon.setAttribute("class", "fi fi-sr-check-circle bi-ailgn-middle text-success fw-bold")
+                    checkUserPaymentStatus.appendChild(checkIcon);
+                }
+                else{
+                    const unCheckIcon = document.createElement("i");
+                    unCheckIcon.setAttribute("class", "fi fi-sr-do-not-enter bi-ailgn-middle text-danger fw-bold")
+                    checkUserPaymentStatus.appendChild(unCheckIcon);
+                    
+                    const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
+                    if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
+                        kakaoPayButton.classList.remove("d-none");
+                    }
+                }
             }
             else{
-                const unCheckIcon = document.createElement("i");
-                unCheckIcon.setAttribute("class", "fi fi-sr-do-not-enter bi-ailgn-middle text-danger fw-bold")
-                checkUserPaymentStatus.appendChild(unCheckIcon);
-                
-                const kakaoPayButton = userPaymentCheckListRow.querySelector("#kakaoPayButton");
-                if(e.profileId === sessionUserMeetingProfileDto.profileid){                    
-                    kakaoPayButton.classList.remove("d-none");
-                }
+                userPaymentCheckListRow.setAttribute("style", "background-color: white;");
+                const innerCol = userPaymentCheckListRow.querySelector(".col");
+                innerCol.innerHTML = "";
+                const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+                const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+                noApplyProfileInfoText.innerText = "이 미팅은 종료되었습니다.";
+
+                innerCol.appendChild(noApplyProfileRow);                
             }
 
             groupMemberPaymentCheckWrapperCol.appendChild(userPaymentCheckListRow);
 
         }
-
     });
 }
 
@@ -681,7 +779,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
 
         <!--footer-->
-        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+        <div class="row fixed-bottom bg-white footer" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
@@ -710,7 +808,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
+                            <div id="ufuf" class="col text-center mx-1">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
@@ -744,9 +842,99 @@ document.addEventListener("DOMContentLoaded", ()=>{
                         </div>
                     </div>
                 </div>                        
+            </div>            
+        </div>
+    </div>
+
+<!--/* footer요소 */-->
+<div class="footer">
+    <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+        <div class="col text-center px-0 ">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                        <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    홈
+                </div>
             </div>
         </div>
     </div>
+    
+    <div id="secondLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 6.8em; width: 100%; z-index: 9999;">
+        <div id="mission" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                        <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+        <div id="circle" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                        <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="thirdLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 4.3em; width: 100%; z-index: 9999;">
+        <div id="signal" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                        <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6.1rem;"></div>
+        <div id="bnb" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                        <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!--/* 템플릿 */-->
 <div id="templete" class="d-none">
@@ -775,25 +963,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
         </div>
     </div>
 
-    <div id="userPaymentCheckListRow" class="row my-2">
+    <div id="userPaymentCheckListRow" class="row my-2 mx-1 border border-0 rounded shadowBox" style="background-color: cornsilk;">
         <div class="col">
-            <div class="row">
+            <div class="row my-1">
                 <div class="col-4 align-self-center">
                     <span id="checkUserNickname" class="fw-bold" style="font-size: 0.9em"></span>
                 </div>
                 <div class="col-3 text-center align-self-center">
                     <span id="checkUserPaymentStatus"></span>
                 </div>
-                <div id="kakaoPayButton" class="col d-none text-center btn" onclick="registerOrderProcess()">
-                    <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 4em; height: 90%;">
+                <div id="kakaoPayButton" class="col d-none text-center btn py-0" onclick="registerOrderProcess()">
+                    <div class="row justify-content-center">
+                        <div class="col-auto ms-4">
+                            <img src="/public/image/commons/payment_icon_yellow_small.png" class="img-fluid" style="width: 4em; height: 90%;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="applyProfileListRow" class="row mt-2 mb-2">
+    <div id="applyProfileListRow" class="row my-2 mx-1 border border-0 rounded shadowBox" style="background-color: cornsilk;">
         <div class="col">
-            <div class="row">
+            <div class="row my-1">
                 <div class="col">
                     <div class="row">
                         <div class="col-auto">
@@ -806,11 +998,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             </div>
                             <div class="row">
                                 <div class="col text-center">
-                                    <span id="applyProfileNickname" style="font-size: 0.8em;"></span>
+                                    <span id="applyProfileNickname" class="fw-bold" style="font-size: 0.8em;"></span>
                                 </div>
                             </div>                    
                         </div>
-                        <div class="col align-self-center">
+                        <div class="col ps-0 align-self-center">
                             <div class="row">
                                 <div class="col">
                                     <span class="fw-bold">Comment</span>
@@ -825,14 +1017,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     </div>
                 </div>
                 <div class="col-auto align-self-center">
-                    <div class="row">
-                        <div class="col px-1 mx-1 text-center btn btn-success" role="button">
-                            <span class="align-middle" style="font-size: 0.8em;">프로필보기</span>    
+                    <!-- <div class="row">
+                        <div class="col-auto px-1 mx-1 text-center btn btn-success" role="button">
+                            <span class="align-middle" style="font-size: 0.8em;">프로필</span>    
                         </div>                        
-                    </div>
+                    </div> -->
                     <div class="row mt-2">
-                        <div id="applyProfilePickButton" class="col px-1 mx-1 text-center btn btn-primary" role="button">
-                            <span style="font-size: 0.8em;">선발하기</span>    
+                        <div id="applyProfilePickButton" class="col-auto px-1 me-2 text-center btn" style="--bs-btn-active-border-color: cornsilk;">
+                            <span class="" style="font-size: 2em; color: #FF8827;"><i class="fi fi-rr-add bi-align-middle"></i></span>                            
                         </div>
                     </div>
                 </div>
@@ -845,7 +1037,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         <div class="col">
             <div class="row">
                 <div class="col text-center">
-                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-face-pleading bi-align-middle"></i></span>
+                    <span class="fw-bold text-secondary text-opacity-50" style="font-size: 5em;"><i class="fi fi-rr-location-exclamation bi-align-middle"></i></span>
                 </div>
             </div>
             <div class="row">
@@ -895,10 +1087,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <span class="fw-bold fs-4 text-white"><i class="fi fi-sr-trophy-star bi-align-center"></i></span>
                             <span id="" class="modal-title fw-bold fs-4 text-white"> 베스트 멤버 Award </span>
                             <span class="fw-bold fs-4 text-white"><i class="fi fi-sr-trophy-star bi-align-center"></i></span>
-                        </div>                    
-                        <!-- <div class="col-auto">
-                            <button type="button" onclick="closeVoteBestMemberModal()" class="btn btn-close"></button>                            
-                        </div>                 -->
+                        </div>
                     </div>                    
                 </div>                
             </div>

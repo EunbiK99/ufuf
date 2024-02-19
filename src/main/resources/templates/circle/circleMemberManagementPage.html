@@ -82,126 +82,149 @@
             ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
         });
     });
-        function goBack() {
-            window.history.go(-1);
-        }
 
-        const ApprovalJoinList = () => {
+    const circleMemberManageList = () => {
 
-            // 링크보낼때 동아리 번호 보내야됨
-            // 동아리 번호기준으로 가입승인이 'N' 인사람 끌어오기
-            const queryString = window.location.search;
-            const urlParam = new URLSearchParams(queryString);
-            const circle_id = urlParam.get("circle_id");
+        // 링크보낼때 동아리 번호 보내야됨
+        // 동아리 번호기준으로 가입승인이 'N' 인사람 끌어오기
+        const queryString = window.location.search;
+        const urlParam = new URLSearchParams(queryString);
+        const circle_id = urlParam.get("circle_id");
 
 
-            fetch("./ApprovalJoinAllList?circle_id=" + circle_id)
-            .then(response => response.json())
-            .then(response => {
+        fetch("./circleMemberManageList?circle_id=" + circle_id)
+        .then(response => response.json())
+        .then(response => {
 
-                // 유저 정보있으면 사진도 부여가능함
-                for(e of response.data){
-                    const UserInfoOne = document.querySelector("#Wrapper .UserInfoOne").cloneNode(true);
-                    const name = UserInfoOne.querySelector(".name").innerText = e.userInfoDto.name;
-                    const university = UserInfoOne.querySelector(".university").innerText = e.userInfoDto.university;
-                    const address = UserInfoOne.querySelector(".address").innerText = e.userInfoDto.address;
-                    const changeGender = e.userInfoDto.gender;
-                    const userprofile = UserInfoOne.querySelector(".userprofile")
+            // 가입신청 두번못하게 막아야함
+            for(e of response.data){
+                console.log(e);
+
+                const UserInfoOne = document.querySelector("#Wrapper .UserInfoOne").cloneNode(true);
+                const name = UserInfoOne.querySelector(".name").innerText = e.userInfoDto.name;
+                const university = UserInfoOne.querySelector(".university").innerText = e.userInfoDto.university;
+                const address = UserInfoOne.querySelector(".address").innerText = e.userInfoDto.address;
+                const changeGender = e.userInfoDto.gender;
+                const userprofile = UserInfoOne.querySelector(".userprofile")
                     userprofile.setAttribute("src",`/uploadFiles/ufuf/userProfile${e.userInfoDto.profile_img}`)
-                    if(changeGender === "M"){
-                        const gender = UserInfoOne.querySelector(".gender").innerText = "남";
-                    }else if(changeGender === "F"){
-                        const gender = UserInfoOne.querySelector(".gender").innerText = "여";
-                    }
-                    const joinSubmit = UserInfoOne.querySelector(".joinSubmit");
-                    joinSubmit.setAttribute("onclick","peopleCheckNagative(" + e.circleJoinApplyDto.circle_join_apply_id + "," + e.userInfoDto.user_id + ")");
-
-                    const listInsert = document.querySelector("#listInsert")
-                    listInsert.appendChild(UserInfoOne);
-                    
-                }
-
-            })
-        }
-        
-        const joinSubmit = (circle_join_apply_id, user_id) => {
-
-            const queryString = window.location.search;
-            const urlParam = new URLSearchParams(queryString);
-            const circle_id = urlParam.get("circle_id");
-            
-            fetch("./approvalJoin?circle_id=" + circle_id + "&circle_join_apply_id=" + circle_join_apply_id + "&user_id=" + user_id)
-            .then(response => response.json())
-            .then(response => {
-
-                location.reload();
-
-            })
-            
-
-        }
-        // 검증부여 
-        const peopleCheckNagative = (circle_join_apply_id, user_id) => {
-
-            const queryString = window.location.search;
-            const urlParam = new URLSearchParams(queryString);
-            const circle_id = urlParam.get("circle_id");
-
-            fetch("./peopleCheckNagative?circle_id=" + circle_id)
-            .then(response => response.json())
-            .then(response => {
-
-                if(response.data == false){
-                    alert("동아리 인원이 꽉 찼습니다.")
-                    return;
+                if(changeGender === "M"){
+                    const gender = UserInfoOne.querySelector(".gender").innerText = "남";
+                }else if(changeGender === "F"){
+                    const gender = UserInfoOne.querySelector(".gender").innerText = "여";
                 }
                 
-                joinSubmit(circle_join_apply_id, user_id)
+                const clickDelete = UserInfoOne.querySelector(".clickDelete")
+                clickDelete.setAttribute("onclick", `modalShow(${JSON.stringify(e)})`)
+                const changePosition = UserInfoOne.querySelector(".changePosition")
+                if(e.circleMemberDto.circle_position == "A"){
+                    changePosition.innerText = "관리자 해임"
+                    changePosition.style.backgroundColor = "white"
+                    changePosition.style.color = "rgb(80, 49, 255)"
+                    changePosition.style.border = "0.01em solid rgb(80, 49, 255)"
+                    changePosition.setAttribute("onclick", `circleMemberChangeM(${e.circleMemberDto.circle_member_id})`)
+                }else if(e.circleMemberDto.circle_position == "M"){
+                    changePosition.innerText = "관리자 임명"
+                    changePosition.style.backgroundColor = "rgb(80, 49, 255)"
+                    changePosition.style.color = "white"
+                    changePosition.setAttribute("onclick", `circleMemberChangeA(${e.circleMemberDto.circle_member_id})`)
+                }
+                
+                
+               
 
+                const listInsert = document.querySelector("#listInsert")
+                listInsert.appendChild(UserInfoOne);
+                
+            }
+
+        })
+        }
+        // 관리자로 변경
+        const circleMemberChangeA = (circle_member_id) => {
+
+            $.ajax({
+                url: `./circleMemberChangeA?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    location.reload();
+
+                }
             })
 
         }
+        // 다시 맴버로 변경
+        const circleMemberChangeM = (circle_member_id) => {
 
+            $.ajax({
+                url: `./circleMemberChangeM?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
 
-        const scheduleIconClick = () => {
+                    location.reload();
 
-        const boardDeleteModal = document.querySelector("#scheduleCheckModal");
-
-        const modal = bootstrap.Modal.getOrCreateInstance("#scheduleCheckModal");
-        modal.show();
+                }
+            })
 
         }
-        const accessDeniedVote = () => {
+        // 모달창을 띄우고 거기서 동아리 회원 삭제 가입신청테이블에서 삭제 
+        const modalShow = (element) => {
 
-            const boardDeleteModal = document.querySelector("#voteCheckModal");
-
-            const modal = bootstrap.Modal.getOrCreateInstance("#voteCheckModal");
+            const modalManagement = document.querySelector("#modalManagement")
+            const username = modalManagement.querySelector(".username")
+            username.innerText = element.userInfoDto.name
+            const hhh = modalManagement.querySelector(".hhh")
+            hhh.removeAttribute("onclick")
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!나중에 풀어야할것
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!더미데이터 다 쓰고 꼭 풀자!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //hhh.setAttribute("onclick",`circleMemberDelete(${element.circleJoinApplyDto.circle_join_apply_id}, ${element.circleMemberDto.circle_member_id})`)
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!더미데이터 다 쓰고 꼭 풀자!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!나중에 풀어야할것
+            hhh.setAttribute("onclick","hhhh()");
+            const modal = bootstrap.Modal.getOrCreateInstance("#modalManagement");
             modal.show();
 
-        }   
-        // 투표글 아이콘 클릭시 ==> 동아리 가입 내동아리 들어갈 수 있는 모달 생성
-        const VoteIconClick = () => {
-
-        accessDeniedVote()
-
         }
-        const writeNeedjoin = () => {
-
-            const modal = bootstrap.Modal.getOrCreateInstance("#writeModal");
-            modal.show();
-
-            setTimeout(() => {
-                location.href = "./circleListPage"
-            }, 10000)
-
+        // 버튼 잠시막기
+        const hhhh = () => {
+            alert("어휴 진ㅉㅏ 기어코 누르네 ㄴㅐㄱㅏ 그럴줄알고 버튼 막아놨다 밤길 조심해라.")
         }
 
+        // 삭제 1
+        const circleMemberDelete = (circle_join_apply_id, circle_member_id) => {
+
+            $.ajax({
+                url: `./circleMemberDelete?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    circleJoinApplyDelete(circle_join_apply_id);
+
+                }
+            })
+
+        }
+        // 삭제 2
+        const circleJoinApplyDelete = (circle_join_apply_id) => {
+
+            $.ajax({
+                url: `./circleJoinApplyDelete?circle_join_apply_id=${circle_join_apply_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    location.reload();
+
+                }
+            })
+
+        }
+        
         function goBack() {
             window.history.go(-1);
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            ApprovalJoinList();
+            circleMemberManageList();
         })
 
      </script>
@@ -269,16 +292,17 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col" style="font-size: 1.2em;">
-                <i class="bi bi-person-fill-add fw-bold" style="color: #fb7928;"></i>&nbsp;&nbsp;동아리 가입승인
+                <i class="bi bi-person-fill-gear fw-bold" style="color: #fb7928;"></i>&nbsp;&nbsp;동아리 회원관리
             </div>
         </div>
         <div class="row">
-            <div id="listInsert" class="col" style="margin-bottom: 13%;">
+            <div id="listInsert" class="col ps-0" style="margin-bottom: 15%;">
             </div>
         </div>
     </div>
     <div id="Wrapper" class="d-none">
         <div class="UserInfoOne row mt-2 align-items-center justify-content-center">
+            
             <div class="col">
                 <div class="row mx-0">
                     <div class="col pe-0">
@@ -309,10 +333,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2 justify-content-end">
-                    <div class="col d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
-                        <button class="joinSubmit btn fw-semibold" style="background-color: #fb7928;color: white;">승인</button>
+                <div class="row mt-2">
+                    <div class="col-1"></div>
+                    <div class="col-5 d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
+                        <button class="btn fw-semibold changePosition"></button>
                     </div>
+                    <div class="col-5 d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
+                        <button class="btn fw-semibold clickDelete" style="background-color: rgb(255, 62, 62);color: rgb(255, 255, 255);">회원 제명</button>
+                    </div>
+                    <div class="col-1"></div>
                 </div>
             </div>
             
@@ -594,6 +623,49 @@
             <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
                 유니비앤비
             </div>
+        </div>
+    </div>
+</div>
+<div id="modalManagementWrapper d-none">
+    <div id="modalManagement" class="modal" tabindex="-1" style="border: none;">
+        <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+          <div class="modal-content px-0 py-0">
+            <div class="modal-header">
+              <h5 class="modal-title">회원 제명</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col fw-semibold text-center">
+                        <span class="username" style="color: #fb7928;"></span>님과 관련된 모든 동아리 정보들이 삭제됩니다.
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center fs-5">
+                        정말로 제명하시겠습니까?
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center" style="color: red;">
+                        @ 아직 제명 누르지마 제발!! @
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center" style="color: red;">
+                        제명누르면 제가 쌓아온 예쁜더미데이터가 날라가요..
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center fs-3" style="color: red;">
+                        제발/제발/제발/제발/제발
+                    </div>
+                </div>
+            </div>    
+            <div class="modal-footer" style="text-decoration-line: none;">
+                <button type="button" class="btn fw-semibold hhh" style="background-color: rgb(255, 62, 62);color: white;">회원 제명</button>
+                <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+            </div>
+          </div>
         </div>
     </div>
 </div>  

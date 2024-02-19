@@ -15,6 +15,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <script>
         function goBack() {
             window.history.go(-1);
@@ -87,6 +88,7 @@
             })
 
         }
+        
 
 
         // 가입이 완료 되었습니다 ? 
@@ -302,6 +304,26 @@
             })
 
         }
+        const circleJangCheck = () => {
+
+        const queryString = window.location.search
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id")
+
+        $.ajax({
+            url: `./circleJangCheck?circle_id=${circle_id}`,
+            dataType: `json`,
+            success: (response) => {
+
+                if(response.data == false){
+                    $("#joincheck").attr("disabled","")
+                }
+                
+
+            }
+        })
+
+        }
 
         window.addEventListener("DOMContentLoaded", () => {
             const queryString = window.location.search;
@@ -315,6 +337,7 @@
             circleInfo();
             circleLikeCheck();
             circleJoinCheck();
+            circleJangCheck();
         })
     </script>
     <style>
@@ -419,7 +442,7 @@
                         </span>&nbsp;<span class="circlecreatedtime fw-semibold" style="color: rgb(59, 59, 59);"></span>
                     </div>
                 </div>
-                <div class="row mt-0">
+                <div class="row mt-0" style="margin-bottom: 10%;">
                     <div class="col px-0 pb-0">
                         <img src="/public/image/circle/add2.jpg" class="img-fluid">
                     </div>

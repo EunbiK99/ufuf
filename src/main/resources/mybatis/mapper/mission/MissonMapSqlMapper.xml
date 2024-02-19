@@ -168,12 +168,17 @@
 </insert>
 
 <insert id="insertPoint">
+    <selectKey keyProperty="user_point_id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID() AS user_point_id
+    </selectKey>
     insert into user_point(
         user_id,
+        detail,
         point_plus_minus
         )
     values(
         #{user_id},
+        #{detail},
         #{point_plus_minus}
     )
 </insert>
@@ -262,9 +267,16 @@
     where chat_room_id = #{chat_room_id}
 </select>
 
+<select id="selectAcceptedChatRoom" resultType="com.cu.ufuf.dto.MissionChatRoomDto">
+    select * from mission_chat_room
+    where mission_id = #{mission_id}
+    and accept_at != null
+</select>
 
-
-
+<delete id="deleteMission">
+    delete from mission_info
+    where mission_id = #{mission_id}
+</delete>
 
 
 

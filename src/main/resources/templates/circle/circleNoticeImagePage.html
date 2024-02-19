@@ -15,25 +15,48 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <script>
-        document.getElementById('fileInput').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // 기존의 미리보기 삭제
+        // document.getElementById('fileInput').addEventListener('change', function (e) {
+        //     const files = e.target.files;
+        //     const previewContainer = document.getElementById('previewContainer');
+        //     previewContainer.innerHTML = ''; // 기존의 미리보기 삭제
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
+        //     for (let i = 0; i < files.length; i++) {
+        //         const file = files[i];
 
-                const reader = new FileReader();
-                reader.onload = function (readerEvent) {
-                    const previewImage = document.createElement('img');
-                    previewImage.src = readerEvent.target.result;
-                    previewImage.classList.add('preview-image');
-                    previewContainer.appendChild(previewImage);
-                };
+        //         const reader = new FileReader();
+        //         reader.onload = function (readerEvent) {
+        //             const previewImage = document.createElement('img');
+        //             previewImage.src = readerEvent.target.result;
+        //             previewImage.classList.add('preview-image');
+        //             previewContainer.appendChild(previewImage);
+        //         };
 
-                reader.readAsDataURL(file);
-            }
+        //         reader.readAsDataURL(file);
+        //     }
+        // });
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('fileInput').addEventListener('change', function (e) {
+                const files = e.target.files;
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = ''; // 기존의 미리보기 삭제
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    const reader = new FileReader();
+                    reader.onload = function (readerEvent) {
+                        const previewImage = document.createElement('img');
+                        previewImage.classList.add("img-fluid");
+                        previewImage.src = readerEvent.target.result;
+                        previewImage.classList.add('preview-image');
+                        previewContainer.appendChild(previewImage);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
         });
         // 이건 다시한번 해보자
     </script>
@@ -50,11 +73,8 @@
     
         .fixed-bottom {
           position: fixed;
-          bottom: 0;
-          left: 0;
-          width: 100%;
+          
           background-color: #ffffff;
-          padding: 1em;
           text-align: center;
         }
       </style>
@@ -78,13 +98,13 @@
                 <input id="fileInput" name="circle_notice_image" type="file" accept="image/*" multiple />
             </div>
         </div>
-        <div class="row">
-            <div id="previewContainer" class="col">
+        <div class="row mt-2">
+            <div id="previewContainer" class="col px-0">
 
             </div>
         </div>
-        <div class="row mt-3 fixed-bottom mx-0">
-            <div class="col d-grid">
+        <div class="row fixed-bottom">
+            <div class="col d-grid mx-3 py-2">
                 <input type="submit" class="btn" style="background-color: #fb7928; color: white;" role="button" value="동아리 이미지 등록완료">
             </div>
         </div>

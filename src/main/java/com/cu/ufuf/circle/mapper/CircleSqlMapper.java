@@ -267,6 +267,35 @@ public interface CircleSqlMapper {
     public List<CircleDto> circleSearchList(String searchword);
     public List<CircleDto> circleNameDuplicateCheck(String circle_name);
     
-    // 동아리 피드 board수정
+    // 동아리 피드 board수정 && 게시판 board_id로 찾기
     public List<CircleBoardDto> circleBoardDtoBycircleId(int circle_id);
+    public CircleBoardDto circleBoardInfoByCircleBoardId(int circle_board_id);
+
+    // 동아리 투표리스트 수정 && 동아리 나랑 같은 대학교 인거 나옴
+    public List<CircleVoteDto> circleVoteDtoBycircleId(int circle_id);
+    public List<CircleDto> circleSessionListOrderByCircleId(int user_id);
+
+    // 동아리 가입신청한 정보 가져오기
+    public CircleJoinApplyDto circleJoinApplyInfoByCircleIdAndUserId(@Param("circle_id") int circle_id, @Param("user_id") int user_id);
+
+    // 동아리 회원정보 삭제 && 동아리 가입신청 테이블 정보 삭제
+    public void circleMemberDeleteByCircleMemberId(int circle_member_id);
+    public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id);
+
+    // 동아리회원 관리자로 바꿔주기 + 반대 회원으로 바꾸기 && 동아리에 관한 모든정보 삭제
+    public void circleMemberChangeAByCircleMemberId(int circle_member_id);
+    public void circleMemberChangeMByCircleMemberId(int circle_member_id);
+    public void circleNoticeImageDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardImageDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteOptionDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteCompleteDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardLikeDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleApplicationDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleAttendanceDeleteByCircleMemberId(int circle_member_id);
+    
+
+    
 }

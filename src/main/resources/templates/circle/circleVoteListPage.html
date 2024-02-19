@@ -15,7 +15,74 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="/public/js/lockLikeMobile.js"></script>
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <script>
+        window.addEventListener("DOMContentLoaded", () => {
+        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        document.getElementById("ufuf").addEventListener("click", function() {
+            const container = document.querySelector(".footer");
+
+            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+                // 변경된 스타일 적용
+                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+                container.style.zIndex = "250";
+                container.style.transition = "all 0.2s";
+
+                document.getElementById("home").classList.remove("d-none");
+                document.getElementById("secondLine").classList.remove("d-none");
+                document.getElementById("thirdLine").classList.remove("d-none");
+
+                setTimeout(() => {
+                    document.getElementById("home").classList.add("clicked");
+                }, 250);
+
+                setTimeout(() => {
+                    document.getElementById("secondLine").classList.add("clicked");
+                    setTimeout(() => {
+                        document.getElementById("mission").classList.add("clicked");
+                    }, 100);
+                    setTimeout(() => {
+                        document.getElementById("circle").classList.add("clicked");
+                    }, 200);
+
+                }, 90);
+
+                setTimeout(() => {
+
+                    document.getElementById("thirdLine").classList.add("clicked");
+
+                    setTimeout(() => {
+                        document.getElementById("signal").classList.add("clicked");
+                    }, 50);
+                    setTimeout(() => {
+                        document.getElementById("bnb").classList.add("clicked");
+                    }, 250);
+
+                }, 90);
+            } else { // ufuf 버튼이 이미 클릭되어 있을 때
+                // 변경 취소
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+
+                document.getElementById("home").classList.add("d-none");
+                document.getElementById("secondLine").classList.add("d-none");
+                document.getElementById("thirdLine").classList.add("d-none");
+                document.getElementById("home").classList.remove("clicked");
+                document.getElementById("secondLine").classList.remove("clicked");
+                document.getElementById("thirdLine").classList.remove("clicked");
+                document.getElementById("mission").classList.remove("clicked");
+                document.getElementById("circle").classList.remove("clicked");
+                document.getElementById("signal").classList.remove("clicked");
+                document.getElementById("bnb").classList.remove("clicked");
+            }
+
+            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+        });
+    });
+
         function goBack() {
             window.history.go(-1);
         }
@@ -75,6 +142,30 @@
 
             })
         }
+        const circleScheduleRegister = () =>{
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const circle_id = urlParams.get("circle_id");
+
+        fetch("./circleScheduleRegisterCheck?circle_id=" + circle_id)
+        .then(response => response.json())
+        .then(response => {
+
+            if(response.data === false){
+
+                // 아닐경우 
+                const modal = bootstrap.Modal.getOrCreateInstance("#eexModal");
+                modal.show();
+                
+            }else{
+                // 맞을경우
+                ScheduleWritePageMove()
+            }
+
+        })
+
+        }
 
         const circleBoardWrite = () => {
 
@@ -127,6 +218,38 @@
         })
     </script>
     <style>
+        .footer{
+        margin: auto;
+    }
+
+    #secondLine,
+    #thirdLine {
+        transition: opacity 1s;
+    }
+
+#signal,
+    #bnb,
+    #mission,
+    #circle,
+    #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked,
+    #bnb.clicked,
+    #mission.clicked,
+    #circle.clicked,
+    #home.clicked {
+        opacity: 1;
+    }
+
+    .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
@@ -145,23 +268,18 @@
             background-color: #ffffff;
             text-align: center;
         }
-        .content{
-            
-                min-height: calc(10em + 100em); /* 초기 높이(100px)에 100em 추가 */
-            
-        }
     </style>
 </head>
 <body>
     <!-- 하나 만들어놓고 랜덤으로 돌릴거.. 베이스만 잡아놓자.. -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid content" style="background-color: rgb(247,247,247);">
+    <div class="container-fluid content" style="background-color: rgb(251,251,251);">
         <div class="row">
             <div class="col pt-2 align-items-center">
                 <i class="bi bi-envelope-paper-fill" style="font-size: 1.4em;color: #fb7928;"></i>&nbsp;&nbsp;<span class="fw-semibold" style="font-size: 1.3em;">투표</span>
             </div>
         </div>
-        <div id="listInsert" class="row">
+        <div id="listInsert" class="row" style="margin-bottom: 15%; background-color: rgb(251,251,251);">
             
         </div>
     </div>
@@ -193,78 +311,197 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid" style="position: absolute;">
-        <div class="row fixed-bottom align-items-center" style="border-top: 0.05em solid rgb(196, 196, 196);">
-            <div class="button col py-0 text-center fs-1" onclick="ScheduleManageMove()">
+    <div class="row pb-2" style="position: fixed; bottom: 6em; right: 0; height: 3em; z-index: 100;">
+        <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
+            <div class="dropup-end dropup" style="position: absolute; right: 2em;">
+                <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
+                    <i class="fs-4 bi bi-plus-lg text-white"></i>
+                </button>
+                <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
+                    <li onclick="circleScheduleRegister()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</li>
+                    <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</li>
+                    <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid footer" style="position: absolute;">
+        <div class="row fixed-bottom align-items-center justify-content-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
+            <div class="button col text-center" onclick="ScheduleManageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date" style="font-size: 0.8em;"></i>
+                        <i class="bi bi-calendar2-date" style="font-size: 1.7em;"></i>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col" style="font-size: 0.3em;">
+                    <div class="col" style="font-size: 0.6em;">
                         일정
                     </div>
                 </div>
             </div>
-            <div class="button col py-0 ps-0 text-center fs-1" onclick="VoteListPageMove()">
+            <div class="button col ps-0 text-center" onclick="VoteListPageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill" style="font-size: 0.8em;"></i>
+                        <i class="bi bi-box-seam-fill" style="font-size: 1.7em;"></i>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col" style="font-size: 0.3em;">
+                    <div class="col" style="font-size: 0.6em;">
                         투표
                     </div>
                 </div>
             </div>
-            <div class="col-2 px-0 justify-content-center" onclick="(() => {
-                location.href='../commons/mainPage'
-            })()">
-                <img class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="width: 2.8em;">
+            <div class="col-2 px-0 justify-content-center">
+                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.8em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
-            <div class="button col py-0 text-center fs-1 pe-0" onclick="(() => {
+            <div class="button col text-center pe-0" onclick="(() => {
                 location.href = './myCircleListPage'
-            })()">                    
-                <div class="row">
-                    <div class="col">
-                        <i class="bi bi-people-fill" style="font-size: 0.8em;"></i>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col" style="font-size: 0.3em;">
-                        내 동아리
-                    </div>
+            })()" style="height: 100%;">
+            <div class="row">
+                <div class="col">
+                    <i class="bi bi-people-fill" style="font-size: 1.7em;"></i>
                 </div>
             </div>
-            <div class="button col py-0 text-center fs-1" onclick="(() => {
+            <div class="row">
+                <div class="col" style="font-size: 0.6em;">
+                    내 동아리
+                </div>
+            </div>
+            </div>
+            <div class="button col text-center" onclick="(() => {
                 location.href = './circleMyPage'
-            })()">                    
-                <div class="row">
-                    <div class="col">
-                        <i class="bi bi-person-circle" style="font-size: 0.8em;"></i>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col" style="font-size: 0.3em;">
-                        마이페이지
-                    </div>
+            })()" style="height: 100%;">
+            <div class="row">
+                <div class="col">
+                    <i class="bi bi-person-circle" style="font-size: 1.7em;"></i>
                 </div>
             </div>
-            <div style="position: fixed; bottom: 10%; z-index: 1000;">      
+            <div class="row">
+                <div class="col" style="font-size: 0.6em;">
+                    마이페이지
+                </div>
+            </div>
+            </div>
+            <!-- <div style="position: fixed; bottom: 10%; z-index: 1000;">      
                 <div class="dropup-end dropup mb-3 justify-content-center" style="position: relative; left: 42%;">
                     <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
                         <i class="fs-4 bi bi-plus-lg text-white"></i>
                     </button>
                     <ul class="dropdown-menu mb-2" style="z-index: 1000;">
-                      <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</span></li>
-                      <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</span></li>
+                        <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</li>
+                      <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</li>
                       <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
                     </ul>
                 </div>
+            </div> -->
+        </div>
+    </div>
+    <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+        <div class="col text-center px-0 ">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                        <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    홈
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="secondLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 6.8em; width: 100%; margin: auto; z-index: 9999;">
+        <div id="mission" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                        <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+        <div id="circle" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                        <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="thirdLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 4.3em; width: 100%; margin: auto; z-index: 9999;">
+        <div id="signal" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                        <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6.1rem;"></div>
+        <div id="bnb" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                        <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="eexWrapper d-none">
+        <div id="eexModal" class="modal" tabindex="-1" style="border: none;">
+            <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+              <div class="modal-content px-0 py-0">
+                <div class="modal-header">
+                  <h5 class="modal-title">일정 등급 제한</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            동아리장 또는 관리자만 일정을 등록할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-decoration-line: none;">
+                  <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
+                </div>
+              </div>
             </div>
         </div>
     </div>

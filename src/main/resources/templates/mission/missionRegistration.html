@@ -28,6 +28,18 @@
 
     var courseCounter = 1;
 
+    function loadMyPoint(){
+        fetch("./loadMyPoint")
+        .then(response => response.json())
+        .then(response => {
+            const sum = response.data;
+            const totalPoint = document.getElementById("totalPoint");
+            totalPoint.innerText = sum.toLocaleString();
+
+            totalPoint.value = sum;
+        });
+    }
+
     // 지금 현재 위치 가져오기
     function getNowLocation(callback){
 
@@ -91,83 +103,87 @@
     // 코스 입력 폼
     function addCourseForm(){
 
-        var inputCourseBox = document.getElementById("inputCourseBox");
-        var inputForm = `<div id="course${courseCounter}" class="row mt-3">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col d-grid">
-                                        <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border" style="background-color: #f7f7f7;">
-                                            <span class="flex-grow-1 text-start">코스<span class="courseIndex ps-2">${courseCounter}</span></span>
-                                            <i class="bi bi-caret-down text-secondary"></i>
-                                        </button>
+        if(courseCounter >= 6){
+            alert("미션 코스는 최대 5개까지 추가할 수 있습니다.");
+        }else{
+
+            var inputCourseBox = document.getElementById("inputCourseBox");
+            var inputForm = `<div id="course${courseCounter}" class="row mt-3">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col d-grid">
+                                            <button class="btn fw-semibold d-flex justify-content-between align-items-center px-3 py-2 rounded-0 border" style="background-color: #f7f7f7;">
+                                                <span class="flex-grow-1 text-start">코스<span class="courseIndex ps-2">${courseCounter}</span></span>
+                                                <i class="bi bi-caret-down text-secondary"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row px-1">
-                                    <div class="col border border-top-0 mx-2 py-3">
-                                        <div class="row">
-                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
-                                                코스명
+                                    <div class="row px-1">
+                                        <div class="col border border-top-0 mx-2 py-3">
+                                            <div class="row">
+                                                <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                    코스명
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row mt-1">
-                                            <div class="col">
-                                                <input type="text" class="courseContent form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
+                                            <div class="row mt-1">
+                                                <div class="col">
+                                                    <input type="text" class="courseContent form-control rounded-0 py-2" placeholder="코스명을 입력해주세요" style="font-size:0.9em;">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
-                                                완료 상금
+                                            <div class="row mt-2">
+                                                <div class="col text-secondary fw-semibold mt-1" style="font-size:0.95em;">
+                                                    완료 상금
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row mt-1">
-                                            <div class="col">
-                                                <input type="text" class="reward form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;" onInput="checkReward(this, ${courseCounter})">
-                                                <span class="MinWarning text-body-tertiary ps-1" style="font-size:0.78em;">
-                                                    ※ 미션 최소 금액은 1000원 입니다.
-                                                </span>
+                                            <div class="row mt-1">
+                                                <div class="col">
+                                                    <input type="text" class="reward form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;" onInput="checkReward(this, ${courseCounter})">
+                                                    <span class="MinWarning text-body-tertiary ps-1" style="font-size:0.78em;">
+                                                        ※ 미션 최소 금액은 1000원 입니다.
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row py-2">
-                                            <div class="col d-grid">
-                                                <div class="gap-2 d-md-block">
-                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(1000, ${courseCounter})">+1000</button>
-                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(3000, ${courseCounter})">+3000</button>
-                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(5000, ${courseCounter})">+5000</button>
-                                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(10000, ${courseCounter})">+10000</button>
+                                            <div class="row py-2">
+                                                <div class="col d-grid">
+                                                    <div class="gap-2 d-md-block">
+                                                        <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(1000, ${courseCounter})">+1000</button>
+                                                        <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(3000, ${courseCounter})">+3000</button>
+                                                        <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(5000, ${courseCounter})">+5000</button>
+                                                        <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(10000, ${courseCounter})">+10000</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
+                                                    미션 수행 지점
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col">
+                                                    <div class="map" style="height:13em; width: 100%;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row px-1 mt-2">
+                                                <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
+                                                    <i class="bi bi-geo-alt me-2"></i><span class="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
+                                                    <input type="hidden" class="lat">
+                                                    <input type="hidden" class="lng">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mt-2">
-                                            <div class="col text-secondary fw-semibold" style="font-size:0.95em;">
-                                                미션 수행 지점
-                                            </div>
-                                        </div>
-                                        <div class="row mt-1">
-                                            <div class="col">
-                                                <div class="map" style="height:13em; width: 100%;"></div>
-                                            </div>
-                                        </div>
-                                        <div class="row px-1 mt-2">
-                                            <div class="col border text-secondary mx-2 py-1 rounded-3" style="font-size:0.83em;">
-                                                <i class="bi bi-geo-alt me-2"></i><span class="location">서울 강남구 테헤란로7길 7 (역삼동)</span>
-                                                <input type="hidden" class="lat">
-                                                <input type="hidden" class="lng">
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>`;
-
-        var addedDiv = document.createElement("div");
-        addedDiv.id = "inputForm" + courseCounter;
-        addedDiv.innerHTML  = inputForm;
-        inputCourseBox.appendChild(addedDiv);
-
-        createMap(courseCounter);
-
-        courseCounter++;
-
+                            </div>`;
+    
+            var addedDiv = document.createElement("div");
+            addedDiv.id = "inputForm" + courseCounter;
+            addedDiv.innerHTML  = inputForm;
+            inputCourseBox.appendChild(addedDiv);
+    
+            createMap(courseCounter);
+    
+            courseCounter++;
+        }
     }
 
     // 입력폼에 매번 새로운 맵 생성..
@@ -177,7 +193,7 @@
         const latSelector = `#course${courseCounter} .lat`;
         const lngSelector = `#course${courseCounter} .lng`;
 
-        map = new kakao.maps.Map(document.querySelector(mapSelector), {
+        var map = new kakao.maps.Map(document.querySelector(mapSelector), {
             center: new kakao.maps.LatLng(33.450701, 126.570667),
             level: 3
         });
@@ -298,9 +314,11 @@
 
         const totalReward = document.getElementById("totalReward");
         totalReward.innerText = sum.toLocaleString();
+        totalReward.value = sum;
 
         if (totalReward.innerText === "NaN") {
             totalReward.innerText = 0;
+            totalReward.setAttribute("value", 0);
         }
     }
 
@@ -341,7 +359,7 @@
         checkReward(rewardInput, courseCounter);
     }
 
-    // 미션 등록 로직
+    // 카카오톡으로 미션 등록 로직
     function submitMission(){
 
         var courseList = [];
@@ -357,7 +375,13 @@
         const minuteDiv = document.getElementById("minute");
 
         if (!title) {
-            alert("미션명을 입력해주세요");
+            alert("미션 제목을 입력해주세요");
+            titleDiv.focus();
+	        return;
+	    }
+
+        if (title.length > 20) {
+            alert("미션 제목은 최대 20자까지 입력 가능합니다.");
             titleDiv.focus();
 	        return;
 	    }
@@ -406,9 +430,9 @@
                 if (inputNumber < 1000) {
                     reward.focus();
                     alert("미션 최소 금액은 1,000원 입니다.");
+                    return;
                 }
 
-                return;
             }
 
             const course = {
@@ -447,6 +471,125 @@
         });
     }
 
+    // 포인트로 미션 등록 로직
+    function submitMissionByPoint(){
+
+        var courseList = [];
+
+        const title = document.getElementById("title").value;
+        const detail = document.getElementById("detail").value;
+        const hour = document.getElementById("hour").value;
+        const minute = document.getElementById("minute").value;
+        const totalReward = document.getElementById("totalReward").value;
+        const totalPoint = document.getElementById("totalPoint").value;
+
+        const titleDiv = document.getElementById("title");
+        const detailDiv = document.getElementById("detail");
+        const hourDiv = document.getElementById("hour");
+        const minuteDiv = document.getElementById("minute");
+
+        if (!title) {
+            alert("미션 제목을 입력해주세요");
+            titleDiv.focus();
+	        return;
+	    }
+
+        if (title.length > 20) {
+            alert("미션 제목은 최대 20자까지 입력 가능합니다.");
+            titleDiv.focus();
+	        return;
+	    }
+
+        if (!detail) {
+            alert("미션 상세 내용을 입력해주세요");
+            detailDiv.focus();
+	        return;
+	    }
+
+        if (!hour || !minute) {
+            alert("미션 제한 시간을 입력해주세요");
+            minuteDiv.focus();
+	        return;
+	    }
+
+        if(totalPoint < totalReward){
+            alert("포인트 잔액이 부족합니다. 포인트 충전 후 다시 시도해 주세요.");
+            return;
+        }
+
+        var total_minutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
+
+        for(i = 1; i < courseCounter; i++){
+
+            var courseContentSelector = `#course${i} .courseContent`;
+            var rewardSelector = `#course${i} .reward`;
+            var latSelector = `#course${i} .lat`;
+            var lngSelector = `#course${i} .lng`;
+            var content = document.querySelector(courseContentSelector);
+            var reward = document.querySelector(rewardSelector);
+            var lat = document.querySelector(latSelector);
+            var lng = document.querySelector(lngSelector);
+
+            if(!content.value){
+                alert("코스명을 입력해주세요");
+                content.focus();
+                return;
+            }
+
+            if(!reward.value){
+                alert("성공 보상 금액을 입력해주세요");
+                reward.focus();
+                return;
+            }
+
+            if(reward.value){
+
+                let inputNumber = parseInt(reward.value, 10);
+
+                if (inputNumber < 1000) {
+                    reward.focus();
+                    alert("미션 최소 금액은 1,000원 입니다.");
+                    return;
+                }
+
+            }
+
+            const course = {
+                content: content.value,
+                reward: reward.value,
+                lat: lat.value,
+                lng: lng.value
+            };
+
+            courseList.push(course);
+        }
+
+        const mission = {
+            user_id: sessionUser,
+            title: title,
+            detail: detail,
+            status: '결제미완료',
+            limit_time: total_minutes,
+        };
+
+        const data = {
+            missionInfoDto: mission,
+            missionCourseDto: courseList,
+        }
+
+        fetch("./submitMissionByPoint", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                window.location.href="./missionRegisterComplete";
+        });
+    }
+
     // 카카오페이 토큰 요청
     function sendKakaoPayReq(res) {
 
@@ -478,7 +621,13 @@
             .then(response => response.json())
             .then(response => {
 
-                window.location.href = response.next_redirect_pc_url;
+                var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    window.location.href = response.next_redirect_pc_url;
+                } else {
+                    window.location.href =response.next_redirect_mobile_url;
+                }
 
                 insertKakaoPayRes(response);
                 saveKakaoPayAccReqInfoToSession(res, response);
@@ -535,6 +684,73 @@
 
     window.addEventListener("DOMContentLoaded", () => {
         addCourseForm();
+        loadMyPoint();
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        document.getElementById("ufuf").addEventListener("click", function() {
+            const container = document.querySelector(".footer");
+
+            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+                // 변경된 스타일 적용
+                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+                container.style.zIndex = "250";
+                container.style.transition = "all 0.2s";
+
+                document.getElementById("home").classList.remove("d-none");
+                document.getElementById("secondLine").classList.remove("d-none");
+                document.getElementById("thirdLine").classList.remove("d-none");
+
+                setTimeout(() => {
+                    document.getElementById("home").classList.add("clicked");
+                }, 250);
+
+                setTimeout(() => {
+                    document.getElementById("secondLine").classList.add("clicked");
+                    setTimeout(() => {
+                        document.getElementById("mission").classList.add("clicked");
+                    }, 100);
+                    setTimeout(() => {
+                        document.getElementById("circle").classList.add("clicked");
+                    }, 200);
+
+                }, 90);
+
+                setTimeout(() => {
+
+                    document.getElementById("thirdLine").classList.add("clicked");
+
+                    setTimeout(() => {
+                        document.getElementById("signal").classList.add("clicked");
+                    }, 50);
+                    setTimeout(() => {
+                        document.getElementById("bnb").classList.add("clicked");
+                    }, 250);
+
+                }, 90);
+            } else { // ufuf 버튼이 이미 클릭되어 있을 때
+                // 변경 취소
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+
+                document.getElementById("home").classList.add("d-none");
+                document.getElementById("secondLine").classList.add("d-none");
+                document.getElementById("thirdLine").classList.add("d-none");
+                document.getElementById("home").classList.remove("clicked");
+                document.getElementById("secondLine").classList.remove("clicked");
+                document.getElementById("thirdLine").classList.remove("clicked");
+                document.getElementById("mission").classList.remove("clicked");
+                document.getElementById("circle").classList.remove("clicked");
+                document.getElementById("signal").classList.remove("clicked");
+                document.getElementById("bnb").classList.remove("clicked");
+            }
+
+            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+        });
     });
 
 </script>
@@ -556,9 +772,47 @@
         letter-spacing: 0.03em;
     }
 
+    .footer{
+        margin: auto;
+    }
+
+    #secondLine,
+    #thirdLine {
+        transition: opacity 1s;
+    }
+
+    #signal,
+    #bnb,
+    #mission,
+    #circle,
+    #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked,
+    #bnb.clicked,
+    #mission.clicked,
+    #circle.clicked,
+    #home.clicked {
+        opacity: 1;
+    }
+
+    .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
+
     .form-control:focus {
       border-color: #ffbf8b; /* 클릭 시 테두리 색상 변경 */
       box-shadow: 0 0 0 0.1em #ffe2ce; /* 기본 제공되는 박스 쉐도우를 제거합니다. */
+    }
+
+    #title::after {
+        content: "(최대 20자)";
+        font-size: 0.7em; /* 원하는 크기로 조절 */
     }
 
 </style>
@@ -575,7 +829,7 @@
             미션 등록
         </div>
         <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
-            <i class="bi bi-three-dots-vertical"></i>
+            
         </div>
     </div>
 
@@ -586,7 +840,19 @@
                 <div class="row mt-5" style="padding-left: 0.2rem; padding-right: 0.2rem;">
                     <div class="col mt-3">
 
-                        <div class="row mt-2">
+                        <div class="row mt-1 border-bottom mx-1" 
+                            style="font-size: 0.85rem; color: #8d8d8d; padding-top: 0.1rem; padding-bottom: 0.15rem;">
+                            <div class="col px-0">
+                                <i class="bi bi-database me-1" style="color: #f3b079;"></i>
+                                현재 보유 포인트
+                            </div>
+                            <div class="col text-end px-0">
+                                <span id="totalPoint" class="fw-semibold" style="letter-spacing: 0.1em; color: #575757;"></span>
+                                <span>P</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
                             <div class="col">
                                 <div class="row">
                                     <div class="col fw-semibold text-secondary" style="font-size:0.95em;">
@@ -666,14 +932,25 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col d-grid">
-                                <button id="registerMissionBtn" type="button" class="btn py-2 fw-semibold rounded-1 px-5 text-white"
-                                    style="border: 0.1em solid #fa7e18; background-color: #FF8827; font-size: 1.08em;" onclick="submitMission()">
+                            <div class="col d-grid mt-1">
+                                <div id="registerMissionBtn" type="button" class="btn fw-semibold rounded-1 px-5"
+                                    style="border: 0.11em solid #fa7e18; color: #FF8827; font-size: 1.06em; padding-top: 0.45rem; padding-bottom: 0.45rem;" onclick="submitMissionByPoint()">
                                     <i class="bi bi-envelope-plus me-1"></i>
-                                    <span class="px-1">미션 등록</span>
-                                </button>
+                                    <span class="px-1">포인트로 미션 등록</span>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="row mt-2">
+                            <div class="col d-grid">
+                                <div id="registerMissionBtn" type="button" class="btn fw-semibold rounded-1 px-5"
+                                    style="background-color: #FEE500;" onclick="submitMission()">
+                                    <img class="img-fluid align-self-center" src="/public/image/commons/payment_icon_yellow_small.png" style="height: 1.83rem;">
+                                    <span class="fw-semibold align-top align-middle align-self-center" style="color: #191919; font-size: 1.13rem;">결제</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row mt-5 mb-4">
                             <div class="col">
                                 
@@ -684,7 +961,11 @@
 
             </div>
         </div>
-        <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+        <div class="row">
+            <div class="col px-0">
+                <th:block th:replace="~{commons/missionFragmentPage.html :: footer}"></th:block>
+            </div>
+        </div>
     </div>
 
 

@@ -42,12 +42,98 @@
         background-color: blueviolet !important;
         color : white !important;
     }
+
+    /* 하단 footer 애니메이션을 위한 코드 */
+    #secondLine, #thirdLine {
+        transition: opacity 1s;
+    }
+
+    #signal, #bnb, #mission, #circle, #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked, #bnb.clicked, #mission.clicked, #circle.clicked, #home.clicked {
+        opacity: 1;
+    }
+
+    .footer .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
     </style>
 </head>
 
 <script th:inline="javascript">
-let meetingProfileDto = /*[[${session.meetingProfileDto}]]*/;
+let meetingProfileDto = [[${session.meetingProfileDto}]]
 console.log('meetingProfileDto: ', meetingProfileDto);
+
+window.addEventListener("DOMContentLoaded", () => {
+    let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+    document.getElementById("ufuf").addEventListener("click", function() {
+        const container = document.querySelector(".footer");
+
+        if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+            // 변경된 스타일 적용
+            container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+            container.style.zIndex = "250";
+            container.style.transition = "all 0.2s";
+
+            document.getElementById("home").classList.remove("d-none");
+            document.getElementById("secondLine").classList.remove("d-none");
+            document.getElementById("thirdLine").classList.remove("d-none");
+
+            setTimeout(() => {
+                document.getElementById("home").classList.add("clicked");
+            }, 250);
+
+            setTimeout(() => {
+                document.getElementById("secondLine").classList.add("clicked");
+                setTimeout(() => {
+                    document.getElementById("mission").classList.add("clicked");
+                }, 100);
+                setTimeout(() => {
+                    document.getElementById("circle").classList.add("clicked");
+                }, 200);
+
+            }, 90);
+
+            setTimeout(() => {
+
+                document.getElementById("thirdLine").classList.add("clicked");
+
+                setTimeout(() => {
+                    document.getElementById("signal").classList.add("clicked");
+                }, 50);
+                setTimeout(() => {
+                    document.getElementById("bnb").classList.add("clicked");
+                }, 250);
+
+            }, 90);
+        } else { // ufuf 버튼이 이미 클릭되어 있을 때
+            // 변경 취소
+            container.style.boxShadow = "none";
+            container.style.zIndex = "300";
+            container.style.transition = "none";
+            
+
+            document.getElementById("home").classList.add("d-none");
+            document.getElementById("secondLine").classList.add("d-none");
+            document.getElementById("thirdLine").classList.add("d-none");
+            document.getElementById("home").classList.remove("clicked");
+            document.getElementById("secondLine").classList.remove("clicked");
+            document.getElementById("thirdLine").classList.remove("clicked");
+            document.getElementById("mission").classList.remove("clicked");
+            document.getElementById("circle").classList.remove("clicked");
+            document.getElementById("signal").classList.remove("clicked");
+            document.getElementById("bnb").classList.remove("clicked");
+        }
+        ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+    });
+});
 
 function plusMemberCount(){
     const curruntMemberCount = document.getElementById("groupHeadCount");
@@ -679,10 +765,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 </div>
 
             </div>
-        </div>        
+        </div>
 
         <!--footer-->
-        <div class="row fixed-bottom bg-white" style="height: 3.4em;">
+        <div class="row fixed-bottom bg-white footer" style="height: 3.4em;">
             <div class="col text-center align-self-center">
                 <div class="row">
                     <div class="col">
@@ -690,7 +776,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./searchPage'">
                                 <div class="row">
                                     <div class="col">                                                
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-ailgn-middle"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-search-heart bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -702,7 +788,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./createNewGroupPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-sr-following bi-ailgn-middle"></i></span>
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-sr-following bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -711,7 +797,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                                     </div>
                                 </div>
                             </div>
-                            <div class="col text-center mx-1" onclick="window.location.href='../commons/mainPage'">
+                            <div id="ufuf" class="col text-center mx-1">
                                 <div class="row">
                                     <div class="col">                                                
                                         <img src="/public/image/meeting/ufuf_image_icon.png" class="img-fluid" style="width: 2.8em; height: auto;">                                                
@@ -721,7 +807,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./chatListPage'">
                                 <div class="row">
                                     <div class="col align-self-center">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-ailgn-middle"></i></span>                                                
+                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-comment-alt bi-align-middle"></i></span>                                                
                                     </div>
                                 </div>
                                 <div class="row">
@@ -733,7 +819,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                             <div class="col text-center mx-1" onclick="window.location.href='./myPage'">
                                 <div class="row">
                                     <div class="col">
-                                        <span class="" style="font-size: 1.2em;"><i class="fi fi-rr-circle-user bi-ailgn-middle"></i></span>
+                                        <span class="" style="font-size: 1.2em; color: #FF8827;"><i class="fi fi-rr-circle-user bi-align-middle"></i></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -745,41 +831,133 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         </div>
                     </div>
                 </div>                        
-            </div>
-        </div>        
+            </div>            
+        </div>
     </div>
 
-    <div id="templete" class="d-none">
+<!--/* footer요소 */-->
+<div class="footer">
+    <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+        <div class="col text-center px-0 ">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                        <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    홈
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="secondLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 6.8em; width: 100%; z-index: 9999;">
+        <div id="mission" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                        <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+        <div id="circle" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                        <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="thirdLine" class="row d-flex justify-content-center d-none" style="margin: auto; position: fixed; bottom: 4.3em; width: 100%; z-index: 9999;">
+        <div id="signal" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                        <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6.1rem;"></div>
+        <div id="bnb" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                        <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <div id="customOverlayWrapper" class="container">
-            <div class="row bg-white border border-2 border-black rounded-3">
-                <div class="col">
-                    <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between rounded-top">
-                        <div class="col-auto align-self-center">
-                            <span><i class="fi fi-rr-map-marker bi-align-center"></i></span>
-                            <span class="fw-bold" style="font-size: 0.9em">주소</span>
-                        </div>
-                        <div class="col-auto">
-                            <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
-                        </div>
+
+
+<!--/* 템플릿 */-->    
+<div id="templete" class="d-none">
+
+    <div id="customOverlayWrapper" class="container">
+        <div class="row bg-white border border-2 border-black rounded-3">
+            <div class="col">
+                <div class="row border-bottom border-1 border-black bg-primary-subtle justify-content-between rounded-top">
+                    <div class="col-auto align-self-center">
+                        <span><i class="fi fi-rr-map-marker bi-align-center"></i></span>
+                        <span class="fw-bold" style="font-size: 0.9em">주소</span>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <span id="testLocation" style="font-size: 0.8em"></span>
-                        </div>
+                    <div class="col-auto">
+                        <span><i class="bi bi-x fs-5 fw-bold" role="button" onclick="closeCustomOverlay()"></i></span>
                     </div>
-                    <div class="row mt-2 mb-2 justify-content-center">
-                        <div class="col-auto btn btn-sm btn-primary" onclick="setMeetingLocation()">
-                            <span class="fw-bold" >여기서 만나요</span>
-                            <span><i class="fi fi-rr-hand-heart bi-align-center"></i></span>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span id="testLocation" style="font-size: 0.8em"></span>
+                    </div>
+                </div>
+                <div class="row mt-2 mb-2 justify-content-center">
+                    <div class="col-auto btn btn-sm btn-primary" onclick="setMeetingLocation()">
+                        <span class="fw-bold" >여기서 만나요</span>
+                        <span><i class="fi fi-rr-hand-heart bi-align-center"></i></span>
                     </div>
                 </div>
             </div>
         </div>
-        
-
     </div>
+    
+
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>       
 </body>

@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>결제진행</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7319aff03174c9825e5552818af66d19&libraries=services"></script>
+    <script src="/public/js/lockLikeMobile.js"></script>
+    <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
+
+<script>
+
+    var relativePath = window.location.origin;
+    var sessionUser = "[[${session.sessionUserInfo.user_id}]]";
+
+    // 내 포인트
+    function loadMyPoint(){
+
+        fetch("./loadMyPoint")
+        .then(response => response.json())
+        .then(response => {
+
+            var sum = response.data;
+            
+            const totalPoint = document.getElementById("totalPoint");
+            totalPoint.innerText = sum.toLocaleString();
+
+        });
+    }
+
+    // 상금 버튼
+    function addReward(input){
+
+        var pointInput = document.querySelector(".point");
+
+        var currentValue = isNaN(parseFloat(pointInput.value)) ? 0 : parseFloat(pointInput.value);
+
+        pointInput.value = (currentValue + input).toFixed(0);
+
+        checkReward(pointInput);
+    }
+
+    // 가격 입력 시, 1000원 이상 입력 필요
+    function checkReward(input) {
+
+        var minWarning = document.querySelector(".minWarning");
+
+        var inputValue = input.value;
+
+        if (!isNaN(inputValue)) {
+            
+            let inputNumber = parseInt(inputValue, 10);
+
+            if (inputNumber >= 1000) {
+                minWarning.classList.add("d-none");
+            } else {
+                minWarning.classList.remove("d-none");
+            }
+
+        } else {
+            input.value = '';
+        }
+    }
+
+    function chargePoint(){
+
+        const point = document.querySelector(".point").value;
+
+        const data = {
+            detail: '포인트 충전',
+            point_plus_minus: point,
+            user_id: sessionUser
+        }
+
+        fetch("./chargePoint", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+                sendKakaoPayReq(response.data);
+        });
+    }
+
+
+    // 카카오페이 토큰 요청
+    function sendKakaoPayReq(res) {
+
+        const approval_url = relativePath + `/mission/paymentPointSuccessPage`;
+        const cancel_url = relativePath + `/mission/paymentPointCancelPage`;
+        const fail_url = relativePath + `/mission/paymentPointFailPage`;
+
+        const data = new URLSearchParams();
+        data.append("cid", "TC0ONETIME");
+        data.append("partner_user_id", res.partner_user_id);
+        data.append("partner_order_id", res.partner_order_id);
+        data.append("item_code", res.item_code);
+        data.append("item_name", res.item_name);
+        data.append("quantity", res.quantity);
+        data.append("total_amount", res.total_amount);
+        data.append("tax_free_amount", res.tax_free_amount);
+        data.append("approval_url", approval_url);
+        data.append("cancel_url", cancel_url);
+        data.append("fail_url", fail_url);
+
+        fetch("https://kapi.kakao.com/v1/payment/ready", {
+            method: "POST",
+            headers: {
+                "Authorization": "KakaoAK fe6556cbcccecbec99f52226077803d7",
+                "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+            },
+            body: data
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    window.location.href = response.next_redirect_pc_url;
+                } else {
+                    window.location.href =response.next_redirect_mobile_url;
+                }
+
+                insertKakaoPayRes(response);
+                saveKakaoPayAccReqInfoToSession(res, response);
+            });
+
+    }
+
+    // 카카오페이 결제 정보 불러오기 위한요소들 세션에 저장
+    function saveKakaoPayAccReqInfoToSession(req, res) {
+
+        const data = {
+            cid: req.cid,
+            tid: res.tid,
+            partner_order_id: req.partner_order_id,
+            partner_user_id:  req.partner_user_id
+        }
+
+        fetch("./saveKakaoPayAccReqInfoToSession", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
+    }
+
+    // 카카오페이 요청, 응답 값 인서트
+    function insertKakaoPayRes(res) {
+
+        const data = {
+            tid: res.tid,
+            next_redirect_mobile_url: res.next_redirect_mobile_url,
+            created_at: res.created_at
+        };
+
+        fetch("./insertKakaoPayResInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        loadMyPoint();
+    });
+
+    
+
+</script>
+<style>
+    
+    .word {
+        width: 1em;
+        font-size: 1em;
+        font-weight: regular !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    *{font-family: -apple-system, 
+        BlinkMacSystemFont, 
+        "Apple SD Gothic Neo", 
+        "Pretendard Variable", 
+        Pretendard, Roboto, 
+        "Noto Sans KR", 
+        "Segoe UI",
+        "Malgun Gothic", 
+        "Apple Color Emoji", 
+        "Segoe UI Emoji", 
+        "Segoe UI Symbol", 
+        sans-serif;
+        letter-spacing: 0.03em;
+    }
+
+</style>
+</head>
+
+<body>
+    <div class="container-fluid" style="overflow: hidden;">
+        <div class="row">
+            <div class="col px-0">
+
+                <div class="row py-2 border-bottom border-dark-subtle fixed-top" style="height: 3.3rem; background-color: white; width: 100%; margin: auto;">
+                    <div class="col-2 fw-semibold text-secondary text-start align-self-center" style="font-size:1.1rem" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left ms-1"></i>
+                    </div>
+                    <div class="col fw-semibold text-secondary text-center align-self-center" style="font-size:1.15rem; letter-spacing: 0.08rem;">
+                        포인트 충전
+                    </div>
+                    <div class="col-2 fw-semibold text-secondary text-end align-self-center" style="font-size:1.1rem">
+                        
+                    </div>
+                </div>
+
+                <!--코드 시작-->
+                <div class="row" style="margin-top: 4.2rem;">
+                    <div class="col">
+
+                        <div class="row rounded-3" 
+                            style="margin-left: 1.1rem; margin-right: 1.1rem; font-size: 0.85rem; color: #5e5e5e; padding-top: 0.1rem; padding-bottom: 0.15rem; background-color: #f5f5f5;">
+                            <div class="col">
+                                <i class="bi bi-database me-1"></i>
+                                현재 보유 포인트
+                            </div>
+                            <div class="col text-end">
+                                <span id="totalPoint" class="fw-semibold" style="letter-spacing: 0.1em;"></span>
+                                <span>P</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 px-3">
+                            <div class="col fw-semibold" style="font-size:0.95em; color: #444444;">
+                                충전할 포인트
+                            </div>
+                        </div>
+                        <div class="row mt-2 px-3">
+                            <div class="col">
+                                <input type="text" class="point form-control rounded-0 py-2" placeholder="직접 입력" style="font-size:0.9em;" onInput="checkReward(this)">
+                                <span class="minWarning text-body-tertiary" style="font-size:0.78em;">
+                                    ※ 최소 충전 금액은 1000원 입니다.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row py-2 px-3">
+                            <div class="col d-grid">
+                                <div class="gap-2 d-md-block">
+                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(1000)">+1000</button>
+                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(3000)">+3000</button>
+                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(5000)">+5000</button>
+                                    <button class="btn btn-sm rounded-0 border-0 px-2 me-1" style="background-color: #f7f7f7;" onclick="addReward(10000)">+10000</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 px-3">
+                            <div class="col d-grid">
+                                <div id="registerMissionBtn" type="button" class="btn fw-semibold rounded-1 px-5 border-0"
+                                    style="background-color: #FEE500;" onclick="chargePoint()">
+                                    <img class="img-fluid align-self-center" src="/public/image/commons/payment_icon_yellow_small.png" style="height: 1.8rem;">
+                                    <span class="pe-2 fw-semibold align-top align-middle align-self-center" style="color: #191919; font-size: 1.18rem;">결제</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row fixed-bottom" style="margin: auto;">
+                            <div class="col px-0">
+                                <div class="row" style="background-color: #f1f1f1; font-size: 0.7rem; color: #5e5e5e; margin: auto; bottom: 0;">
+                                    <div class="col py-3 mb-4 px-3">
+                                        <div class="mb-2 fw-semibold">포인트 충전 시 유의사항</div>
+                                        <div class="mb-1">⋅ 포인트 보유/구매/사용 내역은 마이페이지에서 확인하실 수 있습니다.</div>
+                                        <div class="mb-1">⋅ 정당한 이유 없이 반복하여 환불을 신청할 경우 결제수단을 남용하는 경우에 해당하여 환불이 제한될 수 있습니다.</div>
+                                        <div>⋅ 포인트 결제 시 해당 서비스의 이용 약관을 반드시 확인해 주세요.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+        
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
