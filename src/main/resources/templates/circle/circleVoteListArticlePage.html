@@ -342,9 +342,6 @@
             box-shadow: 0 0 15px rgba(185, 185, 185, 0.4); /* 그림자 효과 추가 */
             /* 추가적인 스타일 속성을 여기에 추가할 수 있습니다. */
         }
-        .mainContent{
-            min-height: 75em;
-        }
         
         
         
@@ -356,7 +353,7 @@
         투표제목, 투표주제, 항목내용 
     -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid mainContent" style="background-color: rgb(247,247,247);">
+    <div class="container-fluid mainContent" style="background-color: rgb(251,251,251);">
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -389,7 +386,7 @@
                         </div>
                         <div class="row">
                             <div class="col btn-group-vertical justify-content-center align-items-center" role="group" aria-label="Vertical radio toggle button group"><!-- Wrapper가 들어갈곳-->
-                                <div id="listInsert" class="row row-cols-2">
+                                <div id="listInsert" class="row row-cols-2" style="margin-bottom: 15%;">
 
                                 </div>
                             </div>
@@ -416,9 +413,9 @@
         </div>
     </div>
     <div id="Wrapper" class="row d-none rounded-3 mt-2">
-        <div class="voteWrapper col rounded-3 border" style="padding-left: 0%; padding-right: 0%; padding-top: 0%; background-color: white;">
+        <div class="voteWrapper col rounded-3" style="padding-left: 0%; padding-right: 0%; padding-top: 0%; background-color: white; border: 0.3em solid rgb(251,251,251);">
             <!-- 테스트1 --><input type="radio" class="radiobutton form-check custom-radio btn-check" name="vbtn-radio" autocomplete="off">
-            <label class="labelbutton btn btn-outline-warning" style="border: 0.01em solid#f3f3f3;">
+            <label class="labelbutton btn btn-outline-warning" style="border: 0.01em solid rgb(251,251,251);">
             <div class="row py-1 rounded-3 justify-content-center align-items-center">
                 <div class="col image-container rounded-3">
                     <img class="responsive-img option_image img-fluid rounded-3">

@@ -1183,9 +1183,6 @@ public class CircleService {
             
         }
         
-        
-
-
         return list;
     }
     
@@ -1236,8 +1233,19 @@ public class CircleService {
         return list;
     }
     public void circleMemberDeleteByCircleMemberId(int circle_member_id){
-        
+        // 여기서 모든걸 삭제하시면 됩니다.. .. 이 동아리 회원과 관련된 모든 정보들을.. 결제내역은 내가 책임안진다.. 확인잘하고 하도록
+        circleSqlMapper.circleNoticeImageDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleBoardImageDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleVoteOptionDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleScheduleAttendanceDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleBoardDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleVoteDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleVoteCompleteDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleBoardLikeDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleScheduleDeleteByCircleMemberId(circle_member_id);
+        circleSqlMapper.circleScheduleApplicationDeleteByCircleMemberId(circle_member_id);
         circleSqlMapper.circleMemberDeleteByCircleMemberId(circle_member_id);
+
     }
     public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id){
 
@@ -1246,6 +1254,11 @@ public class CircleService {
     public void circleMemberChangeAByCircleMemberId(int circle_member_id){
 
         circleSqlMapper.circleMemberChangeAByCircleMemberId(circle_member_id);
+
+    }
+    public void circleMemberChangeMByCircleMemberId(int circle_member_id){
+
+        circleSqlMapper.circleMemberChangeMByCircleMemberId(circle_member_id);
     }
     
 }
