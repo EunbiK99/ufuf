@@ -218,7 +218,7 @@ public class MissionMapRestController {
         return restResponseDto;
     }
 
-    @GetMapping("loadMissionList")
+    @GetMapping("restApi/loadMissionList")
     public RestResponseDto loadMissionList(){
 
         RestResponseDto restResponseDto = new RestResponseDto();
@@ -230,7 +230,7 @@ public class MissionMapRestController {
     }
 
 
-    @PostMapping("getMissionDetail")
+    @PostMapping("restApi/getMissionDetail")
     public RestResponseDto getMissionDetail(@RequestBody String mission_id, HttpSession session){
 
         RestResponseDto restResponseDto = new RestResponseDto();

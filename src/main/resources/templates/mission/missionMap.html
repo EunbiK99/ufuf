@@ -191,7 +191,7 @@
         const startBtn = document.getElementById("startBtn");
         startBtn.classList.add("d-none");
 
-        fetch("./loadMissionList")
+        fetch("./restApi/loadMissionList")
             .then(response => response.json())
             .then(response => {
 

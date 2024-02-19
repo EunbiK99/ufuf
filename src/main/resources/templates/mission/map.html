@@ -300,7 +300,6 @@
             }
         });
 
-
         getNowLocation(function(locPosition) {
             map.relayout();
             map.panTo(locPosition);
@@ -311,7 +310,7 @@
         const missionListBox = document.getElementById("missionListBox");
         missionListBox.innerHTML = "";
 
-        fetch("./loadMissionList")
+        fetch("./restApi/loadMissionList")
             .then(response => response.json())
             .then(response => {
 
@@ -438,7 +437,7 @@
             mission_id: mission_id
         };
 
-        fetch("./getMissionDetail", {
+        fetch("./restApi/getMissionDetail", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
