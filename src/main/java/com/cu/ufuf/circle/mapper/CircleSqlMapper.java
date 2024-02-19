@@ -282,6 +282,20 @@ public interface CircleSqlMapper {
     public void circleMemberDeleteByCircleMemberId(int circle_member_id);
     public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id);
 
-    // 동아리회원 관리자로 바꿔주기
+    // 동아리회원 관리자로 바꿔주기 + 반대 회원으로 바꾸기 && 동아리에 관한 모든정보 삭제
     public void circleMemberChangeAByCircleMemberId(int circle_member_id);
+    public void circleMemberChangeMByCircleMemberId(int circle_member_id);
+    public void circleNoticeImageDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardImageDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteOptionDeleteByCircleMemberId(int circle_member_id);
+    public void circleVoteCompleteDeleteByCircleMemberId(int circle_member_id);
+    public void circleBoardLikeDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleApplicationDeleteByCircleMemberId(int circle_member_id);
+    public void circleScheduleAttendanceDeleteByCircleMemberId(int circle_member_id);
+    
+
+    
 }

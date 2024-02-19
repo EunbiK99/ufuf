@@ -17,6 +17,16 @@
 
     <script>
 
+    function insertIdAndPassword(){
+        const userIdInput = document.getElementById("userid");
+        console.log('userIdInput: ', userIdInput);
+        userIdInput.value = "ufuf";
+
+        const passwordInput = document.getElementById("password");
+        passwordInput.value = "0000";
+
+    }
+
     var relativePath = window.location.origin;
 
     Kakao.init('7319aff03174c9825e5552818af66d19');
@@ -136,6 +146,10 @@
 
     }
 
+    document.addEventListener("DOMContentLoaded", ()=>{
+        insertIdAndPassword();
+    });
+
     
 
     </script>
@@ -191,13 +205,13 @@
                         <form action="./loginProcess" method="post">
                         <div class="row mt-5">
                             <div class="col mt-2">
-                                <input type="text" name ="userid"
+                                <input id="userid" type="text" name ="userid"
                                     class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder=" 아이디" style="font-size:1.12em;">
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <input type="password" name="password"
+                                <input id="password" type="password" name="password"
                                     class="form-control border-top-0 border-start-0 border-end-0 rounded-0 py-2" placeholder=" 비밀번호" style="font-size:1.12em;">
                             </div>
                         </div>
