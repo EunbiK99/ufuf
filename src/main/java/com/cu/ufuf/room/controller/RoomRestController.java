@@ -28,14 +28,14 @@ import com.cu.ufuf.room.service.RoomServiceIpml;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/room")
+@RequestMapping("/room/*")
 public class RoomRestController {
 
     @Autowired
     private RoomServiceIpml roomService;
 
 
-    @RequestMapping("toggleInterestRoom")
+    @RequestMapping("restApi/toggleInterestRoom")
 	public RestResponseDto toggleInterestRoom(HttpSession session, InterestRoomDto params,@RequestParam("roomInfoId") String roomInfoId) {
 		RestResponseDto restResponseDto = new RestResponseDto();
 		
@@ -54,7 +54,7 @@ public class RoomRestController {
 		return restResponseDto;
 	}
 	
-	@RequestMapping("getTotalInterestCount")
+	@RequestMapping("restApi/getTotalInterestCount")
 	public RestResponseDto getTotalInterestCount(@RequestParam("roomInfoId") String roomInfoId) {
 		RestResponseDto restResponseDto = new RestResponseDto();
 		
@@ -87,7 +87,7 @@ public class RoomRestController {
 		return restResponseDto;
 	}
 
-	@RequestMapping("getReviewList")
+	@RequestMapping("restApi/getReviewList")
     public RestResponseDto getReviewList() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -97,7 +97,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-    @RequestMapping("getReviewListForMain")
+    @RequestMapping("restApi/getReviewListForMain")
     public RestResponseDto getReviewListForMain() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -107,7 +107,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-    @RequestMapping("getMyId")
+    @RequestMapping("restApi/getMyId")
 	public RestResponseDto getMyId(HttpSession session) {
 		RestResponseDto restResponseDto = new RestResponseDto();
 		
@@ -124,7 +124,7 @@ public class RoomRestController {
 		return restResponseDto;
 	}
 
-	@RequestMapping("getRoomList")
+	@RequestMapping("restApi/getRoomList")
     public RestResponseDto getRoomList() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -134,7 +134,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-    @RequestMapping("getRoomListForMain")
+    @RequestMapping("restApi/getRoomListForMain")
     public RestResponseDto getRoomListForMain() {
         RestResponseDto restResponseDto = new RestResponseDto();
         
@@ -144,7 +144,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-	@RequestMapping("getRoomListForSearch")
+	@RequestMapping("restApi/getRoomListForSearch")
     public RestResponseDto getRoomListForSearch(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
         RestResponseDto restResponseDto = new RestResponseDto();
 
@@ -159,7 +159,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-    @RequestMapping("getRoomListForSearchAndChargeDesc")
+    @RequestMapping("restApi/getRoomListForSearchAndChargeDesc")
     public RestResponseDto getRoomListForSearchAndChargeDesc(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
         System.out.println("getRoomListForSearchAndChargeDesc 실행");
         RestResponseDto restResponseDto = new RestResponseDto();
@@ -173,7 +173,7 @@ public class RoomRestController {
         return restResponseDto;
 	}
 
-    @RequestMapping("getRoomListForSearchAndChargeAsc")
+    @RequestMapping("restApi/getRoomListForSearchAndChargeAsc")
     public RestResponseDto getRoomListForSearchAndChargeAsc(@RequestParam(required = false) String searchWord,@RequestParam(required = false) Integer peopleCount,@RequestParam(required = false) LocalDate startSchedule,@RequestParam(required = false)LocalDate endSchedule) {
         RestResponseDto restResponseDto = new RestResponseDto();
 

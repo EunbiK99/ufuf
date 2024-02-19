@@ -104,11 +104,11 @@
                 const activeButton = document.querySelector('.btn-link.active');
                 console.log("activeButton : ", activeButton);
                 if (activeButton.textContent === "· 가격 높은순") {
-                    url = `./getRoomListForSearchAndChargeDesc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+                    url = `./restApi/getRoomListForSearchAndChargeDesc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
                 } else if (activeButton.textContent === "· 가격 낮은순") {
-                    url = `./getRoomListForSearchAndChargeAsc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+                    url = `./restApi/getRoomListForSearchAndChargeAsc?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
                 } else if(activeButton.textContent === "· 최신순"){
-                    url = `./getRoomListForSearch?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
+                    url = `./restApi/getRoomListForSearch?searchWord=${searchWord}&peopleCount=${peopleCount}&startSchedule=${startSchedule}&endSchedule=${endSchedule}`;
                 }
 
                 console.log("url : "+ url);
