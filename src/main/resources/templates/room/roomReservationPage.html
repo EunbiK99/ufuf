@@ -172,7 +172,7 @@
             left: 50%;
             top: 47px;
             transform: translateX(-50%);
-            font-size: 12px;
+            font-size: 10px;
             width: 120%;
             color: var(--blue);
         }
@@ -751,45 +751,54 @@
 
                     <!--일정-->
                     <div class="row mt-4 ms-2 fw-bold text-secondary">예약 일정</div>
-                    <div class="row px-0">
+                    <div class="row calendar-wrap">
                         <div class="col">
-                            <div class="row calendar-wrap">
+                            <div class="row calendar-middle-wrap" style="width: 100%;">
+                                <div class="cal_nav">
+                                    <a href="javascript:;" class="nav-btn go-prev"></a>
+                                    <span class="year-month start-year-month"></span>
+                                    <a href="javascript:;" class="nav-btn go-next"></a>
+                                </div>
+                                <div class="cal_wrap">
+                                    <div class="days">
+                                    <div class="day">일</div>
+                                    <div class="day">월</div>
+                                    <div class="day">화</div>
+                                    <div class="day">수</div>
+                                    <div class="day">목</div>
+                                    <div class="day">금</div>
+                                    <div class="day">토</div>
+                                    </div>
+                                    <div class="dates start-calendar"></div>
+                                </div>
+                            </div>
+        
+        
+                        </div>
+                    </div>
+                            
+                    <div class="row ms-1 checkInOutInfo">
+                        <div class="col me-0 text-center" style="align-items: center; width: 100%;">
+                            <div class="row" style="width: 100%;">
                                 <div class="col">
-                                    <div class="row calendar-middle-wrap" style="width: 100%;">
-                                        <div class="cal_nav">
-                                            <a href="javascript:;" class="nav-btn go-prev"></a>
-                                            <span class="year-month start-year-month"></span>
-                                            <a href="javascript:;" class="nav-btn go-next"></a>
-                                        </div>
-                                        <div class="cal_wrap">
-                                            <div class="days">
-                                            <div class="day">일</div>
-                                            <div class="day">월</div>
-                                            <div class="day">화</div>
-                                            <div class="day">수</div>
-                                            <div class="day">목</div>
-                                            <div class="day">금</div>
-                                            <div class="day">토</div>
-                                            </div>
-                                            <div class="dates start-calendar"></div>
+                                    <div class="row">
+                                        <div class="col text-center fw-bold ms-2" style=" font-size: 1.1em;">
+                                            체크인
                                         </div>
                                     </div>
-                
-                
-                                    <div class="row checkInOutInfo ms-2 text-center" style="width: 100%;">
-                                        <div class="col ms-3">
-                                            <div class="row text-center">
-                                                <div class="col text-center ms-2">
-                                                    <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">체크인</div>
-                                                    <div class="row mt-2 text-center" name="start_reservation_schedule" id="check_in_day"></div>
-                                                </div>
-                                                <div class="col-1 mt-4 pt-2 ms-0 me-2">~</div>
-                                                <div class="col text-center">
-                                                    <div class="row fw-bold text-center ms-2 ps-2" style="align-items: center; font-size: 1.1em;">체크아웃</div>
-                                                    <div class="row mt-2 text-center" name="end_reservation_schedule" id="check_out_day" style="align-items: center;"></div>
-                                                </div>
-                                            </div>
+                                    <div class="row ms-0">
+                                        <div class="col mt-2 me-1 text-center" name="start_reservation_schedule" id="check_in_day"></div>
+                                    </div>
+                                </div>
+                                <div class="col-1 mt-4 pt-2 ms-0 me-2">~</div>
+                                <div class="col text-center">
+                                    <div class="row">
+                                        <div class="col text-center fw-bold ms-2" style="align-items: center; font-size: 1.1em;">
+                                            체크아웃
                                         </div>
+                                    </div>
+                                    <div class="row ms-0">
+                                        <div class="col mt-2 me-1 text-center" name="end_reservation_schedule" id="check_out_day"></div>
                                     </div>
                                 </div>
                             </div>

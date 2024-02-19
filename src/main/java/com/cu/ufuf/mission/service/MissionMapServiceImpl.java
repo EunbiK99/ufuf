@@ -90,7 +90,7 @@ public class MissionMapServiceImpl {
         return missionPaymentService.kakaoPayReq(orderInfoDto, itemId, totalReward);
     }
 
-    // 미션 등록
+    // 포인트로 미션 등록
     public void submitMissionByPoint(MissionRegRequestDto missionRegRequestDto){
 
         missionMapSqlMapper.insertMission(missionRegRequestDto.getMissionInfoDto());

@@ -49,8 +49,6 @@
         })
             .then(response => response.json())
             .then(response => {
-
-                loadPaymentInfo(response);
                 insertKakaoPayAccRes(response);
             });
             
@@ -185,7 +183,7 @@
                                 <a href="#" style="color: #e26b09">마이페이지&gt;포인트 내역</a>에서  확인하실 수 있습니다.
                             </div>
                         </div>
-                        <div class="row mt-1">
+                        <div class="row mt-2">
                             <div class="col text-secondary" style="font-size:0.9em">
                                 충전하신 포인트로 어푸어푸를 더 재미있게 즐겨보세요!
                             </div>

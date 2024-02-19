@@ -1488,7 +1488,7 @@ public class CircleRestController {
         return responseDto;
 
     }
-    // circleMemberDelete 동아리 맴버테이블 삭제
+    // circleMemberDelete 동아리 맴버테이블 삭제 ==> 여기서 동아리 회원관련 모든정보 삭제 투표한기록, 투표글삭제(투표항목삭제) 일정글삭제 일정신청삭제 게시글 좋아요삭제
     @RequestMapping("circleMemberDelete")
         public RestResponseDto circleMemberDelete(@RequestParam("circle_member_id") int circle_member_id){
         
@@ -1519,6 +1519,18 @@ public class CircleRestController {
         RestResponseDto responseDto = new RestResponseDto();
         
         circleService.circleMemberChangeAByCircleMemberId(circle_member_id);
+
+        responseDto.setResult("success");
+        
+        return responseDto;
+    }
+    // circleMemberChangeM
+    @RequestMapping("circleMemberChangeM")
+        public RestResponseDto circleMemberChangeM(@RequestParam("circle_member_id") int circle_member_id){
+        
+        RestResponseDto responseDto = new RestResponseDto();
+        
+        circleService.circleMemberChangeMByCircleMemberId(circle_member_id);
 
         responseDto.setResult("success");
         

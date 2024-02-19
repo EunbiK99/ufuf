@@ -69,7 +69,7 @@ public class MissionPaymentServiceImpl {
 
         merchanSqlMapper.insertKakaoPayReqInfoWithCid(kakaoPaymentReqDto);
 
-        return kakaoPaymentReqDto;
+        return kakaoPaymentReqDto; 
     }
 
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto){

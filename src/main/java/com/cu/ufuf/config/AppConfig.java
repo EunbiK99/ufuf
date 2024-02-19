@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.cu.ufuf.login.interceptor.SessionInterceptor;
 import com.cu.ufuf.meeting.interceptor.MeetingInterceptor;
 
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -43,8 +44,23 @@ public class AppConfig implements WebMvcConfigurer{
             .excludePathPatterns("/meeting/errorPage/**")            
             .excludePathPatterns("/meeting/api/**")            
             ;
+        
+        registry.addInterceptor(new SessionInterceptor())
+            .addPathPatterns("/**")
+            .excludePathPatterns("/login/**")
+            .excludePathPatterns("/commons/**")
+            .excludePathPatterns("/circle/restApi**")
+            .excludePathPatterns("/circle/circleMainPage**")
+            .excludePathPatterns("/room/restApi**")
+            .excludePathPatterns("/room/roomMainPage**")
+            .excludePathPatterns("/room/roomListPage**")
+            .excludePathPatterns("/room/roomDetailPage**")
+            .excludePathPatterns("/mission/map**")
+            .excludePathPatterns("/mission/restApi/**")
+            .excludePathPatterns("/public/**")
+            ;
     }
-    
+
 
 }
 

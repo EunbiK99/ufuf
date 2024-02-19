@@ -87,7 +87,7 @@
         function roomList(){
             // 처음에 초기화
             document.querySelector("#roomListBox").innerHTML = "";
-            const url = "./getRoomListForMain";
+            const url = "./restApi/getRoomListForMain";
             
             fetch(url)
             .then(response => response.json())
@@ -132,7 +132,7 @@
         function reviewList(){
             // 처음에 초기화
             document.querySelector("#reviewListBox").innerHTML = "";
-            const url = "./getReviewListForMain";
+            const url = "./restApi/getReviewListForMain";
             
             fetch(url)
             .then(response => response.json())
@@ -360,6 +360,25 @@
             <div class="col ps-0 pt-2 mt-1 pe-0 me-0">
                 <a href="../commons/mainPage" class="ms-3 me-2 pt-2"><img src="/public/image/room/ufuf_logo.png" class="img-fluid" style="width: 2.5em; height: auto;"></a>
                 <span class="ps-0 me-0 ms-0 pt-2 mt-4 text-secondary">유니비앤비</span>
+            </div>
+            <div class="col text-end mt-2 pt-1 me-1">
+                <span th:if="${session.sessionUserInfo ==null}">
+                    <a class="text-secondary" onclick="window.location.href='../login/loginPage'" style="text-decoration: none;">로그인</a>
+                </span>
+
+                <span th:if="${session.sessionUserInfo !=null}">
+                    <div class="dropdown-end">
+                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style=" text-decoration: none;">
+                            <span class="text-secondary" th:text="|${session.sessionUserInfo.name}|"></span>
+                            <span class="text-secondary"><i class="bi bi-person-circle"></i></span>
+                        </a>
+                        <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
+                            <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>
+                            <li><a class="dropdown-item text-secondery"  onclick="window.location.href='./myPage'" style="font-size: 0.9em;">마이페이지</a></li>
+                        </ul>
+                    </div>
+                </span>
+                
             </div>
         </div>
 

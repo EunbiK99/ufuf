@@ -113,7 +113,23 @@
                     const gender = UserInfoOne.querySelector(".gender").innerText = "여";
                 }
                 
-                UserInfoOne.setAttribute("onclick",`modalShow(${JSON.stringify(e)})`)
+                const clickDelete = UserInfoOne.querySelector(".clickDelete")
+                clickDelete.setAttribute("onclick", `modalShow(${JSON.stringify(e)})`)
+                const changePosition = UserInfoOne.querySelector(".changePosition")
+                if(e.circleMemberDto.circle_position == "A"){
+                    changePosition.innerText = "관리자 해임"
+                    changePosition.style.backgroundColor = "white"
+                    changePosition.style.color = "rgb(80, 49, 255)"
+                    changePosition.style.border = "0.01em solid rgb(80, 49, 255)"
+                    changePosition.setAttribute("onclick", `circleMemberChangeM(${e.circleMemberDto.circle_member_id})`)
+                }else if(e.circleMemberDto.circle_position == "M"){
+                    changePosition.innerText = "관리자 임명"
+                    changePosition.style.backgroundColor = "rgb(80, 49, 255)"
+                    changePosition.style.color = "white"
+                    changePosition.setAttribute("onclick", `circleMemberChangeA(${e.circleMemberDto.circle_member_id})`)
+                }
+                
+                
                
 
                 const listInsert = document.querySelector("#listInsert")
@@ -123,14 +139,58 @@
 
         })
         }
-        // 모달창을 띄우고 거기서 동아리 회원 삭제 가입신청테이블에서 삭제 + 
-        // 
+        // 관리자로 변경
+        const circleMemberChangeA = (circle_member_id) => {
+
+            $.ajax({
+                url: `./circleMemberChangeA?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    location.reload();
+
+                }
+            })
+
+        }
+        // 다시 맴버로 변경
+        const circleMemberChangeM = (circle_member_id) => {
+
+            $.ajax({
+                url: `./circleMemberChangeM?circle_member_id=${circle_member_id}`,
+                dataType: `json`,
+                success: (response) => {
+
+                    location.reload();
+
+                }
+            })
+
+        }
+        // 모달창을 띄우고 거기서 동아리 회원 삭제 가입신청테이블에서 삭제 
         const modalShow = (element) => {
-            console.log(element);// 이 요소를 모달에 표시
+
+            const modalManagement = document.querySelector("#modalManagement")
+            const username = modalManagement.querySelector(".username")
+            username.innerText = element.userInfoDto.name
+            const hhh = modalManagement.querySelector(".hhh")
+            hhh.removeAttribute("onclick")
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!나중에 풀어야할것
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!더미데이터 다 쓰고 꼭 풀자!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //hhh.setAttribute("onclick",`circleMemberDelete(${element.circleJoinApplyDto.circle_join_apply_id}, ${element.circleMemberDto.circle_member_id})`)
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!더미데이터 다 쓰고 꼭 풀자!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!나중에 풀어야할것
+            hhh.setAttribute("onclick","hhhh()");
             const modal = bootstrap.Modal.getOrCreateInstance("#modalManagement");
             modal.show();
 
         }
+        // 버튼 잠시막기
+        const hhhh = () => {
+            alert("어휴 진ㅉㅏ 기어코 누르네 ㄴㅐㄱㅏ 그럴줄알고 버튼 막아놨다 밤길 조심해라.")
+        }
+
+        // 삭제 1
         const circleMemberDelete = (circle_join_apply_id, circle_member_id) => {
 
             $.ajax({
@@ -138,16 +198,21 @@
                 dataType: `json`,
                 success: (response) => {
 
+                    circleJoinApplyDelete(circle_join_apply_id);
+
                 }
             })
 
         }
-        const circleJoinApplyDelete = (circle_join_apply_id, circle_member_id) => {
+        // 삭제 2
+        const circleJoinApplyDelete = (circle_join_apply_id) => {
 
             $.ajax({
                 url: `./circleJoinApplyDelete?circle_join_apply_id=${circle_join_apply_id}`,
                 dataType: `json`,
                 success: (response) => {
+
+                    location.reload();
 
                 }
             })
@@ -267,6 +332,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-1"></div>
+                    <div class="col-5 d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
+                        <button class="btn fw-semibold changePosition"></button>
+                    </div>
+                    <div class="col-5 d-grid"><!-- onclick  가입거절은 그냥 안누르면 가입거절.. -->
+                        <button class="btn fw-semibold clickDelete" style="background-color: rgb(255, 62, 62);color: rgb(255, 255, 255);">회원 제명</button>
+                    </div>
+                    <div class="col-1"></div>
                 </div>
             </div>
             
@@ -556,24 +631,39 @@
         <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
           <div class="modal-content px-0 py-0">
             <div class="modal-header">
-              <h5 class="modal-title">회원 관리</h5>
+              <h5 class="modal-title">회원 제명</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col">
-                        
+                    <div class="col fw-semibold text-center">
+                        <span class="username" style="color: #fb7928;"></span>님과 관련된 모든 동아리 정보들이 삭제됩니다.
                     </div>
-                    
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center fs-5">
+                        정말로 제명하시겠습니까?
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center" style="color: red;">
+                        @ 아직 제명 누르지마 제발!! @
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center" style="color: red;">
+                        제명누르면 제가 쌓아온 예쁜더미데이터가 날라가요..
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col fw-semibold text-center fs-3" style="color: red;">
+                        제발/제발/제발/제발/제발
+                    </div>
                 </div>
             </div>    
             <div class="modal-footer" style="text-decoration-line: none;">
-                <button type="button" class="btn fw-semibold " style="background-color: #fb7928;color: white;" onclick="(() => {
-                    location.href = './circleListPage'
-                })()">동아리 가입</button>
-                <button type="button" class="btn btn-secondary fw-semibold" style="color: #fb7928; background-color: white; border-color: #fb7928;" onclick="(() => {
-                    location.href = './myCircleListPage'
-                })()">내 동아리</button>
+                <button type="button" class="btn fw-semibold hhh" style="background-color: rgb(255, 62, 62);color: white;">회원 제명</button>
+                <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal" style="color: white;">닫기</button>
             </div>
           </div>
         </div>
