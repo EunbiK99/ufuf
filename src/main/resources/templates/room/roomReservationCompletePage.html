@@ -95,9 +95,9 @@
             roomData.cid = "TC0ONETIME";
             roomData.item_name = "ufuf게스트하우스예약";
             roomData.total_amount =  roomData.reservationCharge;
-            roomData.approval_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
-            roomData.fail_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentFail?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
-            roomData.cancel_url = `https://ufuf.null-pointer-exception.com/room/roomPaymentCancel?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
+            roomData.approval_url = `https://localhost:8888/room/roomPaymentSuccess?partner_order_id=${roomData.order_id}`;
+            roomData.fail_url = `https://localhost:8888/room/roomPaymentFail?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
+            roomData.cancel_url = `https://localhost:8888/room/roomPaymentCancel?partner_order_id=${roomData.order_id}$room_guest_id=${roomData.guestId}`;
             console.log(roomData);
 
             const requestData = new URLSearchParams({
