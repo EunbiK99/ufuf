@@ -49,7 +49,7 @@
         left: 0; /* 왼쪽에 배치합니다. */
         width: 100%; /* 화면 전체 너비를 사용합니다. */
         height: 14em; /* 원하는 높이를 지정합니다. */
-        background-color: #ff9a47; /* 주황색 배경을 지정합니다. */
+        background: linear-gradient(to bottom, #ff8147, #ffa25b, #ffbf6c); /* 주황색 배경을 지정합니다. */
     }
 
     .carousel-indicators {
@@ -57,15 +57,43 @@
         bottom: -3em; /* 조절 가능한 값 */
         left: 50%;
         transform: translateX(-120%);
-        
     }
-    </style>
-    <script>
-        // 주황색 배경 요소 선택
-        const orangeBackground = document.querySelector('.orange-background');
 
-        // z-index 값 설정
-        orangeBackground.style.zIndex = '1';
+
+
+
+
+
+    </style>
+
+    <script>
+
+        window.addEventListener("DOMContentLoaded", () => {
+
+            // 주황색 배경 요소 선택
+            const orangeBackground = document.querySelector('.orange-background');
+            // z-index 값 설정
+            orangeBackground.style.zIndex = '0';
+
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if (isMobile) {
+
+                const title = document.querySelectorAll(".title");
+                title.forEach(title => {
+                    title.style.fontSize = "0.9rem";
+                });
+                
+            } else {
+                const menuBtns = document.querySelectorAll(".menuBtn");
+                menuBtns.forEach(btn => {
+                    btn.style.height = "9rem";
+                });
+
+            }
+
+        });
+
     </script>
 
 </head>
@@ -73,7 +101,7 @@
 <body style="z-index: -30;">
     <script src="/public/js/lockLikeMobile.js"></script>
     
-    <div class="container-fluid" style="position: relative; z-index: 100;">
+    <div class="container-fluid" style="position: relative; z-index: 100; padding-bottom: 4.5rem;">
         <div class="row" style="z-index: 1;">
             <div class="orange-background" style=" position: absolute;"></div>
         </div>
@@ -117,10 +145,10 @@
                 <div class="row">
                     <div id="carouselExampleIndicators" class="carousel slide">
                         <div class="carousel-indicators">
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4" style="border-radius: 50%; height: 0.4em; width: 0.4em; background-color: #ff9a47;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
                         </div>
                         <div class="carousel-inner">
                           <div class="carousel-item active" data-bs-interval="10000">
@@ -146,163 +174,243 @@
                         </button>
                       </div>
                 </div>
-
-               
-                
             </div>
         </div>
-         <!--여백용-->
-         <div class="row m-4 pt-2"></div>
 
-         <div class="row mx-2">
-             <div onclick="window.location.href='../mission/map'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                 <div class="row">
-                     <div class="col-3 mt-2 ms-2">
-                         <img src="/public/image/commons/map_icon.png" class="img-fluid">
-                     </div>
-                     <div class="col">
-                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                 유니미션
-                             </div>
-                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                         </div>
-                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                             <div class="col">
-                                 의뢰를 해보고 미션도 수행해 보세요!<br>
-                                 미션을 수행하고 의뢰비를 받아가요!
-                             </div>    
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
 
-         <div class="row mt-3 mx-2" onclick="window.location.href='../meeting/mainPage'">
-             <div class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                 <div class="row">
-                     <div class="col-3 mt-2 ms-2">
-                         <img src="/public/image/commons/meeting_icon.png" class="img-fluid">
-                     </div>
-                     <div class="col">
-                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                 유니시그널
-                             </div>
-                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                         </div>
-                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                             <div class="col">
-                                 다들 어디서 그렇게 만나서 연애해?<br>
-                                 유니시그널에서 만나보자!
-                             </div>    
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-
-         <div class="row mt-3 mx-2">
-             <div class="col shadow border border-1 rounded py-2" onclick="window.location.href='../room/roomMainPage'" style="background-color: white; border-color: #ff9a47;">
-                 <div class="row">
-                     <div class="col-3 mt-2 ms-2">
-                         <img src="/public/image/commons/room_icon.png" class="img-fluid">
-                     </div>
-                     <div class="col">
-                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                 유니비앤비
-                             </div>
-                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                         </div>
-                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                             <div class="col">
-                                 잠깐 비는 내 자취방을<br>
-                                 게스트하우스로 개방해요!
-                             </div>    
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-
-         <div class="row mt-3 mx-2">
-             <div onclick="window.location.href='../circle/circleMainPage'" class="col shadow border rounded py-2" style="background-color: white; border-color: #ff9a47;">
-                 <div class="row">
-                     <div class="col-3 mt-2 ms-2">
-                         <img src="/public/image/commons/circle_icon.png" class="img-fluid">
-                     </div>
-                     <div class="col">
-                         <div class="row me-2 ms-1 border-bottom pb-1 border-secondery-subtle">
-                             <div class="col ps-0 fw-bold" style="color: #ff9a47;">
-                                 유니서클
-                             </div>
-                             <div class="col text-end" style="color: #ff9a47;">&gt;</div>
-                         </div>
-                         <div class="row ps-1 pt-2 pb-2 text-secondary" style="font-size: 0.8em;">
-                             <div class="col">
-                                 우리학교 동아리를<br>
-                                 유니서클에서 편하게 일정 정리하자!
-                             </div>    
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-
-        
-         
-            <!--여백용-->
-            <div class="row m-4 pt-4"></div>
-
-            <div class="row pt-2 pb-1 bg-white border-top border-secondary-subtle" style="position: fixed; bottom: 0; height: 3.4rem; z-index: 1000; width: 100%;">
-                <div class="col">
-                    <div class="row mt-0 pt-0">
-                        <div class="col mt-0 ms-1" onclick="window.location.href='../mission/map'">
-                            <div class="row text-center">
-                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class=" bi bi-map text-secondary"></i></a> 
+        <div class="row px-2" style="margin-top: 2.5rem;">
+            <div class="col-6 signal" style="padding-left: 1.2rem; padding-right: 1.1rem;">
+                <div class="row border rounded menuBtn shadow-sm px-0" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../mission/map'">
+                    <div class="col">
+                        <div class="row px-2">
+                            <div class="col-3 d-flex px-1">
+                                <img src="/public/image/commons/map_icon.png" class="img-fluid" style="height: 1.6em;">
                             </div>
-                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                                <div class="col">미션</div>
+                            <div class="col">
+                                <div class="row border-secondery-subtle align-self-center">
+                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
+                                        유니미션
+                                    </div>
+                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col" onclick="window.location.href='../meeting/mainPage'"c>
-                            <div class="row text-center">
-                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-heart text-secondary"></i></a> 
-                            </div>
-                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                                <div class="col">미팅</div>
-                            </div>
+                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.95rem;  color: #a3a3a3;">
+                            <div class="col">
+                                유저들의 미션을 수행해보세요!
+                            </div>    
                         </div>
-        
-                        <!--홈-->
-                        <div class="col ms-1" style="padding-top: 0.02rem;">
-                            <img src="/public/image/commons/logo_fill.png" class="img-fluid" style="width: 2.5em; height: 2.5em;"  onclick="window.location.href='./mainPage'">
-                           
-                        </div>
-        
-                        <div class="col" onclick="window.location.href='../room/roomMainPage'">
-                            <div class="row text-center">
-                                <a style=" text-decoration: none; padding-top: 0.1rem;"><i class="bi bi-houses text-secondary"></i></a> 
-                            </div>
-                            <div class="row text-secondary text-center" style="font-size: 0.75em; padding-top: 0.07rem;">
-                                <div class="col">숙박</div>
-                            </div>
-                        </div>
-                        <div class="col me-2 mb-2" onclick="window.location.href='../circle/circleMainPage'">
-                            <div class="row text-center pt-0">
-                                <!--임시로 방 글쓰기 페이지로 이어짐니다-->
-                                <a style=" text-decoration: none; padding-top: 0rem;"><i class=" bi bi-people text-secondary" style="font-size: 1.1em;"></i></a> 
-                            </div>
-                            <div class="row text-secondary text-center mt-0 py-0" style="font-size: 0.75em; padding-top: 0rem;">
-                                <div class="col">서클</div>
+                        <div class="row">
+                            <div class="col">
+                                <img src="/public/image/commons/mission.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-6 signal" style="padding-left: 1.1rem; padding-right: 1.2rem;">
+                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../meeting/mainPage'">
+                    <div class="col">
+                        <div class="row px-2" style="height: 1.6em;">
+                            <div class="col-3 d-flex px-1">
+                                <img src="/public/image/commons/meeting_icon.png" class="img-fluid" style="height: 1.4rem;">
+                            </div>
+                            <div class="col">
+                                <div class="row border-secondery-subtle align-self-center">
+                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
+                                        유니시그널
+                                    </div>
+                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.77rem; color: #a3a3a3;">
+                            <div class="col">
+                                유니시그널에서 만나자!
+                            </div>    
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <img src="/public/image/commons/meeting.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                
+        <div class="row px-2" style="margin-top: 0.8rem;">
+            <div class="col-6 signal" style="padding-left: 1.2rem; padding-right: 1.1rem;">
+                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../room/roomMainPage'">
+                    <div class="col">
+                        <div class="row px-2">
+                            <div class="col-3 d-flex px-1">
+                                <img src="/public/image/commons/room_icon.png" class="img-fluid" style="height: 1.6em;">
+                            </div>
+                            <div class="col">
+                                <div class="row border-secondery-subtle align-self-center">
+                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
+                                        유니비앤비
+                                    </div>
+                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.5rem; color: #a3a3a3;">
+                            <div class="col">
+                                내 자취방을 게스트 하우스로!
+                            </div>    
+                        </div>
+                        <div class="row">
+                            <div class="col px-1">
+                                <img src="/public/image/commons/room.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 signal" style="padding-left: 1.1rem; padding-right: 1.2rem;">
+                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../circle/circleMainPage'">
+                    <div class="col">
+                        <div class="row px-2" style="height: 1.6em;">
+                            <div class="col-3 d-flex px-1">
+                                <img src="/public/image/commons/circle_icon.png" class="img-fluid" style="height: 1.4rem;">
+                            </div>
+                            <div class="col">
+                                <div class="row border-secondery-subtle align-self-center">
+                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
+                                        유니써클
+                                    </div>
+                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.5rem; color: #a3a3a3;">
+                            <div class="col">
+                                우리 학교 동아리 찾으러 go!
+                            </div>    
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <img src="/public/image/commons/circle.jpg" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 자유게시판 -->
+        <div class="row px-2">
+            <div class="col mx-2">
+
+                <div class="row mt-3 border-bottom border-dark-subtle">
+                    <div class="col px-1 mt-1 fw-semibold px-2 py-1 align-self-center" style="font-size: 0.9em; color: #6d6967;">
+                        자유게시판
+                    </div>
+                    <div class="col-2 text-end align-self-center" style="font-size: 0.9em; color: #807b79;">
+                        <i class="bi bi-plus"></i>
+                    </div>
+                </div>
+                <div class="row py-2 border-bottom">
+                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
+                        오늘 너희 학교 학식 뭐 나왔는지 적고가
+                    </div>
+                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
+                        <i class="bi bi-chat me-2"></i>12
+                    </div>
+                </div>
+                <div class="row py-2 border-bottom">
+                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
+                        새내기들에게 주는 꿀팁 !!!!!!!!
+                    </div>
+                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
+                        <i class="bi bi-chat me-2"></i>5
+                    </div>
+                </div>
+                <div class="row py-2 border-bottom">
+                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
+                        아 동아리 뭐 들어가지? 추천좀
+                    </div>
+                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
+                        <i class="bi bi-chat me-2"></i>8
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        
+        <div class="footer row bg-white border-top fixed-bottom">
+            <div class="col">
+                <div class="row text-secondary text-center py-1" style="height: 3.4rem;">
+                    <div class="col ps-2">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/map'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-map"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                미션
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="col px-0">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../meeting/mainPage'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-heart"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                미팅
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="col px-0 mx-1">
+                        <div class="row">
+                            <div class="col px-0">
+                                <img id="ufuf" src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2.5em; margin-top: 0.16rem;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col px-0">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../room/roomMainPage'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-houses"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                숙박
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <div class="col pe-2">
+                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../circle/circleMainPage'">
+                        <div class="row">
+                            <div class="col px-0">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col px-0" style="font-size:0.75em;">
+                                서클
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         
     </div>
