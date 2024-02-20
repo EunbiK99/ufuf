@@ -96,14 +96,14 @@
             <div class="col-1"></div> 
         </div>
         <!--여백-->
-        <div class="row p-4 mt-4"></div>
+        <div class="row p-4"></div>
 
         
 
         <div class="row mt-3" th:each="room : ${roomList}" style="width: 100%;">
             <div class="col">
                 
-                <div class="row mt-3 border border-secondery-subtle rounded bg-white ms-2 mt-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
+                <div class="row mt-2 border border-secondery-subtle rounded bg-white ms-2" th:if="${session.sessionUserInfo.user_id==room.roomInfoDto.user_id}">
                     <div class="col">
                         
                         <div class="row pt-2 pb-3 px-1">
