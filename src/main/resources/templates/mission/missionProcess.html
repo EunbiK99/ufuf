@@ -1399,7 +1399,6 @@
 
     #missionComplModal{
         top: 7%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
@@ -1414,31 +1413,26 @@
 
     #missionConfirmModal{
         top: 10%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #missionAppListModal{
         top: 15%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #recheckAccPlayerModal{
         top: 30%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #writeReviewModal{
         top: 9%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
     #viewReviewModal{
         top: 9%;
-        left: 2.5%;
         overflow-wrap: break-word;
     }
 
@@ -1737,7 +1731,7 @@
 
 <!-- 미션 완료 작성 모달 -->
 <div id="missionComplModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
                 <div class="row mt-3">
@@ -1782,7 +1776,7 @@
 
 <!-- 미션 완료 인증 확인 모달 -->
 <div id="missionConfirmModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
                 <div class="row mt-3">
@@ -1817,13 +1811,18 @@
 </div>
 
 <!-- 미션 신청자 목록 모달 -->
-<div id="missionAppListModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+<div id="missionAppListModal" class="modal">
+    <div class="modal-dialog shadow" style="width: 90%; margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-2">
-                    <div class="col mt-1">
-                        <div class="row border-bottom pb-2">
+                    <div class="col pe-2 d-flex justify-content-end">
+                        <span onclick="closeMissionAppListModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row border-bottom  border-dark-subtle pb-2">
                             <div class="row">
                                 <div class="col fw-semibold text-secondary">
                                     미션 신청자 목록
@@ -1835,16 +1834,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-1">
-                            <div id="appListBox" class="col overflow-y-sccroll border-bottom" style="height: 10rem;">
+                        <div class="row mt-1 mb-3">
+                            <div id="appListBox" class="col overflow-y-sccroll" style="height: 10rem;">
 
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer border-0 mb-2 d-grid pt-1">
-                <button class="btn px-3 rounded-1 py-1" type="button" style="color: #FF8827; border: 0.1rem solid #FF8827; font-size: 0.85rem;" onclick="closeMissionAppListModal()">닫기</button>
             </div>
         </div>
     </div>
@@ -1867,7 +1863,7 @@
 
 <!-- 미션 신청자 수락시 재확인 모달 -->
 <div id="recheckAccPlayerModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body pb-0 px-3">
                 <div class="row pt-3">
@@ -1894,7 +1890,7 @@
 
 <!-- 미션 리뷰 작성 모달 -->
 <div id="writeReviewModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-3">
@@ -1963,7 +1959,7 @@
 
 <!-- 미션 리뷰 열람 모달 -->
 <div id="viewReviewModal" class="modal">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-3">
