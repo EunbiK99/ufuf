@@ -1815,17 +1815,15 @@
     <div class="modal-dialog shadow" style="width: 90%; margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
-                <div class="row mt-2">
-                    <div class="col pe-2 d-flex justify-content-end">
-                        <span onclick="closeMissionAppListModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col">
-                        <div class="row border-bottom  border-dark-subtle pb-2">
-                            <div class="row">
+                        <div class="row border-bottom border-dark-subtle pb-2">
+                            <div class="row mt-2">
                                 <div class="col fw-semibold text-secondary">
                                     미션 신청자 목록
+                                </div>
+                                <div class="col justify-content-end text-end">
+                                    <span onclick="closeMissionAppListModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
                                 </div>
                             </div>
                             <div class="row">
@@ -1834,8 +1832,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-1 mb-3">
-                            <div id="appListBox" class="col overflow-y-sccroll" style="height: 10rem;">
+                        <div class="row mb-3 border-bottom border-dark-subtle">
+                            <div id="appListBox" class="col overflow-y-scroll" style="height: 14rem;">
 
                             </div>
                         </div>
