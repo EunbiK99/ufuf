@@ -314,15 +314,15 @@ public class MeetingServiceImpl {
 		parameters.add("total_amount", Integer.toString(kakaoPaymentReqDto.getTotal_amount()));
 		parameters.add("tax_free_amount", Integer.toString(kakaoPaymentReqDto.getTax_free_amount()));
 		
-        // // 집 IP
-        // parameters.add("approval_url", "https://61.79.125.156:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
-		// parameters.add("cancel_url", "https://61.79.125.156:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
-		// parameters.add("fail_url", "https://61.79.125.156:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
+        // 집 IP
+        parameters.add("approval_url", "https://61.79.125.156:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" + orderId); // 결제승인시 넘어갈 url
+		parameters.add("cancel_url", "https://61.79.125.156:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" + orderId); // 결제취소시 넘어갈 url
+		parameters.add("fail_url", "https://61.79.125.156:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" + orderId); // 결제 실패시 넘어갈 url
         
-        // 학원 IP
-        parameters.add("approval_url", "https://172.30.1.25:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
-		parameters.add("cancel_url", "https://172.30.1.25:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
-		parameters.add("fail_url", "https://172.30.1.25:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
+        // // 학원 IP
+        // parameters.add("approval_url", "https://172.30.1.25:8888/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url
+		// parameters.add("cancel_url", "https://172.30.1.25:8888/meeting/kakaoPayCancel?userId=" + userId + "&orderId=" +orderId); // 결제취소시 넘어갈 url
+		// parameters.add("fail_url", "https://172.30.1.25:8888/meeting/kakaoPayFail?userId=" + userId + "&orderId=" +orderId); // 결제 실패시 넘어갈 url
 
         // // 배포
         // parameters.add("approval_url", "https://ufuf.null-pointer-exception.com/meeting/kakaoPayApproval?userId=" + userId + "&orderId=" +orderId); // 결제승인시 넘어갈 url

@@ -477,13 +477,15 @@ function makeDetailPage(){
             meBadge.innerText = "Me";
             groupMemberNickname.appendChild(meBadge);
 
-            if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "N"){
-                const kakaoPayButton = groupMemberListRow.querySelector("#kakaoPayButton");
-                kakaoPayButton.classList.remove('d-none');
-            }
-            else if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "Y"){
-                const paidMember = groupMemberListRow.querySelector("#paidMember");
-                paidMember.classList.remove("d-none");
+            if(groupData.meetingGroupDto.groupMeetingStatus === "N"){
+                if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "N"){
+                    const kakaoPayButton = groupMemberListRow.querySelector("#kakaoPayButton");
+                    kakaoPayButton.classList.remove('d-none');
+                }
+                else if(groupData.meetingGroupDto.groupApplyStatus === "Y" && e.groupMemberDto.groupMemberPaymentStatus === "Y"){
+                    const paidMember = groupMemberListRow.querySelector("#paidMember");
+                    paidMember.classList.remove("d-none");
+                }
             }
         }
         GroupMemberListWrapperCol.appendChild(groupMemberListRow);

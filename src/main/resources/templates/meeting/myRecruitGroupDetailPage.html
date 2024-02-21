@@ -70,7 +70,7 @@
         /* 아래 CSS 모달 컨텐츠 표시*/
         position: absolute;
         width: 80%;
-        height: 34em;
+        height: auto;
         overflow-x: scroll;
         background-color: rgba(255,255,255);
         
@@ -430,14 +430,16 @@ function getMeetingGroupMemberList(){
             groupMemberListWrapperRow.appendChild(groupMemberListCol);
 
 
-            const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);
-            const checkUserNickname = userPaymentCheckListRow.querySelector("#checkUserNickname");
-            checkUserNickname.innerText = e.profileNickname;
-
-            const checkUserPaymentStatus = userPaymentCheckListRow.querySelector("#checkUserPaymentStatus");
-            const paymentStatusValue = e.groupMemberPaymentStatus;
-
+            
             if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "N"){
+
+                const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);
+                const checkUserNickname = userPaymentCheckListRow.querySelector("#checkUserNickname");
+                checkUserNickname.innerText = e.profileNickname;
+    
+                const checkUserPaymentStatus = userPaymentCheckListRow.querySelector("#checkUserPaymentStatus");
+                const paymentStatusValue = e.groupMemberPaymentStatus;
+                
                 if(paymentStatusValue === "Y"){
                     const checkIcon = document.createElement("i");
                     checkIcon.setAttribute("class", "fi fi-sr-check-circle bi-ailgn-middle text-success fw-bold")
@@ -453,20 +455,20 @@ function getMeetingGroupMemberList(){
                         kakaoPayButton.classList.remove("d-none");
                     }
                 }
+                groupMemberPaymentCheckWrapperCol.appendChild(userPaymentCheckListRow);
             }
-            else{
-                userPaymentCheckListRow.setAttribute("style", "background-color: white;");
-                const innerCol = userPaymentCheckListRow.querySelector(".col");
-                innerCol.innerHTML = "";
-                const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
-                const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
-                noApplyProfileInfoText.innerText = "이 미팅은 종료되었습니다.";
+        }
+        if(groupDetailInfo.meetingGroupDto.groupMeetingStatus === "Y"){            
+            const userPaymentCheckListRow = document.querySelector("#templete #userPaymentCheckListRow").cloneNode(true);            
+            userPaymentCheckListRow.setAttribute("style", "background-color: white;");
+            const innerCol = userPaymentCheckListRow.querySelector(".col");
+            innerCol.innerHTML = "";
+            const noApplyProfileRow = document.querySelector("#templete #noApplyProfileRow").cloneNode(true);
+            const noApplyProfileInfoText = noApplyProfileRow.querySelector("#noApplyProfileInfoText");
+            noApplyProfileInfoText.innerText = "이 미팅은 종료되었습니다.";
 
-                innerCol.appendChild(noApplyProfileRow);                
-            }
-
+            innerCol.appendChild(noApplyProfileRow);
             groupMemberPaymentCheckWrapperCol.appendChild(userPaymentCheckListRow);
-
         }
     });
 }
@@ -1134,11 +1136,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="col">
                     <div class="row">                        
                         <div class="col btn" role="button" onclick="moveGroupReviewPage()">
-                            <div class="row mt-2 mb-2">                         
+                            <!-- <div class="row mt-2 mb-2">                         
                                 <div class="col text-center">
                                     <span class="text-danger">난 성격에 문제있어서</span>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col text-center">                                    
                                     <span class="text-danger">아무도 뽑고싶지 않아요</span>
