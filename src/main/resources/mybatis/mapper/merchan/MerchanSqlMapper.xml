@@ -153,10 +153,10 @@
 </insert>
 
 <insert id="insertCardInfo">
-	inert into card_info(
         <selectKey keyProperty="card_id" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID() AS card_id
         </selectKey>
+	insert into card_info(
     	bin_,
         card_type,
         install_month,
@@ -166,7 +166,7 @@
     	#{bin},
         #{card_type},
         #{install_month},
-        #{approved_id},
+        #{approved_id}
     )
 </insert>
 
