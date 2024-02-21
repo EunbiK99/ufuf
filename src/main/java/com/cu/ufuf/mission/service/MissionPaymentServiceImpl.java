@@ -178,8 +178,6 @@ public class MissionPaymentServiceImpl {
         merchanSqlMapper.insertAmountInfo(amountDto);
         int amount_id = amountDto.getAmount_id();
 
-        System.out.println(params.getCard_info().getCard_type());
-
         if(params.getCard_info() != null){
             CardInfoDto cardDto = params.getCard_info();
 
