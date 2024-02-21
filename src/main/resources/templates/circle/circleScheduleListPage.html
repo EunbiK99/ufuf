@@ -135,18 +135,18 @@
             const people = ScheduleModal.querySelector(".people").innerText = element.circleScheduleDto.participation // 총 인원
             const person = ScheduleModal.querySelector(".person").innerText = element.applyPeopleCount // 신청한 인원
             const mypay = ScheduleModal.querySelector(".mypay").innerText = element.kakaoPaymentReqDto.total_amount // 내가 낸 회비
-            const orderNumber = ScheduleModal.querySelector(".orderNumber").innerText = element.kakaoPaymentAcceptResDto.partner_order_id // 주문번호
+            //const orderNumber = ScheduleModal.querySelector(".orderNumber").innerText = element.kakaoPaymentReqDto.partner_order_id // 주문번호
             const Stitle = ScheduleModal.querySelector(".Stitle").innerText = element.circleScheduleDto.schedule_title // 제목
             const Scontent = ScheduleModal.querySelector(".Scontent").innerText = element.circleScheduleDto.schedule_content // 내용
             const Saddress = ScheduleModal.querySelector(".Saddress").innerText = element.circleScheduleDto.schedule_address // 주소
             const schedulecancel = ScheduleModal.querySelector(".schedulecancel")
             schedulecancel.setAttribute("onclick", `kakaoPaymentCancel(${JSON.stringify(element)})`)
             
-            if(element.kakaoPaymentAcceptResDto.payment_method_type === "MONEY"){
-                const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "현금결제"
-            }else if(element.kakaoPaymentAcceptResDto.payment_method_type === "CARD"){
-                const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "카드결제"
-            }
+            // if(element.kakaoPaymentAcceptResDto.payment_method_type === "MONEY"){
+            //     const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "현금결제"
+            // }else if(element.kakaoPaymentAcceptResDto.payment_method_type === "CARD"){
+            //     const paymentType = ScheduleModal.querySelector(".paymentType").innerText = "카드결제"
+            // }
             
              // 결제타입 ==> MONEY CARD 로 출력
             
@@ -450,7 +450,7 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div id="listInsert" class="col">
+                    <div id="listInsert" class="col" style="margin-bottom: 15%;">
                         
                     </div>
                 </div>
@@ -506,17 +506,9 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            주문번호:
-                        </div>
-                        <div class="col orderNumber text-end">
-                            
-                        </div>
-                    </div>
                     <div class="row mt-2 align-items-center">
                         <div class="col">
-                            일정제목:
+                            일정제목
                         </div>
                         <div class="col Stitle text-end">
 
@@ -524,15 +516,15 @@
                     </div>
                     <div class="row mt-1 align-items-center">
                         <div class="col">
-                            일정내용:
+                            일정내용
                         </div>
-                        <div class="col Scontent text-end">
+                        <div class="col Scontent text-end" style="font-size: 0.7em;">
                             
                         </div>
                     </div>
                     <div class="row mt-1 align-items-center">
                         <div class="col-3">
-                            일정기간:
+                            일정기간
                         </div>
                         <div class="col text-end" style="font-size: 0.8em;">
                             <span class="start_time"></span> - <span class="end_time"></span>
@@ -540,7 +532,7 @@
                     </div>
                     <div class="row mt-2 align-items-center">
                         <div class="col">
-                            신청인원:
+                            신청인원
                         </div>
                         <div class="col text-end">
                             <span class="person" style="color: #fb7928;"></span> / <span class="people"></span>
@@ -548,15 +540,7 @@
                     </div>
                     <div class="row mt-1 align-items-center">
                         <div class="col">
-                            결제방식:
-                        </div>
-                        <div class="col text-end">
-                            <span class="paymentType"></span>
-                        </div>
-                    </div>
-                    <div class="row mt-1 align-items-center">
-                        <div class="col">
-                            결제금액:
+                            결제금액
                         </div>
                         <div class="col text-end">
                             <span class="mypay" style="color: red;"></span><span>원</span>
@@ -574,7 +558,7 @@
                     </div>
                     <div class="row">
                         <div class="col px-0"><!-- 일정에 주소좌표가 들어갈 예정 --> 
-                            <div id="map" style="width: 100%; height: 19em;"></div>
+                            <div id="map" style="width: 100%; height: 27em;"></div>
                         </div>
                     </div>
                 </div>
