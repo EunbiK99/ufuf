@@ -39,7 +39,16 @@
     let sessionUser = null;
 
     window.addEventListener("DOMContentLoaded", () => {
-        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        let ufufClicked = false;
+
+        const home = document.getElementById("home");
+        const secondLine = document.getElementById("secondLine");
+        const thirdLine = document.getElementById("thirdLine");
+        const mission = document.getElementById("mission");
+        const circle = document.getElementById("circle");
+        const signal = document.getElementById("signal");
+        const bnb = document.getElementById("bnb");
 
         document.getElementById("ufuf").addEventListener("click", function() {
             const container = document.querySelector(".footer");
@@ -50,57 +59,81 @@
                 container.style.zIndex = "250";
                 container.style.transition = "all 0.2s";
 
-                document.getElementById("home").classList.remove("d-none");
-                document.getElementById("secondLine").classList.remove("d-none");
-                document.getElementById("thirdLine").classList.remove("d-none");
+                home.classList.remove("d-none");
+                secondLine.classList.remove("d-none");
+                thirdLine.classList.remove("d-none");
 
                 setTimeout(() => {
-                    document.getElementById("home").classList.add("clicked");
+                    home.classList.add("clicked");
                 }, 250);
 
                 setTimeout(() => {
-                    document.getElementById("secondLine").classList.add("clicked");
+                    secondLine.classList.add("clicked");
                     setTimeout(() => {
-                        document.getElementById("mission").classList.add("clicked");
+                        mission.classList.add("clicked");
                     }, 100);
                     setTimeout(() => {
-                        document.getElementById("circle").classList.add("clicked");
+                        circle.classList.add("clicked");
                     }, 200);
 
                 }, 90);
 
                 setTimeout(() => {
 
-                    document.getElementById("thirdLine").classList.add("clicked");
+                    thirdLine.classList.add("clicked");
 
                     setTimeout(() => {
-                        document.getElementById("signal").classList.add("clicked");
+                        signal.classList.add("clicked");
                     }, 50);
                     setTimeout(() => {
-                        document.getElementById("bnb").classList.add("clicked");
+                        bnb.classList.add("clicked");
                     }, 250);
 
                 }, 90);
+
             } else { // ufuf 버튼이 이미 클릭되어 있을 때
                 // 변경 취소
                 container.style.boxShadow = "none";
                 container.style.zIndex = "300";
                 container.style.transition = "none";
                 
-
-                document.getElementById("home").classList.add("d-none");
-                document.getElementById("secondLine").classList.add("d-none");
-                document.getElementById("thirdLine").classList.add("d-none");
-                document.getElementById("home").classList.remove("clicked");
-                document.getElementById("secondLine").classList.remove("clicked");
-                document.getElementById("thirdLine").classList.remove("clicked");
-                document.getElementById("mission").classList.remove("clicked");
-                document.getElementById("circle").classList.remove("clicked");
-                document.getElementById("signal").classList.remove("clicked");
-                document.getElementById("bnb").classList.remove("clicked");
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
             }
 
-            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+            ufufClicked = !ufufClicked;
+        });
+
+        // 화면을 클릭했을 때 변경된 스타일을 취소하는 기능
+        document.addEventListener("click", function(event) {
+            
+            if (event.target.id !== "ufuf") {
+                const container = document.querySelector(".footer");
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
+                
+                ufufClicked = false;
+            }
         });
     });
 	
@@ -300,7 +333,6 @@
             }
         });
 
-
         getNowLocation(function(locPosition) {
             map.relayout();
             map.panTo(locPosition);
@@ -311,7 +343,7 @@
         const missionListBox = document.getElementById("missionListBox");
         missionListBox.innerHTML = "";
 
-        fetch("./loadMissionList")
+        fetch("./restApi/loadMissionList")
             .then(response => response.json())
             .then(response => {
 
@@ -438,7 +470,7 @@
             mission_id: mission_id
         };
 
-        fetch("./getMissionDetail", {
+        fetch("./restApi/getMissionDetail", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -756,7 +788,7 @@
 
         map.setZoomable(true);
         map.setMinLevel(1);
-        map.setMaxLevel(5);
+        map.setMaxLevel(6);
 
         function updateNowLocation() {
 
@@ -877,7 +909,6 @@
 
     #missionApplyModal {
         top: 23.5%;
-        left: 5%;
     }
 
     #detailBottomBtn{
@@ -1132,7 +1163,7 @@
 
 <!-- 미션 수락 모달 -->
 <div id="missionApplyModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+    <div class="modal-dialog shadow" style="width: 90%; margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body pb-0 px-3">
                 <div class="row">
@@ -1174,8 +1205,8 @@
 </div>
 
 <!-- 미션 삭제 모달 -->
-<div id="missionDeleteModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;">
+<div id="missionDeleteModal" class="modal">
+    <div class="modal-dialog shadow" style="width: 90%; margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body pb-0 px-3">
                 <div class="row">

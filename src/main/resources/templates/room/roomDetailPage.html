@@ -74,7 +74,7 @@
         
         
         function getMyId(){
-            fetch("./getMyId")
+            fetch("./restApi/getMyId")
             .then(response => response.json())
             .then(response => {
                 myId = response.data;
@@ -92,7 +92,7 @@
                 return;
             }
             
-            fetch("./toggleInterestRoom?roomInfoId=" + roomInfoId)
+            fetch("./restApi/toggleInterestRoom?roomInfoId=" + roomInfoId)
             .then(response => response.json())
             .then(response => {
                 reloadTotalCount();
@@ -101,7 +101,7 @@
         }
         
         function reloadTotalCount(){
-            fetch("./getTotalInterestCount?roomInfoId=" + roomInfoId)
+            fetch("./restApi/getTotalInterestCount?roomInfoId=" + roomInfoId)
             .then(response => response.json())
             .then(response => {
                 const totalCountBox = document.getElementById("totalCountBox");
@@ -116,7 +116,7 @@
                 return;
             }
             
-            fetch("./isInterest?roomInfoId=" + roomInfoId)
+            fetch("./restApi/isInterest?roomInfoId=" + roomInfoId)
             .then(response => response.json())
             .then(response => {
                 

@@ -69,7 +69,7 @@ public class MissionPaymentServiceImpl {
 
         merchanSqlMapper.insertKakaoPayReqInfoWithCid(kakaoPaymentReqDto);
 
-        return kakaoPaymentReqDto;
+        return kakaoPaymentReqDto; 
     }
 
     public void insertKakaoPayResInfo(KakaoPaymentResDto kakaoPaymentResDto){
@@ -93,6 +93,7 @@ public class MissionPaymentServiceImpl {
 
         if(params.getCard_info() != null){
             CardInfoDto cardDto = params.getCard_info();
+
             merchanSqlMapper.insertCardInfo(cardDto);
             int card_id = cardDto.getCard_id();
             kakaoPaymentAcceptResDto.setCard_info(card_id);
@@ -179,6 +180,7 @@ public class MissionPaymentServiceImpl {
 
         if(params.getCard_info() != null){
             CardInfoDto cardDto = params.getCard_info();
+
             merchanSqlMapper.insertCardInfo(cardDto);
             int card_id = cardDto.getCard_id();
             kakaoPaymentAcceptResDto.setCard_info(card_id);

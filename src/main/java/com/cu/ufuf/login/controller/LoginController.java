@@ -339,7 +339,10 @@ public class LoginController {
         return "redirect:./welcomePage";
     }
 
-
+    @RequestMapping("loginRequired")
+    public String loginRequired(){
+        return "login/loginRequired";
+    }
 
 
 

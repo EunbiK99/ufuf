@@ -96,7 +96,7 @@
     
                         status.innerText = mission.missionInfoDto.status;
 
-                        if(mission.missionInfoDto.status != "진행중" || mission.missionInfoDto.status != "모집중"){
+                        if(mission.missionInfoDto.status != "미션진행중" && mission.missionInfoDto.status != "모집중"){
                             status.style.backgroundColor = "#a1a1a1";
                         }
     
@@ -128,8 +128,6 @@
         fetch("./loadMyResMission")
             .then(response => response.json())
             .then(response => {
-
-                console.log(response);
 
                 const myMissionListBox = document.getElementById("myMissionListBox");
                 myMissionListBox.innerHTML = "";
@@ -175,7 +173,7 @@
                             }else{
                                 progressPercent.innerText = mission.countChatRoom + ` 명 신청`;
                             }
-                        }else if(mission.missionInfoDto.status === "진행중"){
+                        }else if(mission.missionInfoDto.status === "미션진행중"){
                             progressPercent.innerText = mission.progressPercent + ` % 진행완료`;
                         }else{
                             progressPercent.innerText = mission.progressPercent + ` % 진행완료`;
@@ -183,7 +181,7 @@
 
                         status.innerText = mission.missionInfoDto.status;
 
-                        if(mission.missionInfoDto.status != "진행중" || mission.missionInfoDto.status != "모집중"){
+                        if(mission.missionInfoDto.status != "미션진행중" && mission.missionInfoDto.status != "모집중"){
                             status.style.backgroundColor = "#a1a1a1";
                         }
     
