@@ -94,13 +94,7 @@ public class MissionPaymentServiceImpl {
         if(params.getCard_info() != null){
             CardInfoDto cardDto = params.getCard_info();
 
-            CardInfoDto cardInfoDto = new CardInfoDto();
-            cardInfoDto.setApproved_id(cardDto.getApproved_id());
-            cardInfoDto.setBin(cardDto.getBin());
-            cardInfoDto.setCard_type(cardDto.getCard_type());
-            cardInfoDto.setInstall_month(cardDto.getInstall_month());
-
-            merchanSqlMapper.insertCardInfo(cardInfoDto);
+            merchanSqlMapper.insertCardInfo(cardDto);
             int card_id = cardDto.getCard_id();
             kakaoPaymentAcceptResDto.setCard_info(card_id);
         }else{
@@ -189,13 +183,7 @@ public class MissionPaymentServiceImpl {
         if(params.getCard_info() != null){
             CardInfoDto cardDto = params.getCard_info();
 
-            CardInfoDto cardInfoDto = new CardInfoDto();
-            cardInfoDto.setApproved_id(cardDto.getApproved_id());
-            cardInfoDto.setBin(cardDto.getBin());
-            cardInfoDto.setCard_type(cardDto.getCard_type());
-            cardInfoDto.setInstall_month(cardDto.getInstall_month());
-
-            merchanSqlMapper.insertCardInfo(cardInfoDto);
+            merchanSqlMapper.insertCardInfo(cardDto);
             int card_id = cardDto.getCard_id();
             kakaoPaymentAcceptResDto.setCard_info(card_id);
         }else{
