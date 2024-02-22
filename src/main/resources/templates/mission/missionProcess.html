@@ -188,18 +188,19 @@
 
                 if(mission.missionCourseList.length > 1){
 
-                    const container = 26.5 - mission.missionCourseList.length * 1.5;
+                    const map = document.getElementById("map");
 
-                    if(mission.missionCourseList.length >= 3 && mission.missionCourseList.length < 5){
-                        const map = document.getElementById("map");
-                        map.style.height = "75vh";
-                        map.style.top = "12rem";
-                    }else if(mission.missionCourseList.length = 5){
-                        const map = document.getElementById("map");
-                        map.style.height = "70vh";
+                    if(mission.missionCourseList.length == 3){
+                        map.style.height = "73vh";
                         map.style.top = "15rem";
+                    }else if(mission.missionCourseList.length == 4){
+                        map.style.height = "75vh";
+                        map.style.top = "17rem";
                     }
-    
+                    else if(mission.missionCourseList.length == 5){
+                        map.style.height = "70vh";
+                        map.style.top = "19rem";
+                    }
                 }
 
                 const missionCourseListBox = document.getElementById("missionCourseListBox");
@@ -337,7 +338,6 @@
                     accBtn.onclick = (function (applyer) {
                         return function () {
                             openRecheckAccPlayerModal(applyer);
-                            closeMissionAppListModal();
                         };
                     })(applyer);
 
@@ -368,6 +368,7 @@
             .then(response => response.json())
             .then(response => {
                 closeRecheckAccPlayerModal();
+                closeMissionAppListModal();
                 loadMyMissionInProgress(chatRoomId);
             });
     }
@@ -399,16 +400,18 @@
 
                 if(mission.courseInfoList.length > 1){
 
-                    const container = 26.5 - mission.courseInfoList.length;
+                    const map = document.getElementById("map");
 
-                    if(mission.courseInfoList.length >= 3 && mission.courseInfoList.length < 5){
-                        const map = document.getElementById("map");
-                        map.style.height = "75vh";
-                        map.style.top = "12rem";
-                    }else if(mission.courseInfoList.length = 5){
-                        const map = document.getElementById("map");
-                        map.style.height = "70vh";
+                    if(mission.courseInfoList.length == 3){
+                        map.style.height = "73vh";
                         map.style.top = "15rem";
+                    }else if(mission.courseInfoList.length == 4){
+                        map.style.height = "75vh";
+                        map.style.top = "17rem";
+                    }
+                    else if(mission.courseInfoList.length == 5){
+                        map.style.height = "70vh";
+                        map.style.top = "19rem";
                     }
 
                 }
@@ -427,9 +430,9 @@
 
                 if(mission.courseInfoList.length == mission.countCompleteCourse){
                     nowProcess.innerText = "미션 진행 완료";
-                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "진행중"){
+                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "미션진행중"){
                     nowProcess.innerText = ((mission.countCompleteCourse) + 1) + "코스 진행중";
-                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status != "진행중"){
+                }else if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status != "미션진행중"){
                     nowProcess.innerText = "미션 진행 종료";
                 }
 
@@ -439,7 +442,7 @@
 
                 var remainingTime = 0;
 
-                if(mission.missionInfoDto.status === "진행중"){
+                if(mission.missionInfoDto.status === "미션진행중"){
 
                     var timerId = setInterval(function () {
                         // 현재 시간 구하기
@@ -456,10 +459,10 @@
                             countdownElement.style.color = "#929292";
                             countdownElement.style.fontSize = "0.9rem";
     
-                            if(mission.courseInfoList.length != mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                            if(mission.courseInfoList.length != mission.countCompleteCourse){
                                 countdownElement.innerHTML = '미션실패';
                                 
-                            }else if(mission.courseInfoList.length == mission.countCompleteCourse && mission.missionInfoDto.status === "미션종료"){
+                            }else if(mission.courseInfoList.length == mission.countCompleteCourse){
                                 countdownElement.innerHTML = '미션완료';
                             }
     
@@ -480,7 +483,7 @@
                 }
  
                 // 타이틀에 미션포기 버튼 있? 없?
-                if(sessionUser == mission.missionChatRoomDto.user_id && mission.missionInfoDto.status === "진행중"){
+                if(sessionUser == mission.missionChatRoomDto.user_id && mission.missionInfoDto.status === "미션진행중"){
                     title.innerHTML = `${mission.missionInfoDto.title}
                                         <span class="dropdown">
                                             <button class="btn border-0 bg-white dropdown-toggle px-1 py-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -505,7 +508,7 @@
                     const course = mission.courseInfoList[i];
 
                     // 미션 현재 진행중&미션수행자&미션진행중
-                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"){
+                    if(mission.countCompleteCourse == i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "미션진행중"){
 
                         const inProgressWrapper = document.querySelector("#progressTemplete .inProgressWrapper").cloneNode(true);
                         const courseIndex = inProgressWrapper.querySelector(".courseIndex");
@@ -541,13 +544,13 @@
 
                             polyline.setMap(map);
                             const distance = polyline.getLength();
-
+///////////////////////////////////////////////////
                             successBtn.onclick = function () {
-                                if(distance <= 100){
+                            //     if(distance <= 100){
                                     openMissionComplModal(course);
-                                }else{
-                                    alert("코스 목표지점의 100m내 거리에서만 미션 완료인증이 가능합니다.");
-                                }
+                            //     }else{
+                            //         alert(`코스 목표지점의 100m내에서 미션 완료인증이 가능합니다.`);
+                            //     }
                             };
 
                         });
@@ -596,8 +599,8 @@
 
                     // 내가 등록자이고 미션 수행이 되지 않았을 경우 || 내가 미션 플레이어인데 아직 미션순서가 안왔고, 미션 진행중일 경우
                     }else if((mission.countCompleteCourse <= i && mission.missionChatRoomDto.user_id != sessionUser) 
-                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "진행중"
-                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status != "진행중")) ){
+                            || (mission.countCompleteCourse < i && mission.missionChatRoomDto.user_id == sessionUser && mission.missionInfoDto.status === "미션진행중"
+                            || (mission.countCompleteCourse <= i && mission.missionInfoDto.status != "미션진행중")) ){
                         const notInProgressWrapper = document.querySelector("#progressTemplete .notInProgressWrapper").cloneNode(true);
     
                         const courseIndex = notInProgressWrapper.querySelector(".courseIndex");
@@ -839,6 +842,7 @@
                 closeMissionComplModal();
                 loadMyMissionInProgress(chat_room_id);
         });
+        file = null;
     }
 
     // 미션완료 인증확인 모달
@@ -851,7 +855,7 @@
         const complete_img = document.querySelector("#missionConfirmModal .complete_img");
         const complete_comment = document.querySelector("#missionConfirmModal .complete_comment");
 
-        complete_img.setAttribute("src", `/uploadFiles/ufuf/chatImg${complete.complete_img}`);
+        complete_img.setAttribute("src", `/uploadFiles/ufuf/completeImg${complete.complete_img}`);
         complete_comment.innerText = complete.complete_comment;
 
         modal.show();
@@ -879,6 +883,7 @@
     function openRecheckAccPlayerModal(applyer){
 
         const modal = bootstrap.Modal.getOrCreateInstance("#recheckAccPlayerModal");
+        modal.show();
 
         const recheckAccPlayerModal = document.getElementById("recheckAccPlayerModal");
         const applyerName = document.querySelector("#recheckAccPlayerModal .applyerName");
@@ -890,8 +895,7 @@
                 accMissionApplyer(chatRoomId);
             };
         })(applyer.missionChatRoomDto.chat_room_id);
-
-        modal.show();
+        
     }
 
     // 신청자 선정 재확인 모달 닫기
@@ -942,6 +946,7 @@
             .then(response => response.json())
             .then(response => {
                 closeWriteReviewModal();
+                loadMyMissionInProgress(chat_room_id);
             });
     }
 
@@ -1422,17 +1427,17 @@
     }
 
     #recheckAccPlayerModal{
-        top: 30%;
+        top: 27.2%;
         overflow-wrap: break-word;
     }
 
     #writeReviewModal{
-        top: 9%;
+        top: 12%;
         overflow-wrap: break-word;
     }
 
     #viewReviewModal{
-        top: 9%;
+        top: 12%;
         overflow-wrap: break-word;
     }
 
@@ -1453,7 +1458,7 @@
                 <!-- 지도 -->
                 <div class="row" style="height: 100vh;">
                     <div class="col px-0">
-                        <div id="map" style="height: calc((var(--vh, 1vh) * 78)); top:10rem;">
+                        <div id="map" style="height: calc((var(--vh, 1vh) * 73)); top:12rem;">
                             
                         </div>
                     </div>
@@ -1484,7 +1489,7 @@
     <div class="col">
         <div class="row mt-3">
             <div class="col">
-                <i class="bi bi-x-lg fw-semibold text-body-tertiary" onclick="window.history.back();"></i>
+                <i class="bi bi-x-lg fw-semibold text-body-tertiary" onclick="window.location.href='./myMission'"></i>
             </div>
         </div>
 
@@ -1731,38 +1736,43 @@
 
 <!-- 미션 완료 작성 모달 -->
 <div id="missionComplModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
+    <div class="modal-dialog shadow" style="width: 90%; margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
+                <div class="row py-2 border-bottom">
+                    <div class="col fw-semibold text-body" style="font-size: 1.03rem;">
+                        미션코스 완료 인증
+                    </div>
+                </div>
                 <div class="row mt-3">
                     <div class="col mt-1">
                         <div class="row">
-                            <div class="col fw-semibold text-secondary">
-                                미션코스 완료인증 사진
+                            <div class="col fw-semibold text-secondary" style="font-size: 0.95rem;">
+                                완료인증 사진
                             </div>
                         </div>
                         <div class="row mt-1 px-1">
-                            <div class="col border d-flex justify-content-center mx-2 py-5">
+                            <div class="col border d-flex justify-content-center mx-2 py-5" style="background-color: #f7f7f7">
                                 <label for="complete_img">
-                                    <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 4.5em;">
+                                    <img class="img-fluid" id="loadImg" th:src="@{/public/image/commons/img_need_upload.png}" style="height: 10rem; ">
                                 </label>
                                 <input class="form-control border-dark-subtle" type="file" name="complete_img" id="complete_img" accept="image/*" style="display:none;" onchange="showSelectedImg(this);">
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col fw-semibold text-secondary">
-                                미션코스 완료 코멘트
+                            <div class="col fw-semibold text-secondary mt-1"  style="font-size: 0.95rem;">
+                                완료 코멘트
                             </div>
                         </div>
                         <div class="row mt-1">
                             <div class="col">
-                                <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em;"></textarea>
+                                <textarea class="form-control rounded-0" id="complete_comment" placeholder="코멘트를 입력해주세요" style="height: 7em; font-size:0.9em; background-color: #f7f7f7;"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-0 mb-2 d-grid">
+            <div class="modal-footer border-0 mb-2 d-grid pt-1">
                 <div class="gap-2 d-md-block">
                     <button class="btn px-3 rounded-1 me-1 py-1" type="button" style="border: 0.1em solid #e9ba95; color:#FF8827; font-size: 0.85rem;" onclick="closeMissionComplModal()">
                         취소
@@ -1779,11 +1789,16 @@
     <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
         <div class="modal-content rounded-2">
             <div class="modal-body px-3 pt-2">
+                <div class="row py-2 border-bottom">
+                    <div class="col fw-semibold text-body" style="font-size: 1.03rem;">
+                        미션코스 완료 인증
+                    </div>
+                </div>
                 <div class="row mt-3">
                     <div class="col mt-1">
                         <div class="row">
-                            <div class="col fw-semibold text-secondary">
-                                미션코스 완료인증 사진
+                            <div class="col fw-semibold text-secondary" style="font-size: 0.95rem;">
+                                완료인증 사진
                             </div>
                         </div>
                         <div class="row mt-1 px-1">
@@ -1792,12 +1807,12 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col fw-semibold text-secondary">
-                                미션코스 완료 코멘트
+                            <div class="col fw-semibold text-secondary mt-1 mx-1"  style="font-size: 0.95rem;">
+                                완료 코멘트
                             </div>
                         </div>
                         <div class="row mt-1">
-                            <div class="col complete_comment overflow-y-sccroll" style="font-size: 0.9rem; height: auto; max-height: 5rem;">
+                            <div class="col complete_comment overflow-y-sccroll mx-1" style="font-size: 0.85rem; height: auto; max-height: 5rem; color: #979797;">
                             </div>
                         </div>
                     </div>
@@ -1816,30 +1831,29 @@
         <div class="modal-content rounded-2">
             <div class="modal-body px-4 pt-2">
                 <div class="row mt-2">
-                    <div class="col pe-2 d-flex justify-content-end">
-                        <span onclick="closeMissionAppListModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col">
-                        <div class="row border-bottom  border-dark-subtle pb-2">
-                            <div class="row">
-                                <div class="col fw-semibold text-secondary">
-                                    미션 신청자 목록
+                        <div class="row border-bottom border-dark-subtle pb-2">
+                            <div class="col px-2">
+                                <div class="row">
+                                    <div class="col fw-semibold text-secondary">
+                                        미션 신청자 목록
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="font-size: 0.8rem; color: #a0a0a0;">
+                                        총 <span id="countApp"></span>명의 미션 신청자가 있습니다.
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col" style="font-size: 0.8rem; color: #a0a0a0;">
-                                    총 <span id="countApp"></span>명의 미션 신청자가 있습니다.
-                                </div>
+                            <div class="col-2 px-0 d-flex justify-content-end">
+                                <span onclick="closeMissionAppListModal()" class="close" id="close-modal"><i class="bi bi-x-lg fw-bold text-body-tertiary"></i></span>
                             </div>
                         </div>
-                        <div class="row mt-1 mb-3">
-                            <div id="appListBox" class="col overflow-y-sccroll" style="height: 10rem;">
+                        <div class="row mb-3 border-bottom border-dark-subtle">
+                            <div id="appListBox" class="col overflow-y-scroll" style="height: 15rem;">
 
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1863,8 +1877,8 @@
 
 <!-- 미션 신청자 수락시 재확인 모달 -->
 <div id="recheckAccPlayerModal" class="modal mx-auto">
-    <div class="modal-dialog shadow" style="width: 90%;  margin: auto;">
-        <div class="modal-content rounded-2">
+    <div class="modal-dialog shadow-lg" style="width: 80%;  margin: auto;">
+        <div id="recheckModal" class="modal-content rounded-2">
             <div class="modal-body pb-0 px-3">
                 <div class="row pt-3">
                     <div class="col text-center" style="font-size: 0.9rem;">
