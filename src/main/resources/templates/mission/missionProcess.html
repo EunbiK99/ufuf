@@ -946,8 +946,9 @@
             .then(response => response.json())
             .then(response => {
                 closeWriteReviewModal();
-                loadMyMissionInProgress(chat_room_id);
             });
+            
+            loadMyMissionInProgress(chat_room_id);
     }
 
     // 작성된 리뷰 열람 모달
@@ -1850,6 +1851,7 @@
 
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
