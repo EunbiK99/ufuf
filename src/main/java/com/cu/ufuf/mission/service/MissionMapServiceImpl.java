@@ -303,6 +303,15 @@ public class MissionMapServiceImpl {
                 </div>
             </div>
             """, lat, lng, playerName, title);
+
+        MissionChatDto missionChatDto = new MissionChatDto();
+        missionChatDto.setChat_room_id(missionChatRoomDto.getChat_room_id());
+        missionChatDto.setChat_category_id(3);
+        missionChatDto.setUser_id(userInfoDto.getUser_id());
+        missionChatDto.setMessage(text);
+        missionChatDto.setIs_read("N");
+
+        missionChatSqlMapper.insertChat(missionChatDto);
     }
 
 
@@ -415,7 +424,70 @@ public class MissionMapServiceImpl {
         missionMapSqlMapper.updateGiveup(chat_room_id);
         
         MissionInfoDto missionInfoDto = missionChatSqlMapper.selectMissionByChatRoom(chat_room_id);
-        missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션종료");
+        missionMapSqlMapper.updateStatus(missionInfoDto.getMission_id(), "미션포기");
+
+        MissionChatRoomDto missionChatRoomDto = missionChatSqlMapper.selectChatRoomByChatRoom(chat_room_id);
+        UserInfoDto userInfoDto = missionMapSqlMapper.selectUserById(missionChatRoomDto.getUser_id());
+
+        String playerName = userInfoDto.getName();
+        String title = missionInfoDto.getTitle();
+        int mission_id = missionInfoDto.getMission_id();
+
+        List<MissionCourseDto> missionCourseDtos = missionMapSqlMapper.selectCourseByMission(mission_id);
+        int lastIndex = missionCourseDtos.size()-1;
+
+        BigDecimal lat = missionCourseDtos.get(lastIndex).getLat();
+        BigDecimal lng = missionCourseDtos.get(lastIndex).getLng();
+
+        String text = String.format("""
+            <div class="row">
+                <div class="col px-0">
+                    <div id="staticMap" class="rounded-bottom-0 rounded-2 border-bottom border-dark-subtle" style="width: 14.85rem; height: 8rem;" onload="loadMap(%f, %f)">
+                    </div>
+                </div>
+            </div>
+            <div class="row py-3">
+                <div class="col">
+                    <div class="row">
+                        <div class="col" style="word-wrap: break-word;">
+                            ^alert!^%s님께서 "%s" 미션을 포기하셨습니다.<br>
+                            이번 미션은 종료됩니다<br> 
+                            ^alert!^
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col missionDetailBtn d-grid"></div>
+                    </div>
+                </div>
+            </div>
+            """, lat, lng, playerName, title);
+
+        MissionChatDto missionChatDto = new MissionChatDto();
+        missionChatDto.setChat_room_id(missionChatRoomDto.getChat_room_id());
+        missionChatDto.setChat_category_id(3);
+        missionChatDto.setUser_id(userInfoDto.getUser_id());
+        missionChatDto.setMessage(text);
+        missionChatDto.setIs_read("N");
+
+        missionChatSqlMapper.insertChat(missionChatDto);
+
+        missionMapSqlMapper.updateStatus(mission_id, "미션포기");
+
+        int user_id = missionInfoDto.getUser_id();
+
+        int sum = 0;
+
+        for(MissionCourseDto missionCourseDto : missionCourseDtos){
+            int reward = missionCourseDto.getReward();
+            sum = sum + reward;
+        }
+        
+        UserPointDto userPointDto = new UserPointDto();
+        userPointDto.setUser_id(user_id);
+        userPointDto.setPoint_plus_minus(sum);
+        userPointDto.setDetail("미션실패 환불");
+
+        missionMapSqlMapper.insertPoint(userPointDto);
     }
 
     // 내 미션 지원자 리스트
@@ -495,7 +567,6 @@ public class MissionMapServiceImpl {
         missionChatSqlMapper.insertChat(missionChatDto);
 
         missionMapSqlMapper.updateStatus(mission_id, "미션진행중");
-
     }
 
     // 미션 리뷰 작성
@@ -839,6 +910,10 @@ public class MissionMapServiceImpl {
         missionMapSqlMapper.insertPoint(userPointDto);
 
         missionMapSqlMapper.deleteMission(mission_id);
+    }
+
+    public void deleteNotPayMission(){
+        missionMapSqlMapper.deletePayRegMission();
     }
 
 

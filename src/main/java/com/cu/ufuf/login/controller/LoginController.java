@@ -346,11 +346,7 @@ public class LoginController {
 
 
 
-    @RequestMapping("aaa")
-    public String aaa(HttpSession session, Model model){
 
-        return "login/aaa";
-    }
 
 
 }

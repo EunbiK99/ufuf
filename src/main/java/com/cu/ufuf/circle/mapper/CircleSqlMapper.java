@@ -207,7 +207,7 @@ public interface CircleSqlMapper {
     // 동아리 내가 일정신청한 리스트를 가져옴 && 스케쥴id로 상품테이블 가져옴 && item테이블정보 상품pk로
     public List<CircleScheduleApplyDto> circleScheduleApplyByUserId(int user_id);
     public ItemInfoDto itemInfoByCircleScheduleId(int circle_schedule_id);
-    public OrderInfoDto orderInfoByItemId(int item_id);
+    public OrderInfoDto orderInfoByItemIdAndUserId(@Param("item_id")int item_id, @Param("user_id") int user_id);
 
     // 카카오페이 결제요청 내역 상품pk로 가져오기 && 결제응답도 상품pk로 가져옴
     public KakaoPaymentReqDto kakaoPaymentReqInfoByItemId(String order_id);
@@ -283,6 +283,7 @@ public interface CircleSqlMapper {
     public void circleJoinApplyDeleteByCircleJoinApplyId(int circle_join_apply_id);
 
     // 동아리회원 관리자로 바꿔주기 + 반대 회원으로 바꾸기 && 동아리에 관한 모든정보 삭제
+    // 함부로 삭제하지 말 것
     public void circleMemberChangeAByCircleMemberId(int circle_member_id);
     public void circleMemberChangeMByCircleMemberId(int circle_member_id);
     public void circleNoticeImageDeleteByCircleMemberId(int circle_member_id);

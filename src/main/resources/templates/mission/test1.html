@@ -98,321 +98,33 @@
 
 </head>
 
-<body style="z-index: -30;">
-    <script src="/public/js/lockLikeMobile.js"></script>
+<body>
     
     <div class="container-fluid" style="position: relative; z-index: 100; padding-bottom: 4.5rem;">
-        <div class="row" style="z-index: 1;">
-            <div class="orange-background" style=" position: absolute;"></div>
-        </div>
-        <!--/* 임시 탑 에어리어 */-->
-        <div id="top-navi" class="row" style="z-index: 1001; position: relative;">
+        <div class="row">
             <div class="col">
-                <div class="row mt-2 pb-3 align-content-center">
-                    <div class="col">
-                        <div class="row justify-content-between">
-                            <div class="col-auto">
-                                <img src="/public/image/commons/ufuf_white_logo.png" class="img-fluid" style="width: 3em; height: auto;">
-                            </div>
-                            <div class="col-auto mt-1">
-                                <span th:if="${session.sessionUserInfo ==null}">
-                                    <a onclick="window.location.href='../login/loginPage'" style="color: white; text-decoration: none;">로그인</a>
-                                </span>
-
-                                <span th:if="${session.sessionUserInfo !=null}">
-                                    <div class="dropdown-end">
-                                        <a type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; text-decoration: none;">
-                                            <span class="text-white" th:text="|${session.sessionUserInfo.name}|"></span>
-                                            <span class="text-white" style="color: #ff9a47;"><i class="bi bi-person-circle"></i></span>
-                                        </a>
-                                        <ul class="dropdown-menu mb-2" style=" z-index: 1000;">
-                                            <li><a class="dropdown-item text-secondery" onclick="window.location.href='../login/logoutProcess'" style="font-size: 0.9em;">로그아웃</a></li>
-                                            <li><a class="dropdown-item text-secondery"  onclick="window.location.href='./myPage'" style="font-size: 0.9em;">마이페이지</a></li>
-                                        </ul>
-                                    </div>
-                                </span>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row"> 
-            <div class="col">
-                <!--캐러셀-->
                 <div class="row">
-                    <div id="carouselExampleIndicators" class="carousel slide">
-                        <div class="carousel-indicators">
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4" style="height: 0.25em; width: 0.9em; background-color: #ffac68;"></button>
-                        </div>
-                        <div class="carousel-inner">
-                          <div class="carousel-item active" data-bs-interval="10000">
-                            <img src="/public/image/commons/main_image_meeting.jpg" class="d-block w-100 img-fluid rounded-4">
-                          </div>
-                          <div class="carousel-item" data-bs-interval="10000">
-                            <img src="/public/image/commons/main_image_circle.jpg" class="d-block w-100 img-fluid rounded-4">
-                          </div>
-                          <div class="carousel-item" data-bs-interval="10000">
-                            <img src="/public/image/commons/main_image_mission.jpg" class="d-block w-100 img-fluid rounded-4">
-                          </div>
-                          <div class="carousel-item" data-bs-interval="10000">
-                            <img src="/public/image/commons/main_image_guest_house_2.jpg" class="d-block w-100 img-fluid rounded-4">
-                          </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Next</span>
-                        </button>
-                      </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row px-2" style="margin-top: 2.5rem;">
-            <div class="col-6 signal" style="padding-left: 1.2rem; padding-right: 1.1rem;">
-                <div class="row border rounded menuBtn shadow-sm px-0" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../mission/map'">
-                    <div class="col">
-                        <div class="row px-2">
-                            <div class="col-3 d-flex px-1">
-                                <img src="/public/image/commons/map_icon.png" class="img-fluid" style="height: 1.6em;">
-                            </div>
-                            <div class="col">
-                                <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
-                                        유니미션
-                                    </div>
-                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.95rem;  color: #a3a3a3;">
-                            <div class="col">
-                                유저들의 미션을 수행해보세요!
-                            </div>    
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <img src="/public/image/commons/mission.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
-                            </div>
-                        </div>
+                    <div class="col text-center fw-bold" style="font-size: 1.3rem;">
+                        UFUF
                     </div>
                 </div>
-            </div>
-            <div class="col-6 signal" style="padding-left: 1.1rem; padding-right: 1.2rem;">
-                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../meeting/mainPage'">
-                    <div class="col">
-                        <div class="row px-2" style="height: 1.6em;">
-                            <div class="col-3 d-flex px-1">
-                                <img src="/public/image/commons/meeting_icon.png" class="img-fluid" style="height: 1.4rem;">
-                            </div>
-                            <div class="col">
-                                <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
-                                        유니시그널
-                                    </div>
-                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.77rem; color: #a3a3a3;">
-                            <div class="col">
-                                유니시그널에서 만나자!
-                            </div>    
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <img src="/public/image/commons/meeting.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
-                            </div>
-                        </div>
+                <div class="row mt-2">
+                    <div class="col text-center" style="font-size: 0.9rem; color: #575757;">
+                        UFUF는 모바일에 최적화 되어있습니다.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center" style="font-size: 0.9rem; color: #636363;">
+                        아래 QR코드를 통해 모바일로 접속하실 수 있습니다.
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col d-flex justify-content-center">
+                        <img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid" style="height: 8rem;">
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row px-2" style="margin-top: 0.8rem;">
-            <div class="col-6 signal" style="padding-left: 1.2rem; padding-right: 1.1rem;">
-                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../room/roomMainPage'">
-                    <div class="col">
-                        <div class="row px-2">
-                            <div class="col-3 d-flex px-1">
-                                <img src="/public/image/commons/room_icon.png" class="img-fluid" style="height: 1.6em;">
-                            </div>
-                            <div class="col">
-                                <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
-                                        유니비앤비
-                                    </div>
-                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.5rem; color: #a3a3a3;">
-                            <div class="col">
-                                내 자취방을 게스트 하우스로!
-                            </div>    
-                        </div>
-                        <div class="row">
-                            <div class="col px-1">
-                                <img src="/public/image/commons/room.png" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 signal" style="padding-left: 1.1rem; padding-right: 1.2rem;">
-                <div class="row border rounded shadow-sm menuBtn" type="button" style="height: 7.8rem; padding-top: 0.63rem; padding-bottom: 0.5rem;" onclick="window.location.href='../circle/circleMainPage'">
-                    <div class="col">
-                        <div class="row px-2" style="height: 1.6em;">
-                            <div class="col-3 d-flex px-1">
-                                <img src="/public/image/commons/circle_icon.png" class="img-fluid" style="height: 1.4rem;">
-                            </div>
-                            <div class="col">
-                                <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-bold title ps-0" style="color: #fc8e45; letter-spacing: 0.03rem;">
-                                        유니써클
-                                    </div>
-                                    <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row pt-1" style="font-size: 0.68em; padding-bottom: 0.5rem; color: #a3a3a3;">
-                            <div class="col">
-                                우리 학교 동아리 찾으러 go!
-                            </div>    
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <img src="/public/image/commons/circle.jpg" class="img-fluid" style="opacity: 0.65; width: 100%; filter: saturate(80%);">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 자유게시판 -->
-        <div class="row px-2">
-            <div class="col mx-2">
-
-                <div class="row mt-3 border-bottom border-dark-subtle">
-                    <div class="col px-1 mt-1 fw-semibold px-2 py-1 align-self-center" style="font-size: 0.9em; color: #6d6967;">
-                        자유게시판
-                    </div>
-                    <div class="col-2 text-end align-self-center" style="font-size: 0.9em; color: #807b79;">
-                        <i class="bi bi-plus"></i>
-                    </div>
-                </div>
-                <div class="row py-2 border-bottom">
-                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
-                        오늘 너희 학교 학식 뭐 나왔는지 적고가
-                    </div>
-                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
-                        <i class="bi bi-chat me-2"></i>12
-                    </div>
-                </div>
-                <div class="row py-2 border-bottom">
-                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
-                        새내기들에게 주는 꿀팁 !!!!!!!!
-                    </div>
-                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
-                        <i class="bi bi-chat me-2"></i>5
-                    </div>
-                </div>
-                <div class="row py-2 border-bottom">
-                    <div class="col px-1" style="font-size: 0.8em; color: #918d8c;">
-                        아 동아리 뭐 들어가지? 추천좀
-                    </div>
-                    <div class="col-2 px-1 text-center" style="font-size: 0.8em; color: #b6b4b3;">
-                        <i class="bi bi-chat me-2"></i>8
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-
-        
-        <div class="footer row bg-white border-top fixed-bottom">
-            <div class="col">
-                <div class="row text-secondary text-center py-1" style="height: 3.4rem;">
-                    <div class="col ps-2">
-                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../mission/map'">
-                        <div class="row">
-                            <div class="col px-0">
-                                <i class="bi bi-map"></i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col px-0" style="font-size:0.75em;">
-                                미션
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    <div class="col px-0">
-                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../meeting/mainPage'">
-                        <div class="row">
-                            <div class="col px-0">
-                                <i class="bi bi-heart"></i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col px-0" style="font-size:0.75em;">
-                                미팅
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    <div class="col px-0 mx-1">
-                        <div class="row">
-                            <div class="col px-0">
-                                <img id="ufuf" src="/public/image/commons/logo_fill.png" class="img-fluid" style="height: 2.5em; margin-top: 0.16rem;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col px-0">
-                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../room/roomMainPage'">
-                        <div class="row">
-                            <div class="col px-0">
-                                <i class="bi bi-houses"></i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col px-0" style="font-size:0.75em;">
-                                숙박
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    <div class="col pe-2">
-                        <a class="link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-0-hover" onclick="window.location.href='../circle/circleMainPage'">
-                        <div class="row">
-                            <div class="col px-0">
-                                <i class="bi bi-people"></i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col px-0" style="font-size:0.75em;">
-                                서클
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        
     </div>
 
 
