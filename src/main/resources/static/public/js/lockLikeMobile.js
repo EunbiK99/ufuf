@@ -18,11 +18,12 @@ const llmSettingValues = {
 
 // 왼쪽 요약 페이지 세팅값(em)
 const llmLeftSummarySettingValues = {
-    left: 3,                                    // auto 옵션 만들어야 되나
-    top: 3,
+    left: 7,                                    // auto 옵션 만들어야 되나
+    top: 9,
     backgroundColor: "#FFF",
-    width: 15,
-    height: 40,
+    width: 17,
+    height: 30,
+    zIndex: 0
 };
 
 // 오른쪽 요약 페이지 세팅값(em)
@@ -36,46 +37,34 @@ const llmRightSummarySettingValues = {
 
 
 const leftSummaryHtml = `
-<div class="row">
-<div class="col mt-2 fw-bold text-center">
-<span class="fw-bold fs-4">- Notice -</span>
-</div>
-</div>
-<div class="row mt-2">
-<div class="col">
-<span style="white-space: pre-line;">
-안녕하세요. Team UFUF입니다.
-우선 저희 프로젝트에 관심을 가져 
-주셔서 감사합니다.
-프로젝트 ufuf는
-'U'niverce 'F'or 'U'niversity 'F'riends.
-즉, 대학생들을 대상으로 학교생활 중
-유용하거나 재미있을만한 기능들 위주로 제작 해 보았습니다.
-본 프로젝트는 모바일 환경에
-최적화 되어 있습니다.
-아래 QR코드를 찍고 모바일 디바이스에서 확인 해 주시면 감사하겠습니다.
-</span>
-</div>
-</div>
-<div class="row">
-<div class="col-auto">
-<div class="row justify-content-center">
-<div class="col-8 align-self-center">
-<img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid">
-</div>
-</div>
-</div>
-</div>
+        <div class="row mt-5">
+            <div class="col">
+                <div class="row">
+                    <div class="col text-center fw-bold" style="font-size: 1.4rem;">
+                        UFUF
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col text-center fw-semibold" style="font-size: 1rem; color: #636363;">
+                        UFUF는 모바일에 최적화 되어있습니다
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col text-center mt-3" style="font-size: 0.9rem; color: #636363;">
+                        아래 QR코드를 통해<br>
+                        모바일로 접속하실 수 있습니다
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col d-flex justify-content-center">
+                        <img src="/public/image/commons/ufuf_QR_2.png" class="img-fluid" style="height: 10rem;">
+                    </div>
+                </div>
+            </div>
+        </div>
 `;
 
-const rightSummaryHtml = `
-<div class="row">
-<div class="col fw-bold">오른쪽 제목... 블라블라...</div>
-</div>
-<div class="row">
-<div class="col">레이아웃 테스트</div>
-</div>
-`;
+
 
 
 
