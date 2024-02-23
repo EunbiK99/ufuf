@@ -17,71 +17,7 @@
      <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
      <script>
-        window.addEventListener("DOMContentLoaded", () => {
-        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
-
-        document.getElementById("ufuf").addEventListener("click", function() {
-            const container = document.querySelector(".footer");
-
-            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
-                // 변경된 스타일 적용
-                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
-                container.style.zIndex = "250";
-                container.style.transition = "all 0.2s";
-
-                document.getElementById("home").classList.remove("d-none");
-                document.getElementById("secondLine").classList.remove("d-none");
-                document.getElementById("thirdLine").classList.remove("d-none");
-
-                setTimeout(() => {
-                    document.getElementById("home").classList.add("clicked");
-                }, 250);
-
-                setTimeout(() => {
-                    document.getElementById("secondLine").classList.add("clicked");
-                    setTimeout(() => {
-                        document.getElementById("mission").classList.add("clicked");
-                    }, 100);
-                    setTimeout(() => {
-                        document.getElementById("circle").classList.add("clicked");
-                    }, 200);
-
-                }, 90);
-
-                setTimeout(() => {
-
-                    document.getElementById("thirdLine").classList.add("clicked");
-
-                    setTimeout(() => {
-                        document.getElementById("signal").classList.add("clicked");
-                    }, 50);
-                    setTimeout(() => {
-                        document.getElementById("bnb").classList.add("clicked");
-                    }, 250);
-
-                }, 90);
-            } else { // ufuf 버튼이 이미 클릭되어 있을 때
-                // 변경 취소
-                container.style.boxShadow = "none";
-                container.style.zIndex = "300";
-                container.style.transition = "none";
-                
-
-                document.getElementById("home").classList.add("d-none");
-                document.getElementById("secondLine").classList.add("d-none");
-                document.getElementById("thirdLine").classList.add("d-none");
-                document.getElementById("home").classList.remove("clicked");
-                document.getElementById("secondLine").classList.remove("clicked");
-                document.getElementById("thirdLine").classList.remove("clicked");
-                document.getElementById("mission").classList.remove("clicked");
-                document.getElementById("circle").classList.remove("clicked");
-                document.getElementById("signal").classList.remove("clicked");
-                document.getElementById("bnb").classList.remove("clicked");
-            }
-
-            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
-        });
-    });
+        
 
         function goBack() {
             window.history.go(-1);
