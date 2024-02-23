@@ -59,7 +59,34 @@
         transform: translateX(-120%);
     }
 
+    #secondLine,
+    #thirdLine {
+        transition: opacity 1s;
+    }
 
+    #signal,
+    #bnb,
+    #mission,
+    #circle,
+    #home{
+        transition: all 0.5s;
+        opacity: 0;
+    }
+
+    #signal.clicked,
+    #bnb.clicked,
+    #mission.clicked,
+    #circle.clicked,
+    #home.clicked {
+        opacity: 1;
+    }
+
+    .fi {
+        background: linear-gradient(to bottom, #ff4a1d, #ff882c, #ffa939); /* 그라데이션 색상 설정 */
+        -webkit-background-clip: text; /* 텍스트에만 배경 적용 (WebKit 브라우저를 위한 프리픽스) */
+        background-clip: text; /* 텍스트에만 배경 적용 */
+        color: transparent; /* 텍스트 색상을 투명하게 설정하여 텍스트가 보이지 않게 함 */
+    }
 
 
 
@@ -67,6 +94,105 @@
     </style>
 
     <script>
+
+    window.addEventListener("DOMContentLoaded", () => {
+
+        let ufufClicked = false;
+
+        const home = document.getElementById("home");
+        const secondLine = document.getElementById("secondLine");
+        const thirdLine = document.getElementById("thirdLine");
+        const mission = document.getElementById("mission");
+        const circle = document.getElementById("circle");
+        const signal = document.getElementById("signal");
+        const bnb = document.getElementById("bnb");
+
+        document.getElementById("ufuf").addEventListener("click", function() {
+            const container = document.querySelector(".footer");
+
+            if (!ufufClicked) { // ufuf 버튼이 한번도 클릭되지 않았을 때
+                // 변경된 스타일 적용
+                container.style.boxShadow = "rgba(0,0,0,0.75) 0 0 0 9999px";
+                container.style.zIndex = "250";
+                container.style.transition = "all 0.2s";
+
+                home.classList.remove("d-none");
+                secondLine.classList.remove("d-none");
+                thirdLine.classList.remove("d-none");
+
+                setTimeout(() => {
+                    home.classList.add("clicked");
+                }, 250);
+
+                setTimeout(() => {
+                    secondLine.classList.add("clicked");
+                    setTimeout(() => {
+                        mission.classList.add("clicked");
+                    }, 100);
+                    setTimeout(() => {
+                        circle.classList.add("clicked");
+                    }, 200);
+
+                }, 90);
+
+                setTimeout(() => {
+
+                    thirdLine.classList.add("clicked");
+
+                    setTimeout(() => {
+                        signal.classList.add("clicked");
+                    }, 50);
+                    setTimeout(() => {
+                        bnb.classList.add("clicked");
+                    }, 250);
+
+                }, 90);
+
+            } else { // ufuf 버튼이 이미 클릭되어 있을 때
+                // 변경 취소
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
+            }
+
+            ufufClicked = !ufufClicked;
+        });
+
+        // 화면을 클릭했을 때 변경된 스타일을 취소하는 기능
+        document.addEventListener("click", function(event) {
+            
+            if (event.target.id !== "ufuf") {
+                const container = document.querySelector(".footer");
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
+                
+                ufufClicked = false;
+            }
+        });
+    });
 
         window.addEventListener("DOMContentLoaded", () => {
 
@@ -188,7 +314,7 @@
                             </div>
                             <div class="col">
                                 <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-semibold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
+                                    <div class="col fw-bold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
                                         유니미션
                                     </div>
                                     <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
@@ -217,7 +343,7 @@
                             </div>
                             <div class="col">
                                 <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-semibold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
+                                    <div class="col fw-bold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
                                         유니시그널
                                     </div>
                                     <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
@@ -249,7 +375,7 @@
                             </div>
                             <div class="col">
                                 <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-semibold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
+                                    <div class="col fw-bold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
                                         유니비앤비
                                     </div>
                                     <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
@@ -278,7 +404,7 @@
                             </div>
                             <div class="col">
                                 <div class="row border-secondery-subtle align-self-center">
-                                    <div class="col fw-semibold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
+                                    <div class="col fw-bold title ps-0" style="color: #6b5f5a; letter-spacing: 0.03rem;">
                                         유니써클
                                     </div>
                                     <div class="col-2 text-end pe-2 ps-0" style="color: #d1d1d1;">&gt;</div>
@@ -414,6 +540,93 @@
 
         
     </div>
+
+    <div id="home" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 8em; width: 100%; margin: auto; z-index: 9999;">
+        <div class="col text-center px-0 ">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../commons/mainPage'">
+                        <i class="fi fi-rr-house-chimney align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    홈
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="secondLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 6.8em; width: 100%; margin: auto; z-index: 9999;">
+        <div id="mission" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../mission/map'">
+                        <i class="fi fi-rr-map-marker align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니미션
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 2.8em;" onclick="window.location.href='../commons/mainPage'"></div>
+        <div id="circle" class="col-2 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../circle/circleMainPage'">
+                        <i class="fi fi-rr-meeting align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니써클
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="thirdLine" class="row d-flex justify-content-center d-none" style="position: fixed; bottom: 4.3em; width: 100%; margin: auto; z-index: 9999;">
+        <div id="signal" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                        style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../meeting/mainPage'">
+                        <i class="fi fi-rr-comment-heart align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니시그널
+                </div>
+            </div>
+        </div>
+        <div class="col-1" style="width: 6.1rem;"></div>
+        <div id="bnb" class="col-3 text-center">
+            <div class="row">
+                <div class="col px-0 align-self-center d-flex justify-content-center">
+                    <span class="btn rounded-circle bg-white d-flex justify-content-center border-0 align-self-center" 
+                            style="color: #616161; height: 2.3em; width: 2.3em; box-shadow: 0 0 0.1rem 0.1rem #dddddd;" onclick="window.location.href='../room/roomMainPage'">
+                        <i class="fi fi-rr-bed-alt align-middle fs-4"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col px-0 text-center fw-light" style="color: #ffffff; font-size: 0.6rem;">
+                    유니비앤비
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 

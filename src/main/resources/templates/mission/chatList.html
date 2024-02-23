@@ -79,7 +79,6 @@
                                 myMissionChatWrapper.onclick = (function (missionInfo) {
                                     return function () {
                                         loadMyMissionPlayer(missionInfo);
-                                        
                                     };
                                 })(chat.missionInfoDto);
     
@@ -102,7 +101,7 @@
                             }else{
                                 myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
 
-                                if(chat.missionInfoDto.status == "미션성공" || chat.missionInfoDto.status == "미션실패"){
+                                if(chat.missionInfoDto.status == "미션성공" || chat.missionInfoDto.status == "미션실패" || chat.missionInfoDto.status == "미션포기"){
                                     myPlayMissionChatWrapper.querySelector(".status").style.border = "0.1rem solid #a1a1a1";
                                     myPlayMissionChatWrapper.querySelector(".status").style.color = "#a1a1a1";
                                 }
@@ -278,7 +277,16 @@
     });
 
     window.addEventListener("DOMContentLoaded", () => {
-        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+        let ufufClicked = false;
+
+        const home = document.getElementById("home");
+        const secondLine = document.getElementById("secondLine");
+        const thirdLine = document.getElementById("thirdLine");
+        const mission = document.getElementById("mission");
+        const circle = document.getElementById("circle");
+        const signal = document.getElementById("signal");
+        const bnb = document.getElementById("bnb");
 
         document.getElementById("ufuf").addEventListener("click", function() {
             const container = document.querySelector(".footer");
@@ -289,57 +297,81 @@
                 container.style.zIndex = "250";
                 container.style.transition = "all 0.2s";
 
-                document.getElementById("home").classList.remove("d-none");
-                document.getElementById("secondLine").classList.remove("d-none");
-                document.getElementById("thirdLine").classList.remove("d-none");
+                home.classList.remove("d-none");
+                secondLine.classList.remove("d-none");
+                thirdLine.classList.remove("d-none");
 
                 setTimeout(() => {
-                    document.getElementById("home").classList.add("clicked");
+                    home.classList.add("clicked");
                 }, 250);
 
                 setTimeout(() => {
-                    document.getElementById("secondLine").classList.add("clicked");
+                    secondLine.classList.add("clicked");
                     setTimeout(() => {
-                        document.getElementById("mission").classList.add("clicked");
+                        mission.classList.add("clicked");
                     }, 100);
                     setTimeout(() => {
-                        document.getElementById("circle").classList.add("clicked");
+                        circle.classList.add("clicked");
                     }, 200);
 
                 }, 90);
 
                 setTimeout(() => {
 
-                    document.getElementById("thirdLine").classList.add("clicked");
+                    thirdLine.classList.add("clicked");
 
                     setTimeout(() => {
-                        document.getElementById("signal").classList.add("clicked");
+                        signal.classList.add("clicked");
                     }, 50);
                     setTimeout(() => {
-                        document.getElementById("bnb").classList.add("clicked");
+                        bnb.classList.add("clicked");
                     }, 250);
 
                 }, 90);
+
             } else { // ufuf 버튼이 이미 클릭되어 있을 때
                 // 변경 취소
                 container.style.boxShadow = "none";
                 container.style.zIndex = "300";
                 container.style.transition = "none";
                 
-
-                document.getElementById("home").classList.add("d-none");
-                document.getElementById("secondLine").classList.add("d-none");
-                document.getElementById("thirdLine").classList.add("d-none");
-                document.getElementById("home").classList.remove("clicked");
-                document.getElementById("secondLine").classList.remove("clicked");
-                document.getElementById("thirdLine").classList.remove("clicked");
-                document.getElementById("mission").classList.remove("clicked");
-                document.getElementById("circle").classList.remove("clicked");
-                document.getElementById("signal").classList.remove("clicked");
-                document.getElementById("bnb").classList.remove("clicked");
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
             }
 
-            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+            ufufClicked = !ufufClicked;
+        });
+
+        // 화면을 클릭했을 때 변경된 스타일을 취소하는 기능
+        document.addEventListener("click", function(event) {
+            
+            if (event.target.id !== "ufuf") {
+                const container = document.querySelector(".footer");
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
+                
+                ufufClicked = false;
+            }
         });
     });
 

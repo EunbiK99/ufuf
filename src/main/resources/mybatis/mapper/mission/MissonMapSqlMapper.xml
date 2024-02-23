@@ -8,7 +8,6 @@
     <selectKey keyProperty="mission_id" resultType="int" order="AFTER">
         SELECT LAST_INSERT_ID() AS mission_id
     </selectKey>
-
     INSERT INTO mission_info (
         user_id, 
         title, 
@@ -84,6 +83,7 @@
 <select id="selectMyResMission" resultType="com.cu.ufuf.dto.MissionInfoDto">
     select * from mission_info
     where user_id = #{user_id}
+    and status != '결제미완료'
 </select>
 
 <update id="updateAccStatus">
@@ -278,7 +278,10 @@
     where mission_id = #{mission_id}
 </delete>
 
-
+<delete id="deletePayRegMission">
+    delete from mission_info
+    where status = '결제미완료'
+</delete>
 
 
 </mapper>
