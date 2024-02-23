@@ -156,7 +156,7 @@ function myRecruitMeetingListCSR(){
                 const newRegdate = orginalRegdate[0] + "년 " + orginalRegdate[1] + "월" + orginalRegdate[2] + "일";
                 myMeetingGroupMeetingdate.innerText = newRegdate;
 
-                if(e.meetingGroupDto.groupApplyStatue === "Y"){
+                if(e.meetingGroupDto.groupApplyStatus === "Y"){
                     const myMeetingGroupStatus = myMeetingGroupListRow.querySelector("#myMeetingGroupStatus");
                     myMeetingGroupStatus.setAttribute("class", "fw-bold badge text-bg-danger");
                     myMeetingGroupStatus.innerText = "모집종료";

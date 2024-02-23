@@ -97,15 +97,18 @@
     
                             var countUnread = chat.countUnreadChat;
     
-                            // 미션 진행상태
-                            if(chat.missionChatRoomDto.accept_at == null){
+                            if(chat.missionInfoDto.status === "모집중"){
                                 myPlayMissionChatWrapper.querySelector(".status").innerText = "수락대기중";
-                            }else if(chat.missionChatRoomDto.accept_at != null && chat.missionChatRoomDto.giveup_at == null){
-                                myPlayMissionChatWrapper.querySelector(".status").innerText = "미션진행중";
-                            }else if(chat.missionChatRoomDto.giveup_at != null){
+                            }else{
                                 myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
+
+                                if(chat.missionInfoDto.status == "미션성공" || chat.missionInfoDto.status == "미션실패"){
+                                    myPlayMissionChatWrapper.querySelector(".status").style.border = "0.1rem solid #a1a1a1";
+                                    myPlayMissionChatWrapper.querySelector(".status").style.color = "#a1a1a1";
+                                }
                             }
-    
+
+
                             // 채팅 읽음 0이면 표시 X
                             if(chat.countUnreadChat == 0){
                                 myPlayMissionChatWrapper.querySelector(".countUnreadBox").innerHTML = "";

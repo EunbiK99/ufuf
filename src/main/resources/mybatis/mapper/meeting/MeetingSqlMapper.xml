@@ -211,6 +211,7 @@ values (
 <select id="selectMeetingGroupListByProfilePk" resultType="com.cu.ufuf.dto.MeetingGroupDto">
     SELECT * from meeting_group mg
     where profileId = #{profileId}
+    order by regdate DESC
 </select>
 
 <!-- * 미팅 확정멤버 인서트-->

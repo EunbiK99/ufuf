@@ -106,19 +106,25 @@
                             accPlayer();
                         });
 
-                    }else if(info.missionChatRoomDto.accept_at != null && info.missionChatRoomDto.giveup_at == null){
-                        status.innerText = "진행중";
-                    }else if(info.missionChatRoomDto.giveup_at != null){
-                        status.innerText = "미션종료";
+                    }else{
+                        status.innerText = info.missionInfoDto.status;
+
+                        if(info.missionInfoDto.status == "미션성공" || info.missionInfoDto.status == "미션실패"){
+                            status.style.border = "0.1rem solid #a1a1a1";
+                            status.style.color = "#a1a1a1";
+                        }
                     }
                 }else{
-                    // 미션 진행상태
-                    if(info.missionChatRoomDto.accept_at == null){
+
+                    if(info.missionInfoDto.status === "모집중"){
                         status.innerText = "수락대기중";
-                    }else if(info.missionChatRoomDto.accept_at != null && info.missionChatRoomDto.giveup_at == null){
-                        status.innerText = "진행중";
-                    }else if(info.missionChatRoomDto.giveup_at != null){
-                        status.innerText = "미션종료";
+                    }else{
+                        status.innerText = info.missionInfoDto.status;
+
+                        if(info.missionInfoDto.status == "미션성공" || info.missionInfoDto.status == "미션실패"){
+                            status.style.border = "0.1rem solid #a1a1a1";
+                            status.style.color = "#a1a1a1";
+                        }
                     }
                 }
 
