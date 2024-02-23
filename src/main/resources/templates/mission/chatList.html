@@ -79,7 +79,6 @@
                                 myMissionChatWrapper.onclick = (function (missionInfo) {
                                     return function () {
                                         loadMyMissionPlayer(missionInfo);
-                                        
                                     };
                                 })(chat.missionInfoDto);
     
@@ -102,7 +101,7 @@
                             }else{
                                 myPlayMissionChatWrapper.querySelector(".status").innerText = chat.missionInfoDto.status;
 
-                                if(chat.missionInfoDto.status == "미션성공" || chat.missionInfoDto.status == "미션실패"){
+                                if(chat.missionInfoDto.status == "미션성공" || chat.missionInfoDto.status == "미션실패" || chat.missionInfoDto.status == "미션포기"){
                                     myPlayMissionChatWrapper.querySelector(".status").style.border = "0.1rem solid #a1a1a1";
                                     myPlayMissionChatWrapper.querySelector(".status").style.color = "#a1a1a1";
                                 }

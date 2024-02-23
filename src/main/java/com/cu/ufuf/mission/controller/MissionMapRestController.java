@@ -361,7 +361,7 @@ public class MissionMapRestController {
 
         if(complete_img != null) {
 				
-			String rootPath = "C:/uploadFiles/ufuf/missionCompleteImg";
+			String rootPath = "/uploadFiles/ufuf/missionCompleteImg";
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
 			String todayPath = sdf.format(new Date());

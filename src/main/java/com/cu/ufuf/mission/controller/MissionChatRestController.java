@@ -159,7 +159,7 @@ public class MissionChatRestController {
 
         if(sendImg != null) {
 				
-			String rootPath = "C:/uploadFiles/ufuf/chatImg";
+			String rootPath = "/uploadFiles/ufuf/chatImg";
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/");
 			String todayPath = sdf.format(new Date());
