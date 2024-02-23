@@ -60,7 +60,7 @@ public class AppConfig implements WebMvcConfigurer{
             .excludePathPatterns("/mission/restApi/**")
             .excludePathPatterns("/meeting/mainPage/**")
             .excludePathPatterns("/meeting/myPage/**")            
-            .excludePathPatterns("/meeting/errorPage/**")            
+            .excludePathPatterns("/meeting/errorPage/**")    
             .excludePathPatterns("/meeting/api/**")   
             .excludePathPatterns("/public/**")
             .excludePathPatterns("https://ufuf.null-pointer-exception.com")
