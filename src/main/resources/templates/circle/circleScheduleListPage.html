@@ -95,6 +95,7 @@
                 
                 for(e of response.data){
 
+                    console.log(e);
                     const paymentList = document.querySelector("#Wrapper .paymentList").cloneNode(true);
                     const title = paymentList.querySelector(".title").innerText = e.circleScheduleDto.schedule_title
                     const place = paymentList.querySelector(".place").innerText = e.circleScheduleDto.schedule_address

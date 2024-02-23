@@ -287,8 +287,8 @@
     <select id="itemInfoByCircleScheduleId" resultType="com.cu.ufuf.dto.ItemInfoDto">
         select * from item_info where merchan_id = #{circle_schedule_id} and item_category_id = 2
     </select>
-    <select id="orderInfoByItemId" resultType="com.cu.ufuf.dto.OrderInfoDto">
-        select * from order_info where item_id = #{item_id}
+    <select id="orderInfoByItemIdAndUserId" resultType="com.cu.ufuf.dto.OrderInfoDto">
+        select * from order_info where item_id = #{item_id} and user_id = #{user_id}
     </select>
     <select id="kakaoPaymentReqInfoByItemId" resultType="com.cu.ufuf.dto.KakaoPaymentReqDto">
         select * from kakao_payment_req where partner_order_id = #{order_id}

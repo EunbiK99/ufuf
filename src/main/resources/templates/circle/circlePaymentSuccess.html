@@ -81,10 +81,10 @@
             })
             .then(response => response.json())
             .then(response => {
-
+                
+                console.log(response);
                 kakaoPaymentAcceptReqInsert(sendData)
                 kakaoPaymentAcceptResInsert(response)// 승인 , 승인완료 끝나고 주문상태 바꾸고 , 일정신청테이블 insertㅎㅎ..
-                console.log(response);
                 orderStatusChange(reqValue) //마지막에 주문상태 바꿔줘야함
                 circleScheduleApply() // 일정신청테이블 insert
 
@@ -119,6 +119,7 @@
             })
 
         }
+        // amount dto 에서 오류 발생
         // 페이 응답dto insert ==> amount랑 card정보 둘다있음
         // 이거왜 됐다 안됐다함??? 왜그래.. 2/19
         const kakaoPaymentAcceptResInsert = (response) => {
