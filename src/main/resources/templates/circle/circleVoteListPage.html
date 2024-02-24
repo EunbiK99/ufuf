@@ -327,10 +327,10 @@
     </div>
     <div class="container-fluid footer" style="position: absolute;">
         <div class="row fixed-bottom align-items-center justify-content-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
-            <div class="button col text-center" onclick="ScheduleManageMove()" style="height: 100%;">
+            <div class="button col text-center ps-3" onclick="ScheduleManageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-calendar2-date" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -342,7 +342,7 @@
             <div class="button col ps-0 text-center" onclick="VoteListPageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-box-seam-fill" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -352,7 +352,7 @@
                 </div>
             </div>
             <div class="col-2 px-0 justify-content-center">
-                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.8em;">
+                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.5em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
@@ -361,7 +361,7 @@
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-people-fill" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-people-fill" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -370,12 +370,12 @@
                 </div>
             </div>
             </div>
-            <div class="button col text-center" onclick="(() => {
+            <div class="button col text-center pe-3" onclick="(() => {
                 location.href = './circleMyPage'
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-person-circle" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-person-circle" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -384,15 +384,15 @@
                 </div>
             </div>
             </div>
-            <!-- <div style="position: fixed; bottom: 10%; z-index: 1000;">      
+            <!-- <div style="position: fixed;bottom: 6.7%; z-index: 1000;right: 0; width: 30%;">      
                 <div class="dropup-end dropup mb-3 justify-content-center" style="position: relative; left: 42%;">
                     <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
                         <i class="fs-4 bi bi-plus-lg text-white"></i>
                     </button>
                     <ul class="dropdown-menu mb-2" style="z-index: 1000;">
-                        <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</li>
-                      <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</li>
-                      <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+                      <li><a class="dropdown-item text-secondary" href="./circleApplyPage" style="font-size: 0.9em;"> 동아리 개설하기</a></li>
+                      <li><a class="dropdown-item text-secondary" href="./circleListPage" style="font-size: 0.9em;"> 동아리 가입하기</a></li>
+                      <li onclick="writeNeedjoin()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
                     </ul>
                 </div>
             </div> -->
