@@ -912,6 +912,10 @@ public class MissionMapServiceImpl {
         missionMapSqlMapper.deleteMission(mission_id);
     }
 
+    public void deleteNotPayMission(){
+        missionMapSqlMapper.deletePayRegMission();
+    }
+
 
 
 

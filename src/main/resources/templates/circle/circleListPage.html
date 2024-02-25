@@ -407,6 +407,10 @@
             height: 100%;
             object-fit: cover;
         }
+        .shadow-box {
+        background-color: #ffffff;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+        }
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
@@ -461,7 +465,7 @@
                         
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="padding-left: 0.7rem; padding-right: 0.7rem;">
                     <div id="listInsert" class="col">
                         
                     </div>
@@ -470,46 +474,42 @@
             </div>
         </div>
     </div>
-    <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
-        <div class="col rounded-3" style="background-color: white;">
-            <div class="row rounded-3" style="font-size: small;">
+    <div id="Wrapper" class="row d-none rounded-3 border my-2 bg-white shadow-box">
+        <div class="col rounded-3 mx-1">
+            <div class="row rounded-3 py-2" style="font-size: small;">
                 <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
-                    <div class="row mt-1">
-                        <div class="col align-items-center" style="padding-top: 0.9em; font-size: 0.75em;">
-                            &nbsp;<span class="circlemiddlecategory fw-semibold">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory fw-semibold">배찌</span>
+                    <div class="row">
+                        <div class="col align-items-center" style="padding-top: 0.5em; font-size: 0.78rem; color: #9b9b9b;">
+                            <span class="circlemiddlecategory">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory">배찌</span>
                         </div>
                     </div>
-                    <div class="row mt-1">
-                        <div class="circlename col fw-semibold" style="font-size: 1.4em;">
+                    <div class="row">
+                        <div class="circlename col fw-semibold" style="font-size: 1.25em;">
                             동아리명
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="university col" style="font-size: 1em; color: gray;">
+                    <div class="row mt-1">
+                        <div class="university col fw-semibold" style="font-size: 1.02em; color: gray;">
                             학교명
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col pt-1" style="color: rgb(134, 134, 134); font-size: 1.3em;">
-                            <i class="bi bi-people-fill"></i>&nbsp; <span class="currentpeople" style="color: black;">현재인원</span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circlepeople" style="color: black;">등급인원</span>
+                    <div class="row mt-2 pt-1">
+                        <div class="col" style="color: rgb(134, 134, 134); font-size: 1.2em;">
+                            <i class="bi bi-people-fill" style="color: #8f8f8f;"></i>&nbsp; <span class="currentpeople fw-semibold" style="color: rgb(85, 85, 85);">현재인원</span>&nbsp;<span style="color: rgb(49, 49, 49);">/</span>&nbsp;<span class="circlepeople" style="color: rgb(145, 145, 145);">등급인원</span>
                         </div>
                     </div>
                 </div>
+                <!-- 이미지가 들어가야 이쁜가?-->
                 <div class="col-2 pt-3">
-                    <div class="row">
-                        <div class="col text-center">
-                            <span class="circlecreatedtime fw-semibold" style="font-size: 0.8em;"></span>
-                        </div>
-                    </div>
                     <div class="row align-items-center mt-0">
                         <div class="col d-grid rounded-3">
                             <img class="circlegradeimg img-fluid">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col text-center">
-                            <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                        <div class="col text-center px-0">
+                            <span class="circlegrade fw-semibold" style="font-size: 0.8em; color: #4e4e4e;"></span>
                         </div>
                     </div>
                 </div>

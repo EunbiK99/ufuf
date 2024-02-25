@@ -106,5 +106,6 @@ public interface MissionMapSqlMapper {
 
     // 미션 삭제
     public void deleteMission(int mission_id);
+    public void deletePayRegMission();
 
 }

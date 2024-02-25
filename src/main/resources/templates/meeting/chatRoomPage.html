@@ -16,11 +16,8 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
-    <script src="/public/js/lockLikeMobile.js"></script> 
+    <script src="/public/js/lockLikeMobile.js"></script>
     
-    <script src="/public/js/meetingFooter.js"></script>
-    <link rel="stylesheet" href="/public/css/meetingFooterCSS.css">
-
     <style>
     *{
         /* font-family: 'Dongle', sans-serif; */
@@ -86,7 +83,8 @@ function getChatMessageEnter(event){
         const inputChatMessage = document.getElementById("chatMessageInput");
         const inputChatMessageValue = inputChatMessage.value;
         if(inputChatMessageValue.trim() === ""){
-        return;
+            alert("메세지를 입력해주세요.");
+            return;
         }
         console.log('inputChatMessageValue: ', inputChatMessageValue);
         registerChatMessage(inputChatMessageValue);
@@ -98,6 +96,7 @@ function getChatMessage(event){
     const inputChatMessage = document.getElementById("chatMessageInput");
     const inputChatMessageValue = inputChatMessage.value;
     if(inputChatMessageValue.trim() === ""){
+        alert("메세지를 입력해주세요.");
         return;
     }
     console.log('inputChatMessageValue: ', inputChatMessageValue);
@@ -247,7 +246,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <div class="row">
                     <div class="col">
                         <div class="row my-2">
-                            <div id="chatMessageWrapperCol" class="col overflow-y-scroll" style="height: 100%;">                                
+                            <div id="chatMessageWrapperCol" class="col overflow-y-scroll" style="height: 37em;">                                
 
                             </div>
                         </div>

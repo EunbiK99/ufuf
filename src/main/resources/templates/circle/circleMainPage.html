@@ -21,8 +21,18 @@
     <link rel="shortcut icon" href="/public/image/commons/logo_fill.png">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <script>
-        window.addEventListener("DOMContentLoaded", () => {
-        let ufufClicked = false; // ufuf 버튼이 클릭되었는지 여부를 나타내는 플래그
+
+    window.addEventListener("DOMContentLoaded", () => {
+
+        let ufufClicked = false;
+
+        const home = document.getElementById("home");
+        const secondLine = document.getElementById("secondLine");
+        const thirdLine = document.getElementById("thirdLine");
+        const mission = document.getElementById("mission");
+        const circle = document.getElementById("circle");
+        const signal = document.getElementById("signal");
+        const bnb = document.getElementById("bnb");
 
         document.getElementById("ufuf").addEventListener("click", function() {
             const container = document.querySelector(".footer");
@@ -33,57 +43,81 @@
                 container.style.zIndex = "250";
                 container.style.transition = "all 0.2s";
 
-                document.getElementById("home").classList.remove("d-none");
-                document.getElementById("secondLine").classList.remove("d-none");
-                document.getElementById("thirdLine").classList.remove("d-none");
+                home.classList.remove("d-none");
+                secondLine.classList.remove("d-none");
+                thirdLine.classList.remove("d-none");
 
                 setTimeout(() => {
-                    document.getElementById("home").classList.add("clicked");
+                    home.classList.add("clicked");
                 }, 250);
 
                 setTimeout(() => {
-                    document.getElementById("secondLine").classList.add("clicked");
+                    secondLine.classList.add("clicked");
                     setTimeout(() => {
-                        document.getElementById("mission").classList.add("clicked");
+                        mission.classList.add("clicked");
                     }, 100);
                     setTimeout(() => {
-                        document.getElementById("circle").classList.add("clicked");
+                        circle.classList.add("clicked");
                     }, 200);
 
                 }, 90);
 
                 setTimeout(() => {
 
-                    document.getElementById("thirdLine").classList.add("clicked");
+                    thirdLine.classList.add("clicked");
 
                     setTimeout(() => {
-                        document.getElementById("signal").classList.add("clicked");
+                        signal.classList.add("clicked");
                     }, 50);
                     setTimeout(() => {
-                        document.getElementById("bnb").classList.add("clicked");
+                        bnb.classList.add("clicked");
                     }, 250);
 
                 }, 90);
+
             } else { // ufuf 버튼이 이미 클릭되어 있을 때
                 // 변경 취소
                 container.style.boxShadow = "none";
                 container.style.zIndex = "300";
                 container.style.transition = "none";
                 
-
-                document.getElementById("home").classList.add("d-none");
-                document.getElementById("secondLine").classList.add("d-none");
-                document.getElementById("thirdLine").classList.add("d-none");
-                document.getElementById("home").classList.remove("clicked");
-                document.getElementById("secondLine").classList.remove("clicked");
-                document.getElementById("thirdLine").classList.remove("clicked");
-                document.getElementById("mission").classList.remove("clicked");
-                document.getElementById("circle").classList.remove("clicked");
-                document.getElementById("signal").classList.remove("clicked");
-                document.getElementById("bnb").classList.remove("clicked");
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
             }
 
-            ufufClicked = !ufufClicked; // ufufClicked 플래그 업데이트
+            ufufClicked = !ufufClicked;
+        });
+
+        // 화면을 클릭했을 때 변경된 스타일을 취소하는 기능
+        document.addEventListener("click", function(event) {
+            
+            if (event.target.id !== "ufuf") {
+                const container = document.querySelector(".footer");
+                container.style.boxShadow = "none";
+                container.style.zIndex = "300";
+                container.style.transition = "none";
+                
+                home.classList.add("d-none");
+                secondLine.classList.add("d-none");
+                thirdLine.classList.add("d-none");
+                home.classList.remove("clicked");
+                secondLine.classList.remove("clicked");
+                thirdLine.classList.remove("clicked");
+                mission.classList.remove("clicked");
+                circle.classList.remove("clicked");
+                signal.classList.remove("clicked");
+                bnb.classList.remove("clicked");
+                
+                ufufClicked = false;
+            }
         });
     });
 
@@ -188,11 +222,13 @@
 
                     //<span class="badge text-bg-light">축구</span>
                     const span = document.createElement("span")
-                    span.innerText = "# " + e.category_name;
-                    span.classList.add("badge", "badge-md", "rounded-pill", "py-3", "border")
+                    span.innerHTML = `<span class="me-1" style="color:#FF8827">#</span><span>${e.category_name}</span>`;
+                    span.classList.add("badge", "badge-md", "rounded-pill", "border");
                     span.style.fontSize = "0.88em"
-                    span.style.color = "black";
+                    span.style.color = "#3d3d3d";
                     span.style.backgroundColor = "white";
+                    span.style.paddingLeft = "0.8rem";
+                    span.style.paddingRight = "0.8rem";
                     
                     div.appendChild(span);
                     smallC.appendChild(div);
@@ -502,8 +538,8 @@
             transform: translateY(0); /* 다른 위치 클래스와 충돌 방지 */
         }
         .image-container {
-            width: 10em;
-            height: 10em; /* 높이를 조절하세요 */
+            width: 9em;
+            height: 9em; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
@@ -525,25 +561,31 @@
             margin-left: 0.01em;
             margin-right: 0.01em;
         }
+
+        .badge{
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+            width: fit-content;
+        }
         
     </style>
 </head>
 
 <body>
-    <div class="container-fluid justify-content-center">
-        <div class="row align-items-center my-2" style="height: 3.3em;" onclick="(() => {
+    <div class="container-fluid justify-content-center" style="height: 3.3rem;">
+        <div class="row align-items-center" style="height: 3.3rem;" onclick="(() => {
             location.href = './circleMainPage'
         })()">
             <div class="col-2">
-                <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid">
+                <img src="/public/image/circle/ufufmainlogo.png" class="img-fluid" style="height: 2.6rem;">
             </div>
-            <div class="col-8 ps-0 fw-semibold" style="font-size: 1.2em; color: #ff9e62;" onclick="(() => {
+            <div class="col-8 ps-1 fw-semibold align-self-center" style="font-size: 1.15em; color: #ff9e62; letter-spacing: 0.1rem;" onclick="(() => {
                 location.href = './circleMainPage'
             })()">
-                ufuf                                                                                     
+                UNI CIRCLE                                                                             
             </div>
-            <div class="col-2">
-                <a href="./logoutProcess" style="text-decoration: none; color: black;"><i class="bi bi-door-closed" style="font-size: 2em;"></i></a>
+            <div class="col-2 d-flex justify-content-end">
+                <a href="./logoutProcess" style="text-decoration: none; color: rgb(148, 148, 148);"><i class="bi bi-door-closed" style="font-size: 1.7em;"></i></a>
             </div>
         </div>
     </div>
@@ -556,31 +598,31 @@
                             <div class="carousel-inner px-0">
                                 <div class="carousel-item active" data-bs-interval="5000">
                                     <img src="/public/image/commons/main_image_circle.jpg" class="d-block" alt="..."
-                                        style="height: 16em; width: 100%;">
+                                        style="height: 14em; width: 100%;">
                                 </div>
                                 <div class="carousel-item" data-bs-interval="5000">
                                     <img src="/public/image/commons/main_image_guest_house_2.jpg" class="d-block w-100" alt="..."
-                                        style="height: 16em;">
+                                        style="height: 14em;">
                                 </div>
                                 <div class="carousel-item" data-bs-interval="5000">
                                     <img src="/public/image/commons/main_image_meeting.jpg" class="d-block w-100" alt="..."
-                                        style="height: 16em;">
+                                        style="height: 14em;">
                                 </div>
                                 <div class="carousel-item" data-bs-interval="5000">
                                     <img src="/public/image/commons/main_image_mission.jpg" class="d-block w-100" alt="..."
-                                        style="height: 16em;">
+                                        style="height: 14em;">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col overflow-x-auto">
-                        <div id="smallC" class="row" style="width: 200%;">
+                    <div class="col overflow-x-auto" style="scrollbar-width: none;">
+                        <div id="smallC" class="row px-2" style="width: max-content;">
                         </div>
                     </div>
                 </div>
-                <div id="subWrapper" class="row align-items-center me-1">
+                <div id="subWrapper" class="row align-items-center me-1 px-2" style="margin-top: 0.8rem;">
                     <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
                         <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;<span class="subname1">핫한 동아리</span>
                     </div>
@@ -591,17 +633,17 @@
                 </div>
                 <div class="row">
                     <div id="deleteList" class="col" style="margin-bottom: 13%;">
-                        <div class="row">
+                        <div class="row" style="padding-left: 0.7rem; padding-right: 0.7rem;">
                             <div class="col" id="listInsert">
                                 
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col d-grid px-0">
-                                <img src="/public/image/circle/middlebanner.jpg" class="img-fluid" style="width: 120%;">
+                                <img src="/public/image/circle/middleBanner.png" class="img-fluid" style="width: 100%; opacity: 0.8;">
                             </div>
                         </div>
-                        <div class="row align-items-center me-1">
+                        <div class="row align-items-center me-1 px-2" style="margin-top: 1.15rem;">
                             <div class="col-11 ps-2 fw-bold" style="font-size: 1.2em;">
                                 <span class="bi bi-award-fill" style="color: #fb7928;"></span>&nbsp;따끈따끈한 투표글
                             </div>
@@ -609,7 +651,7 @@
                                 +
                             </div>
                         </div>
-                        <div class="row mt-2 ">
+                        <div class="row mt-1 mb-3">
                             <div id="voteListInsert" class="col"><!-- 이쪽에 들어가야함.. 투표글 리스트 3개정도-->
                                 
                             </div>
@@ -639,10 +681,10 @@
         </div>
     <div class="container-fluid footer" style="position: absolute;">
         <div class="row fixed-bottom align-items-center justify-content-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
-            <div class="button col text-center" onclick="scheduleIconClick()" style="height: 100%;">
+            <div class="button col text-center ps-3" onclick="scheduleIconClick()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date text-secondary" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-calendar2-date text-secondary" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -654,7 +696,7 @@
             <div class="button col ps-0 text-center" onclick="VoteIconClick()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill text-secondary" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-box-seam-fill text-secondary" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -664,7 +706,7 @@
                 </div>
             </div>
             <div class="col-2 px-0 justify-content-center">
-                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.8em;">
+                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.5em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
@@ -673,7 +715,7 @@
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-people-fill text-secondary" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-people-fill text-secondary" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -682,12 +724,12 @@
                 </div>
             </div>
             </div>
-            <div class="button col text-center" onclick="(() => {
+            <div class="button col text-center pe-3" onclick="(() => {
                 location.href = './circleMyPage'
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-person-circle text-secondary" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-person-circle text-secondary" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -743,29 +785,29 @@
         </div>
     </div>
     <!-- 동아리 클론노드..-->
-    <div id="Wrapper" class="row mt-2 mb-1 d-none rounded-3">
-        <div class="col rounded-3 mx-1" style="background-color: white;">
-            <div class="row rounded-3" style="font-size: small;">
+    <div id="Wrapper" class="row d-none rounded-3 border my-2 bg-white shadow-box">
+        <div class="col rounded-3 mx-1">
+            <div class="row rounded-3 py-2" style="font-size: small;">
                 <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
-                    <div class="row mt-1">
-                        <div class="col align-items-center" style="padding-top: 0.9em; font-size: 0.75em;">
-                            &nbsp;<span class="circlemiddlecategory fw-semibold">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory fw-semibold">배찌</span>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="circlename col fw-semibold" style="font-size: 1.4em;">
-                            동아리명
+                    <div class="row">
+                        <div class="col align-items-center" style="padding-top: 0.5em; font-size: 0.78rem; color: #9b9b9b;">
+                            <span class="circlemiddlecategory">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory">배찌</span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="university col" style="font-size: 1em; color: gray;">
+                        <div class="circlename col fw-semibold" style="font-size: 1.25em;">
+                            동아리명
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="university col fw-semibold" style="font-size: 1.02em; color: gray;">
                             학교명
                         </div>
                     </div>
-                    <div class="row mt-4">
-                        <div class="col" style="color: rgb(134, 134, 134); font-size: 1.3em;">
-                            <i class="bi bi-people-fill"></i>&nbsp; <span class="currentpeople" style="color: black;">현재인원</span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circlepeople" style="color: black;">등급인원</span>
+                    <div class="row mt-2 pt-1">
+                        <div class="col" style="color: rgb(134, 134, 134); font-size: 1.2em;">
+                            <i class="bi bi-people-fill" style="color: #8f8f8f;"></i>&nbsp; <span class="currentpeople fw-semibold" style="color: rgb(85, 85, 85);">현재인원</span>&nbsp;<span style="color: rgb(49, 49, 49);">/</span>&nbsp;<span class="circlepeople" style="color: rgb(145, 145, 145);">등급인원</span>
                         </div>
                     </div>
                 </div>
@@ -777,8 +819,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col text-center">
-                            <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                        <div class="col text-center px-0">
+                            <span class="circlegrade fw-semibold" style="font-size: 0.8em; color: #4e4e4e;"></span>
                         </div>
                     </div>
                 </div>
@@ -817,24 +859,24 @@
         <div id="voteWrapper" class="col d-none">
             <div class="row pp">
                 <div class="col">
-                    <div class="row my-1 rounded-3 shadow-box" style="background-color: white;">
+                    <div class="row my-1 rounded-3 shadow-box border" style="background-color: white;">
                         <div class="col py-2 px-3">
                             <div class="row mb-0">
-                                <div class="vote_title col pb-0" style="font-size: 1.2em;">
+                                <div class="vote_title col pb-0" style="font-size: 0.85rem; color: #7e7e7e;">
                                     글제목
                                 </div>
                             </div>
                             <div class="row mt-0">
-                                <div class="vote_theme col pt-0" style="font-size: 1.08em; color: rgb(102, 102, 102);">
+                                <div class="vote_theme col pt-0 fw-semibold" style="font-size: 1.1em; color: rgb(80, 80, 80);">
                                     투표주제
                                 </div>
                             </div>
                             <div class="row mt-1 justify-content-center align-items-center">
                                 <div class="col-5">
-                                    <span class="voteCnt fw-semibold" style="color: #fb6b12; font-size: 0.8em;"></span><span style="font-size: 0.8em;">명 참여</span>
+                                    <span class="voteCnt fw-semibold me-1" style="color: #fb6b12; font-size: 0.8em;"></span><span style="font-size: 0.8em; color: #5c5c5c;">명 참여</span>
                                 </div>
                                 <div class="col text-end">
-                                    <span class="vote_end_time" style="text-align: end; font-size: 0.8em;">마감 ㅇ</span>
+                                    <span class="vote_end_time" style="text-align: end; font-size: 0.8em; color: #a3a3a3;">마감 ㅇ</span>
                                 </div>
                             </div>
                         </div>

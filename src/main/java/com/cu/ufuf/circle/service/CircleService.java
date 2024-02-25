@@ -834,16 +834,18 @@ public class CircleService {
         for(CircleScheduleApplyDto circleScheduleApplyDto : circleScheduleApplyDtos){
             
             Map<String, Object> map = new HashMap<>();
-            
+
+            //o
             int circle_schedule_id = circleScheduleApplyDto.getCircle_schedule_id(); // 일정pk값을가져옴
-            
+            //o 조건이 아이템카테고리 2번 and merchan_id = schedule_id 맞음
             ItemInfoDto itemInfoDto = circleSqlMapper.itemInfoByCircleScheduleId(circle_schedule_id);
             int item_id = itemInfoDto.getItem_id();
-            
-            OrderInfoDto orderInfoDto = circleSqlMapper.orderInfoByItemId(item_id);
+            // ==> 여기서 에러가 남 조건이 부합하지 않음 item_pk 이랑 user_id 랑 조건이 안맞아서 에러가 난거임 ==> 결제가 안되었을때 자꾸 type miss 에러가 나옴
+            OrderInfoDto orderInfoDto = circleSqlMapper.orderInfoByItemIdAndUserId(item_id, user_id);
             String order_id = orderInfoDto.getOrder_id();
             KakaoPaymentReqDto kakaoPaymentReqDto = circleSqlMapper.kakaoPaymentReqInfoByItemId(order_id);
             KakaoPaymentAcceptResDto kakaoPaymentAcceptResDto = circleSqlMapper.kakaoPaymentAccResInfoByItemId(order_id);
+            // o
             CircleScheduleDto circleScheduleDto = circleSqlMapper.circleScheduleInfoByCircleScheduleid(circle_schedule_id);
 
             // 인원수도 있으면 좋을거 같은데?
@@ -856,6 +858,8 @@ public class CircleService {
             map.put("orderInfoDto", orderInfoDto);
             map.put("kakaoPaymentReqDto", kakaoPaymentReqDto);
             map.put("kakaoPaymentAcceptResDto", kakaoPaymentAcceptResDto);
+            
+            
             // null 값이라 안나오는듯
 
             list.add(map);

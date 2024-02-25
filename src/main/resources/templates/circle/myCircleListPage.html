@@ -243,6 +243,10 @@
             background-color: #ffffff;
             text-align: center;
         }
+        .shadow-box {
+        background-color: #ffffff;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+        }
         *{
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
         }
@@ -258,7 +262,7 @@
         </div>
         <div class="row">
             <div class="col" style="font-size: 1.2em;">
-                <div class="row"><!-- 반복문? -->
+                <div class="row" style="padding-left: 0.7rem; padding-right: 0.7rem;"><!-- 반복문? -->
                     <div id="listInsert" class="col" style="margin-bottom: 11%; background-color: rgb(251, 251, 251);">
 
                     </div>
@@ -267,32 +271,33 @@
         </div>
     </div>
     
-    <div id="Wrapper" class="row mt-2 mb-2 d-none rounded-3">
-        <div class="col rounded-3 mx-1" style="background-color: white;">
-            <div class="row rounded-3" style="font-size: small;">
+    <div id="Wrapper" class="row d-none rounded-3 border my-2 bg-white shadow-box">
+        <div class="col rounded-3 mx-1">
+            <div class="row rounded-3 py-2" style="font-size: small;">
                 <div class="image-container col-4 rounded-3 py-2 ps-1"><img class="responsive-img circlemainimage img-fluid rounded-3" src="/public/image/circle/MainCarousel1.png"></div>
                 <div class="col">
-                    <div class="row mt-1">
-                        <div class="col align-items-center" style="padding-top: 0.9em; font-size: 0.75em;">
-                            &nbsp;<span class="circlemiddlecategory fw-semibold">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory fw-semibold">배찌</span>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="circlename col fw-semibold" style="font-size: 1.4em;">
-                            동아리명
+                    <div class="row">
+                        <div class="col align-items-center" style="padding-top: 0.5em; font-size: 0.78rem; color: #9b9b9b;">
+                            <span class="circlemiddlecategory">중배찌</span>&nbsp;<span class="fw-semibold">></span>&nbsp;<span class="circlecategory">배찌</span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="university col" style="font-size: 1em; color: gray;">
+                        <div class="circlename col fw-semibold" style="font-size: 1.25em;">
+                            동아리명
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="university col fw-semibold" style="font-size: 1.02em; color: gray;">
                             학교명
                         </div>
                     </div>
-                    <div class="row mt-3 align-items-center">
-                        <div class="col pt-1" style="color: rgb(134, 134, 134); font-size: 1.3em;">
-                            <i class="bi bi-people-fill"></i>&nbsp; <span class="currentpeople" style="color: black">현재인원</span>&nbsp;<span style="color: black;">/</span>&nbsp;<span class="circlepeople" style="color: black;">등급인원</span>
+                    <div class="row mt-2 pt-1">
+                        <div class="col" style="color: rgb(134, 134, 134); font-size: 1.2em;">
+                            <i class="bi bi-people-fill" style="color: #8f8f8f;"></i>&nbsp; <span class="currentpeople fw-semibold" style="color: rgb(85, 85, 85);">현재인원</span>&nbsp;<span style="color: rgb(49, 49, 49);">/</span>&nbsp;<span class="circlepeople" style="color: rgb(145, 145, 145);">등급인원</span>
                         </div>
                     </div>
                 </div>
+                <!-- 이미지가 들어가야 이쁜가?-->
                 <div class="col-2 pt-3">
                     <div class="row align-items-center mt-0">
                         <div class="col d-grid rounded-3">
@@ -300,8 +305,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col text-center">
-                            <span class="circlegrade fw-semibold" style="font-size: 0.8em;"></span>
+                        <div class="col text-center px-0">
+                            <span class="circlegrade fw-semibold" style="font-size: 0.8em; color: #4e4e4e;"></span>
                         </div>
                     </div>
                 </div>
@@ -324,10 +329,10 @@
     </div>
     <div class="container-fluid footer" style="position: absolute;">
         <div class="row fixed-bottom align-items-center justify-content-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
-            <div class="button col text-center" onclick="scheduleIconClick()" style="height: 100%;">
+            <div class="button col text-center ps-3" onclick="scheduleIconClick()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date text-secondary" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-calendar2-date text-secondary" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -339,7 +344,7 @@
             <div class="button col ps-0 text-center" onclick="VoteIconClick()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill text-secondary" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-box-seam-fill text-secondary" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -349,7 +354,7 @@
                 </div>
             </div>
             <div class="col-2 px-0 justify-content-center">
-                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.8em;">
+                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.5em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
@@ -358,7 +363,7 @@
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-people-fill text-secondary" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-people-fill text-secondary" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -367,12 +372,12 @@
                 </div>
             </div>
             </div>
-            <div class="button col text-center" onclick="(() => {
+            <div class="button col text-center pe-3" onclick="(() => {
                 location.href = './circleMyPage'
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-person-circle text-secondary" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-person-circle text-secondary" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -381,7 +386,7 @@
                 </div>
             </div>
             </div>
-            <!-- <div style="position: fixed; bottom: 10%; z-index: 1000;">      
+            <!-- <div style="position: fixed;bottom: 6.7%; z-index: 1000;right: 0; width: 30%;">      
                 <div class="dropup-end dropup mb-3 justify-content-center" style="position: relative; left: 42%;">
                     <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
                         <i class="fs-4 bi bi-plus-lg text-white"></i>

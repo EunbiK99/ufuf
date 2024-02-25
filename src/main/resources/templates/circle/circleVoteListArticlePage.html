@@ -191,8 +191,6 @@
                         
                         $("#voteInfoInsert").append(voteNode)
 
-                        
-
                     }
                     
                     const modal = bootstrap.Modal.getOrCreateInstance("#voteModal");
@@ -202,6 +200,19 @@
                 }
             })
 
+        }
+
+        function showVoteRatio(){
+
+            const showVoteRatioBtn = document.getElementById("showVoteRatioBtn");
+            showVoteRatioBtn.classList.add("d-none");
+
+            const voteChart = document.getElementById("voteChart");
+            voteChart.classList.remove("d-none");
+
+            setTimeout(() => {
+                window.scrollTo(0, document.body.scrollHeight);
+            }, 15);
         }
         
 
@@ -239,19 +250,12 @@
                         const nothing = $("<h5>").text("아직 투표한 인원이 없습니다.")
                         $("#hideControl").append(nothing)
                     }
-                        
-
-                        
 
                 }
                 
             })
-
-
         }
         
-        let myChart;
-        // 로드됐을때 바로실행
         window.addEventListener("DOMContentLoaded", () => {
             voteInfoOne();
             voteOptionPrint();
@@ -325,7 +329,7 @@
             /* 와 여기 .. 이미지 맞추기가 가능함.. 개신기... */
         .image-container {
             width: auto;
-            height: 15em; /* 높이를 조절하세요 */
+            height: 10rem; /* 높이를 조절하세요 */
             overflow: hidden;
         }
 
@@ -347,52 +351,63 @@
         
     </style>
 </head>
-<body>
+<body style="height: 100vh; background-color: rgb(251,251,251);">
     <!-- 투표하기 => 음 사진이랑 옵션내용 나오게하고 옵션id 선택했을때 userid랑 circleid 가지고 memberid 찾아서 투표에 넣어줌
          이미지 + 내용 칸을 만들어서 클릭 라디오버튼 => 체크 중복투표x
         투표제목, 투표주제, 항목내용 
     -->
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
-    <div class="container-fluid mainContent" style="background-color: rgb(251,251,251);">
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col mt-2">
+    <div class="container-fluid mainContent">
+        <div class="row pb-5">
+            <div class="col pb-4">
+                <div class="row px-1">
+                    <div class="col mt-3">
                         <div class="row align-items-center">
-                            <div id="vote_title" class="col fw-semibold" style="font-size: 1.4em;">
+                            <div id="vote_title" class="col" style="font-size: 1em; color: #787878;">
                                 제목
                             </div>
                         </div>
                         <div class="row">
-                            <div id="vote_theme" class="col" style="font-size: 1.27em; color: #787878;">
+                            <div id="vote_theme" class="col fw-semibold" style="font-size: 1.2em; color: #555555;">
                                 투표 주제
                             </div>
                         </div>
-                        <div class="row py-0 mt-2">
-                            <div id="hideControl" class="col-12 d-grid py-0 justify-content-center align-items-center" style="height: 15em;">
-                                <canvas id="myChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-9"></div>
-                            <div onclick="voteCompleteInfo()" class="col fw-semibold btn rounded-3 me-1 text-end lh-sm" style="color: blue; padding-top: 0%; padding-bottom: 0%; font-size: 0.9em;">
-                                투표한사람
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col fw-semibold text-end" style="font-size: 0.8em; color: rgba(255, 29, 29, 0.847);">
-                                중복투표는 불가!
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row px-1 py-3">
                             <div class="col btn-group-vertical justify-content-center align-items-center" role="group" aria-label="Vertical radio toggle button group"><!-- Wrapper가 들어갈곳-->
-                                <div id="listInsert" class="row row-cols-2" style="margin-bottom: 15%;">
+                                <div id="listInsert" class="row row-cols-2">
 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center" style="color: #adadad; font-size: 0.85rem;">
+                                <i class="bi bi-exclamation-circle me-2"></i>중복투표는 불가합니다.
+                            </div>
+                        </div>
+                        <div id="showVoteRatioBtn" class="row mb-3" style="margin: 2rem;">
+                            <div class="col px-5 d-grid">
+                                <div id="showVoteRatio" class="btn fw-semibold bg-white" onclick="showVoteRatio()" style="border: 0.1rem solid #fb7928; color: #fb7928;">투표결과 확인하기</div>
+                            </div>
+                        </div>
+                        <div id="voteChart" class="row py-4 d-none mt-2">
+                            <div class="col">
+                                <div class="row">
+                                    <div id="hideControl" class="col d-flex py-0 justify-content-center align-items-center" style="height: 15em;">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="row mt-3 text-center px-3">
+                                    <div class="col btn border text-center bg-white" onclick="voteCompleteInfo()" style="font-size: 0.9rem; color: #727272;">결과 상세 열람하기</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row mt-3 fixed-bottom">
+            <div class="col px-4 d-grid border-top" style="padding-top: 0.75rem; padding-bottom: 0.75rem;">
+                <button id="controldisabled" class="btn fw-semibold py-2" onclick="optionComplete()" style="background-color: #fb7928;color: white; font-size: 1.1rem;">투표하기</button>
             </div>
         </div>
     </div>
@@ -405,13 +420,9 @@
         <label class="btn btn-outline-danger" for="vbtn-radio3">Radio 3</label>
         </div>     -->
     <!-- optionCheckComplete -->
-    <div class="container-fluid">
-        <div class="row mt-3 fixed-bottom">
-            <div class="col mx-3 py-2 d-grid">
-                <button id="controldisabled" class="btn fw-semibold" onclick="optionComplete()" style="background-color: #fb7928;color: white;">투표하기</button>
-            </div>
-        </div>
-    </div>
+
+    
+
     <div id="Wrapper" class="row d-none rounded-3 mt-2">
         <div class="voteWrapper col rounded-3" style="padding-left: 0%; padding-right: 0%; padding-top: 0%; background-color: white; border: 0.3em solid rgb(251,251,251);">
             <!-- 테스트1 --><input type="radio" class="radiobutton form-check custom-radio btn-check" name="vbtn-radio" autocomplete="off">
@@ -421,7 +432,7 @@
                     <img class="responsive-img option_image img-fluid rounded-3">
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-1">
                 <div class="col">
                     <div class="row align-items-center justify-content-center">
                         <div class="col text-center fw-semibold" style="font-size: 0.9em; color: black;">
@@ -458,7 +469,7 @@
     </div>
     <div id="voteWrapper d-none">
         <div id="voteModal" class="modal" tabindex="-1" style="border: none;">
-            <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
+            <div class="modal-dialog modal-dialog-bottom" style="padding-top: 38%; margin-right: 5%; margin-left: 5%;">
               <div class="modal-content px-0 py-0">
                 <div class="modal-header">
                   <h5 class="modal-title">투표 현황</h5>

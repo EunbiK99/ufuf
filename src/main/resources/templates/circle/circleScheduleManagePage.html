@@ -245,7 +245,7 @@
                                 "start": postDateTime,
                                 "end": postDateTime2,
                                 "textColor": "white",
-                                "color": "#fb7928",
+                                "color": "#ff9a42",
                                 "extendedProps":{
                                     schedule_title: e.schedule_title,
                                     schedule_content: e.schedule_content,
@@ -289,7 +289,6 @@
                 locale: 'ko',
                 selectLongPressDelay: 300,
                 aspectRatio: 0.9,
-                
             });
 
             calendar.render();
@@ -1068,6 +1067,7 @@
             z-index: 10000; /* 필요한 만큼의 높은 z-index 값으로 설정 */
             
         }
+
         .fixed-bottom {
             position: fixed;
             bottom: 0;
@@ -1075,13 +1075,20 @@
             background-color: #ffffff;
             text-align: center;
         }
+
         #fc-dom-1{
             padding-left: 1em;
         }
+
+        .fc .fc-button-group > .fc-button{
+            background-color: #ececec;
+            border: 0.1rem solid #a5a5a5;
+            color: #282828;
+        }
+
         .fc-button-group{
             padding-right: 1em;
         }
-
 
         /* [컨테이너 크기 설정] */
         
@@ -1090,19 +1097,25 @@
         }
         .fc {
             font-family: 'Arial', sans-serif;
-            background-color: #fafafa;
+            background-color: #ffffff;
             color: #3e3e3e;
             font-size: 0.7em;
             text-decoration: none;
             /* 기타 스타일 설정 */
         }
+        
         .fc-daygrid-day-number{
             text-decoration: none;
-            color: black;
+            color: rgb(58, 58, 58);
         }
+
+        .fc-scrollgrid-section-header{
+            background-color: #fafafa;
+        }
+
         .fc-col-header-cell-cushion{
             text-decoration: none;
-            color: black;
+            color: rgb(39, 39, 39);
         }
         .fc-daygrid-event {
             background-color: #fb7928; /* 이벤트의 배경색을 변경 */
@@ -1137,18 +1150,18 @@
         
     </style>
 </head>
-<body>
+<body style="background-color: #fafafa;">
     <th:block th:replace="~{commons/circlefragmentPage.html :: topNavi}"></th:block>
     <div class="container-fluid">
-        <div class="row">
-            <div id="calendar" class="col px-0">
+        <div class="row border-top">
+            <div id="calendar" class="col px-0 pt-3" style="height: 80vh;">
 
             </div>
         </div>
         <!-- 생각을 해보자.. 일정출석부는 일정 마감일이 지나고 나서 이틀정도 기한을 준다고 했고 출석부는 일정등록을 한 본인만 출석체크를 할 수 있다.
              일정시작일 기준으로 일정출석부는 생길것이고 일정출석부가 보이는 기간은 일정마감일 기준으로 2일동안 근데 여기서 일정 출석부가 보여야 하는건 등록한사람만 -->
-        <div class="row">
-            <div id="scheduleListInsert" class="col" style="margin-bottom: 20%;">
+        <div class="row fixed-bottom border-top" style="bottom: 3.4rem;">
+            <div id="scheduleListInsert" class="col" style="padding-top: 0.5rem; padding-bottom: 0.6rem;">
 
             </div>
         </div>
@@ -1169,10 +1182,10 @@
     </div>
     <div class="container-fluid footer" style="position: absolute;">
         <div class="row fixed-bottom align-items-center justify-content-center" style="border-top: 0.05em solid rgb(196, 196, 196); height: 3.4em;">
-            <div class="button col text-center" onclick="ScheduleManageMove()" style="height: 100%;">
+            <div class="button col text-center ps-3" onclick="ScheduleManageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-calendar2-date" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-calendar2-date" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -1184,7 +1197,7 @@
             <div class="button col ps-0 text-center" onclick="VoteListPageMove()" style="height: 100%;">
                 <div class="row">
                     <div class="col">
-                        <i class="bi bi-box-seam-fill" style="font-size: 1.7em;"></i>
+                        <i class="bi bi-box-seam-fill" style="font-size: 1.5em;"></i>
                     </div>
                 </div>
                 <div class="row">
@@ -1194,7 +1207,7 @@
                 </div>
             </div>
             <div class="col-2 px-0 justify-content-center">
-                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.8em;">
+                <img id="ufuf" class="img-fluid" src="/public/image/circle/ufufmainlogo.png" style="height: 2.5em;">
                 <!-- 여기 플러스버튼을 따로 떼어내서 이동시켜야함 !!!!!! -->
                 <!-- <button class="btn px-0" onclick="openModal()"><i class="bi bi-plus-circle py-0 fs-1"></i></button> -->
             </div>
@@ -1203,7 +1216,7 @@
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-people-fill" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-people-fill" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -1212,12 +1225,12 @@
                 </div>
             </div>
             </div>
-            <div class="button col text-center" onclick="(() => {
+            <div class="button col text-center pe-3" onclick="(() => {
                 location.href = './circleMyPage'
             })()" style="height: 100%;">
             <div class="row">
                 <div class="col">
-                    <i class="bi bi-person-circle" style="font-size: 1.7em;"></i>
+                    <i class="bi bi-person-circle" style="font-size: 1.5em;"></i>
                 </div>
             </div>
             <div class="row">
@@ -1226,15 +1239,15 @@
                 </div>
             </div>
             </div>
-            <!-- <div style="position: fixed; bottom: 10%; z-index: 1000;">      
+            <!-- <div style="position: fixed;bottom: 6.7%; z-index: 1000;right: 0; width: 30%;">      
                 <div class="dropup-end dropup mb-3 justify-content-center" style="position: relative; left: 42%;">
                     <button class="btn rounded-circle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #FF8827;">
                         <i class="fs-4 bi bi-plus-lg text-white"></i>
                     </button>
                     <ul class="dropdown-menu mb-2" style="z-index: 1000;">
-                        <li onclick="ScheduleWritePageMove()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 일정 추가</li>
-                      <li onclick="circleVoteWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 투표글 작성</li>
-                      <li onclick="circleBoardWrite()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
+                      <li><a class="dropdown-item text-secondary" href="./circleApplyPage" style="font-size: 0.9em;"> 동아리 개설하기</a></li>
+                      <li><a class="dropdown-item text-secondary" href="./circleListPage" style="font-size: 0.9em;"> 동아리 가입하기</a></li>
+                      <li onclick="writeNeedjoin()"><span class="dropdown-item text-secondary" style="font-size: 0.9em;"> 동아리 게시글 작성</span></li>
                     </ul>
                 </div>
             </div> -->
@@ -1293,28 +1306,29 @@
         </div>
       </div>
     </div>
-    <div id="listWrapper" class="row d-none mt-2">
-        <div class="col">
+    <div id="listWrapper" class="row d-none px-3">
+        <div class="col text-start">
             <div class="row">
-                <div class="col scheduletitle fw-semibold" style="font-size: 1.2em;">
+                <div class="col scheduletitle fw-semibold pe-0" style="font-size: 1.07em;">
+                    
+                </div>
+            </div>
+            <div class="row" style="margin-top: -0.18rem;">
+                <div class="col scheduleaddress pe-0" style="font-size: 0.8em; color: rgb(172, 172, 172);">
                     
                 </div>
             </div>
             <div class="row">
-                <div class="col scheduleaddress fw-semibold" style="font-size: 0.9em; color: rgb(153, 153, 153);">
-                    
-                </div>
-            </div>
-            <div class="row mt-1">
-                <div class="col participation2">
-                    
+                <div class="col fw-semibold">
+                    <span style="color: #858585; font-size: 0.9rem;">일정 전체 인원</span><span class="participation2 ms-2" style="font-size: 0.95em; color: rgb(102, 102, 102);"></span>
                 </div>
             </div>
         </div>
-        <div class="col-4 d-grid">
-            <button type="button" class="btn fw-semibold attendanceCheck" style="background-color: #fb7928;color: white;">출석체크</button>
+        <div class="col-4 d-grid align-items-center">
+            <button type="button" class="btn fw-semibold attendanceCheck align-items-center ps-1" style="background-color: #fb7928;color: white; height: 2.5rem;"><i class="bi bi-plus me-1"></i>출석체크</button>
         </div>
     </div>
+
     <div id="attendanceWrapper d-none">
         <div id="attendanceModal" class="modal" tabindex="-1" style="border: none;">
             <div class="modal-dialog modal-dialog-bottom" style="padding-top: 50%; margin-right: 5%; margin-left: 5%;">
