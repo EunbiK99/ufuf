@@ -49,7 +49,7 @@
 
 <!-- * 미팅 모집글 테이블 PK 생성-->
 <select id="countGroupPk" resultType="int">
-    SELECT count(groupId) from meeting_group
+    SELECT max(groupId) from meeting_group
 </select>
 
 <!-- * 미팅 모집글 인서트 쿼리-->
