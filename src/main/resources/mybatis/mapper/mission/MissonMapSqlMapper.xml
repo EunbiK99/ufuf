@@ -205,7 +205,7 @@
     INNER JOIN mission_chat_room mcr ON mi.mission_id = mcr.mission_id
     <![CDATA[
     WHERE TIMESTAMPDIFF(MINUTE, mcr.accept_at, NOW()) >= mi.limit_time
-    AND status = "진행중"
+    AND status = '미션진행중'
     ]]>
 </select>
 

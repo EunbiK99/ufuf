@@ -136,17 +136,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function changeDateFormat(){
     const sessionUserBirth = document.getElementById("sessionUserBirth");
-    const sessionUserBirthValue = sessionUserBirth.innerText;    
-    const dateObject = new Date(sessionUserBirthValue);
-    console.log('dateObject: ', dateObject);
+    const sessionUserBirthValue = sessionUserBirth.innerText;
+    console.log('sessionUserBirthValue: ', sessionUserBirthValue);
 
-    sessionUserBirth.innerText = "";
+    const arraydate = Array.from(sessionUserBirthValue.split(" "));
+    console.log('arraydate: ', arraydate);
+    const dateValue = new Date(arraydate);
+    console.log('dateValue: ', dateValue);
+    
     const dateOption = {
         year : 'numeric',
         month : 'long',
         day : 'numeric',        
     };
-    const formatDate = new Intl.DateTimeFormat("ko-KR", dateOption).format(dateObject);
+    
+    const formatDate = formattedDate.toLocaleDateString("ko-KR", dateOption);
+    
+    sessionUserBirth.innerText = "";
     sessionUserBirth.innerText = formatDate;
 }
 
@@ -224,14 +230,14 @@ function checkDuplicateSNSUrl(textValue){
 
         if(checkedValue === 0){
             const goodCheck = document.createElement('div');
-            goodCheck.setAttribute('class', 'col-auto fs-6');
+            goodCheck.setAttribute('class', 'col-auto fs-6 mt-2');
             goodCheck.innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check2"></i> 사용 가능한 주소입니다!</span>'
             SNSUrlCheckRow.innerHTML = "";
             SNSUrlCheckRow.appendChild(goodCheck);
         }
         else{
             const badCheck = document.createElement('div');
-            badCheck.setAttribute('class', 'col-auto fs-6');
+            badCheck.setAttribute('class', 'col-auto fs-6 mt-2');
             badCheck.innerHTML = '<span class="text-danger fw-bold"><i class="bi bi-x"></i> 중복된 주소입니다!</span>'
             SNSUrlCheckRow.innerHTML = "";
             SNSUrlCheckRow.appendChild(badCheck);
@@ -240,7 +246,7 @@ function checkDuplicateSNSUrl(textValue){
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    changeDateFormat();
+    
 })
 
 
@@ -340,7 +346,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                             <div class="col">
                                                 <div class="row justify-content-center">
                                                     <div id="attachProfileImageCol" class="col-auto text-center">                                                
-                                                        <span class="text-secondary" style="font-size: 6em;"><i class="fi fi-rr-add-image bi-align-middle"></i></span>
+                                                        <span class="text-secondary text-opacity-50" style="font-size: 6em;"><i class="fi fi-rr-add-image bi-align-middle"></i></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -362,12 +368,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                                                 <input id="inputNickname" type="text" class="custom-input border border-2 form-control form-control-sm" placeholder="닉네임 입력">
                                             </div>
                                         </div>
-
-                                        <div class="row mt-2">                                            
-                                            <div class="col-auto">
-                                                <span id="sessionUserBirth" th:text="${session.sessionUserInfo.birth}"></span>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="row mt-2">
                                             <div class="col">
                                                 <span><i class="fi fi-rr-graduation-cap"></i></span>
