@@ -396,184 +396,188 @@
 
                 for(chat of response.data){
 
-                    latestChatId = chat.missionChatDto.chat_id;
+                    if(chat.missionChatDto.is_read === "N"){
 
-                    if(chat.missionChatDto.user_id == sessionUser){
-
-                        const myChatWrapper = document.querySelector("#myChatTemplete .myChatWrapper").cloneNode(true);
-                        const text = myChatWrapper.querySelector(".text");
-                        const created_at = myChatWrapper.querySelector(".created_at");
-
-                        let currentDate = new Date();
-                        let chatDate = new Date(chat.missionChatDto.created_at);
-
-                        let year = chatDate.getFullYear();
-                        let month = chatDate.getMonth() + 1;
-                        let date = chatDate.getDate();
-                        let hour = chatDate.getHours();
-                        let minutes = chatDate.getMinutes();
-
-                        let timeDiff = currentDate - chatDate;
-                        const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-                        if(dayDiff < 1){
-                            if(hour < 10){
-                                hour = "0" + hour;
+                        latestChatId = chat.missionChatDto.chat_id;
+    
+                        if(chat.missionChatDto.user_id == sessionUser){
+    
+                            const myChatWrapper = document.querySelector("#myChatTemplete .myChatWrapper").cloneNode(true);
+                            const text = myChatWrapper.querySelector(".text");
+                            const created_at = myChatWrapper.querySelector(".created_at");
+    
+                            let currentDate = new Date();
+                            let chatDate = new Date(chat.missionChatDto.created_at);
+    
+                            let year = chatDate.getFullYear();
+                            let month = chatDate.getMonth() + 1;
+                            let date = chatDate.getDate();
+                            let hour = chatDate.getHours();
+                            let minutes = chatDate.getMinutes();
+    
+                            let timeDiff = currentDate - chatDate;
+                            const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    
+                            if(dayDiff < 1){
+                                if(hour < 10){
+                                    hour = "0" + hour;
+                                }
+                                if(minutes < 10){
+                                    minutes = "0" + minutes;
+                                }
+                                created_at.innerText = hour + ":" +  minutes;
+                            }else{
+                                created_at.innerText = year + "." + month + "." + date;
                             }
-                            if(minutes < 10){
-                                minutes = "0" + minutes;
-                            }
-                            created_at.innerText = hour + ":" +  minutes;
-                        }else{
-                            created_at.innerText = year + "." + month + "." + date;
-                        }
-
-                        if(chat.missionChatDto.chat_category_id === 1){
-                            text.innerText = chat.missionChatDto.message;
-                        }else if(chat.missionChatDto.chat_category_id === 2){
-
-                            text.innerHTML = `<img class="img${chat.missionChatDto.chat_id} img-fluid" style="object-fit: cover;" src="/uploadFiles/ufuf/chatImg${chat.missionChatDto.message}">`;
-
-                        }else if(chat.missionChatDto.chat_category_id === 3){
-
-                            let message = chat.missionChatDto.message;
-                            message = message.replace(/\^alert!\^/g, "");
-
-                            text.innerHTML = message;
-
-                            setTimeout((chatId) => {
-                                if (message.includes("loadMap")) {
-                                    text.classList.remove("py-2");
-
-                                    const loadMapIndex = message.indexOf("loadMap");
-
-                                    if (loadMapIndex !== -1) {
-                                        const start = message.indexOf("(", loadMapIndex);
-                                        const end = message.indexOf(")", start);
-
-                                        let staticMap = text.querySelector("#staticMap");
-                                        staticMap.id = `staticMap${chatId}`;
-
-                                        if (start !== -1 && end !== -1) {
-                                            const coordinates = message.substring(start + 1, end).split(',').map(Number);
-
-                                            // coordinates 배열의 각각의 값을 따로 변수에 저장
-                                            const lat = coordinates[0];
-                                            const lng = coordinates[1];
-
-                                            setTimeout(() => {
-                                                loadMap(lat, lng, chatId);
-                                            }, 5);
+    
+                            if(chat.missionChatDto.chat_category_id === 1){
+                                text.innerText = chat.missionChatDto.message;
+                            }else if(chat.missionChatDto.chat_category_id === 2){
+    
+                                text.innerHTML = `<img class="img${chat.missionChatDto.chat_id} img-fluid" style="object-fit: cover;" src="/uploadFiles/ufuf/chatImg${chat.missionChatDto.message}">`;
+    
+                            }else if(chat.missionChatDto.chat_category_id === 3){
+    
+                                let message = chat.missionChatDto.message;
+                                message = message.replace(/\^alert!\^/g, "");
+    
+                                text.innerHTML = message;
+    
+                                setTimeout((chatId) => {
+                                    if (message.includes("loadMap")) {
+                                        text.classList.remove("py-2");
+    
+                                        const loadMapIndex = message.indexOf("loadMap");
+    
+                                        if (loadMapIndex !== -1) {
+                                            const start = message.indexOf("(", loadMapIndex);
+                                            const end = message.indexOf(")", start);
+    
+                                            let staticMap = text.querySelector("#staticMap");
+                                            staticMap.id = `staticMap${chatId}`;
+    
+                                            if (start !== -1 && end !== -1) {
+                                                const coordinates = message.substring(start + 1, end).split(',').map(Number);
+    
+                                                // coordinates 배열의 각각의 값을 따로 변수에 저장
+                                                const lat = coordinates[0];
+                                                const lng = coordinates[1];
+    
+                                                setTimeout(() => {
+                                                    loadMap(lat, lng, chatId);
+                                                }, 5);
+                                            }
                                         }
                                     }
+                                }, 5, chat.missionChatDto.chat_id);
+    
+                                if(message.includes("missionDetailBtn")) {
+    
+                                    setTimeout(() => {
+    
+                                        var btn = `#chat${chat.missionChatDto.chat_id} .missionDetailBtn`;
+    
+                                        document.querySelector(btn).innerHTML = `<div class="py-2 fw-semibold text-center px-2 rounded-2 justify-content-center align-self-center" 
+                                                style="background-color: #ffffff; color: #FF8827; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;"
+                                                onclick="window.location.href='./missionProcess?chat_room_id=${chat_room_id}'">
+                                                미션 진행 확인하기
+                                            </div>`;
+                                    }, 5);    
                                 }
-                            }, 5, chat.missionChatDto.chat_id);
-
-                            if(message.includes("missionDetailBtn")) {
-
-                                setTimeout(() => {
-
-                                    var btn = `#chat${chat.missionChatDto.chat_id} .missionDetailBtn`;
-
-                                    document.querySelector(btn).innerHTML = `<div class="py-2 fw-semibold text-center px-2 rounded-2 justify-content-center align-self-center" 
-                                            style="background-color: #ffffff; color: #FF8827; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;"
-                                            onclick="window.location.href='./missionProcess?chat_room_id=${chat_room_id}'">
-                                            미션 진행 확인하기
-                                        </div>`;
-                                }, 5);    
                             }
-                        }
-                        myChatWrapper.id = "chat" + chat.missionChatDto.chat_id;
-                        chatDialogueBox.appendChild(myChatWrapper);
-
-                    }else{
-
-                        const mateChatWrapper = document.querySelector("#mateChatTemplete .mateChatWrapper").cloneNode(true);
-                        const text = mateChatWrapper.querySelector(".text");
-                        const created_at = mateChatWrapper.querySelector(".created_at");
-
-                        mateChatWrapper.id = "chat" + chat.missionChatDto.chat_id;
-
-                        let currentDate = new Date();
-                        let chatDate = new Date(chat.missionChatDto.created_at);
-
-                        let year = chatDate.getFullYear();
-                        let month = chatDate.getMonth() + 1;
-                        let date = chatDate.getDate();
-                        let hour = chatDate.getHours();
-                        let minutes = chatDate.getMinutes();
-
-                        let timeDiff = currentDate - chatDate;
-                        const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-                        if(dayDiff < 1){
-                            if(hour < 10){
-                                hour = "0" + hour;
-                            }
-                            if(minutes < 10){
-                                minutes = "0" + minutes;
-                            }
-                            created_at.innerText = hour + ":" +  minutes;
+                            myChatWrapper.id = "chat" + chat.missionChatDto.chat_id;
+                            chatDialogueBox.appendChild(myChatWrapper);
+    
                         }else{
-                            created_at.innerText = year + "." + month + "." + date;
-                        }
-
-                        if(chat.missionChatDto.chat_category_id === 1){
-                            text.innerText = chat.missionChatDto.message;
-                        }else if(chat.missionChatDto.chat_category_id === 2){
-                            text.innerHTML = `<img class="img${chat.missionChatDto.chat_id} img-fluid" style="object-fit: cover;" src="/uploadFiles/ufuf/chatImg${chat.missionChatDto.message}">`;
-                        }else if(chat.missionChatDto.chat_category_id === 3){
-
-                            let message = chat.missionChatDto.message;
-                            message = message.replace(/\^alert!\^/g, "");
-
-                            text.innerHTML = message;
-                            
-                            setTimeout((chatId) => {
-                                if (message.includes("loadMap")) {
-                                    text.classList.remove("py-2");
-
-                                    const loadMapIndex = message.indexOf("loadMap");
-
-                                    if (loadMapIndex !== -1) {
-                                        const start = message.indexOf("(", loadMapIndex);
-                                        const end = message.indexOf(")", start);
-
-                                        let staticMap = text.querySelector("#staticMap");
-                                        staticMap.id = `staticMap${chatId}`;
-
-                                        if (start !== -1 && end !== -1) {
-                                            const coordinates = message.substring(start + 1, end).split(',').map(Number);
-
-                                            // coordinates 배열의 각각의 값을 따로 변수에 저장
-                                            const lat = coordinates[0];
-                                            const lng = coordinates[1];
-
-                                            setTimeout(() => {
-                                                loadMap(lat, lng, chatId);
-                                            }, 5);
+    
+                            const mateChatWrapper = document.querySelector("#mateChatTemplete .mateChatWrapper").cloneNode(true);
+                            const text = mateChatWrapper.querySelector(".text");
+                            const created_at = mateChatWrapper.querySelector(".created_at");
+    
+                            mateChatWrapper.id = "chat" + chat.missionChatDto.chat_id;
+    
+                            let currentDate = new Date();
+                            let chatDate = new Date(chat.missionChatDto.created_at);
+    
+                            let year = chatDate.getFullYear();
+                            let month = chatDate.getMonth() + 1;
+                            let date = chatDate.getDate();
+                            let hour = chatDate.getHours();
+                            let minutes = chatDate.getMinutes();
+    
+                            let timeDiff = currentDate - chatDate;
+                            const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    
+                            if(dayDiff < 1){
+                                if(hour < 10){
+                                    hour = "0" + hour;
+                                }
+                                if(minutes < 10){
+                                    minutes = "0" + minutes;
+                                }
+                                created_at.innerText = hour + ":" +  minutes;
+                            }else{
+                                created_at.innerText = year + "." + month + "." + date;
+                            }
+    
+                            if(chat.missionChatDto.chat_category_id === 1){
+                                text.innerText = chat.missionChatDto.message;
+                            }else if(chat.missionChatDto.chat_category_id === 2){
+                                text.innerHTML = `<img class="img${chat.missionChatDto.chat_id} img-fluid" style="object-fit: cover;" src="/uploadFiles/ufuf/chatImg${chat.missionChatDto.message}">`;
+                            }else if(chat.missionChatDto.chat_category_id === 3){
+    
+                                let message = chat.missionChatDto.message;
+                                message = message.replace(/\^alert!\^/g, "");
+    
+                                text.innerHTML = message;
+                                
+                                setTimeout((chatId) => {
+                                    if (message.includes("loadMap")) {
+                                        text.classList.remove("py-2");
+    
+                                        const loadMapIndex = message.indexOf("loadMap");
+    
+                                        if (loadMapIndex !== -1) {
+                                            const start = message.indexOf("(", loadMapIndex);
+                                            const end = message.indexOf(")", start);
+    
+                                            let staticMap = text.querySelector("#staticMap");
+                                            staticMap.id = `staticMap${chatId}`;
+    
+                                            if (start !== -1 && end !== -1) {
+                                                const coordinates = message.substring(start + 1, end).split(',').map(Number);
+    
+                                                // coordinates 배열의 각각의 값을 따로 변수에 저장
+                                                const lat = coordinates[0];
+                                                const lng = coordinates[1];
+    
+                                                setTimeout(() => {
+                                                    loadMap(lat, lng, chatId);
+                                                }, 5);
+                                            }
                                         }
                                     }
+                                }, 5, chat.missionChatDto.chat_id);
+    
+                                if(message.includes("missionDetailBtn")) {
+    
+                                    setTimeout(() => {
+    
+                                        var btn = `#chat${chat.missionChatDto.chat_id} .missionDetailBtn`;
+    
+                                        document.querySelector(btn).innerHTML = `<div class="py-2 fw-semibold text-center px-2 rounded-2 justify-content-center align-self-center" 
+                                                style="background-color: #FF8827; color: #ffffff; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;"
+                                                onclick="window.location.href='./missionProcess?chat_room_id=${chat_room_id}'">
+                                                미션 진행 확인하기
+                                            </div>`;
+                                    }, 5);    
                                 }
-                            }, 5, chat.missionChatDto.chat_id);
-
-                            if(message.includes("missionDetailBtn")) {
-
-                                setTimeout(() => {
-
-                                    var btn = `#chat${chat.missionChatDto.chat_id} .missionDetailBtn`;
-
-                                    document.querySelector(btn).innerHTML = `<div class="py-2 fw-semibold text-center px-2 rounded-2 justify-content-center align-self-center" 
-                                            style="background-color: #FF8827; color: #ffffff; margin-top: 0.15em; margin-bottom: 0.13em; padding-top: 0.16em;"
-                                            onclick="window.location.href='./missionProcess?chat_room_id=${chat_room_id}'">
-                                            미션 진행 확인하기
-                                        </div>`;
-                                }, 5);    
+    
                             }
-
+    
+                            chatDialogueBox.appendChild(mateChatWrapper);
                         }
 
-                        chatDialogueBox.appendChild(mateChatWrapper);
                    } 
                 }
                 resolve();
@@ -703,15 +707,56 @@
         }, 15);
     }
 
+    // 종료된 미션 채팅 입력창 닫음
+    function disabledInput(chat_room_id){
+
+        const data = {
+            chat_room_id: chat_room_id
+        }
+
+        fetch("./getBasicInfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(response => {
+
+                const info = response.data;
+
+                if(info.missionInfoDto.status === "미션성공" || info.missionInfoDto.status === "미션실패" || info.missionInfoDto.status === "미션포기"){
+                    const sendImg = document.getElementById('sendImg');
+                    const sendImgBtn = document.querySelector('.sendImgBtn');
+                    const inputMessage = document.getElementById('inputMessage');
+                    const sendMessage = document.getElementById('sendMessage');
+
+                    sendImg.disabled = true;
+                    inputMessage.disabled = true;
+                    sendMessage.removeAttribute('onclick');
+
+                    sendImgBtn.style.color = 'white';
+                    sendMessage.style.color = 'white';
+                    inputMessage.placeholder = '메세지를 전송할 수 없습니다';
+                }
+
+            });
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
         executeSequentially(chat_room_id);
         loadBasicInfo(chat_room_id);
+        disabledInput(chat_room_id);
     });
 
     setInterval(function() {
         updateReadStatus(chat_room_id);
-        loadNewChat(chat_room_id, latestChatId);
     }, 5000);
+
+    setInterval(function() {
+        loadNewChat(chat_room_id, latestChatId);
+    }, 10000);
 
 
 </script>
@@ -845,7 +890,7 @@
                             <textarea id="inputMessage" class="form-control rounded-4 align-self-center" placeholder="메세지 보내기"
                                 style="font-size: 0.9rem; border: 0.08em solid #b1b1b1; padding-top: 0.3rem; padding-bottom: 0.3rem; height: 2rem;"></textarea>
                             <button class="btn border-0 align-self-center px-2 me-1" style="font-size: 1.45rem; color: #b1b1b1; transform: rotate(45deg); width: 2.97rem; height: 2.97rem ;">
-                                <i class="bi bi-send-fill" onclick="sendMessage()"></i>
+                                <i id="sendMessage" class="bi bi-send-fill" onclick="sendMessage()"></i>
                             </button>
                         </div>
                     </div>
