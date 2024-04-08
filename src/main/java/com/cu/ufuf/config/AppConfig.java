@@ -46,25 +46,11 @@ public class AppConfig implements WebMvcConfigurer{
             ;
         
         registry.addInterceptor(new SessionInterceptor())
-            .addPathPatterns("/**")
-            .excludePathPatterns("/login/**")
-            .excludePathPatterns("/commons/**")
-            .excludePathPatterns("/circle/restApi/**")
-            .excludePathPatterns("/circle/circleMainPage**")
-            .excludePathPatterns("/room/restApi/**")
-            .excludePathPatterns("/room/roomMainPage/**")
-            .excludePathPatterns("/room/roomListPage/**")
-            .excludePathPatterns("/room/roomDetailPage/**")
+            .addPathPatterns("/mission/**")
             .excludePathPatterns("/mission/map**")
-            .excludePathPatterns("/mission/test1**")
             .excludePathPatterns("/mission/restApi/**")
-            .excludePathPatterns("/meeting/mainPage/**")
-            .excludePathPatterns("/meeting/myPage/**")            
-            .excludePathPatterns("/meeting/errorPage/**")    
-            .excludePathPatterns("/meeting/api/**")   
-            .excludePathPatterns("/public/**")
-            .excludePathPatterns("/")
             ;
+
     }
 
 }
